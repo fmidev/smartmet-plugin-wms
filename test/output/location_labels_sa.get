@@ -213,262 +213,259 @@
    <use x="93" xlink:href="#dot_small" y="305"/>
    <use x="102" xlink:href="#dot_small" y="352"/>
    <use x="90" xlink:href="#dot_small" y="329"/>
-   <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="296" xml:space="preserve" y="351"</text>
-   <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="296" xml:space="preserve" y="351"</text>
-   <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="275" xml:space="preserve" y="173"</text>
-   <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="275" xml:space="preserve" y="173"</text>
-   <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="284" xml:space="preserve" y="334"</text>
-   <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="284" xml:space="preserve" y="334"</text>
-   <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="137" xml:space="preserve" y="288"</text>
-   <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="137" xml:space="preserve" y="288"</text>
-   <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="369" xml:space="preserve" y="110"</text>
-   <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="369" xml:space="preserve" y="110"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="487" xml:space="preserve" y="28"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="487" xml:space="preserve" y="28"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="432" xml:space="preserve" y="254"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="432" xml:space="preserve" y="254"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="169" xml:space="preserve" y="170"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="169" xml:space="preserve" y="170"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="510" xml:space="preserve" y="256"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="510" xml:space="preserve" y="256"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="303" xml:space="preserve" y="242"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="303" xml:space="preserve" y="242"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="179" xml:space="preserve" y="10"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="179" xml:space="preserve" y="10"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="206" xml:space="preserve" y="308"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="206" xml:space="preserve" y="308"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="437" xml:space="preserve" y="298"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="437" xml:space="preserve" y="298"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="327" xml:space="preserve" y="325"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="327" xml:space="preserve" y="325"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="459" xml:space="preserve" y="173"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="459" xml:space="preserve" y="173"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="325" xml:space="preserve" y="284"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="325" xml:space="preserve" y="284"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="108" xml:space="preserve" y="234"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="108" xml:space="preserve" y="234"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="272" xml:space="preserve" y="325"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="272" xml:space="preserve" y="325"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="337" xml:space="preserve" y="309"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="337" xml:space="preserve" y="309"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="248" xml:space="preserve" y="190"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="248" xml:space="preserve" y="190"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="263" xml:space="preserve" y="146"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="263" xml:space="preserve" y="146"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="304" xml:space="preserve" y="188"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="304" xml:space="preserve" y="188"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="242" xml:space="preserve" y="353"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="242" xml:space="preserve" y="353"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="541" xml:space="preserve" y="223"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="541" xml:space="preserve" y="223"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="298" xml:space="preserve" y="308"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="298" xml:space="preserve" y="308"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="489" xml:space="preserve" y="147"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="489" xml:space="preserve" y="147"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="163" xml:space="preserve" y="212"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="163" xml:space="preserve" y="212"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="339" xml:space="preserve" y="140"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="339" xml:space="preserve" y="140"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="447" xml:space="preserve" y="11"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="447" xml:space="preserve" y="11"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="282" xml:space="preserve" y="217"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="282" xml:space="preserve" y="217"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="396" xml:space="preserve" y="216"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="396" xml:space="preserve" y="216"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="381" xml:space="preserve" y="56"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="381" xml:space="preserve" y="56"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="295" xml:space="preserve" y="293"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="295" xml:space="preserve" y="293"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="450" xml:space="preserve" y="102"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="450" xml:space="preserve" y="102"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="118" xml:space="preserve" y="302"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="118" xml:space="preserve" y="302"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="259" xml:space="preserve" y="251"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="259" xml:space="preserve" y="251"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="222" xml:space="preserve" y="249"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="222" xml:space="preserve" y="249"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="316" xml:space="preserve" y="255"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="316" xml:space="preserve" y="255"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="63" xml:space="preserve" y="267"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="63" xml:space="preserve" y="267"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="397" xml:space="preserve" y="307"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="397" xml:space="preserve" y="307"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="150" xml:space="preserve" y="329"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="150" xml:space="preserve" y="329"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="192" xml:space="preserve" y="57"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="192" xml:space="preserve" y="57"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="247" xml:space="preserve" y="26"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="247" xml:space="preserve" y="26"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="195" xml:space="preserve" y="94"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="195" xml:space="preserve" y="94"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="180" xml:space="preserve" y="181"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="180" xml:space="preserve" y="181"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="147" xml:space="preserve" y="232"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="147" xml:space="preserve" y="232"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="564" xml:space="preserve" y="75"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="564" xml:space="preserve" y="75"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="129" xml:space="preserve" y="157"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="129" xml:space="preserve" y="157"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="214" xml:space="preserve" y="44"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="214" xml:space="preserve" y="44"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="316" xml:space="preserve" y="128"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="316" xml:space="preserve" y="128"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="384" xml:space="preserve" y="245"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="384" xml:space="preserve" y="245"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="315" xml:space="preserve" y="98"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="315" xml:space="preserve" y="98"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="184" xml:space="preserve" y="221"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="184" xml:space="preserve" y="221"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="289" xml:space="preserve" y="55"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="289" xml:space="preserve" y="55"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="490" xml:space="preserve" y="76"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="490" xml:space="preserve" y="76"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="202" xml:space="preserve" y="168"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="202" xml:space="preserve" y="168"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="286" xml:space="preserve" y="23"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="286" xml:space="preserve" y="23"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="206" xml:space="preserve" y="298"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="206" xml:space="preserve" y="298"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="214" xml:space="preserve" y="368"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="214" xml:space="preserve" y="368"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="110" xml:space="preserve" y="82"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="110" xml:space="preserve" y="82"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="253" xml:space="preserve" y="295"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="253" xml:space="preserve" y="295"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="226" xml:space="preserve" y="67"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="226" xml:space="preserve" y="67"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="559" xml:space="preserve" y="129"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="559" xml:space="preserve" y="129"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="240" xml:space="preserve" y="304"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="240" xml:space="preserve" y="304"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="274" xml:space="preserve" y="274"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="274" xml:space="preserve" y="274"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="365" xml:space="preserve" y="230"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="365" xml:space="preserve" y="230"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="199" xml:space="preserve" y="261"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="199" xml:space="preserve" y="261"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="158" xml:space="preserve" y="246"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="158" xml:space="preserve" y="246"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="262" xml:space="preserve" y="285"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="262" xml:space="preserve" y="285"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="110" xml:space="preserve" y="277"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="110" xml:space="preserve" y="277"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="189" xml:space="preserve" y="32"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="189" xml:space="preserve" y="32"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="450" xml:space="preserve" y="64"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="450" xml:space="preserve" y="64"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="269" xml:space="preserve" y="99"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="269" xml:space="preserve" y="99"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="207" xml:space="preserve" y="151"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="207" xml:space="preserve" y="151"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="541" xml:space="preserve" y="54"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="541" xml:space="preserve" y="54"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="49" xml:space="preserve" y="324"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="49" xml:space="preserve" y="324"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="382" xml:space="preserve" y="12"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="382" xml:space="preserve" y="12"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="54" xml:space="preserve" y="103"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="54" xml:space="preserve" y="103"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="402" xml:space="preserve" y="265"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="402" xml:space="preserve" y="265"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="230" xml:space="preserve" y="119"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="230" xml:space="preserve" y="119"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="453" xml:space="preserve" y="151"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="453" xml:space="preserve" y="151"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="268" xml:space="preserve" y="263"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="268" xml:space="preserve" y="263"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="298" xml:space="preserve" y="78"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="298" xml:space="preserve" y="78"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="437" xml:space="preserve" y="209"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="437" xml:space="preserve" y="209"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="424" xml:space="preserve" y="129"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="424" xml:space="preserve" y="129"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="106" xml:space="preserve" y="207"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="106" xml:space="preserve" y="207"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="174" xml:space="preserve" y="67"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="174" xml:space="preserve" y="67"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="172" xml:space="preserve" y="195"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="172" xml:space="preserve" y="195"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="537" xml:space="preserve" y="200"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="537" xml:space="preserve" y="200"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="111" xml:space="preserve" y="24"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="111" xml:space="preserve" y="24"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="238" xml:space="preserve" y="343"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="238" xml:space="preserve" y="343"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="413" xml:space="preserve" y="92"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="413" xml:space="preserve" y="92"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="457" xml:space="preserve" y="112"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="457" xml:space="preserve" y="112"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="255" xml:space="preserve" y="240"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="255" xml:space="preserve" y="240"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="510" xml:space="preserve" y="11"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="510" xml:space="preserve" y="11"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="444" xml:space="preserve" y="266"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="444" xml:space="preserve" y="266"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="398" xml:space="preserve" y="154"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="398" xml:space="preserve" y="154"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="240" xml:space="preserve" y="135"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="240" xml:space="preserve" y="135"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="206" xml:space="preserve" y="24"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="206" xml:space="preserve" y="24"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="499" xml:space="preserve" y="242"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="499" xml:space="preserve" y="242"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="347" xml:space="preserve" y="270"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="347" xml:space="preserve" y="270"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="366" xml:space="preserve" y="295"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="366" xml:space="preserve" y="295"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="505" xml:space="preserve" y="39"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="505" xml:space="preserve" y="39"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="194" xml:space="preserve" y="236"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="194" xml:space="preserve" y="236"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="330" xml:space="preserve" y="31"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="330" xml:space="preserve" y="31"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="253" xml:space="preserve" y="208"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="253" xml:space="preserve" y="208"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="227" xml:space="preserve" y="79"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="227" xml:space="preserve" y="79"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="509" xml:space="preserve" y="121"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="509" xml:space="preserve" y="121"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="265" xml:space="preserve" y="42"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="265" xml:space="preserve" y="42"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="198" xml:space="preserve" y="278"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="198" xml:space="preserve" y="278"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="532" xml:space="preserve" y="86"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="532" xml:space="preserve" y="86"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="469" xml:space="preserve" y="226"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="469" xml:space="preserve" y="226"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="474" xml:space="preserve" y="298"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="474" xml:space="preserve" y="298"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="428" xml:space="preserve" y="76"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="428" xml:space="preserve" y="76"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="360" xml:space="preserve" y="81"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="360" xml:space="preserve" y="81"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="342" xml:space="preserve" y="204"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="342" xml:space="preserve" y="204"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="530" xml:space="preserve" y="21"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="530" xml:space="preserve" y="21"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="391" xml:space="preserve" y="180"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="391" xml:space="preserve" y="180"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="154" xml:space="preserve" y="135"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="154" xml:space="preserve" y="135"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="233" xml:space="preserve" y="226"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="226"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="287" xml:space="preserve" y="12"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="287" xml:space="preserve" y="12"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="164" xml:space="preserve" y="315"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="164" xml:space="preserve" y="315"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="520" xml:space="preserve" y="168"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="520" xml:space="preserve" y="168"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="396" xml:space="preserve" y="283"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="396" xml:space="preserve" y="283"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="456" xml:space="preserve" y="48"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="456" xml:space="preserve" y="48"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="213" xml:space="preserve" y="108"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="213" xml:space="preserve" y="108"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="239" xml:space="preserve" y="275"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="239" xml:space="preserve" y="275"</text>
-   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="530" xml:space="preserve" y="101"</text>
-   <text fill="#222222" font-family="sans-serif" font-size="10" x="530" xml:space="preserve" y="101"</text>
+  
+  <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="327" xml:space="preserve" y="335">Helsinki</text>
+  <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="327" xml:space="preserve" y="335">Helsinki</text>
+  <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="269" xml:space="preserve" y="334">Espoo</text>
+  <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="269" xml:space="preserve" y="334">Espoo</text>
+  <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="275" xml:space="preserve" y="173">Tampere</text>
+  <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="275" xml:space="preserve" y="173">Tampere</text>
+  <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="340" xml:space="preserve" y="321">Vantaa</text>
+  <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="340" xml:space="preserve" y="321">Vantaa</text>
+  <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="164" xml:space="preserve" y="304">Turku</text>
+  <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="164" xml:space="preserve" y="304">Turku</text>
+  <text fill="none" font-family="sans-serif" font-size="12" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="369" xml:space="preserve" y="110">Jyväskylä</text>
+  <text fill="#111111" font-family="sans-serif" font-size="12" font-weight="bold" x="369" xml:space="preserve" y="110">Jyväskylä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="487" xml:space="preserve" y="28">Kuopio</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="487" xml:space="preserve" y="28">Kuopio</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="432" xml:space="preserve" y="254">Kouvola</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="432" xml:space="preserve" y="254">Kouvola</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="169" xml:space="preserve" y="170">Pori</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="169" xml:space="preserve" y="170">Pori</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="510" xml:space="preserve" y="242">Lappeenranta</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="510" xml:space="preserve" y="242">Lappeenranta</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="303" xml:space="preserve" y="242">Hämeenlinna</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="303" xml:space="preserve" y="242">Hämeenlinna</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="236" xml:space="preserve" y="320">Salo</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="236" xml:space="preserve" y="320">Salo</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="437" xml:space="preserve" y="298">Kotka</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="437" xml:space="preserve" y="298">Kotka</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="459" xml:space="preserve" y="173">Mikkeli</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="459" xml:space="preserve" y="173">Mikkeli</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="325" xml:space="preserve" y="284">Hyvinkää</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="325" xml:space="preserve" y="284">Hyvinkää</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="111" xml:space="preserve" y="234">Rauma</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="111" xml:space="preserve" y="234">Rauma</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="238" xml:space="preserve" y="311">Lohja</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="238" xml:space="preserve" y="311">Lohja</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="248" xml:space="preserve" y="190">Nokia</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="248" xml:space="preserve" y="190">Nokia</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="263" xml:space="preserve" y="146">Ylöjärvi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="263" xml:space="preserve" y="146">Ylöjärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="304" xml:space="preserve" y="188">Kangasala</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="304" xml:space="preserve" y="188">Kangasala</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="186" xml:space="preserve" y="353">Raasepori</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="186" xml:space="preserve" y="353">Raasepori</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="541" xml:space="preserve" y="223">Imatra</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="541" xml:space="preserve" y="223">Imatra</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="268" xml:space="preserve" y="308">Vihti</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="268" xml:space="preserve" y="308">Vihti</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="491" xml:space="preserve" y="147">Savonlinna</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="491" xml:space="preserve" y="147">Savonlinna</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="164" xml:space="preserve" y="212">Sastamala</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="164" xml:space="preserve" y="212">Sastamala</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="339" xml:space="preserve" y="140">Jämsä</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="339" xml:space="preserve" y="140">Jämsä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="422" xml:space="preserve" y="28">Siilinjärvi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="422" xml:space="preserve" y="28">Siilinjärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="282" xml:space="preserve" y="217">Valkeakoski</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="282" xml:space="preserve" y="217">Valkeakoski</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="351" xml:space="preserve" y="216">Heinola</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="351" xml:space="preserve" y="216">Heinola</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="381" xml:space="preserve" y="56">Äänekoski</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="381" xml:space="preserve" y="56">Äänekoski</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="450" xml:space="preserve" y="102">Pieksämäki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="450" xml:space="preserve" y="102">Pieksämäki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="118" xml:space="preserve" y="302">Naantali</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="118" xml:space="preserve" y="302">Naantali</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="259" xml:space="preserve" y="251">Forssa</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="259" xml:space="preserve" y="251">Forssa</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="222" xml:space="preserve" y="249">Loimaa</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="222" xml:space="preserve" y="249">Loimaa</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="316" xml:space="preserve" y="255">Janakkala</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="316" xml:space="preserve" y="255">Janakkala</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="63" xml:space="preserve" y="253">Uusikaupunki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="63" xml:space="preserve" y="253">Uusikaupunki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="397" xml:space="preserve" y="307">Loviisa</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="397" xml:space="preserve" y="307">Loviisa</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="150" xml:space="preserve" y="329">Parainen</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="150" xml:space="preserve" y="329">Parainen</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="147" xml:space="preserve" y="51">Kurikka</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="147" xml:space="preserve" y="51">Kurikka</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="247" xml:space="preserve" y="26">Lapua</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="247" xml:space="preserve" y="26">Lapua</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="195" xml:space="preserve" y="95">Kauhajoki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="195" xml:space="preserve" y="95">Kauhajoki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="180" xml:space="preserve" y="181">Ulvila</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="180" xml:space="preserve" y="181">Ulvila</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="147" xml:space="preserve" y="232">Eura</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="147" xml:space="preserve" y="232">Eura</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="564" xml:space="preserve" y="75">Liperi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="564" xml:space="preserve" y="75">Liperi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="131" xml:space="preserve" y="158">Kankaanpää</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="131" xml:space="preserve" y="158">Kankaanpää</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="214" xml:space="preserve" y="44">Ilmajoki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="214" xml:space="preserve" y="44">Ilmajoki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="316" xml:space="preserve" y="128">Mänttä-Vilppula</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="316" xml:space="preserve" y="128">Mänttä-Vilppula</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="384" xml:space="preserve" y="245">Nastola</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="384" xml:space="preserve" y="245">Nastola</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="315" xml:space="preserve" y="98">Keuruu</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="315" xml:space="preserve" y="98">Keuruu</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="184" xml:space="preserve" y="221">Huittinen</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="184" xml:space="preserve" y="221">Huittinen</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="291" xml:space="preserve" y="70">Saarijärvi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="291" xml:space="preserve" y="70">Saarijärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="490" xml:space="preserve" y="76">Leppävirta</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="490" xml:space="preserve" y="76">Leppävirta</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="204" xml:space="preserve" y="168">Hämeenkyrö</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="204" xml:space="preserve" y="168">Hämeenkyrö</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="286" xml:space="preserve" y="23">Alajärvi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="286" xml:space="preserve" y="23">Alajärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="206" xml:space="preserve" y="298">Paimio</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="206" xml:space="preserve" y="298">Paimio</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="214" xml:space="preserve" y="368">Hanko</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="214" xml:space="preserve" y="368">Hanko</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="109" xml:space="preserve" y="83">Närpiö</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="109" xml:space="preserve" y="83">Närpiö</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="253" xml:space="preserve" y="283">Somero</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="253" xml:space="preserve" y="283">Somero</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="227" xml:space="preserve" y="67">Alavus</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="227" xml:space="preserve" y="67">Alavus</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="561" xml:space="preserve" y="129">Kitee</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="561" xml:space="preserve" y="129">Kitee</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="289" xml:space="preserve" y="292">Karkkila</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="289" xml:space="preserve" y="292">Karkkila</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="365" xml:space="preserve" y="230">Asikkala</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="365" xml:space="preserve" y="230">Asikkala</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="199" xml:space="preserve" y="261">Pöytyä</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="199" xml:space="preserve" y="261">Pöytyä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="158" xml:space="preserve" y="246">Laitila</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="158" xml:space="preserve" y="246">Laitila</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="298" xml:space="preserve" y="278">Loppi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="298" xml:space="preserve" y="278">Loppi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="112" xml:space="preserve" y="278">Mynämäki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="112" xml:space="preserve" y="278">Mynämäki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="189" xml:space="preserve" y="26">Laihia</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="189" xml:space="preserve" y="26">Laihia</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="269" xml:space="preserve" y="99">Virrat</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="269" xml:space="preserve" y="99">Virrat</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="207" xml:space="preserve" y="151">Ikaalinen</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="207" xml:space="preserve" y="151">Ikaalinen</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="541" xml:space="preserve" y="54">Outokumpu</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="541" xml:space="preserve" y="54">Outokumpu</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="49" xml:space="preserve" y="324">Maarianhamina</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="49" xml:space="preserve" y="324">Maarianhamina</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="382" xml:space="preserve" y="12">Viitasaari</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="382" xml:space="preserve" y="12">Viitasaari</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="55" xml:space="preserve" y="103">Kristiinankaupunki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="55" xml:space="preserve" y="103">Kristiinankaupunki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="402" xml:space="preserve" y="265">Iitti</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="402" xml:space="preserve" y="265">Iitti</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="230" xml:space="preserve" y="119">Parkano</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="230" xml:space="preserve" y="119">Parkano</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="456" xml:space="preserve" y="151">Juva</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="456" xml:space="preserve" y="151">Juva</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="170" xml:space="preserve" y="14">Vöyri</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="170" xml:space="preserve" y="14">Vöyri</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="268" xml:space="preserve" y="263">Tammela</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="268" xml:space="preserve" y="263">Tammela</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="260" xml:space="preserve" y="64">Ähtäri</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="260" xml:space="preserve" y="64">Ähtäri</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="437" xml:space="preserve" y="209">Mäntyharju</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="437" xml:space="preserve" y="209">Mäntyharju</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="424" xml:space="preserve" y="129">Kangasniemi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="424" xml:space="preserve" y="129">Kangasniemi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="106" xml:space="preserve" y="207">Eurajoki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="106" xml:space="preserve" y="207">Eurajoki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="174" xml:space="preserve" y="67">Teuva</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="174" xml:space="preserve" y="67">Teuva</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="172" xml:space="preserve" y="195">Nakkila</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="172" xml:space="preserve" y="195">Nakkila</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="537" xml:space="preserve" y="200">Ruokolahti</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="537" xml:space="preserve" y="200">Ruokolahti</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="111" xml:space="preserve" y="24">Maalahti</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="111" xml:space="preserve" y="24">Maalahti</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="274" xml:space="preserve" y="343">Inkoo</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="274" xml:space="preserve" y="343">Inkoo</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="413" xml:space="preserve" y="92">Hankasalmi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="413" xml:space="preserve" y="92">Hankasalmi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="433" xml:space="preserve" y="114">Joroinen</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="433" xml:space="preserve" y="114">Joroinen</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="255" xml:space="preserve" y="240">Urjala</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="255" xml:space="preserve" y="240">Urjala</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="510" xml:space="preserve" y="11">Juankoski</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="510" xml:space="preserve" y="11">Juankoski</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="421" xml:space="preserve" y="264">Luumäki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="421" xml:space="preserve" y="264">Luumäki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="398" xml:space="preserve" y="154">Joutsa</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="398" xml:space="preserve" y="154">Joutsa</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="242" xml:space="preserve" y="135">Ruovesi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="242" xml:space="preserve" y="135">Ruovesi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="206" xml:space="preserve" y="17">Isokyrö</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="206" xml:space="preserve" y="17">Isokyrö</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="437" xml:space="preserve" y="243">Taipalsaari</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="437" xml:space="preserve" y="243">Taipalsaari</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="347" xml:space="preserve" y="264">Kärkölä</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="347" xml:space="preserve" y="264">Kärkölä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="366" xml:space="preserve" y="295">Askola</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="366" xml:space="preserve" y="295">Askola</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="508" xml:space="preserve" y="39">Polvijärvi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="508" xml:space="preserve" y="39">Polvijärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="194" xml:space="preserve" y="236">Säkylä</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="194" xml:space="preserve" y="236">Säkylä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="330" xml:space="preserve" y="31">Karstula</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="330" xml:space="preserve" y="31">Karstula</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="253" xml:space="preserve" y="208">Vesilahti</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="253" xml:space="preserve" y="208">Vesilahti</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="355" xml:space="preserve" y="187">Sysmä</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="355" xml:space="preserve" y="187">Sysmä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="227" xml:space="preserve" y="79">Jalasjärvi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="227" xml:space="preserve" y="79">Jalasjärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="509" xml:space="preserve" y="121">Rantasalmi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="509" xml:space="preserve" y="121">Rantasalmi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="265" xml:space="preserve" y="42">Kuortane</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="265" xml:space="preserve" y="42">Kuortane</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="198" xml:space="preserve" y="278">Aura</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="198" xml:space="preserve" y="278">Aura</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="532" xml:space="preserve" y="86">Heinävesi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="532" xml:space="preserve" y="86">Heinävesi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="469" xml:space="preserve" y="226">Savitaipale</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="469" xml:space="preserve" y="226">Savitaipale</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="474" xml:space="preserve" y="298">Virolahti</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="474" xml:space="preserve" y="298">Virolahti</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="428" xml:space="preserve" y="77">Rautalampi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="428" xml:space="preserve" y="77">Rautalampi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="360" xml:space="preserve" y="81">Uurainen</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="360" xml:space="preserve" y="81">Uurainen</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="342" xml:space="preserve" y="204">Padasjoki</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="342" xml:space="preserve" y="204">Padasjoki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="530" xml:space="preserve" y="21">Kaavi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="530" xml:space="preserve" y="21">Kaavi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="391" xml:space="preserve" y="180">Hartola</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="391" xml:space="preserve" y="180">Hartola</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="154" xml:space="preserve" y="135">Merikarvia</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="154" xml:space="preserve" y="135">Merikarvia</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="233" xml:space="preserve" y="226">Punkalaidun</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="226">Punkalaidun</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="243" xml:space="preserve" y="13">Vimpeli</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="243" xml:space="preserve" y="13">Vimpeli</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="203" xml:space="preserve" y="315">Sauvo</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="203" xml:space="preserve" y="315">Sauvo</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="350" xml:space="preserve" y="71">Konnevesi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="350" xml:space="preserve" y="71">Konnevesi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="520" xml:space="preserve" y="168">Sulkava</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="520" xml:space="preserve" y="168">Sulkava</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="396" xml:space="preserve" y="283">Lapinjärvi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="396" xml:space="preserve" y="283">Lapinjärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="458" xml:space="preserve" y="48">Tuusniemi</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="458" xml:space="preserve" y="48">Tuusniemi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="213" xml:space="preserve" y="108">Karvia</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="213" xml:space="preserve" y="108">Karvia</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="239" xml:space="preserve" y="268">Ypäjä</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="239" xml:space="preserve" y="268">Ypäjä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.75" stroke-width="2.5" x="533" xml:space="preserve" y="101">Rääkkylä</text>
+  <text fill="#222222" font-family="sans-serif" font-size="10" x="533" xml:space="preserve" y="101">Rääkkylä</text>
   </g>
  </g>
 </g>

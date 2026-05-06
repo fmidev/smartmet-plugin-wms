@@ -160,8 +160,11 @@ std::size_t hashLabelConfig(const LabelConfig& cfg)
   return hash;
 }
 
-// Emit a <text> SVG element (and optional halo) into group_cdt["tags"]
-void emitText(CTPP::CDT& group_cdt,
+// Emit a <text> SVG element (and optional halo) as top-level layers.
+// Text content must travel via layer.cdata, which the SVG template only
+// renders at the layer level — nested entries in layer.tags do not get
+// their cdata expanded, see NumberLayer.cpp for the same pattern.
+void emitText(CTPP::CDT& theLayersCdt,
               const PlacedLabel& pl,
               const LabelConfig& cfg,
               double x, double y)
@@ -185,7 +188,7 @@ void emitText(CTPP::CDT& group_cdt,
     halo["attributes"]["stroke-linejoin"] = "round";
     halo["attributes"]["fill"] = "none";
     halo["attributes"]["xml:space"] = "preserve";
-    group_cdt["tags"].PushBack(halo);
+    theLayersCdt.PushBack(halo);
   }
 
   // Fill / foreground pass
@@ -201,7 +204,7 @@ void emitText(CTPP::CDT& group_cdt,
     text["attributes"]["font-weight"] = pl.font_weight;
   text["attributes"]["fill"] = pl.fill;
   text["attributes"]["xml:space"] = "preserve";
-  group_cdt["tags"].PushBack(text);
+  theLayersCdt.PushBack(text);
 }
 
 }  // anonymous namespace
@@ -424,14 +427,20 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // layer (higher z-order in the product JSON).
     // ----------------------------------------------------------------
 
+    // The <g> wrapper holds symbols as nested tags. Text labels cannot
+    // ride along as nested tags because the SVG template does not render
+    // tag.cdata — they must be emitted as separate top-level layers, and
+    // the </g> close is concatenated onto the last one. Same pattern as
+    // NumberLayer::generate_qEngine.
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
-    group_cdt["end"] = "</g>";
+    group_cdt["end"] = "";
 
     // Add layer attributes to the group, not to the individual elements
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
-    // Emit symbols
+    // Emit symbols (as nested tags inside the group, since <use ... /> is
+    // self-closing and works with the template's nested-tag rendering)
     for (const auto& al : accepted)
     {
       CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -475,6 +484,8 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       }
     }
 
+    theLayersCdt.PushBack(group_cdt);
+
     // Emit labels (after symbols so text renders above symbols within
     // the same SVG group)
     for (const auto& pl : placed_labels)
@@ -489,10 +500,13 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       const double text_x = pl.bbox.x1;
       const double text_y = pl.bbox.y2;
 
-      emitText(group_cdt, pl, label_config, text_x, text_y);
+      emitText(theLayersCdt, pl, label_config, text_x, text_y);
     }
 
-    theLayersCdt.PushBack(group_cdt);
+    // Close the <g> wrapper. Always concatenated onto the last pushed
+    // layer's end — that is group_cdt itself if no labels were placed,
+    // or the last text element otherwise.
+    theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
   }
   catch (...)
   {
