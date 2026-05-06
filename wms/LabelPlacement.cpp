@@ -593,9 +593,14 @@ std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
     order[i] = i;
 
   // Population bucketing: with priority_bucket_ratio > 1, populations
-  // that fall within the same log-bucket compare as equal so the
-  // stable_sort tiebreaker keeps them in the original geonames order
-  // rather than letting a tiny census difference flip placement.
+  // that fall within the same log-bucket compare as equal.  Within a
+  // bucket the *shorter* label wins the tiebreaker — shorter names
+  // are less visually obtrusive, fit into tighter spots, and cause
+  // fewer mutual conflicts, so prioritising them produces a cleaner
+  // map.  After length, the original geonames order breaks remaining
+  // ties via the underlying stable_sort.  When bucketing is off
+  // (ratio == 1), we keep strict population order without any length
+  // tiebreak so existing behaviour is preserved.
   const double bucket_ratio = config.priority_bucket_ratio;
   const bool bucket = (bucket_ratio > 1.0);
   const double inv_log_ratio = bucket ? 1.0 / std::log(bucket_ratio) : 0.0;
@@ -608,8 +613,13 @@ std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
 
   std::stable_sort(order.begin(), order.end(),
                    [&](size_t a, size_t b) {
-                     return popKey(candidates[a].population) >
-                            popKey(candidates[b].population);
+                     const double pa = popKey(candidates[a].population);
+                     const double pb = popKey(candidates[b].population);
+                     if (pa != pb)
+                       return pa > pb;
+                     if (!bucket)
+                       return false;  // equal-priority, preserve input order
+                     return candidates[a].label_w < candidates[b].label_w;
                    });
 
   std::vector<LabelCandidate> sorted;

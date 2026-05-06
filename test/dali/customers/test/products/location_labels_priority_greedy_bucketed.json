@@ -1,0 +1,109 @@
+{
+    "title": "LocationLayer — priority-greedy with population bucketing + shorter-name tiebreak",
+
+    "projection":
+    {
+        "xsize": 400,
+        "ysize": 700,
+        "crs": "EPSG:2393",
+        "bboxcrs": "EPSG:4326",
+        "cy": 64.8,
+        "cx": 25.4,
+        "resolution": 2.5
+    },
+
+    "defs":
+    {
+        "layers":
+        [
+            {
+                "tag": "symbol",
+                "attributes": { "id": "dot", "overflow": "visible" },
+                "layers":
+                [
+                    {
+                        "tag": "circle",
+                        "attributes": { "r": "3", "cx": "0", "cy": "0" }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "background",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 10
+                    },
+                    "attributes":
+                    {
+                        "fill": "#e8e8e8",
+                        "stroke": "#aaa",
+                        "stroke-width": "0.5"
+                    }
+                },
+                {
+                    "qid": "cities",
+                    "layer_type": "location",
+                    "keyword": "municipalities_fi",
+                    "countries": "fi",
+                    // Tighter mindistance than the standard
+                    // priority-greedy test so neighbouring cities can
+                    // actually conflict and the bucketing+length
+                    // tiebreaker has visible effect (sparser maps
+                    // would show no difference vs strict population).
+                    "mindistance": 18,
+                    "symbols":
+                    {
+                        "default":
+                        [
+                            { "hilimit": 100000, "symbol": "dot" },
+                            { "lolimit": 100000, "symbol": "dot" }
+                        ]
+                    },
+                    "attributes":
+                    {
+                        "fill": "#c00000",
+                        "stroke": "none"
+                    },
+                    // Priority-greedy: re-sorts by population descending before
+                    // running the greedy algorithm.  Use this when you want to
+                    // guarantee that the largest cities always get labels even if
+                    // they rank lower in the geonames autocomplete sort.
+                    "label":
+                    {
+                        "algorithm": "priority-greedy",
+                        "candidates": 8,
+                        // Bucket cities into log-buckets so close
+                        // populations are tied; within a bucket the
+                        // shorter label wins, then geonames order
+                        // (stable sort).  Reduces sensitivity to small
+                        // census differences and lets a short coastal
+                        // city outrank a long inland neighbour of
+                        // similar population.
+                        "priority_bucket_ratio": 2.0,
+                        "offset": 0,
+                        "symbol_size": 6,
+                        "font_family": "sans-serif",
+                        "font_size": 10,
+                        "fill": "#333333",
+                        "stroke": "white",
+                        "stroke_width": 2,
+                        "stroke_opacity": 0.8,
+                        "max_labels": 100
+                    }
+                }
+            ]
+        }
+    ]
+}
