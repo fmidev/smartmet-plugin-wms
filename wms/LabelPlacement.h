@@ -200,6 +200,19 @@ struct LabelConfig
   double sa_overlap_weight = 1.0;   // penalty weight for overlapping label area
   double sa_position_weight = 0.2;  // penalty for using a less-preferred position
 
+  // Free-space bias: when > 0, each candidate's position priority is
+  // shifted toward the direction that points away from neighbouring
+  // markers, weighted by inverse-square distance.  This pushes coastal
+  // labels into the sea (or away from inland clusters) without needing
+  // a sea mask — the only "occupied" regions known to the algorithm
+  // are the other markers themselves.  free_space_radius caps the
+  // neighbourhood (0 = use all candidates regardless of distance).
+  // Greedy: positions are sorted by (position_index − weight × alignment)
+  // so highly-aligned positions are tried first.  SA: the same term is
+  // added to the position penalty.
+  double free_space_weight = 0.0;
+  double free_space_radius = 0.0;
+
   // Population-dependent style overrides (first match wins)
   std::vector<LabelStyleClass> classes;
 

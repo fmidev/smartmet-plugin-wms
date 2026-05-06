@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+#include <numeric>
 #include <random>
 
 namespace SmartMet
@@ -15,6 +16,71 @@ namespace Plugin
 {
 namespace Dali
 {
+
+// ======================================================================
+// Position rules — direction unit vector and label alignment per
+// candidate position.  Shared between candidateBBoxes (which uses them
+// to position the label rectangle) and the free-space biasing code in
+// the placement algorithms (which uses just the directions).
+// ======================================================================
+
+namespace
+{
+
+struct PositionRule { double dx, dy, afx, afy; };
+
+constexpr double S2 = 0.7071067811865476;    // sin/cos 45°
+constexpr double S225 = 0.3826834323650898;  // sin 22.5°
+constexpr double S675 = 0.9238795325112867;  // sin 67.5° = cos 22.5°
+
+// 8-position priority order (right > above): NE, SE, NW, SW, E, W, N, S
+constexpr std::array<PositionRule, 8> RULES_8{{
+    { S2, -S2, 0.0, 1.0},  // 0 NE: bottom-left of label at directional anchor
+    { S2,  S2, 0.0, 0.0},  // 1 SE: top-left
+    {-S2, -S2, 1.0, 1.0},  // 2 NW: bottom-right
+    {-S2,  S2, 1.0, 0.0},  // 3 SW: top-right
+    { 1.0, 0.0, 0.0, 0.5}, // 4 E:  left-middle
+    {-1.0, 0.0, 1.0, 0.5}, // 5 W:  right-middle
+    { 0.0,-1.0, 0.5, 1.0}, // 6 N:  bottom-middle
+    { 0.0, 1.0, 0.5, 0.0}, // 7 S:  top-middle
+}};
+
+// 16-position: same priority order plus 8 finer-resolution intermediates.
+// Each intermediate snaps its alignment fraction to the nearest 8-pos rule
+// so the closest point of the label is still ~ at the directional anchor.
+constexpr std::array<PositionRule, 16> RULES_16{{
+    { S2,   -S2,   0.0, 1.0},  // 0  NE
+    { S2,    S2,   0.0, 0.0},  // 1  SE
+    {-S2,   -S2,   1.0, 1.0},  // 2  NW
+    {-S2,    S2,   1.0, 0.0},  // 3  SW
+    { S675, -S225, 0.0, 1.0},  // 4  ENE (snap to NE alignment)
+    { S675,  S225, 0.0, 0.0},  // 5  ESE (snap to SE alignment)
+    {-S675, -S225, 1.0, 1.0},  // 6  WNW (snap to NW alignment)
+    {-S675,  S225, 1.0, 0.0},  // 7  WSW (snap to SW alignment)
+    { 1.0,   0.0,  0.0, 0.5},  // 8  E
+    {-1.0,   0.0,  1.0, 0.5},  // 9  W
+    { S225, -S675, 0.5, 1.0},  // 10 NNE (snap to N alignment)
+    { S225,  S675, 0.5, 0.0},  // 11 SSE (snap to S alignment)
+    {-S225, -S675, 0.5, 1.0},  // 12 NNW (snap to N alignment)
+    {-S225,  S675, 0.5, 0.0},  // 13 SSW (snap to S alignment)
+    { 0.0,  -1.0,  0.5, 1.0},  // 14 N
+    { 0.0,   1.0,  0.5, 0.0},  // 15 S
+}};
+
+inline int clampNumCandidates(int n)
+{
+  if (n <= 4) return 4;
+  if (n <= 8) return 8;
+  return 16;
+}
+
+inline const PositionRule& positionRule(int n_candidates, int idx)
+{
+  return (n_candidates <= 8) ? RULES_8[static_cast<size_t>(idx)]
+                              : RULES_16[static_cast<size_t>(idx)];
+}
+
+}  // anonymous namespace
 
 // ======================================================================
 // LabelBBox
@@ -95,6 +161,44 @@ double LabelConfig::effective_symbol_height(double population) const noexcept
 // Candidate bounding-box geometry
 // ======================================================================
 
+// Per-candidate free-direction calculation is now done inline in
+// greedyCore and simulatedAnnealingPlacement so that already-placed
+// labels can contribute to the "occupied" footprint, not just markers.
+
+namespace
+{
+
+// Sort position indices [0..n) by score ascending so the lowest-cost
+// position comes first.  Score = position_index − weight * alignment
+// where alignment = position_direction · free_direction (in [-1, 1]).
+std::vector<int> orderedPositionIndices(int n_candidates,
+                                        std::pair<double, double> free_dir,
+                                        double free_space_weight)
+{
+  std::vector<int> order(static_cast<size_t>(n_candidates));
+  std::iota(order.begin(), order.end(), 0);
+  if (free_space_weight <= 0.0 ||
+      (free_dir.first == 0.0 && free_dir.second == 0.0))
+    return order;  // plain priority order
+
+  std::vector<double> score(static_cast<size_t>(n_candidates));
+  for (int i = 0; i < n_candidates; i++)
+  {
+    const auto& r = positionRule(n_candidates, i);
+    const double alignment = r.dx * free_dir.first + r.dy * free_dir.second;
+    score[static_cast<size_t>(i)] =
+        static_cast<double>(i) - free_space_weight * alignment;
+  }
+  std::stable_sort(order.begin(), order.end(),
+                   [&](int a, int b) {
+                     return score[static_cast<size_t>(a)] <
+                            score[static_cast<size_t>(b)];
+                   });
+  return order;
+}
+
+}  // anonymous namespace
+
 // Eight standard positions in preference order.
 // Indices 0-7 are used for num_candidates <= 8; all 16 for larger values.
 // The coordinate system has y increasing downward (SVG/pixel space).
@@ -162,90 +266,23 @@ std::vector<LabelBBox> candidateBBoxes(double ax,
     return std::min(t_x, t_y);
   };
 
-  // Direction unit vectors (screen y-down) and label alignment fractions.
-  // afx, afy specify which point of the label rectangle aligns with the
-  // directional anchor (ax + D*dx, ay + D*dy):
-  //   afx = 0  → label.x1 (left edge)
-  //   afx = 1  → label.x2 (right edge)
-  //   afx = 0.5 → label horizontal centre
-  //   afy = 0  → label.y1 (top edge)
-  //   afy = 1  → label.y2 (bottom edge)
-  //   afy = 0.5 → label vertical centre
-  // The chosen alignment puts the closest point of the label rectangle
-  // (relative to the anchor) exactly at the directional anchor.
-  struct Pos { double dx, dy, afx, afy; };
+  // Direction unit vectors and label alignment fractions live in
+  // RULES_8 / RULES_16 at file scope.  See the comment block at the
+  // top of this file for the meaning of (dx, dy, afx, afy).
+  const int n = clampNumCandidates(num_candidates);
 
-  static constexpr double s2 = 0.7071067811865476;   // sin/cos 45°
-  static constexpr double s225 = 0.3826834323650898; // sin 22.5°
-  static constexpr double s675 = 0.9238795325112867; // sin 67.5° = cos 22.5°
-
-  // 8-position priority order (right > above): NE, SE, NW, SW, E, W, N, S
-  const std::array<Pos, 8> rules8{{
-      { s2, -s2, 0.0, 1.0},  // 0 NE: bottom-left of label at directional anchor
-      { s2,  s2, 0.0, 0.0},  // 1 SE: top-left
-      {-s2, -s2, 1.0, 1.0},  // 2 NW: bottom-right
-      {-s2,  s2, 1.0, 0.0},  // 3 SW: top-right
-      { 1.0, 0.0, 0.0, 0.5}, // 4 E:  left-middle
-      {-1.0, 0.0, 1.0, 0.5}, // 5 W:  right-middle
-      { 0.0,-1.0, 0.5, 1.0}, // 6 N:  bottom-middle
-      { 0.0, 1.0, 0.5, 0.0}, // 7 S:  top-middle
-  }};
-
-  // 16-position: same priority order plus 8 finer-resolution intermediate
-  // angles (22.5°/67.5°).  Each intermediate snaps its alignment fraction
-  // to the nearest 8-pos rule, so the closest point of the label is still
-  // approximately at the directional anchor.
-  const std::array<Pos, 16> rules16{{
-      { s2,   -s2,   0.0, 1.0},  // 0  NE
-      { s2,    s2,   0.0, 0.0},  // 1  SE
-      {-s2,   -s2,   1.0, 1.0},  // 2  NW
-      {-s2,    s2,   1.0, 0.0},  // 3  SW
-      { s675, -s225, 0.0, 1.0},  // 4  ENE (snap to NE alignment)
-      { s675,  s225, 0.0, 0.0},  // 5  ESE (snap to SE alignment)
-      {-s675, -s225, 1.0, 1.0},  // 6  WNW (snap to NW alignment)
-      {-s675,  s225, 1.0, 0.0},  // 7  WSW (snap to SW alignment)
-      { 1.0,   0.0,  0.0, 0.5},  // 8  E
-      {-1.0,   0.0,  1.0, 0.5},  // 9  W
-      { s225, -s675, 0.5, 1.0},  // 10 NNE (snap to N alignment)
-      { s225,  s675, 0.5, 0.0},  // 11 SSE (snap to S alignment)
-      {-s225, -s675, 0.5, 1.0},  // 12 NNW (snap to N alignment)
-      {-s225,  s675, 0.5, 0.0},  // 13 SSW (snap to S alignment)
-      { 0.0,  -1.0,  0.5, 1.0},  // 14 N
-      { 0.0,   1.0,  0.5, 0.0},  // 15 S
-  }};
-
-  // Clamp to supported counts: 4, 8, or 16
-  int n = num_candidates;
-  if (n <= 4)
-    n = 4;
-  else if (n <= 8)
-    n = 8;
-  else
-    n = 16;
-
-  auto place = [&](const Pos& r) {
+  std::vector<LabelBBox> result;
+  result.reserve(static_cast<size_t>(n));
+  for (int i = 0; i < n; i++)
+  {
+    const auto& r = positionRule(n, i);
     const double D = rectRayDist(r.dx, r.dy) + offset;
     const double apx = ax + D * r.dx;
     const double apy = ay + D * r.dy;
     const double x1 = apx - dw * r.afx;
     const double y1 = apy - dh * r.afy;
-    return LabelBBox{x1, y1, x1 + dw, y1 + dh};
-  };
-
-  std::vector<LabelBBox> result;
-  result.reserve(static_cast<size_t>(n));
-
-  if (n <= 8)
-  {
-    for (int i = 0; i < n; i++)
-      result.push_back(place(rules8[static_cast<size_t>(i)]));
+    result.push_back({x1, y1, x1 + dw, y1 + dh});
   }
-  else
-  {
-    for (int i = 0; i < n; i++)
-      result.push_back(place(rules16[static_cast<size_t>(i)]));
-  }
-
   return result;
 }
 
@@ -419,6 +456,47 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
   placed_bboxes.reserve(n);
 
   const double pad = config.bbox_padding;
+  const bool fs_on = config.free_space_weight > 0.0;
+  const double fs_radius = config.free_space_radius;
+  const double fs_radius2 = fs_radius * fs_radius;
+
+  // Centroids of labels already placed in this run.  Greedy is one-pass
+  // in priority order, so when candidate i is being placed, every label
+  // in this list belongs to a higher-priority candidate (j < i).  Adding
+  // their centroids to the free-direction sum lets each new label see
+  // the previously-placed labels as occupied space, not just markers.
+  // (Without this, the free direction is computed from anchor points
+  // alone and a wide neighbour-label can still end up under the new one
+  // even when the markers are technically far apart.)
+  std::vector<std::pair<double, double>> placed_centroids;
+  placed_centroids.reserve(n);
+
+  auto computeFreeDir = [&](size_t i) -> std::pair<double, double> {
+    if (!fs_on)
+      return {0.0, 0.0};
+    double fx = 0.0;
+    double fy = 0.0;
+    auto accumulate = [&](double ox, double oy) {
+      const double dx = candidates[i].anchor_x - ox;
+      const double dy = candidates[i].anchor_y - oy;
+      const double d2 = dx * dx + dy * dy;
+      if (d2 < 1e-9)
+        return;
+      if (fs_radius > 0.0 && d2 > fs_radius2)
+        return;
+      fx += dx / d2;
+      fy += dy / d2;
+    };
+    for (size_t j = 0; j < n; j++)
+      if (j != i)
+        accumulate(candidates[j].anchor_x, candidates[j].anchor_y);
+    for (const auto& c : placed_centroids)
+      accumulate(c.first, c.second);
+    const double mag = std::sqrt(fx * fx + fy * fy);
+    if (mag <= 1e-9)
+      return {0.0, 0.0};
+    return {fx / mag, fy / mag};
+  };
 
   for (size_t i = 0; i < n; i++)
   {
@@ -428,9 +506,14 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
                                   cand.label_w, cand.label_h,
                                   config.offset, config.candidates,
                                   sym_half_w, sym_half_h);
+    const std::pair<double, double> free_dir = computeFreeDir(i);
+    const std::vector<int> order =
+        orderedPositionIndices(static_cast<int>(bboxes.size()), free_dir,
+                               config.free_space_weight);
     bool placed = false;
-    for (const auto& bbox : bboxes)
+    for (int oi : order)
     {
+      const auto& bbox = bboxes[static_cast<size_t>(oi)];
       if (!withinBounds(bbox, map_w, map_h))
         continue;
 
@@ -472,6 +555,9 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
       {
         result.push_back(makePlaced(cand, bbox));
         placed_bboxes.push_back(test);
+        if (fs_on)
+          placed_centroids.push_back(
+              {(bbox.x1 + bbox.x2) / 2.0, (bbox.y1 + bbox.y2) / 2.0});
         placed = true;
         break;
       }
@@ -641,9 +727,72 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
   const int num_cands = static_cast<int>(
       render_bboxes.empty() ? 0 : render_bboxes[0].size());
 
-  auto posPenalty = [&](int k) -> double {
-    return (k < 0) ? static_cast<double>(num_cands)
-                   : static_cast<double>(k);
+  // Free-space bias: when enabled, the position penalty is reduced for
+  // candidate positions whose direction aligns with the candidate's
+  // free-direction vector — same idea as the greedy reorder, expressed
+  // here as an extra penalty term so SA balances it against the overlap
+  // and base position-index costs.
+  //
+  // Free direction is recomputed for the candidate being moved on each
+  // posPenalty call.  It includes both other candidates' markers AND
+  // their currently-assigned label centroids, so a wide neighbour-label
+  // is treated as occupied space.  Cost: O(n) per call ≈ 200 ops, run
+  // ~4 × sa_iterations times — well under a millisecond at typical
+  // settings.
+  const double fw = config.free_space_weight;
+  const double fs_radius = config.free_space_radius;
+  const double fs_radius2 = fs_radius * fs_radius;
+
+  auto computeFreeDir = [&](int i) -> std::pair<double, double> {
+    if (fw <= 0.0)
+      return {0.0, 0.0};
+    double fx = 0.0;
+    double fy = 0.0;
+    auto accumulate = [&](double ox, double oy) {
+      const double dx = candidates[static_cast<size_t>(i)].anchor_x - ox;
+      const double dy = candidates[static_cast<size_t>(i)].anchor_y - oy;
+      const double d2 = dx * dx + dy * dy;
+      if (d2 < 1e-9)
+        return;
+      if (fs_radius > 0.0 && d2 > fs_radius2)
+        return;
+      fx += dx / d2;
+      fy += dy / d2;
+    };
+    for (int j = 0; j < n; j++)
+    {
+      if (j == i)
+        continue;
+      const auto& cj = candidates[static_cast<size_t>(j)];
+      accumulate(cj.anchor_x, cj.anchor_y);
+      const int kj = assignment[static_cast<size_t>(j)];
+      if (kj >= 0)
+      {
+        const auto& bj = render_bboxes[static_cast<size_t>(j)][static_cast<size_t>(kj)];
+        accumulate((bj.x1 + bj.x2) / 2.0, (bj.y1 + bj.y2) / 2.0);
+      }
+    }
+    const double mag = std::sqrt(fx * fx + fy * fy);
+    if (mag <= 1e-9)
+      return {0.0, 0.0};
+    return {fx / mag, fy / mag};
+  };
+
+  auto posPenalty = [&](int i, int k) -> double {
+    if (k < 0)
+      return static_cast<double>(num_cands);
+    double penalty = static_cast<double>(k);
+    if (fw > 0.0)
+    {
+      const auto fd = computeFreeDir(i);
+      if (fd.first != 0.0 || fd.second != 0.0)
+      {
+        const auto& r = positionRule(num_cands, k);
+        const double alignment = r.dx * fd.first + r.dy * fd.second;
+        penalty -= fw * alignment;
+      }
+    }
+    return penalty;
   };
 
   // Fixed seed for reproducibility: identical map requests must produce
@@ -682,7 +831,7 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
     const double dE =
         ow * (labelOverlapContrib(i, new_k) - labelOverlapContrib(i, old_k)) +
         ow * (obstacleOverlapContrib(i, new_k) - obstacleOverlapContrib(i, old_k)) +
-        pw * (posPenalty(new_k) - posPenalty(old_k));
+        pw * (posPenalty(i, new_k) - posPenalty(i, old_k));
 
     if (dE < 0.0 || prob_dist(rng) < std::exp(-dE / std::max(T, 1e-10)))
       assignment[static_cast<size_t>(i)] = new_k;

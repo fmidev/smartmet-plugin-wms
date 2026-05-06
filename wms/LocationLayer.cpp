@@ -92,6 +92,10 @@ LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
   JsonTools::remove_double(cfg.symbol_height, json, "symbol_height");
   JsonTools::remove_double(cfg.symbol_margin, json, "symbol_margin");
 
+  // Free-space bias
+  JsonTools::remove_double(cfg.free_space_weight, json, "free_space_weight");
+  JsonTools::remove_double(cfg.free_space_radius, json, "free_space_radius");
+
   // Cross-platform stability for placement
   JsonTools::remove_double(cfg.bbox_padding, json, "bbox_padding");
   {
@@ -192,6 +196,8 @@ std::size_t hashLabelConfig(const LabelConfig& cfg)
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.sa_cooling_rate));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.sa_overlap_weight));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.sa_position_weight));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.free_space_weight));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.free_space_radius));
   for (const auto& cls : cfg.classes)
   {
     if (cls.lolimit) Fmi::hash_combine(hash, Fmi::hash_value(*cls.lolimit));

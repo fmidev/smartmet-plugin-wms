@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=location_labels_sa_freespace&type=svg HTTP/1.0

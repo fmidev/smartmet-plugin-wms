@@ -1,0 +1,138 @@
+{
+    "title": "LocationLayer — simulated-annealing label placement with free-space bias",
+
+    // Use a denser zoom level to exercise conflict resolution harder.
+    "projection":
+    {
+        "xsize": 600,
+        "ysize": 600,
+        "crs": "EPSG:3067",   // ETRS-TM35FIN
+        "bboxcrs": "EPSG:4326",
+        "cy": 60.5,           // southern Finland
+        "cx": 24.5,
+        "resolution": 1.0
+    },
+
+    "defs":
+    {
+        "layers":
+        [
+            {
+                "tag": "symbol",
+                "attributes": { "id": "dot_small", "overflow": "visible" },
+                "layers":
+                [
+                    {
+                        "tag": "circle",
+                        "attributes": { "r": "2", "cx": "0", "cy": "0" }
+                    }
+                ]
+            },
+            {
+                "tag": "symbol",
+                "attributes": { "id": "dot_large", "overflow": "visible" },
+                "layers":
+                [
+                    {
+                        "tag": "circle",
+                        "attributes": { "r": "4", "cx": "0", "cy": "0" }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "background",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 5
+                    },
+                    "attributes":
+                    {
+                        "fill": "#f0f0f0",
+                        "stroke": "#999",
+                        "stroke-width": "0.4"
+                    }
+                },
+                {
+                    "qid": "cities",
+                    "layer_type": "location",
+                    "keyword": "municipalities_fi",
+                    "countries": "fi",
+                    "mindistance": 30,
+                    "symbols":
+                    {
+                        "default":
+                        [
+                            { "hilimit": 100000, "symbol": "dot_small" },
+                            { "lolimit": 100000, "symbol": "dot_large" }
+                        ]
+                    },
+                    "attributes":
+                    {
+                        "fill": "#900000",
+                        "stroke": "none"
+                    },
+                    // Simulated annealing: globally optimises label positions to
+                    // minimise total overlap area, at the cost of more CPU time.
+                    // For a typical weather map with <150 labels, 2000 iterations
+                    // typically converges in under 50 ms.
+                    //
+                    // Result is deterministic (fixed RNG seed) so the HTTP
+                    // response cache still works.
+                    "label":
+                    {
+                        "algorithm": "simulated-annealing",
+                        "candidates": 8,
+                        "offset": 0,
+                        // Free-space bias enabled: SA's position penalty
+                        // is reduced for positions whose direction aligns
+                        // with each candidate's "free direction" (away
+                        // from neighbouring markers).  Coastal and
+                        // archipelago cities push their labels into open
+                        // water rather than over land detail.  Set the
+                        // weight to 0 to disable and recover plain SA.
+                        "free_space_weight": 1.5,
+                        "free_space_radius": 120,
+                        "symbol_size": 4,
+                        "font_family": "sans-serif",
+                        "font_size": 10,
+                        "fill": "#222222",
+                        "stroke": "white",
+                        "stroke_width": 2.5,
+                        "stroke_opacity": 0.75,
+                        "max_labels": 150,
+                        "simulated_annealing":
+                        {
+                            "iterations": 2000,
+                            "initial_temperature": 1.0,
+                            "cooling_rate": 0.99,
+                            "overlap_weight": 1.0,
+                            "position_weight": 0.2
+                        },
+                        "classes":
+                        [
+                            {
+                                "lolimit": 100000,
+                                "font_size": 12,
+                                "font_weight": "bold",
+                                "fill": "#111111",
+                                "symbol_size": 8
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
