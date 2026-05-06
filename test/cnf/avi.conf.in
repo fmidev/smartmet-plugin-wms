@@ -1,0 +1,50 @@
+#
+# AVI engine configuration for WMS plugin tests.
+# Uses the same test database as the AVI engine unit tests.
+#
+
+postgis:
+{
+	host		= "smartmet-test";
+	port		= 5444;
+	database	= "avi";
+	username	= "avi_user";
+	password	= "avi_pw";
+	encoding	= "UTF8";
+};
+
+message:
+{
+	maxstations	 = 0;
+	maxrows		 = 0;
+	recordsetstarttimeoffsethours = 30;
+	recordsetendtimeoffsethours = 12;
+
+	filter_FI_METARxxx =
+	{
+		filter = true;
+		excludeicaos = ["EFHF","EFUT"];
+	};
+
+	types =
+	(
+		{
+			name = "METAR";
+			timerangetype = "messagetime";
+			validityhours = 2;
+			latestmessage = true;
+		},
+		{
+			name = "AWSMETAR";
+			timerangetype = "messagetime";
+			validityhours = 2;
+			latestmessage = true;
+		},
+		{
+			name = "SPECI";
+			timerangetype = "messagetime";
+			validityhours = 2;
+			latestmessage = true;
+		}
+	);
+};

@@ -1,5 +1,6 @@
 /authentication.conf
 /geonames.conf
 /gis.conf
+/avi.conf
 /observation.conf
 /grid

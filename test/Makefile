@@ -41,6 +41,7 @@ TEST_PREPARE_TARGETS := \
 	cnf/authentication.conf \
 	cnf/geonames.conf \
 	cnf/gis.conf \
+	cnf/avi.conf \
 	cnf/observation.conf \
 	start-redis-db
 
@@ -54,11 +55,13 @@ TEST_DB_DIR := $(shell pwd)/tmp-geonames-db
 ifdef CI
 GEONAMES_HOST_EDIT := sed -e 's|"smartmet-test"|"$(TEST_DB_DIR)"|g'
 OBSERVATION_CONF_EDIT := sed -e 's|"@IOT_OBS@"|"$(TEST_DB_DIR)"|g'
+AVI_CONF_EDIT := sed -e 's|"smartmet-test"|"$(TEST_DB_DIR)"|g'
 TEST_PREPARE_TARGETS += geonames-database start-geonames-db
 TEST_FINISH_TARGETS += stop-geonames-db
 else
 GEONAMES_HOST_EDIT := cat
 OBSERVATION_CONF_EDIT := sed -e 's|"@IOT_OBS@"|"smartmet-test"|g'
+AVI_CONF_EDIT := cat
 endif
 
 all: $(PROG)
@@ -188,6 +191,9 @@ cnf/authentication.conf cnf/geonames.conf cnf/gis.conf:
 cnf/observation.conf: cnf/observation.conf.in
 	$(OBSERVATION_CONF_EDIT) $@.in >$@
 
+cnf/avi.conf: cnf/avi.conf.in
+	$(AVI_CONF_EDIT) $@.in >$@
+
 templates:
 	$(MAKE) -C .. $@
 
@@ -200,7 +206,7 @@ obj/%.o: %.cpp objdir
 objdir:
 	mkdir -p $(objdir)
 
-.PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf dummy \
+.PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/avi.conf cnf/observation.conf dummy \
         test test-dali test-wms test-wmts test-tiles update-outputs
 
 -include $(wildcard obj/*.d)
