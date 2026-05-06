@@ -990,12 +990,36 @@ Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geo
     }
   }
 
+  // Multi-angle rotations of the same isoline often pick out the same
+  // local extremum more than once (e.g. a topmost point appears in
+  // both the 0° and ±45° scans). The same polyline vertex feeds each
+  // scan, so duplicates are bit-for-bit identical in (id, x, y).
+  // Drop them so the downstream MST does not spend cycles on
+  // self-pairs.
+  std::sort(candidates.begin(),
+            candidates.end(),
+            [](const Candidate& a, const Candidate& b)
+            { return std::tie(a.id, a.x, a.y) < std::tie(b.id, b.x, b.y); });
+  candidates.erase(std::unique(candidates.begin(),
+                               candidates.end(),
+                               [](const Candidate& a, const Candidate& b) {
+                                 return a.id == b.id && a.x == b.x && a.y == b.y;
+                               }),
+                   candidates.end());
+
   return candidates;
 }
 
 // ----------------------------------------------------------------------
 /*!
- * Fix label orientations by peeking at querydata values
+ * Fix label orientations by peeking at querydata values.
+ *
+ * GeoJSON's right-hand rule defines a winding convention for
+ * polygons (isobands), but no equivalent constraint for linestrings.
+ * Trax chains its marching-squares output into isolines whose
+ * traversal direction is therefore not guaranteed to keep higher
+ * values on a known side, so we have to ask the data for each
+ * candidate which way the gradient points.
  */
 // ----------------------------------------------------------------------
 
