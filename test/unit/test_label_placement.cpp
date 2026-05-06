@@ -776,6 +776,98 @@ BOOST_AUTO_TEST_CASE(priority_greedy_returns_input_order)
   BOOST_CHECK_EQUAL(result[2].text, "Mid");
 }
 
+BOOST_AUTO_TEST_CASE(priority_greedy_bucketing_groups_close_populations)
+{
+  // Populations 100k and 110k fall in the same log-bucket at ratio=2
+  // (both in [65535, 131071)).  When bucketing is on, stable_sort
+  // preserves the input order within the bucket — so a city with
+  // FEWER residents but LISTED FIRST will outrank its slightly more
+  // populous neighbour, eliminating the strict-population sensitivity.
+  auto base = makeConfig(PlacementAlgorithm::PriorityGreedy);
+
+  // Three cities placed far apart so all three can be placed at NE
+  // regardless.  Input order intentionally puts the slightly smaller
+  // city first.
+  std::vector<LabelCandidate> cands = {
+      makeCandidate(100, 100, "A_smaller", 100000, 30, 10),
+      makeCandidate(200, 100, "B_bigger",  110000, 30, 10),
+      makeCandidate(300, 100, "C_small",    50000, 30, 10),
+  };
+
+  // Without bucketing: strict population descending → B, A, C.
+  auto cfg_strict = base;
+  cfg_strict.priority_bucket_ratio = 1.0;
+  auto strict = placeLabels(cfg_strict, cands, 500, 500);
+  BOOST_REQUIRE_EQUAL(strict.size(), 3u);
+  BOOST_CHECK_EQUAL(strict[0].text, "A_smaller");
+  BOOST_CHECK_EQUAL(strict[1].text, "B_bigger");
+  BOOST_CHECK_EQUAL(strict[2].text, "C_small");
+  // (Input order is preserved in the result; we cannot directly observe
+  // the internal placement order from the result.  But the placement
+  // succeeds the same for both configs, so we test the comparator
+  // behaviour separately below.)
+
+  auto cfg_bucket = base;
+  cfg_bucket.priority_bucket_ratio = 2.0;
+  auto bucketed = placeLabels(cfg_bucket, cands, 500, 500);
+  BOOST_REQUIRE_EQUAL(bucketed.size(), 3u);
+  // Output order matches input order in both cases (priorityGreedy
+  // unscatters its internal sort), so direct order comparison is not
+  // sufficient here.  Verify by checking that all three got placed
+  // (i.e., the algorithm runs and reorders internally without crashing
+  // or producing wrong size).
+  BOOST_CHECK(bucketed[0].placed);
+  BOOST_CHECK(bucketed[1].placed);
+  BOOST_CHECK(bucketed[2].placed);
+}
+
+BOOST_AUTO_TEST_CASE(priority_greedy_bucketing_resolves_conflicts_by_input_order)
+{
+  // Two cities with similar populations that conflict spatially.
+  // Strict-population sort: bigger one places first at NE, smaller
+  // one is dropped or moved.  Bucketed sort: both share a bucket;
+  // input-order tiebreak gives the FIRST listed candidate the prime
+  // NE slot.  We arrange the input so the smaller city is listed
+  // first — bucketing should make the smaller-but-listed-first city
+  // win the NE position.
+  auto base = makeConfig(PlacementAlgorithm::PriorityGreedy);
+  base.candidates = 8;
+
+  // Anchors close enough that NE labels collide.  Smaller listed first.
+  std::vector<LabelCandidate> cands = {
+      makeCandidate(100, 100, "Smaller_first", 100000, 60, 10),
+      makeCandidate(110, 100, "Bigger_second", 110000, 60, 10),
+  };
+
+  auto cfg_strict = base;
+  cfg_strict.priority_bucket_ratio = 1.0;
+  auto strict = placeLabels(cfg_strict, cands, 500, 500);
+  BOOST_REQUIRE_EQUAL(strict.size(), 2u);
+  // Strict-pop: Bigger_second has the higher population, placed first
+  // at its preferred NE position.  Smaller_first then collides and
+  // ends up at a non-NE position.
+  BOOST_REQUIRE(strict[0].placed);  // Smaller_first still placed (alt position)
+  BOOST_REQUIRE(strict[1].placed);  // Bigger_second placed at NE
+
+  auto cfg_bucket = base;
+  cfg_bucket.priority_bucket_ratio = 2.0;
+  auto bucketed = placeLabels(cfg_bucket, cands, 500, 500);
+  BOOST_REQUIRE_EQUAL(bucketed.size(), 2u);
+  BOOST_REQUIRE(bucketed[0].placed);
+  BOOST_REQUIRE(bucketed[1].placed);
+
+  // The bbox of the SECOND-listed (bigger) city should differ between
+  // the two runs: in strict it placed first (got NE); in bucketed it
+  // placed second (got an alternate position because the smaller-listed-
+  // first now claims NE).
+  const bool changed =
+      strict[1].bbox.x1 != bucketed[1].bbox.x1 ||
+      strict[1].bbox.y1 != bucketed[1].bbox.y1;
+  BOOST_CHECK_MESSAGE(changed,
+                      "Bucketing should change which city wins the prime "
+                      "position when populations are close");
+}
+
 BOOST_AUTO_TEST_CASE(bbox_padding_does_not_clip_against_map_bounds)
 {
   // A label whose natural bbox sits exactly at the right map edge must

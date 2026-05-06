@@ -592,10 +592,24 @@ std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
   for (size_t i = 0; i < n; i++)
     order[i] = i;
 
-  // stable_sort preserves geonames order for equal populations
+  // Population bucketing: with priority_bucket_ratio > 1, populations
+  // that fall within the same log-bucket compare as equal so the
+  // stable_sort tiebreaker keeps them in the original geonames order
+  // rather than letting a tiny census difference flip placement.
+  const double bucket_ratio = config.priority_bucket_ratio;
+  const bool bucket = (bucket_ratio > 1.0);
+  const double inv_log_ratio = bucket ? 1.0 / std::log(bucket_ratio) : 0.0;
+  auto popKey = [&](double pop) -> double {
+    if (!bucket)
+      return pop;
+    // log of pop+1 keeps zero/negative populations finite and ordered.
+    return std::floor(std::log(std::max(pop, 0.0) + 1.0) * inv_log_ratio);
+  };
+
   std::stable_sort(order.begin(), order.end(),
                    [&](size_t a, size_t b) {
-                     return candidates[a].population > candidates[b].population;
+                     return popKey(candidates[a].population) >
+                            popKey(candidates[b].population);
                    });
 
   std::vector<LabelCandidate> sorted;

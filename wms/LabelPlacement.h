@@ -213,6 +213,17 @@ struct LabelConfig
   double free_space_weight = 0.0;
   double free_space_radius = 0.0;
 
+  // Population bucketing for priority-greedy.  Used only by the
+  // priority-greedy algorithm.  > 1 means cities whose populations
+  // fall within the same log-bucket are treated as equal-priority,
+  // and the stable_sort tiebreaker keeps them in geonames order.
+  // Example: ratio = 1.5 puts populations in [10k, 15k), [15k, 22.5k),
+  // [22.5k, 33.75k), ... into the same bucket.  Default = 1.0 means
+  // strict population sort (current behaviour) — a city with 10
+  // more residents always outranks an otherwise-identical neighbour.
+  // 1.1 ≈ 10 % ratio, 2.0 = power-of-two buckets.
+  double priority_bucket_ratio = 1.0;
+
   // Population-dependent style overrides (first match wins)
   std::vector<LabelStyleClass> classes;
 
