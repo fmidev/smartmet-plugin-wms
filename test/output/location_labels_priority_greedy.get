@@ -20,82 +20,85 @@
   
   <g style="fill:#c00000; stroke:none">
   
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="165" xml:space="preserve" y="176">Enontekiö</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="165" xml:space="preserve" y="176">Enontekiö</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="270" xml:space="preserve" y="393">Valtimo</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="270" xml:space="preserve" y="393">Valtimo</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="267" xml:space="preserve" y="245">Salla</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="267" xml:space="preserve" y="245">Salla</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="187" xml:space="preserve" y="290">Ylitornio</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="187" xml:space="preserve" y="290">Ylitornio</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="203" xml:space="preserve" y="212">Kittilä</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="203" xml:space="preserve" y="212">Kittilä</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="235" xml:space="preserve" y="158">Inari</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="235" xml:space="preserve" y="158">Inari</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="35" xml:space="preserve" y="545">Maarianhamina</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="35" xml:space="preserve" y="545">Maarianhamina</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="203" xml:space="preserve" y="409">Haapajärvi</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="203" xml:space="preserve" y="409">Haapajärvi</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="235" xml:space="preserve" y="211">Sodankylä</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="235" xml:space="preserve" y="211">Sodankylä</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="275" xml:space="preserve" y="335">Suomussalmi</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="275" xml:space="preserve" y="335">Suomussalmi</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="289" xml:space="preserve" y="369">Kuhmo</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="289" xml:space="preserve" y="369">Kuhmo</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="296" xml:space="preserve" y="410">Lieksa</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="296" xml:space="preserve" y="410">Lieksa</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="137" xml:space="preserve" y="449">Kauhajoki</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="137" xml:space="preserve" y="449">Kauhajoki</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="276" xml:space="preserve" y="291">Kuusamo</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="276" xml:space="preserve" y="291">Kuusamo</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="162" xml:space="preserve" y="517">Forssa</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="162" xml:space="preserve" y="517">Forssa</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="191" xml:space="preserve" y="302">Kemi</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="191" xml:space="preserve" y="302">Kemi</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="194" xml:space="preserve" y="358">Raahe</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="194" xml:space="preserve" y="358">Raahe</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="280" xml:space="preserve" y="476">Savonlinna</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="280" xml:space="preserve" y="476">Savonlinna</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="98" xml:space="preserve" y="576">Raasepori</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="98" xml:space="preserve" y="576">Raasepori</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="243" xml:space="preserve" y="372">Kajaani</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="243" xml:space="preserve" y="372">Kajaani</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="170" xml:space="preserve" y="388">Kokkola</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="170" xml:space="preserve" y="388">Kokkola</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="196" xml:space="preserve" y="504">Mikkeli</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="196" xml:space="preserve" y="504">Mikkeli</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="233" xml:space="preserve" y="536">Kotka</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="536">Kotka</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="130" xml:space="preserve" y="418">Vaasa</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="130" xml:space="preserve" y="418">Vaasa</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="217" xml:space="preserve" y="265">Rovaniemi</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="217" xml:space="preserve" y="265">Rovaniemi</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="263" xml:space="preserve" y="511">Lappeenranta</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="263" xml:space="preserve" y="511">Lappeenranta</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="304" xml:space="preserve" y="440">Joensuu</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="304" xml:space="preserve" y="440">Joensuu</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="126" xml:space="preserve" y="485">Pori</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="126" xml:space="preserve" y="485">Pori</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="254" xml:space="preserve" y="425">Kuopio</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="254" xml:space="preserve" y="425">Kuopio</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="206" xml:space="preserve" y="515">Lahti</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="206" xml:space="preserve" y="515">Lahti</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="206" xml:space="preserve" y="458">Jyväskylä</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="206" xml:space="preserve" y="458">Jyväskylä</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="216" xml:space="preserve" y="327">Oulu</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="216" xml:space="preserve" y="327">Oulu</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="133" xml:space="preserve" y="550">Turku</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="133" xml:space="preserve" y="550">Turku</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="169" xml:space="preserve" y="483">Tampere</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="169" xml:space="preserve" y="483">Tampere</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="190" xml:space="preserve" y="569">Helsinki</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="190" xml:space="preserve" y="569">Helsinki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="163" xml:space="preserve" y="178">Enontekiö</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="163" xml:space="preserve" y="178">Enontekiö</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="269" xml:space="preserve" y="395">Valtimo</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="269" xml:space="preserve" y="395">Valtimo</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="265" xml:space="preserve" y="247">Salla</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="265" xml:space="preserve" y="247">Salla</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="185" xml:space="preserve" y="288">Ylitornio</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="185" xml:space="preserve" y="288">Ylitornio</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="201" xml:space="preserve" y="214">Kittilä</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="201" xml:space="preserve" y="214">Kittilä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="233" xml:space="preserve" y="160">Inari</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="160">Inari</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="158" xml:space="preserve" y="424">Viitasaari</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="158" xml:space="preserve" y="424">Viitasaari</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="76" xml:space="preserve" y="549">Maarianhamina</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="76" xml:space="preserve" y="549">Maarianhamina</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="201" xml:space="preserve" y="407">Haapajärvi</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="201" xml:space="preserve" y="407">Haapajärvi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="233" xml:space="preserve" y="216">Sodankylä</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="216">Sodankylä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="273" xml:space="preserve" y="337">Suomussalmi</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="273" xml:space="preserve" y="337">Suomussalmi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="287" xml:space="preserve" y="371">Kuhmo</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="287" xml:space="preserve" y="371">Kuhmo</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="294" xml:space="preserve" y="412">Lieksa</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="294" xml:space="preserve" y="412">Lieksa</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="135" xml:space="preserve" y="454">Kauhajoki</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="135" xml:space="preserve" y="454">Kauhajoki</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="274" xml:space="preserve" y="293">Kuusamo</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="274" xml:space="preserve" y="293">Kuusamo</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="160" xml:space="preserve" y="519">Forssa</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="160" xml:space="preserve" y="519">Forssa</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="189" xml:space="preserve" y="304">Kemi</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="189" xml:space="preserve" y="304">Kemi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="192" xml:space="preserve" y="360">Raahe</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="192" xml:space="preserve" y="360">Raahe</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="278" xml:space="preserve" y="478">Savonlinna</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="278" xml:space="preserve" y="478">Savonlinna</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="154" xml:space="preserve" y="574">Raasepori</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="154" xml:space="preserve" y="574">Raasepori</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="241" xml:space="preserve" y="377">Kajaani</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="241" xml:space="preserve" y="377">Kajaani</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="168" xml:space="preserve" y="390">Kokkola</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="168" xml:space="preserve" y="390">Kokkola</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="240" xml:space="preserve" y="502">Mikkeli</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="240" xml:space="preserve" y="502">Mikkeli</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="232" xml:space="preserve" y="538">Kotka</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="232" xml:space="preserve" y="538">Kotka</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="128" xml:space="preserve" y="420">Vaasa</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="128" xml:space="preserve" y="420">Vaasa</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="215" xml:space="preserve" y="267">Rovaniemi</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="215" xml:space="preserve" y="267">Rovaniemi</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="261" xml:space="preserve" y="516">Lappeenranta</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="261" xml:space="preserve" y="516">Lappeenranta</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="302" xml:space="preserve" y="445">Joensuu</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="302" xml:space="preserve" y="445">Joensuu</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="124" xml:space="preserve" y="487">Pori</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="124" xml:space="preserve" y="487">Pori</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="252" xml:space="preserve" y="430">Kuopio</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="252" xml:space="preserve" y="430">Kuopio</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="204" xml:space="preserve" y="517">Lahti</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="204" xml:space="preserve" y="517">Lahti</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="204" xml:space="preserve" y="463">Jyväskylä</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="204" xml:space="preserve" y="463">Jyväskylä</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="214" xml:space="preserve" y="329">Oulu</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="214" xml:space="preserve" y="329">Oulu</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="131" xml:space="preserve" y="534">Turku</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="131" xml:space="preserve" y="534">Turku</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="167" xml:space="preserve" y="488">Tampere</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="167" xml:space="preserve" y="488">Tampere</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="188" xml:space="preserve" y="553">Helsinki</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="188" xml:space="preserve" y="553">Helsinki</text>
    <use x="160" xlink:href="#dot" y="181"/>
    <use x="266" xlink:href="#dot" y="398"/>
    <use x="262" xlink:href="#dot" y="250"/>
    <use x="182" xlink:href="#dot" y="277"/>
    <use x="198" xlink:href="#dot" y="217"/>
    <use x="230" xlink:href="#dot" y="163"/>
+   <use x="207" xlink:href="#dot" y="427"/>
    <use x="73" xlink:href="#dot" y="552"/>
    <use x="198" xlink:href="#dot" y="396"/>
    <use x="230" xlink:href="#dot" y="219"/>
