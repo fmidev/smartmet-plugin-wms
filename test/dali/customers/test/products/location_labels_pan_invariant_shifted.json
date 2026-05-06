@@ -1,0 +1,127 @@
+{
+    "title": "LocationLayer — pan-invariant filter, bbox shifted east by 0.5°",
+
+    // Same projection as location_labels_pan_invariant but cx shifted by
+    // 0.5°.  With pan_invariant: true, cities visible in BOTH bboxes
+    // should have IDENTICAL offsets from their markers (same NE/SE/etc
+    // choice).  Compare visually against location_labels_pan_invariant
+    // to verify decisions are stable under panning.
+    "projection":
+    {
+        "xsize": 400,
+        "ysize": 700,
+        "crs": "EPSG:2393",
+        "bboxcrs": "EPSG:4326",
+        "cy": 64.8,
+        "cx": 25.9,
+        "resolution": 2.5
+    },
+
+    "defs":
+    {
+        "layers":
+        [
+            {
+                "tag": "symbol",
+                "attributes": { "id": "dot", "overflow": "visible" },
+                "layers":
+                [
+                    {
+                        "tag": "circle",
+                        "attributes": { "r": "3", "cx": "0", "cy": "0" }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "background",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 10
+                    },
+                    "attributes":
+                    {
+                        "fill": "#e8e8e8",
+                        "stroke": "#aaa",
+                        "stroke-width": "0.5"
+                    }
+                },
+                {
+                    "qid": "cities",
+                    "layer_type": "location",
+                    "keyword": "municipalities_fi",
+                    "countries": "fi",
+                    "mindistance": 30,
+                    // Pan-invariant placement: candidates are filtered
+                    // through a margin-extended bbox before projection
+                    // and placement, then the visible-bbox check happens
+                    // at render time.  This makes label decisions stable
+                    // when the bbox is shifted by less than `margin`
+                    // pixels — necessary for tile rendering and for
+                    // viewer software that pans by issuing successive
+                    // GetMap requests.
+                    "pan_invariant": true,
+                    "symbols":
+                    {
+                        "default":
+                        [
+                            { "hilimit": 100000, "symbol": "dot" },
+                            { "lolimit": 100000, "symbol": "dot" }
+                        ]
+                    },
+                    "attributes":
+                    {
+                        "fill": "#c00000",
+                        "stroke": "none"
+                    },
+                    // Greedy placement in geonames priority order (highest-priority
+                    // cities placed first, dropping labels with no valid position).
+                    // k=8 tries the 8 Imhof positions; the first non-overlapping
+                    // one that fits within the map bounds is chosen.
+                    "label":
+                    {
+                        "algorithm": "greedy",
+                        "candidates": 8,
+                        "offset": 0,
+                        "symbol_size": 6,
+                        "font_family": "sans-serif",
+                        "font_size": 10,
+                        "fill": "#222222",
+                        "stroke": "white",
+                        "stroke_width": 2.5,
+                        "stroke_opacity": 0.8,
+                        "max_labels": 120,
+                        // Style overrides by population: large cities get bigger,
+                        // bolder labels so they read as more important than small
+                        // municipalities.  The location label is context for weather
+                        // data, so keep it lighter than the weather symbology.
+                        "classes":
+                        [
+                            {
+                                "lolimit": 200000,
+                                "font_size": 13,
+                                "font_weight": "bold",
+                                "fill": "#111111"
+                            },
+                            {
+                                "lolimit": 50000,
+                                "font_size": 11
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

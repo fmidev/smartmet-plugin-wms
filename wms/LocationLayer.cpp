@@ -284,6 +284,8 @@ void LocationLayer::init(Json::Value& theJson,
 
     JsonTools::remove_string(keyword, theJson, "keyword");
     JsonTools::remove_double(mindistance, theJson, "mindistance");
+    JsonTools::remove_bool(pan_invariant, theJson, "pan_invariant");
+    JsonTools::remove_double(placement_margin, theJson, "placement_margin");
 
     auto json = JsonTools::remove(theJson, "countries");
     if (!json.isNull())
@@ -396,7 +398,85 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     //         their pixel coordinates.  This decouples the NearTree
     //         filtering from symbol/label emission so label placement
     //         can see the full set before any SVG is written.
+    //
+    // pan_invariant mode:
+    //   The strict-bbox filter is replaced with a *margin-extended*
+    //   bbox.  Cities whose anchors lie outside the visible bbox but
+    //   inside the buffered region still participate in placement so
+    //   that visible cities see the same neighbours regardless of how
+    //   the request bbox is shifted (panning).  At render time we
+    //   skip elements whose anchor is outside the original bbox.
+    //   For large keyword sets (e.g. 200k world locations) we add a
+    //   WGS84 prefilter so we don't pay for projecting points that
+    //   are obviously outside the buffered region.
     // ----------------------------------------------------------------
+
+    // Buffered image bbox (in image pixel coords).  When pan_invariant
+    // is off, margin = 0 and this collapses to the existing strict bbox.
+    auto autoMargin = [&]() -> double {
+      double m = mindistance;
+      if (label_config.free_space_radius > m)
+        m = label_config.free_space_radius;
+      // Allow space for a wide label and the symbol obstacle.
+      // 256 px is a generous bound on label width; safety = 32 px.
+      m += 256.0;
+      m += label_config.symbol_width / 2.0 + label_config.symbol_margin;
+      m += 32.0;
+      return m;
+    };
+    const double margin =
+        pan_invariant ? (placement_margin ? *placement_margin : autoMargin())
+                      : 0.0;
+    const double bx1 = -margin;
+    const double by1 = -margin;
+    const double bx2 = static_cast<double>(box.width()) + margin;
+    const double by2 = static_cast<double>(box.height()) + margin;
+
+    // WGS84 prefilter: inverse-project a few sample points along the
+    // buffered image bbox edge to estimate a (possibly loose) WGS84
+    // rectangle.  Then a cheap lon/lat box check can drop most of a
+    // 200k-entry keyword list before we pay for the full projection.
+    // Disabled when pan_invariant is off (the existing strict-bbox
+    // filter happens after projection like before).
+    bool wgs84_prefilter_active = false;
+    double lon_min = 0, lon_max = 0, lat_min = 0, lat_max = 0;
+    bool lon_wraps = false;
+    if (pan_invariant)
+    {
+      Fmi::CoordinateTransformation invtransformation(crs, "WGS84");
+      // Sample 12 points around the buffered bbox boundary.  Four
+      // corners plus midpoints of each edge handles the bow-shaped
+      // distortion of most projections; doesn't cover poles correctly
+      // but does cover everything else with a slight overestimate
+      // that is fine for a prefilter.
+      std::vector<double> sx{bx1, bx2, bx1, bx2,
+                             (bx1 + bx2) / 2, (bx1 + bx2) / 2,
+                             bx1, bx2,
+                             (bx1 + 3 * bx2) / 4, (3 * bx1 + bx2) / 4,
+                             (bx1 + 3 * bx2) / 4, (3 * bx1 + bx2) / 4};
+      std::vector<double> sy{by1, by1, by2, by2,
+                             by1, by2,
+                             (by1 + by2) / 2, (by1 + by2) / 2,
+                             by1, by1, by2, by2};
+      for (size_t i = 0; i < sx.size(); i++)
+        box.itransform(sx[i], sy[i]);  // image px → CRS
+      invtransformation.transform(sx, sy);  // CRS → WGS84
+      lon_min = lon_max = sx[0];
+      lat_min = lat_max = sy[0];
+      for (size_t i = 1; i < sx.size(); i++)
+      {
+        if (sx[i] < lon_min) lon_min = sx[i];
+        if (sx[i] > lon_max) lon_max = sx[i];
+        if (sy[i] < lat_min) lat_min = sy[i];
+        if (sy[i] > lat_max) lat_max = sy[i];
+      }
+      // If the buffered region spans more than ~180° of longitude we
+      // are most likely viewing a hemispheric / world projection where
+      // the four-corner inverse projects to a wrap-crossing rectangle.
+      // Disable longitude prefilter in that case.
+      lon_wraps = (lon_max - lon_min) > 180.0;
+      wgs84_prefilter_active = true;
+    }
 
     // Store only the fields needed for symbol selection and label placement;
     // this avoids taking a type dependency on the internal location list type.
@@ -415,12 +495,24 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     for (const auto& location : locations)
     {
+      // WGS84 prefilter (cheap O(1) box check; runs once per location).
+      if (wgs84_prefilter_active)
+      {
+        if (location->latitude < lat_min || location->latitude > lat_max)
+          continue;
+        if (!lon_wraps &&
+            (location->longitude < lon_min || location->longitude > lon_max))
+          continue;
+      }
+
       double x = location->longitude;
       double y = location->latitude;
       transformation.transform(x, y);
       box.transform(x, y);
 
-      if (!inside(box, x, y))
+      // Buffered image bbox check.  When pan_invariant is off the
+      // margin is 0 and this is the original strict-bbox skip.
+      if (x < bx1 || x > bx2 || y < by1 || y > by2)
         continue;
 
       XY xy(x, y);
@@ -539,10 +631,26 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // matters for the `fixed` algorithm (no conflict detection); the
     // others avoid overlap by construction but the reverse order is a
     // safe default.
+    // In pan_invariant mode the algorithm also ran on candidates whose
+    // anchors fell into the buffered margin but outside the displayed
+    // bbox.  Those anchor positions are at i where !inside(box, anchor)
+    // and we skip emitting both their labels and their markers — they
+    // existed only to influence the placement decisions of visible
+    // neighbours.  When pan_invariant is off, the candidate set was
+    // already pre-filtered to the visible bbox so this check is a
+    // cheap no-op.
+    auto anchorVisible = [&](size_t i) -> bool {
+      if (!pan_invariant)
+        return true;
+      return inside(box, accepted[i].x, accepted[i].y);
+    };
+
     for (size_t i = placed_labels.size(); i-- > 0;)
     {
       const auto& pl = placed_labels[i];
       if (!pl.placed)
+        continue;
+      if (!anchorVisible(i))
         continue;
 
       // Position-aware baseline so the visible *letter body* touches
@@ -589,6 +697,8 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     for (size_t i = accepted.size(); i-- > 0;)
     {
       if (labels_active && i < placed_labels.size() && !placed_labels[i].placed)
+        continue;
+      if (!anchorVisible(i))
         continue;
 
       const auto& al = accepted[i];
@@ -668,6 +778,9 @@ std::size_t LocationLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
     Fmi::hash_combine(hash, Fmi::hash_value(keyword));
     Fmi::hash_combine(hash, Fmi::hash_value(mindistance));
+    Fmi::hash_combine(hash, Fmi::hash_value(pan_invariant));
+    if (placement_margin)
+      Fmi::hash_combine(hash, Fmi::hash_value(*placement_margin));
     Fmi::hash_combine(hash, Fmi::hash_value(countries));
     Fmi::hash_combine(hash, Fmi::hash_value(symbol));
     Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));

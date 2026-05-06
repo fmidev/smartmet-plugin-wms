@@ -9,6 +9,7 @@
 #include "AttributeSelection.h"
 #include "LabelPlacement.h"
 #include "Layer.h"
+#include <optional>
 #include <vector>
 
 namespace SmartMet
@@ -46,6 +47,22 @@ class LocationLayer : public Layer
 
   // Optional text label placement
   LabelConfig label_config;
+
+  // Pan-invariance: when true, the candidate set used for placement is
+  // computed from a *margin-extended* version of the request bbox (and
+  // labels are filtered to the original bbox at render time).  This
+  // makes label-direction decisions invariant under panning at the
+  // same zoom + projection — necessary for tile rendering and for WMS
+  // viewer software that pans by issuing successive overlapping
+  // GetMap requests.  Default false (current bbox-strict filter).
+  bool pan_invariant = false;
+
+  // Optional explicit margin in image-pixels.  When pan_invariant is
+  // true and this is unset, the margin is auto-computed from the
+  // active LabelConfig (mindistance, free_space_radius, plus a label
+  // and safety buffer).  Setting this manually lets callers tune the
+  // edge-jitter tradeoff.
+  std::optional<double> placement_margin;
 
  private:
 };  // class LocationLayer
