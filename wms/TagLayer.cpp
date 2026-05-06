@@ -87,8 +87,14 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     std::string x = attributes.value("x");
     std::string y = attributes.value("y");
 
-    if (!x.empty() && !y.empty())
+    if (!x.empty() && !y.empty() && !theState.inDefs())
     {
+      // Negative-as-edge-relative rewrite: "x=-3" on a body tag means
+      // "3 px from the right edge of the view".  Skip this inside <defs>
+      // because symbol contents must keep their literal coordinates —
+      // WMS symbols are required to be centred on (0, 0) with negative
+      // coordinates indicating the symbol's left/top edge, and getting
+      // rewritten to canvas-relative would push the geometry off-screen.
       double xx = toDouble(x.c_str());
       double yy = toDouble(y.c_str());
 

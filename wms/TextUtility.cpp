@@ -62,6 +62,7 @@ text_dimension_t measureWithCairo(const std::string& text, const text_style_t& t
   text_dimension_t dim;
   dim.width = static_cast<unsigned int>(ceil(std::max(extents.width, extents.x_advance)));
   dim.height = static_cast<unsigned int>(ceil(extents.height));
+  dim.y_bearing = static_cast<int>(floor(extents.y_bearing));
   return dim;
 }
 

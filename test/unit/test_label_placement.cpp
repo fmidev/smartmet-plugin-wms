@@ -235,19 +235,20 @@ BOOST_AUTO_TEST_CASE(ne_is_first_and_upper_right_of_anchor)
   BOOST_CHECK_LT(bboxes[0].y2, ay);
 }
 
-BOOST_AUTO_TEST_CASE(nw_is_left_of_anchor)
+BOOST_AUTO_TEST_CASE(se_is_second_and_lower_right)
 {
   auto bboxes = candidateBBoxes(100, 100, 40, 12, 5, 8);
-  // NW (index 1): x2 < anchor_x
-  BOOST_CHECK_LT(bboxes[1].x2, 100.0);
+  // SE (index 1): x1 > ax, y1 > ay (right preferred over above wins tiebreak)
+  BOOST_CHECK_GT(bboxes[1].x1, 100.0);
+  BOOST_CHECK_GT(bboxes[1].y1, 100.0);
 }
 
-BOOST_AUTO_TEST_CASE(se_is_lower_right)
+BOOST_AUTO_TEST_CASE(nw_is_third_and_upper_left)
 {
   auto bboxes = candidateBBoxes(100, 100, 40, 12, 5, 8);
-  // SE (index 2): x1 > ax, y1 > ay
-  BOOST_CHECK_GT(bboxes[2].x1, 100.0);
-  BOOST_CHECK_GT(bboxes[2].y1, 100.0);
+  // NW (index 2): x2 < ax, y2 < ay
+  BOOST_CHECK_LT(bboxes[2].x2, 100.0);
+  BOOST_CHECK_LT(bboxes[2].y2, 100.0);
 }
 
 BOOST_AUTO_TEST_CASE(all_bboxes_are_valid)
@@ -654,6 +655,140 @@ BOOST_AUTO_TEST_CASE(sa_empty_input_returns_empty)
   auto cfg = makeConfig(PlacementAlgorithm::SimulatedAnnealing);
   auto result = placeLabels(cfg, {}, 500, 500);
   BOOST_CHECK(result.empty());
+}
+
+// ----- Marker obstacle and bbox-padding regression tests -----------
+
+BOOST_AUTO_TEST_CASE(symbol_extents_push_label_off_marker)
+{
+  // 16x16 marker, 5 px offset → label should be at least 5 px outside the
+  // marker rectangle in every direction.
+  auto bboxes = candidateBBoxes(100.0, 100.0, 30, 12, 5.0, 8, 8.0, 8.0);
+  BOOST_REQUIRE_EQUAL(bboxes.size(), 8u);
+  for (const auto& b : bboxes)
+  {
+    // Marker covers x in [92, 108] and y in [92, 108]
+    const bool clear =
+        b.x2 <= 92.0 || b.x1 >= 108.0 || b.y2 <= 92.0 || b.y1 >= 108.0;
+    BOOST_CHECK_MESSAGE(clear, "label bbox not clear of marker rectangle");
+  }
+}
+
+BOOST_AUTO_TEST_CASE(zero_symbol_extents_match_legacy_geometry)
+{
+  // No-symbol path must give the same bboxes as the previous behaviour
+  // (offset / offset/2 spacing) so existing test outputs are stable.
+  auto a = candidateBBoxes(100.0, 100.0, 30, 12, 5.0, 8);
+  auto b = candidateBBoxes(100.0, 100.0, 30, 12, 5.0, 8, 0.0, 0.0);
+  BOOST_REQUIRE_EQUAL(a.size(), b.size());
+  for (size_t i = 0; i < a.size(); i++)
+  {
+    BOOST_CHECK_CLOSE(a[i].x1, b[i].x1, 1e-9);
+    BOOST_CHECK_CLOSE(a[i].y1, b[i].y1, 1e-9);
+    BOOST_CHECK_CLOSE(a[i].x2, b[i].x2, 1e-9);
+    BOOST_CHECK_CLOSE(a[i].y2, b[i].y2, 1e-9);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(greedy_avoids_other_marker_obstacle)
+{
+  // Two labels placed close enough that the second label's chosen
+  // position would land on the first label's marker without the obstacle
+  // term in greedyCore.  Radial placement may put a label inside its
+  // *own* marker's bbox corner (between the inscribed circle and the
+  // square corner) — that is allowed and explicitly skipped in greedy —
+  // but it must never land inside *another* candidate's obstacle.
+  auto cfg = makeConfig(PlacementAlgorithm::Greedy);
+  cfg.symbol_width = 30;
+  cfg.symbol_height = 30;
+
+  auto a = makeCandidate(100, 100, "A", 1000, 20, 10);
+  a.obstacle = {85.0, 85.0, 115.0, 115.0};
+  auto b = makeCandidate(150, 100, "B", 1000, 20, 10);
+  b.obstacle = {135.0, 85.0, 165.0, 115.0};
+
+  auto result = placeLabels(cfg, {a, b}, 500, 500);
+  BOOST_REQUIRE_EQUAL(result.size(), 2u);
+  if (result[0].placed)
+    BOOST_CHECK(!result[0].bbox.overlaps(b.obstacle));
+  if (result[1].placed)
+    BOOST_CHECK(!result[1].bbox.overlaps(a.obstacle));
+}
+
+BOOST_AUTO_TEST_CASE(inflated_bbox_helper_extends_each_edge)
+{
+  LabelBBox a{10.0, 20.0, 30.0, 40.0};
+  auto b = a.inflated(3.0);
+  BOOST_CHECK_CLOSE(b.x1, 7.0, 1e-9);
+  BOOST_CHECK_CLOSE(b.y1, 17.0, 1e-9);
+  BOOST_CHECK_CLOSE(b.x2, 33.0, 1e-9);
+  BOOST_CHECK_CLOSE(b.y2, 43.0, 1e-9);
+}
+
+BOOST_AUTO_TEST_CASE(bbox_padding_changes_overlap_decision)
+{
+  // Two labels separated by ~5 px between their NE bboxes.
+  // With padding > 2.5 the inflated bboxes touch — second label must
+  // pick a different position than it does without padding.
+  auto cfg_no_pad = makeConfig(PlacementAlgorithm::Greedy);
+  cfg_no_pad.bbox_padding = 0.0;
+  auto cfg_pad = cfg_no_pad;
+  cfg_pad.bbox_padding = 6.0;
+
+  // a NE = (105, 88, 125, 100), b NE = (135, 88, 155, 100); 10 px gap
+  auto a = makeCandidate(100, 100, "A", 1000, 20, 10);
+  auto b = makeCandidate(130, 100, "B", 1000, 20, 10);
+
+  auto r0 = placeLabels(cfg_no_pad, {a, b}, 500, 500);
+  auto r1 = placeLabels(cfg_pad, {a, b}, 500, 500);
+  BOOST_REQUIRE_EQUAL(r0.size(), 2u);
+  BOOST_REQUIRE_EQUAL(r1.size(), 2u);
+
+  // Without padding both fit in NE.  With padding the second label
+  // must use a different bbox or be dropped.
+  BOOST_REQUIRE(r0[1].placed);
+  if (r1[1].placed)
+  {
+    const bool changed =
+        r0[1].bbox.x1 != r1[1].bbox.x1 || r0[1].bbox.y1 != r1[1].bbox.y1;
+    BOOST_CHECK(changed);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(priority_greedy_returns_input_order)
+{
+  // priority-greedy sorts internally by population, but the result
+  // must come back in input order so callers can correlate result[i]
+  // with input[i] (e.g. to suppress the marker for a dropped label).
+  auto cfg = makeConfig(PlacementAlgorithm::PriorityGreedy);
+
+  // Input order intentionally not sorted by population
+  std::vector<LabelCandidate> cands = {
+      makeCandidate(100, 100, "Small",  100, 30, 10),
+      makeCandidate(200, 100, "Big",  500000, 30, 10),
+      makeCandidate(300, 100, "Mid",   10000, 30, 10),
+  };
+
+  auto result = placeLabels(cfg, cands, 500, 500);
+  BOOST_REQUIRE_EQUAL(result.size(), 3u);
+  BOOST_CHECK_EQUAL(result[0].text, "Small");
+  BOOST_CHECK_EQUAL(result[1].text, "Big");
+  BOOST_CHECK_EQUAL(result[2].text, "Mid");
+}
+
+BOOST_AUTO_TEST_CASE(bbox_padding_does_not_clip_against_map_bounds)
+{
+  // A label whose natural bbox sits exactly at the right map edge must
+  // remain placeable when bbox_padding > 0 — padding is for inter-label
+  // collision only, never a hard map-bounds constraint.
+  auto cfg = makeConfig(PlacementAlgorithm::Greedy);
+  cfg.bbox_padding = 5.0;
+
+  // Anchor at x=470 with a 20-wide label: NE bbox extends to ~495.
+  auto c = makeCandidate(470, 100, "Edge", 1000, 20, 10);
+  auto result = placeLabels(cfg, {c}, 500, 500);
+  BOOST_REQUIRE_EQUAL(result.size(), 1u);
+  BOOST_CHECK(result[0].placed);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

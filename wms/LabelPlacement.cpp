@@ -6,6 +6,7 @@
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <random>
 
 namespace SmartMet
@@ -74,21 +75,46 @@ std::string LabelConfig::effective_fill(double population) const
   return fill;
 }
 
+double LabelConfig::effective_symbol_width(double population) const noexcept
+{
+  for (const auto& cls : classes)
+    if (cls.matches(population) && cls.symbol_width > 0)
+      return cls.symbol_width;
+  return symbol_width;
+}
+
+double LabelConfig::effective_symbol_height(double population) const noexcept
+{
+  for (const auto& cls : classes)
+    if (cls.matches(population) && cls.symbol_height > 0)
+      return cls.symbol_height;
+  return symbol_height;
+}
+
 // ======================================================================
 // Candidate bounding-box geometry
 // ======================================================================
 
-// Eight standard positions in Imhof (1975) preference order.
+// Eight standard positions in preference order.
 // Indices 0-7 are used for num_candidates <= 8; all 16 for larger values.
 // The coordinate system has y increasing downward (SVG/pixel space).
 //
 // Legend: anchor (ax, ay) is the symbol centre; label bbox top-left is
 // computed from (ax, ay), label size (w, h), and gap (offset).
 //
+// Preference rules (applied in order):
+//   1) east of the anchor preferred over west
+//   2) above the anchor preferred over below
+// This gives the corner ranking NE > SE > NW > SW (cf. Imhof 1975, who
+// preferred above-over-right; we follow the convention more common in
+// modern dynamic visualisation, e.g. arxiv:1209.5765).  Cardinals come
+// after corners; vertical cardinals come last because they sit directly
+// over the symbol centre line.
+//
 // Preference order (best = 0):
-//   0 NE  upper-right  — Imhof's strongly preferred position
-//   1 NW  upper-left
-//   2 SE  lower-right
+//   0 NE  upper-right
+//   1 SE  lower-right
+//   2 NW  upper-left
 //   3 SW  lower-left
 //   4 E   right-middle
 //   5 W   left-middle
@@ -102,47 +128,90 @@ std::vector<LabelBBox> candidateBBoxes(double ax,
                                        unsigned int w,
                                        unsigned int h,
                                        double offset,
-                                       int num_candidates)
+                                       int num_candidates,
+                                       double symbol_half_w,
+                                       double symbol_half_h)
 {
   const auto dw = static_cast<double>(w);
   const auto dh = static_cast<double>(h);
-  const double half_w = dw / 2.0;
-  const double half_h = dh / 2.0;
-  const double gap = offset;
-  const double half_gap = offset / 2.0;
 
-  // 8-position array in Imhof preference order.
-  // Each entry: top-left (x1, y1) of the label bounding box.
-  const std::array<std::pair<double, double>, 8> pos8{{
-      {ax + gap,          ay - dh - half_gap},  // 0: NE
-      {ax - dw - gap,     ay - dh - half_gap},  // 1: NW
-      {ax + gap,          ay + half_gap},         // 2: SE
-      {ax - dw - gap,     ay + half_gap},         // 3: SW
-      {ax + gap,          ay - half_h},           // 4: E
-      {ax - dw - gap,     ay - half_h},           // 5: W
-      {ax - half_w,       ay - dh - gap},         // 6: N
-      {ax - half_w,       ay + gap},               // 7: S
+  // Radial placement: each label is positioned so its closest point
+  // (corner / edge midpoint, depending on direction) lies at distance
+  // `offset` from the marker's rectangle boundary along the position's
+  // direction vector.
+  //
+  // Treating the marker as an axis-aligned rectangle gives the same gap
+  // from any side or corner — exactly `offset` for square markers, and
+  // a small *additional* corner-bias for circles (the inscribed circle
+  // tucks in at the corners, so visually corner labels look slightly
+  // further than cardinal labels by a factor of (√2 − 1) × radius).
+  //
+  // For each direction (dx, dy), the ray-to-rectangle distance is
+  //
+  //   t = min(sym_half_w / |dx|, sym_half_h / |dy|)
+  //
+  // (∞ when the corresponding marker extent or direction component is
+  // zero).  D = t + offset.  For symbol_half_* = 0 this collapses to a
+  // fixed-distance-from-anchor placement with D = offset.
+  auto rectRayDist = [&](double dx, double dy) -> double {
+    const double abs_dx = std::abs(dx);
+    const double abs_dy = std::abs(dy);
+    const double inf = std::numeric_limits<double>::infinity();
+    const double t_x = (abs_dx > 1e-12) ? symbol_half_w / abs_dx : inf;
+    const double t_y = (abs_dy > 1e-12) ? symbol_half_h / abs_dy : inf;
+    return std::min(t_x, t_y);
+  };
+
+  // Direction unit vectors (screen y-down) and label alignment fractions.
+  // afx, afy specify which point of the label rectangle aligns with the
+  // directional anchor (ax + D*dx, ay + D*dy):
+  //   afx = 0  → label.x1 (left edge)
+  //   afx = 1  → label.x2 (right edge)
+  //   afx = 0.5 → label horizontal centre
+  //   afy = 0  → label.y1 (top edge)
+  //   afy = 1  → label.y2 (bottom edge)
+  //   afy = 0.5 → label vertical centre
+  // The chosen alignment puts the closest point of the label rectangle
+  // (relative to the anchor) exactly at the directional anchor.
+  struct Pos { double dx, dy, afx, afy; };
+
+  static constexpr double s2 = 0.7071067811865476;   // sin/cos 45°
+  static constexpr double s225 = 0.3826834323650898; // sin 22.5°
+  static constexpr double s675 = 0.9238795325112867; // sin 67.5° = cos 22.5°
+
+  // 8-position priority order (right > above): NE, SE, NW, SW, E, W, N, S
+  const std::array<Pos, 8> rules8{{
+      { s2, -s2, 0.0, 1.0},  // 0 NE: bottom-left of label at directional anchor
+      { s2,  s2, 0.0, 0.0},  // 1 SE: top-left
+      {-s2, -s2, 1.0, 1.0},  // 2 NW: bottom-right
+      {-s2,  s2, 1.0, 0.0},  // 3 SW: top-right
+      { 1.0, 0.0, 0.0, 0.5}, // 4 E:  left-middle
+      {-1.0, 0.0, 1.0, 0.5}, // 5 W:  right-middle
+      { 0.0,-1.0, 0.5, 1.0}, // 6 N:  bottom-middle
+      { 0.0, 1.0, 0.5, 0.0}, // 7 S:  top-middle
   }};
 
-  // 16-position array: interleave 8 intermediate positions between
-  // each pair of adjacent cardinal/ordinal positions.
-  const std::array<std::pair<double, double>, 16> pos16{{
-      {ax + gap,          ay - dh - half_gap},   // 0:  NE
-      {ax - dw - gap,     ay - dh - half_gap},   // 1:  NW
-      {ax + gap,          ay + half_gap},          // 2:  SE
-      {ax - dw - gap,     ay + half_gap},          // 3:  SW
-      {ax + gap,          ay - dh * 0.75},         // 4:  ENE
-      {ax - dw - gap,     ay - dh * 0.75},         // 5:  WNW
-      {ax + gap,          ay - dh * 0.25},         // 6:  ESE
-      {ax - dw - gap,     ay - dh * 0.25},         // 7:  WSW
-      {ax + gap,          ay - half_h},            // 8:  E
-      {ax - dw - gap,     ay - half_h},            // 9:  W
-      {ax - half_w,       ay - dh - gap},          // 10: N
-      {ax - half_w,       ay + gap},                // 11: S
-      {ax - dw * 0.25,    ay - dh - gap},          // 12: NNE
-      {ax - dw * 0.75,    ay - dh - gap},          // 13: NNW
-      {ax - dw * 0.25,    ay + gap},                // 14: SSE
-      {ax - dw * 0.75,    ay + gap},                // 15: SSW
+  // 16-position: same priority order plus 8 finer-resolution intermediate
+  // angles (22.5°/67.5°).  Each intermediate snaps its alignment fraction
+  // to the nearest 8-pos rule, so the closest point of the label is still
+  // approximately at the directional anchor.
+  const std::array<Pos, 16> rules16{{
+      { s2,   -s2,   0.0, 1.0},  // 0  NE
+      { s2,    s2,   0.0, 0.0},  // 1  SE
+      {-s2,   -s2,   1.0, 1.0},  // 2  NW
+      {-s2,    s2,   1.0, 0.0},  // 3  SW
+      { s675, -s225, 0.0, 1.0},  // 4  ENE (snap to NE alignment)
+      { s675,  s225, 0.0, 0.0},  // 5  ESE (snap to SE alignment)
+      {-s675, -s225, 1.0, 1.0},  // 6  WNW (snap to NW alignment)
+      {-s675,  s225, 1.0, 0.0},  // 7  WSW (snap to SW alignment)
+      { 1.0,   0.0,  0.0, 0.5},  // 8  E
+      {-1.0,   0.0,  1.0, 0.5},  // 9  W
+      { s225, -s675, 0.5, 1.0},  // 10 NNE (snap to N alignment)
+      { s225,  s675, 0.5, 0.0},  // 11 SSE (snap to S alignment)
+      {-s225, -s675, 0.5, 1.0},  // 12 NNW (snap to N alignment)
+      {-s225,  s675, 0.5, 0.0},  // 13 SSW (snap to S alignment)
+      { 0.0,  -1.0,  0.5, 1.0},  // 14 N
+      { 0.0,   1.0,  0.5, 0.0},  // 15 S
   }};
 
   // Clamp to supported counts: 4, 8, or 16
@@ -154,24 +223,27 @@ std::vector<LabelBBox> candidateBBoxes(double ax,
   else
     n = 16;
 
+  auto place = [&](const Pos& r) {
+    const double D = rectRayDist(r.dx, r.dy) + offset;
+    const double apx = ax + D * r.dx;
+    const double apy = ay + D * r.dy;
+    const double x1 = apx - dw * r.afx;
+    const double y1 = apy - dh * r.afy;
+    return LabelBBox{x1, y1, x1 + dw, y1 + dh};
+  };
+
   std::vector<LabelBBox> result;
   result.reserve(static_cast<size_t>(n));
 
   if (n <= 8)
   {
     for (int i = 0; i < n; i++)
-    {
-      const auto& p = pos8[static_cast<size_t>(i)];
-      result.push_back({p.first, p.second, p.first + dw, p.second + dh});
-    }
+      result.push_back(place(rules8[static_cast<size_t>(i)]));
   }
   else
   {
     for (int i = 0; i < n; i++)
-    {
-      const auto& p = pos16[static_cast<size_t>(i)];
-      result.push_back({p.first, p.second, p.first + dw, p.second + dh});
-    }
+      result.push_back(place(rules16[static_cast<size_t>(i)]));
   }
 
   return result;
@@ -198,8 +270,8 @@ bool withinBounds(const LabelBBox& b, double map_w, double map_h)
 int fixedPositionIndex(const std::string& pos)
 {
   if (pos == "ne" || pos == "NE") return 0;
-  if (pos == "nw" || pos == "NW") return 1;
-  if (pos == "se" || pos == "SE") return 2;
+  if (pos == "se" || pos == "SE") return 1;
+  if (pos == "nw" || pos == "NW") return 2;
   if (pos == "sw" || pos == "SW") return 3;
   if (pos == "e"  || pos == "E")  return 4;
   if (pos == "w"  || pos == "W")  return 5;
@@ -220,6 +292,7 @@ PlacedLabel makePlaced(const LabelCandidate& cand, const LabelBBox& bbox)
   pl.font_size = cand.font_size;
   pl.font_weight = cand.font_weight;
   pl.fill = cand.fill;
+  pl.y_bearing = cand.y_bearing;
   pl.placed = true;
   return pl;
 }
@@ -232,6 +305,7 @@ PlacedLabel makeDropped(const LabelCandidate& cand)
   pl.font_size = cand.font_size;
   pl.font_weight = cand.font_weight;
   pl.fill = cand.fill;
+  pl.y_bearing = cand.y_bearing;
   pl.placed = false;
   return pl;
 }
@@ -239,22 +313,89 @@ PlacedLabel makeDropped(const LabelCandidate& cand)
 // ------------------------------------------------------------------
 // FIXED placement — one predetermined position, no conflict detection
 // ------------------------------------------------------------------
+// Derive symbol half-extents from a candidate's obstacle bbox.  The
+// caller (LocationLayer) builds the obstacle from the per-population
+// effective symbol size plus symbol_margin, so this is the single source
+// of truth for the marker rectangle that the label must clear.
+std::pair<double, double> candidateSymbolHalf(const LabelCandidate& c)
+{
+  if (!c.obstacle.valid())
+    return {0.0, 0.0};
+  return {(c.obstacle.x2 - c.obstacle.x1) / 2.0,
+          (c.obstacle.y2 - c.obstacle.y1) / 2.0};
+}
+
 std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
                                         const std::vector<LabelCandidate>& candidates,
                                         double /*map_w*/, double /*map_h*/)
 {
   const int pos_idx = fixedPositionIndex(config.fixed_position);
+  const double pad = config.bbox_padding;
+  const size_t n = candidates.size();
 
-  std::vector<PlacedLabel> result;
-  result.reserve(candidates.size());
-
-  for (const auto& cand : candidates)
+  // Pre-compute the chosen-position bbox for every candidate, so we can
+  // do bidirectional conflict checks below.
+  std::vector<LabelBBox> chosen(n);
+  for (size_t i = 0; i < n; i++)
   {
+    const auto& cand = candidates[i];
+    const auto [sym_half_w, sym_half_h] = candidateSymbolHalf(cand);
     auto bboxes = candidateBBoxes(cand.anchor_x, cand.anchor_y,
                                   cand.label_w, cand.label_h,
-                                  config.offset, 8);
+                                  config.offset, 8,
+                                  sym_half_w, sym_half_h);
     const int idx = std::min(pos_idx, static_cast<int>(bboxes.size()) - 1);
-    result.push_back(makePlaced(cand, bboxes[static_cast<size_t>(idx)]));
+    chosen[i] = bboxes[static_cast<size_t>(idx)];
+  }
+
+  // Process in input order (geonames priority — highest first) and
+  // accept a candidate only if it is compatible with everything already
+  // in the kept set.  "Fixed" still performs no label-vs-label conflict
+  // detection — labels may overlap each other — but we won't allow a
+  // label to cover, or be covered by, a higher-priority kept marker.
+  // This is a directed-priority heuristic for the underlying conflict
+  // graph; an exact maximum-independent-set solution would be NP-hard.
+  std::vector<bool> kept(n, false);
+
+  for (size_t i = 0; i < n; i++)
+  {
+    const auto& bi = chosen[i];
+    const LabelBBox test_i = (pad > 0.0) ? bi.inflated(pad) : bi;
+
+    bool conflict = false;
+    for (size_t j = 0; j < i; j++)
+    {
+      if (!kept[j])
+        continue;
+      const auto& bj = chosen[j];
+      const LabelBBox test_j = (pad > 0.0) ? bj.inflated(pad) : bj;
+
+      // i's label covering j's marker, or j's already-kept label
+      // covering i's marker — either way drop i.
+      const auto& ob_j = candidates[j].obstacle;
+      const auto& ob_i = candidates[i].obstacle;
+      if (ob_j.valid() && test_i.overlaps(ob_j))
+      {
+        conflict = true;
+        break;
+      }
+      if (ob_i.valid() && test_j.overlaps(ob_i))
+      {
+        conflict = true;
+        break;
+      }
+    }
+    kept[i] = !conflict;
+  }
+
+  std::vector<PlacedLabel> result;
+  result.reserve(n);
+  for (size_t i = 0; i < n; i++)
+  {
+    if (kept[i])
+      result.push_back(makePlaced(candidates[i], chosen[i]));
+    else
+      result.push_back(makeDropped(candidates[i]));
   }
   return result;
 }
@@ -268,29 +409,39 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
                                     const std::vector<LabelCandidate>& candidates,
                                     double map_w, double map_h)
 {
+  const size_t n = candidates.size();
   std::vector<PlacedLabel> result;
-  result.reserve(candidates.size());
+  result.reserve(n);
 
   // Flat list of placed bounding boxes for O(n·k·m) overlap check.
   // For typical weather-map label counts (<200) this is fast enough.
   std::vector<LabelBBox> placed_bboxes;
-  placed_bboxes.reserve(candidates.size());
+  placed_bboxes.reserve(n);
 
-  for (const auto& cand : candidates)
+  const double pad = config.bbox_padding;
+
+  for (size_t i = 0; i < n; i++)
   {
+    const auto& cand = candidates[i];
+    const auto [sym_half_w, sym_half_h] = candidateSymbolHalf(cand);
     auto bboxes = candidateBBoxes(cand.anchor_x, cand.anchor_y,
                                   cand.label_w, cand.label_h,
-                                  config.offset, config.candidates);
+                                  config.offset, config.candidates,
+                                  sym_half_w, sym_half_h);
     bool placed = false;
     for (const auto& bbox : bboxes)
     {
       if (!withinBounds(bbox, map_w, map_h))
         continue;
 
+      // Inflate for collision testing only — absorbs sub-pixel font-metric
+      // variation between systems and gives a small visual breathing space.
+      const LabelBBox test = (pad > 0.0) ? bbox.inflated(pad) : bbox;
+
       bool overlap = false;
       for (const auto& pb : placed_bboxes)
       {
-        if (bbox.overlaps(pb))
+        if (test.overlaps(pb))
         {
           overlap = true;
           break;
@@ -298,8 +449,29 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
       }
       if (!overlap)
       {
+        // Test against every other candidate's marker, but never
+        // against the label's own marker — the candidate position
+        // was deliberately laid out to clear it, and applying padding
+        // there would push the label uselessly far from its own
+        // anchor.
+        for (size_t j = 0; j < n; j++)
+        {
+          if (j == i)
+            continue;
+          const auto& ob = candidates[j].obstacle;
+          if (!ob.valid())
+            continue;
+          if (test.overlaps(ob))
+          {
+            overlap = true;
+            break;
+          }
+        }
+      }
+      if (!overlap)
+      {
         result.push_back(makePlaced(cand, bbox));
-        placed_bboxes.push_back(bbox);
+        placed_bboxes.push_back(test);
         placed = true;
         break;
       }
@@ -321,18 +493,36 @@ std::vector<PlacedLabel> greedyPlacement(const LabelConfig& config,
 }
 
 // ------------------------------------------------------------------
-// PRIORITY-GREEDY — re-sorts by population descending, then greedy
+// PRIORITY-GREEDY — re-sorts by population descending, runs greedy,
+// then restores input order so callers can correlate result[i] with
+// input[i] (e.g. to suppress the marker for a dropped label).
 // ------------------------------------------------------------------
 std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
                                                   std::vector<LabelCandidate> candidates,
                                                   double map_w, double map_h)
 {
+  const size_t n = candidates.size();
+  std::vector<size_t> order(n);
+  for (size_t i = 0; i < n; i++)
+    order[i] = i;
+
   // stable_sort preserves geonames order for equal populations
-  std::stable_sort(candidates.begin(), candidates.end(),
-                   [](const LabelCandidate& a, const LabelCandidate& b) {
-                     return a.population > b.population;
+  std::stable_sort(order.begin(), order.end(),
+                   [&](size_t a, size_t b) {
+                     return candidates[a].population > candidates[b].population;
                    });
-  return greedyCore(config, candidates, map_w, map_h);
+
+  std::vector<LabelCandidate> sorted;
+  sorted.reserve(n);
+  for (auto idx : order)
+    sorted.push_back(candidates[idx]);
+
+  auto sorted_result = greedyCore(config, sorted, map_w, map_h);
+
+  std::vector<PlacedLabel> result(n);
+  for (size_t i = 0; i < n; i++)
+    result[order[i]] = sorted_result[i];
+  return result;
 }
 
 // ------------------------------------------------------------------
@@ -359,28 +549,49 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
   if (n == 0)
     return {};
 
-  // Pre-compute all candidate bounding boxes for every label
-  std::vector<std::vector<LabelBBox>> all_bboxes(static_cast<size_t>(n));
+  const double pad = config.bbox_padding;
+
+  // Pre-compute all candidate bounding boxes for every label.  Two
+  // versions are kept: render_bboxes are the natural (un-padded) boxes
+  // returned to the caller; coll_bboxes are inflated by pad for collision
+  // detection so platform-specific font measurement noise can't flip
+  // close decisions.
+  std::vector<std::vector<LabelBBox>> render_bboxes(static_cast<size_t>(n));
+  std::vector<std::vector<LabelBBox>> coll_bboxes(static_cast<size_t>(n));
   for (int i = 0; i < n; i++)
   {
-    all_bboxes[static_cast<size_t>(i)] =
-        candidateBBoxes(candidates[static_cast<size_t>(i)].anchor_x,
-                        candidates[static_cast<size_t>(i)].anchor_y,
-                        candidates[static_cast<size_t>(i)].label_w,
-                        candidates[static_cast<size_t>(i)].label_h,
+    const auto& ci = candidates[static_cast<size_t>(i)];
+    const auto [sym_half_w, sym_half_h] = candidateSymbolHalf(ci);
+    render_bboxes[static_cast<size_t>(i)] =
+        candidateBBoxes(ci.anchor_x, ci.anchor_y,
+                        ci.label_w, ci.label_h,
                         config.offset,
-                        config.candidates);
+                        config.candidates,
+                        sym_half_w, sym_half_h);
+    auto& dst = coll_bboxes[static_cast<size_t>(i)];
+    dst.reserve(render_bboxes[static_cast<size_t>(i)].size());
+    for (const auto& b : render_bboxes[static_cast<size_t>(i)])
+      dst.push_back(pad > 0.0 ? b.inflated(pad) : b);
   }
 
-  // assignment[i]: index into all_bboxes[i], or -1 if dropped
+  // Marker obstacles indexed parallel to candidates so we can skip self
+  // when computing the obstacle-overlap energy.  Invalid bboxes (zero
+  // size) are kept in the list and ignored at lookup time.
+  std::vector<LabelBBox> obstacles(static_cast<size_t>(n));
+  for (int i = 0; i < n; i++)
+    obstacles[static_cast<size_t>(i)] = candidates[static_cast<size_t>(i)].obstacle;
+
+  // assignment[i]: index into render_bboxes[i], or -1 if dropped
   std::vector<int> assignment(static_cast<size_t>(n), -1);
 
-  // Initialise: each label at its first within-bounds candidate
+  // Initialise: each label at its first within-bounds candidate.  Bounds
+  // are checked against the natural (render) bbox; padding is for
+  // overlap detection only and does not constrain map bounds.
   for (int i = 0; i < n; i++)
   {
-    for (int k = 0; k < static_cast<int>(all_bboxes[static_cast<size_t>(i)].size()); k++)
+    for (int k = 0; k < static_cast<int>(render_bboxes[static_cast<size_t>(i)].size()); k++)
     {
-      if (withinBounds(all_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)], map_w, map_h))
+      if (withinBounds(render_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)], map_w, map_h))
       {
         assignment[static_cast<size_t>(i)] = k;
         break;
@@ -388,12 +599,14 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
     }
   }
 
-  // Delta-energy: contribution of label i at candidate position k with
-  // respect to all other currently assigned labels (excludes self)
-  auto overlapContrib = [&](int i, int k) -> double {
+  // Delta-energy contributions for label i at candidate position k.
+  // Splits into label-vs-label and label-vs-obstacle terms because
+  // obstacles are static (don't depend on assignment) and weighted
+  // separately to make symbol-overlap a hard penalty.
+  auto labelOverlapContrib = [&](int i, int k) -> double {
     if (k < 0)
       return 0.0;
-    const auto& bi = all_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
+    const auto& bi = coll_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
     double e = 0.0;
     for (int j = 0; j < n; j++)
     {
@@ -402,14 +615,31 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
       const int kj = assignment[static_cast<size_t>(j)];
       if (kj < 0)
         continue;
-      e += bi.overlap_area(all_bboxes[static_cast<size_t>(j)][static_cast<size_t>(kj)]);
+      e += bi.overlap_area(coll_bboxes[static_cast<size_t>(j)][static_cast<size_t>(kj)]);
+    }
+    return e;
+  };
+
+  auto obstacleOverlapContrib = [&](int i, int k) -> double {
+    if (k < 0)
+      return 0.0;
+    const auto& bi = coll_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
+    double e = 0.0;
+    for (int j = 0; j < n; j++)
+    {
+      if (j == i)
+        continue;  // never test a label against its own marker
+      const auto& ob = obstacles[static_cast<size_t>(j)];
+      if (!ob.valid())
+        continue;
+      e += bi.overlap_area(ob);
     }
     return e;
   };
 
   // Position penalty: dropped label costs (num_candidates) to discourage dropping
   const int num_cands = static_cast<int>(
-      all_bboxes.empty() ? 0 : all_bboxes[0].size());
+      render_bboxes.empty() ? 0 : render_bboxes[0].size());
 
   auto posPenalty = [&](int k) -> double {
     return (k < 0) ? static_cast<double>(num_cands)
@@ -431,7 +661,7 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
   for (int iter = 0; iter < config.sa_iterations; iter++)
   {
     const int i = label_dist(rng);
-    const auto& bboxes_i = all_bboxes[static_cast<size_t>(i)];
+    const auto& bboxes_i = render_bboxes[static_cast<size_t>(i)];
     if (bboxes_i.empty())
       continue;
 
@@ -447,8 +677,11 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
     if (new_k == old_k)
       continue;
 
+    // Obstacle overlap reuses the label-overlap weight so a marker
+    // collision is treated at least as harshly as a label collision.
     const double dE =
-        ow * (overlapContrib(i, new_k) - overlapContrib(i, old_k)) +
+        ow * (labelOverlapContrib(i, new_k) - labelOverlapContrib(i, old_k)) +
+        ow * (obstacleOverlapContrib(i, new_k) - obstacleOverlapContrib(i, old_k)) +
         pw * (posPenalty(new_k) - posPenalty(old_k));
 
     if (dE < 0.0 || prob_dist(rng) < std::exp(-dE / std::max(T, 1e-10)))
@@ -457,7 +690,8 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
     T *= cool;
   }
 
-  // Build result vector
+  // Build result vector — return natural (render) bboxes, not the
+  // padded collision bboxes used internally.
   std::vector<PlacedLabel> result;
   result.reserve(static_cast<size_t>(n));
   for (int i = 0; i < n; i++)
@@ -466,7 +700,7 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
     if (k >= 0)
       result.push_back(
           makePlaced(candidates[static_cast<size_t>(i)],
-                     all_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)]));
+                     render_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)]));
     else
       result.push_back(makeDropped(candidates[static_cast<size_t>(i)]));
   }

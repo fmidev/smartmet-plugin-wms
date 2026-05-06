@@ -77,6 +77,31 @@ LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
   JsonTools::remove_int(cfg.candidates, json, "candidates");
   JsonTools::remove_double(cfg.offset, json, "offset");
 
+  // Marker obstacle.  symbol_size is a shorthand alias for symmetric
+  // markers: it just sets both width and height to the same value.
+  // Explicit symbol_width/symbol_height parsed afterwards override the
+  // shorthand, so a user can mix them (e.g. size=8, override width=10).
+  if (json.isMember("symbol_size"))
+  {
+    double sym_size = 0.0;
+    JsonTools::remove_double(sym_size, json, "symbol_size");
+    cfg.symbol_width = sym_size;
+    cfg.symbol_height = sym_size;
+  }
+  JsonTools::remove_double(cfg.symbol_width, json, "symbol_width");
+  JsonTools::remove_double(cfg.symbol_height, json, "symbol_height");
+  JsonTools::remove_double(cfg.symbol_margin, json, "symbol_margin");
+
+  // Cross-platform stability for placement
+  JsonTools::remove_double(cfg.bbox_padding, json, "bbox_padding");
+  {
+    int q = static_cast<int>(cfg.bbox_quantum);
+    JsonTools::remove_int(q, json, "bbox_quantum");
+    if (q < 0)
+      throw Fmi::Exception(BCP, "LocationLayer 'label.bbox_quantum' must be >= 0");
+    cfg.bbox_quantum = static_cast<unsigned int>(q);
+  }
+
   // Style
   JsonTools::remove_string(cfg.font_family, json, "font_family");
   JsonTools::remove_double(cfg.font_size, json, "font_size");
@@ -122,6 +147,19 @@ LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
         cls.font_weight = cls_json["font_weight"].asString();
       if (cls_json.isMember("fill"))
         cls.fill = cls_json["fill"].asString();
+      // Per-class symbol obstacle override.  symbol_size is the alias
+      // for symmetric markers; explicit width/height parsed afterwards
+      // override it.  Mirrors the top-level LabelConfig parsing.
+      if (cls_json.isMember("symbol_size"))
+      {
+        const double s = cls_json["symbol_size"].asDouble();
+        cls.symbol_width = s;
+        cls.symbol_height = s;
+      }
+      if (cls_json.isMember("symbol_width"))
+        cls.symbol_width = cls_json["symbol_width"].asDouble();
+      if (cls_json.isMember("symbol_height"))
+        cls.symbol_height = cls_json["symbol_height"].asDouble();
       cfg.classes.push_back(cls);
     }
   }
@@ -135,6 +173,11 @@ std::size_t hashLabelConfig(const LabelConfig& cfg)
   Fmi::hash_combine(hash, Fmi::hash_value(static_cast<int>(cfg.algorithm)));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.candidates));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.offset));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.symbol_width));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.symbol_height));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.symbol_margin));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.bbox_padding));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.bbox_quantum));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.font_family));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.font_size));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.font_weight));
@@ -156,6 +199,8 @@ std::size_t hashLabelConfig(const LabelConfig& cfg)
     Fmi::hash_combine(hash, Fmi::hash_value(cls.font_size));
     Fmi::hash_combine(hash, Fmi::hash_value(cls.font_weight));
     Fmi::hash_combine(hash, Fmi::hash_value(cls.fill));
+    Fmi::hash_combine(hash, Fmi::hash_value(cls.symbol_width));
+    Fmi::hash_combine(hash, Fmi::hash_value(cls.symbol_height));
   }
   return hash;
 }
@@ -392,6 +437,12 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       std::vector<LabelCandidate> label_candidates;
       label_candidates.reserve(accepted.size());
 
+      // Marker is centered on the anchor with overflow=visible.  Symbol
+      // size is resolved per-candidate so different population classes
+      // can use different marker sizes (e.g. small dots for villages,
+      // larger dots for cities).
+      const unsigned int quantum = label_config.bbox_quantum;
+
       for (const auto& al : accepted)
       {
         LabelCandidate cand;
@@ -410,6 +461,29 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         const auto dim = getTextDimension(al.name, style);
         cand.label_w = dim.width;
         cand.label_h = dim.height;
+        cand.y_bearing = dim.y_bearing;
+
+        // Round dimensions up to the next multiple of quantum.  This
+        // absorbs sub-pixel font-metric drift between platforms (Rocky10
+        // vs RHEL9 fontconfig substitution) so the first overlap test
+        // doesn't flip and cascade through the rest of the placement.
+        if (quantum > 1)
+        {
+          cand.label_w = ((cand.label_w + quantum - 1) / quantum) * quantum;
+          cand.label_h = ((cand.label_h + quantum - 1) / quantum) * quantum;
+        }
+
+        const double cand_sym_half_w =
+            label_config.effective_symbol_width(cand.population) / 2.0 +
+            label_config.symbol_margin;
+        const double cand_sym_half_h =
+            label_config.effective_symbol_height(cand.population) / 2.0 +
+            label_config.symbol_margin;
+        if (cand_sym_half_w > 0.0 && cand_sym_half_h > 0.0)
+        {
+          cand.obstacle = {al.x - cand_sym_half_w, al.y - cand_sym_half_h,
+                           al.x + cand_sym_half_w, al.y + cand_sym_half_h};
+        }
 
         label_candidates.push_back(cand);
       }
@@ -422,16 +496,23 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // ----------------------------------------------------------------
     // PASS 3: emit SVG.
-    // Symbols first, then labels — labels render on top within the
-    // group.  Across layers, weather data should sit above the location
-    // layer (higher z-order in the product JSON).
+    //
+    // Render order within the group:
+    //   1) labels (halo first, then fill)
+    //   2) markers
+    // Drawing markers last keeps them visually clean even when the label
+    // halo would otherwise bleed onto them — useful when offset is small.
+    //
+    // Across layers in the product, weather data should sit above the
+    // location layer (higher z-order in the product JSON).
     // ----------------------------------------------------------------
 
-    // The <g> wrapper holds symbols as nested tags. Text labels cannot
-    // ride along as nested tags because the SVG template does not render
-    // tag.cdata — they must be emitted as separate top-level layers, and
-    // the </g> close is concatenated onto the last one. Same pattern as
-    // NumberLayer::generate_qEngine.
+    // Open the <g> wrapper as a stand-alone layer (no nested tags).  All
+    // labels and markers are pushed afterwards as top-level siblings so
+    // the render order is exactly the push order.  The </g> close is
+    // concatenated onto the last layer pushed — the group_cdt itself if
+    // nothing follows, otherwise the last marker (or last label, if no
+    // markers were emitted).
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
     group_cdt["end"] = "";
@@ -439,10 +520,69 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // Add layer attributes to the group, not to the individual elements
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
-    // Emit symbols (as nested tags inside the group, since <use ... /> is
-    // self-closing and works with the template's nested-tag rendering)
-    for (const auto& al : accepted)
+    theLayersCdt.PushBack(group_cdt);
+
+    // Emit labels first (so markers can render on top of them).
+    // Iterate in reverse input order: input order is geonames priority
+    // (highest first), so reversing means highest-priority text renders
+    // last and stays visually on top when labels overlap.  Mostly only
+    // matters for the `fixed` algorithm (no conflict detection); the
+    // others avoid overlap by construction but the reverse order is a
+    // safe default.
+    for (size_t i = placed_labels.size(); i-- > 0;)
     {
+      const auto& pl = placed_labels[i];
+      if (!pl.placed)
+        continue;
+
+      // Position-aware baseline so the visible *letter body* touches
+      // the marker on the side facing it (rather than the bbox, which
+      // includes descender extent).  Descenders for above-labels then
+      // hang into the empty area below the body without affecting how
+      // the body's vertical position lines up across labels:
+      //   - ABOVE the anchor (NE/NW/N/...): baseline = bbox.y2
+      //     (body bottom at marker top edge; descender extends below)
+      //   - BELOW the anchor (SE/SW/S/...): baseline = bbox.y1 + ascent
+      //     (body top at marker bottom edge; descender extends below
+      //     bbox into open space)
+      //   - SIDE (E/W): body centred on the anchor (baseline = ay + ascent/2)
+      // ascent is recovered from y_bearing (= -ascent in cairo).
+      const double ay = accepted[i].y;
+      const double y_bearing = static_cast<double>(pl.y_bearing);
+      const double text_y = (pl.bbox.y2 <= ay)   ? pl.bbox.y2
+                            : (pl.bbox.y1 >= ay) ? pl.bbox.y1 - y_bearing
+                                                 : ay - y_bearing / 2.0;
+
+      const double text_x = pl.bbox.x1;
+      emitText(theLayersCdt, pl, label_config, text_x, text_y);
+    }
+
+    // Then emit markers.  They MUST go through layer.tags (not as
+    // top-level layer entries) because the SVG template hard-codes a `>`
+    // after layer attributes, which would mangle self-closing `<use ... />`
+    // into `<use ...>\n/>`.  A single collector-layer with empty start
+    // and end carries all <use> elements as nested tags so each renders
+    // as one self-contained `<use attrs/>`.
+    //
+    // Iterated in reverse input order for the same reason as labels:
+    // if two markers happen to land on top of each other (e.g. tiny
+    // mindistance), the highest-priority one stays visible.
+    // When label placement is active, suppress markers whose label was
+    // dropped — an isolated marker on the map confuses the reader because
+    // they cannot identify what location it points to.
+    CTPP::CDT marker_cdt(CTPP::CDT::HASH_VAL);
+    marker_cdt["start"] = "";
+    marker_cdt["end"] = "";
+    bool any_marker = false;
+
+    const bool labels_active = !label_config.empty();
+    for (size_t i = accepted.size(); i-- > 0;)
+    {
+      if (labels_active && i < placed_labels.size() && !placed_labels[i].placed)
+        continue;
+
+      const auto& al = accepted[i];
+
       CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
       tag_cdt["start"] = "<use";
       tag_cdt["end"] = "/>";
@@ -480,32 +620,16 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         tag_cdt["attributes"]["x"] = Fmi::to_string(lround(al.x));
         tag_cdt["attributes"]["y"] = Fmi::to_string(lround(al.y));
 
-        group_cdt["tags"].PushBack(tag_cdt);
+        marker_cdt["tags"].PushBack(tag_cdt);
+        any_marker = true;
       }
     }
 
-    theLayersCdt.PushBack(group_cdt);
+    if (any_marker)
+      theLayersCdt.PushBack(marker_cdt);
 
-    // Emit labels (after symbols so text renders above symbols within
-    // the same SVG group)
-    for (const auto& pl : placed_labels)
-    {
-      if (!pl.placed)
-        continue;
-
-      // Bounding box top-left is (pl.bbox.x1, pl.bbox.y1).
-      // SVG text y is the baseline; we set it to the bottom of the
-      // bounding box (conservative: all measured height treated as
-      // above-baseline).
-      const double text_x = pl.bbox.x1;
-      const double text_y = pl.bbox.y2;
-
-      emitText(theLayersCdt, pl, label_config, text_x, text_y);
-    }
-
-    // Close the <g> wrapper. Always concatenated onto the last pushed
-    // layer's end — that is group_cdt itself if no labels were placed,
-    // or the last text element otherwise.
+    // Close the <g> wrapper on whichever layer was pushed last.  This is
+    // the group_cdt itself if neither labels nor markers were emitted.
     theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
   }
   catch (...)

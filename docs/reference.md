@@ -494,7 +494,13 @@ The placement algorithms come from the cartographic literature. For most weather
 | --------------- | -------- | ------------- | --------------------------------------------------------------------------------------------------------------- |
 | algorithm       | string   | `"none"`      | Placement algorithm. One of `none`, `fixed`, `greedy`, `priority-greedy`, `simulated-annealing`.                |
 | candidates      | int      | 8             | Number of candidate positions tried per label: 4, 8, or 16. Positions follow Imhof (1975) preference order (NE best, S worst). |
-| offset          | double   | 5.0           | Pixel gap between the symbol anchor and the label bounding box edge.                                            |
+| offset          | double   | 5.0           | Pixel gap between the marker rectangle and the label bounding box edge.                                         |
+| symbol_size     | double   | -             | Alias that sets both `symbol_width` and `symbol_height` to the same value. Convenient for symmetric markers (dots, circles). Not stored as a separate field; explicit width/height parsed afterwards override it. |
+| symbol_width    | double   | 8.0           | Marker bounding-box width in pixels. The marker is assumed centered on the anchor with `overflow=visible`. The placement keeps labels off this rectangle; it acts as a hard obstacle in `greedy` and as an energy term in `simulated-annealing`. Set to `0` (together with `symbol_height`) to disable the obstacle entirely. |
+| symbol_height   | double   | 8.0           | Marker bounding-box height in pixels. See `symbol_width`.                                                       |
+| symbol_margin   | double   | 0.0           | Extra margin added on every side of the marker rectangle before obstacle testing.                              |
+| bbox_padding    | double   | 0.0           | Pixels of padding applied to each label bbox during overlap testing only (visual position is unchanged). Absorbs sub-pixel font-metric drift between platforms (e.g. Rocky10 vs RHEL9 fontconfig). Applied symmetrically on all four edges. |
+| bbox_quantum    | int      | 0             | If > 1, measured label width and height are rounded up to the next multiple of this many pixels before placement. Same purpose as `bbox_padding`: stabilises placement against tiny font-measurement variation. `0` disables quantisation. |
 | font_family     | string   | `"sans-serif"`| SVG `font-family` attribute.                                                                                    |
 | font_size       | double   | 11            | Default font size in pixels.                                                                                    |
 | font_weight     | string   | `"normal"`    | Default font weight (`"normal"` or `"bold"`).                                                                   |

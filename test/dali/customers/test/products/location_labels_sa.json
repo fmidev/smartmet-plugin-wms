@@ -19,7 +19,7 @@
         [
             {
                 "tag": "symbol",
-                "attributes": { "id": "dot_small" },
+                "attributes": { "id": "dot_small", "overflow": "visible" },
                 "layers":
                 [
                     {
@@ -30,7 +30,7 @@
             },
             {
                 "tag": "symbol",
-                "attributes": { "id": "dot_large" },
+                "attributes": { "id": "dot_large", "overflow": "visible" },
                 "layers":
                 [
                     {
@@ -69,7 +69,7 @@
                     "layer_type": "location",
                     "keyword": "municipalities_fi",
                     "countries": "fi",
-                    "mindistance": 15,
+                    "mindistance": 30,
                     "symbols":
                     {
                         "default":
@@ -94,7 +94,8 @@
                     {
                         "algorithm": "simulated-annealing",
                         "candidates": 8,
-                        "offset": 4,
+                        "offset": 0,
+                        "symbol_size": 4,
                         "font_family": "sans-serif",
                         "font_size": 10,
                         "fill": "#222222",
@@ -116,7 +117,8 @@
                                 "lolimit": 100000,
                                 "font_size": 12,
                                 "font_weight": "bold",
-                                "fill": "#111111"
+                                "fill": "#111111",
+                                "symbol_size": 8
                             }
                         ]
                     }

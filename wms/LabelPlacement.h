@@ -57,6 +57,12 @@ struct LabelBBox
   bool valid() const noexcept { return x2 > x1 && y2 > y1; }
   bool overlaps(const LabelBBox& o) const noexcept;
   double overlap_area(const LabelBBox& o) const noexcept;
+
+  // Inflated copy: each edge moved outward by pad
+  LabelBBox inflated(double pad) const noexcept
+  {
+    return {x1 - pad, y1 - pad, x2 + pad, y2 + pad};
+  }
 };
 
 // -----------------------------------------------------------------------
@@ -71,11 +77,20 @@ struct LabelCandidate
   double population = 0;
   unsigned int label_w = 0;  // pre-measured pixel width
   unsigned int label_h = 0;  // pre-measured pixel height
+  // Cairo y_bearing — the offset from the SVG <text> baseline to the
+  // top of the visual glyph extent.  Typically negative.  Threading
+  // this through placement to render lets emit code align the visual
+  // glyphs with bbox.y1 instead of with the baseline.
+  int y_bearing = 0;
 
   // Effective style (resolved from LabelConfig + population classes)
   double font_size = 11;
   std::string font_weight = "normal";
   std::string fill = "#333333";
+
+  // Marker obstacle bounding box centered on the anchor (symbol size +
+  // optional margin).  Default-constructed (zero-sized) means no obstacle.
+  LabelBBox obstacle;
 };
 
 // -----------------------------------------------------------------------
@@ -91,6 +106,11 @@ struct PlacedLabel
   double font_size = 11;
   std::string font_weight = "normal";
   std::string fill = "#333333";
+
+  // y_bearing forwarded from LabelCandidate so the renderer can place
+  // the SVG <text> baseline such that the visual glyphs line up with
+  // bbox.y1 .. bbox.y2 (not offset by descent).
+  int y_bearing = 0;
 
   bool placed = false;
 };
@@ -117,6 +137,11 @@ struct LabelStyleClass
   double font_size = 0;            // 0 = inherit from LabelConfig default
   std::string font_weight;         // "" = inherit
   std::string fill;                // "" = inherit
+  // Marker obstacle overrides; 0 = inherit from LabelConfig default.
+  // symbol_size is the shorthand alias for symmetric markers; explicit
+  // width/height take precedence when both are given.
+  double symbol_width = 0;
+  double symbol_height = 0;
 
   bool matches(double population) const noexcept;
 };
@@ -134,6 +159,26 @@ struct LabelConfig
   // Candidate geometry
   int candidates = 8;    // how many candidate positions to try: 4, 8, or 16
   double offset = 5.0;   // pixel gap between symbol edge and label
+
+  // Marker obstacle: a bbox centered on the anchor.  Treated as a reserved
+  // region during placement.  Markers are assumed centered on the anchor
+  // with overflow=visible — caller passes the rendered marker size.
+  // Defaults are 8x8 — a small dot-style marker — which gives sensible
+  // behaviour for typical weather/location maps without configuration.
+  // Set to zero to disable the obstacle entirely.
+  double symbol_width = 8.0;
+  double symbol_height = 8.0;
+  double symbol_margin = 0.0;   // extra margin around the symbol
+
+  // Cross-platform stability for placement: collision detection inflates
+  // each label bbox by bbox_padding pixels on every side, and label
+  // dimensions are quantised up to a multiple of bbox_quantum before
+  // placement.  Together these absorb 1-2 px font-metric variation
+  // between distros (e.g. Rocky10 vs RHEL9 fontconfig differences).
+  // bbox_quantum = 0 disables quantisation.  Defaults are zero so
+  // existing tests are unaffected.
+  double bbox_padding = 0.0;
+  unsigned int bbox_quantum = 0;
 
   // Default text style
   std::string font_family = "sans-serif";
@@ -164,6 +209,8 @@ struct LabelConfig
   double effective_font_size(double population) const noexcept;
   std::string effective_font_weight(double population) const;
   std::string effective_fill(double population) const;
+  double effective_symbol_width(double population) const noexcept;
+  double effective_symbol_height(double population) const noexcept;
 };
 
 // -----------------------------------------------------------------------
@@ -172,13 +219,18 @@ struct LabelConfig
 // Returns up to num_candidates bounding boxes around (ax, ay) for a label
 // of pixel size (w, h), in Imhof preference order (best position first).
 // num_candidates is clamped to 4, 8, or 16.
+//
+// symbol_half_w / symbol_half_h push the label outward from the anchor
+// so it clears the marker rectangle.  Pass zero when no marker obstacle.
 // -----------------------------------------------------------------------
 std::vector<LabelBBox> candidateBBoxes(double ax,
                                        double ay,
                                        unsigned int w,
                                        unsigned int h,
                                        double offset,
-                                       int num_candidates);
+                                       int num_candidates,
+                                       double symbol_half_w = 0.0,
+                                       double symbol_half_h = 0.0);
 
 // -----------------------------------------------------------------------
 // Main placement function

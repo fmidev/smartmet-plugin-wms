@@ -19,7 +19,7 @@
         [
             {
                 "tag": "symbol",
-                "attributes": { "id": "dot" },
+                "attributes": { "id": "dot", "overflow": "visible" },
                 "layers":
                 [
                     {
@@ -59,7 +59,7 @@
                     "keyword": "municipalities_fi",
                     "countries": "fi",
                     // mindistance keeps symbol density manageable
-                    "mindistance": 25,
+                    "mindistance": 30,
                     "symbols":
                     {
                         "default":
@@ -80,7 +80,8 @@
                     {
                         "algorithm": "fixed",
                         "fixed_position": "ne",
-                        "offset": 4,
+                        "offset": 0,
+                        "symbol_size": 6,
                         "font_family": "sans-serif",
                         "font_size": 10,
                         "fill": "#333333",
