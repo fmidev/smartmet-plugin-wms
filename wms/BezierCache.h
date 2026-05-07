@@ -45,6 +45,26 @@ class BezierCache
   // hashes.
   static std::size_t hashCanonical(const std::vector<Fmi::BezierFit::Point>& pts);
 
+  // Result of canonicalizing a closed ring. Two rings tracing the same
+  // loop produce the same `canonical` (rotation + direction invariant),
+  // but `callerForward` records which direction the caller traversed it
+  // so the cubics can be reversed back to caller's direction on cache
+  // hit (preserving winding-fill semantics).
+  struct CanonicalRing
+  {
+    std::vector<Fmi::BezierFit::Point> canonical;
+    bool callerForward = true;
+  };
+
+  // Build the canonical form of a closed ring [v_0, ..., v_{n-1}, v_0]
+  // (with closing duplicate). The canonical form is rotated so the
+  // lex-smallest vertex is at index 0, with the smaller of its two
+  // neighbours next, and the closing duplicate appended at the end.
+  // callerForward is true iff the caller's traversal direction agrees
+  // with the canonical direction.
+  static CanonicalRing canonicalizeClosedRing(
+      const std::vector<Fmi::BezierFit::Point>& pts);
+
   // Look up cached cubics for the given canonical-direction hash.
   // Returns nullptr on miss.
   const std::vector<Fmi::BezierFit::CubicBez>* find(std::size_t key) const;

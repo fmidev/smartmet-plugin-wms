@@ -215,11 +215,29 @@ std::vector<Fmi::BezierFit::CubicBez> IsolineFilter::fitWithCache(
   if (points.size() < 2)
     return {};
 
-  // Closed-ring fits are tied to a specific closure point, so they can't
-  // be reused in canonical-direction form. Skip the cache for those — the
-  // caller still benefits from the C1-continuous closure.
-  if (cache == nullptr || closed)
+  if (cache == nullptr)
     return Fmi::BezierFit::fitPolyline(points, m_bezierAccuracy, m_bezierMaxDepth, closed);
+
+  // Closed rings: canonicalize so the same loop, regardless of its
+  // OGR ring's start vertex or traversal direction, produces the same
+  // cache key. Cubics are stored in canonical direction. On hit we
+  // reverse them back to the caller's traversal direction so the
+  // isoband's winding (CCW exterior, CW hole) is preserved.
+  if (closed)
+  {
+    const auto cr = BezierCache::canonicalizeClosedRing(points);
+    const std::size_t key = BezierCache::hashCanonical(cr.canonical);
+
+    if (const auto* cached = cache->find(key))
+    {
+      return cr.callerForward ? *cached : Fmi::BezierFit::reverseCubics(*cached);
+    }
+
+    auto cubics = Fmi::BezierFit::fitPolyline(
+        cr.canonical, m_bezierAccuracy, m_bezierMaxDepth, /*closed=*/true);
+    cache->insert(key, cubics);
+    return cr.callerForward ? std::move(cubics) : Fmi::BezierFit::reverseCubics(cubics);
+  }
 
   const bool canonical = BezierCache::isCanonical(points);
 
