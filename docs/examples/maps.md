@@ -2,6 +2,21 @@
 
 Any PROJ projection string can be supplied as the `p.crs` URL parameter on the `/dali` endpoint.  The test suite exercises the full set of projections supported by the installed PROJ library using the `map` test product.
 
+## Contents
+
+- [Test Product](#test-product)
+- [Unsupported Projections](#unsupported-projections)
+- [Projections by Type](#projections-by-type)
+  - [Cylindrical](#cylindrical)
+  - [Conic](#conic)
+  - [Azimuthal](#azimuthal)
+  - [Pseudocylindrical](#pseudocylindrical)
+  - [Globular and Polyhedral](#globular-and-polyhedral)
+  - [Van der Grinten](#van-der-grinten)
+  - [Interrupted](#interrupted)
+  - [Satellite and Perspective](#satellite-and-perspective)
+- [Alphabetical Index](#alphabetical-index)
+
 ## Test Product
 
 The `map` product ([`test/dali/customers/test/products/map.json`](../../test/dali/customers/test/products/map.json)) renders:

@@ -8,6 +8,13 @@ The WMTS tests exercise the `/wmts` endpoint, which implements OGC Web Map Tile 
 
 Test inputs are in [`test/input/wmts_*.get`](../../test/input/) and expected outputs in [`test/output/wmts_*.get`](../../test/output/).
 
+## Contents
+
+- [wmts_getcapabilities](#wmts_getcapabilities)
+- [wmts_gettile_isoband](#wmts_gettile_isoband)
+- [wmts_gettile_temperature_numbers](#wmts_gettile_temperature_numbers)
+- [wmts_gettile_geotiff](#wmts_gettile_geotiff)
+
 ## wmts_getcapabilities
 
 **Input:** [`test/input/wmts_getcapabilities.get`](../../test/input/wmts_getcapabilities.get)

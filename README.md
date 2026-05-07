@@ -120,7 +120,8 @@ shows the HTTP request, the product JSON, and the rendered output:
 |-------|----------|
 | [Map Projections](docs/examples/maps.md) | All PROJ-supported projections tested via the `/dali` `map` product |
 | [Dali Examples](docs/examples/dali.md) | All `/dali` endpoint test cases: output formats, isobands, isolabels, symbols, wind, METAR, Hovmoeller, fire weather, world projections, and more |
-| [WMS Examples](docs/examples/wms.md) | `/wms` GetMap, GetCapabilities, GetFeatureInfo, and GetLegendGraphic test cases |
+| [WMS Examples](docs/examples/wms.md) | `/wms` GetMap, GetCapabilities, and GetFeatureInfo test cases |
+| [Legend Examples](docs/examples/legends.md) | `/wms` GetLegendGraphic — automatic, style variants, multilingual, internal, and external legends |
 | [WMTS Examples](docs/examples/wmts.md) | `/wmts` GetCapabilities, GetTile (isoband and temperature numbers) |
 | [OGC Tiles Examples](docs/examples/tiles.md) | `/tiles` GetCollections and GetTile test cases |
 

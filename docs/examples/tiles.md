@@ -8,6 +8,19 @@ The OGC Tiles tests exercise the `/tiles` endpoint, which implements the OGC API
 
 Test inputs are in [`test/input/tiles_*.get`](../../test/input/) and expected outputs in [`test/output/tiles_*.get`](../../test/output/).
 
+## Contents
+
+- [tiles_getcollections](#tiles_getcollections)
+- [tiles_gettile_isoband](#tiles_gettile_isoband)
+- [tiles_gettile_temperature_numbers](#tiles_gettile_temperature_numbers)
+- [tiles_gettile_geotiff](#tiles_gettile_geotiff)
+- [tiles_gettile_geotiff_wind_speed_and_direction_1 and _2](#tiles_gettile_geotiff_wind_speed_and_direction_1-and-_2)
+- [Mapbox Vector Tile (MVT) outputs](#mapbox-vector-tile-mvt-outputs)
+  - [tiles_gettile_mvt_isoband](#tiles_gettile_mvt_isoband)
+  - [tiles_gettile_mvt_isoline](#tiles_gettile_mvt_isoline)
+  - [tiles_gettile_mvt_numbers](#tiles_gettile_mvt_numbers)
+  - [tiles_gettile_mvt_circles](#tiles_gettile_mvt_circles)
+
 ## tiles_getcollections
 
 **Input:** [`test/input/tiles_getcollections.get`](../../test/input/tiles_getcollections.get)

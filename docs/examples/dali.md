@@ -4,6 +4,37 @@ The Dali tests exercise the `/dali` endpoint directly, bypassing the WMS/WMTS la
 
 Each request URL is decomposed into a table showing every query parameter and its effect.  Layer-specific URL overrides follow the pattern `l.{qid}.{setting}` and view overrides follow `v{n}.{setting}`.
 
+## Contents
+
+- [Output Formats](#output-formats)
+- [Isoband and Isoline](#isoband-and-isoline)
+- [Isoband Labels](#isoband-labels)
+- [Location Label Placement](#location-label-placement)
+- [SVG Customisation](#svg-customisation)
+- [Clipping to Geographic Boundaries](#clipping-to-geographic-boundaries)
+- [Pressure Level and Elevation Selection](#pressure-level-and-elevation-selection)
+- [Multiple Views and Side-by-Side Products](#multiple-views-and-side-by-side-products)
+- [Time Layer and Timezone](#time-layer-and-timezone)
+- [Observation Numbers](#observation-numbers)
+- [Observation Positions and Keyword Selection](#observation-positions-and-keyword-selection)
+- [Weather Symbols](#weather-symbols)
+- [Flash and Lightning Symbols](#flash-and-lightning-symbols)
+- [Wind Arrows](#wind-arrows)
+- [Wind Barbs and Wind Roses](#wind-barbs-and-wind-roses)
+- [WAFS Aviation Charts](#wafs-aviation-charts)
+- [Observations with Wind and Temperature](#observations-with-wind-and-temperature)
+- [Heatmap](#heatmap)
+- [Hovmoeller Diagrams](#hovmoeller-diagrams)
+- [Graticule](#graticule)
+- [Circles Layer](#circles-layer)
+- [Fronts](#fronts)
+- [PostGIS Layer](#postgis-layer)
+- [WKT Layer](#wkt-layer)
+- [METAR Layer](#metar-layer)
+- [Fire Weather](#fire-weather)
+- [Text Layer](#text-layer)
+- [World Map Products](#world-map-products)
+
 ---
 
 ## Output Formats
@@ -474,6 +505,36 @@ Same as `t2m_p` but with a stronger smoother applied to the temperature field, p
 
 ---
 
+### Pressure smoothing comparison
+
+The same European pressure field is rendered with five different smoothing pipelines so the visual effect of each can be compared side by side.
+
+| Test | Smoothing | Output |
+|------|-----------|--------|
+| `pressure_europe` | None — raw isobands and isolines | ![pe](../images/dali/pressure_europe.png) |
+| `pressure_europe_bezier` | Bezier curve fitting on the contour polylines (no pre-smoothing of the field) | ![pe_b](../images/dali/pressure_europe_bezier.png) |
+| `pressure_europe_gaussian` | Gaussian filter applied to the field before contouring | ![pe_g](../images/dali/pressure_europe_gaussian.png) |
+| `pressure_europe_gaussian_bezier` | Gaussian filter on the field + Bezier fitting on the contours | ![pe_gb](../images/dali/pressure_europe_gaussian_bezier.png) |
+| `pressure_europe_tukey` | Tukey biweight filter (robust to outliers) on the field | ![pe_t](../images/dali/pressure_europe_tukey.png) |
+
+Each test is a `/dali?product=pressure_europe[_variant]&time=200808050300` request.  All five share the same product structure — only the smoothing/filter block changes.
+
+---
+
+### TFP — Thermal-Front Parameter diagnostics
+
+The TFP (Thermal-Front Parameter) diagnostic highlights baroclinic zones — boundaries where temperature/humidity changes sharply.  These three tests apply TFP isobands to different upper-level fields to reveal jet-stream edges, moisture boundaries, and frontal surfaces.
+
+| Test | Field / Level | Output |
+|------|---------------|--------|
+| `tfp_humidity` | Humidity at 850 hPa (moisture boundaries) | ![tfp_h](../images/dali/tfp_humidity.png) |
+| `tfp_theta` | Potential temperature at 850 hPa (frontal surface marker) | ![tfp_t](../images/dali/tfp_theta.png) |
+| `tfp_wind` | Wind speed at 300 hPa (jet-stream edges) | ![tfp_w](../images/dali/tfp_wind.png) |
+
+All three use the `ecmwf_skandinavia_painepinta` pressure-level producer, render to PNG (700×500 px) over Northern Europe in Web Mercator.
+
+---
+
 ### crs_bbox — CRS bounding box handling
 
 **Input:** [`test/input/crs_bbox.get`](../../test/input/crs_bbox.get)
@@ -635,6 +696,270 @@ Demonstrates per-isoline label styling: each contour level can have its own font
 **Output:**
 
 ![isolabel_styles](../images/dali/isolabel_styles.png)
+
+---
+
+### isolabel_wide — Wide formatted labels
+
+**Input:** [`test/input/isolabel_wide.get`](../../test/input/isolabel_wide.get)
+
+```
+GET /dali?customer=test&product=isolabel_wide&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_wide` | Product JSON: [`test/dali/customers/test/products/isolabel_wide.json`](../../test/dali/customers/test/products/isolabel_wide.json) |
+
+Sets `label.precision: 1` and `label.suffix: " hPa"` so labels render as `1015.0 hPa`.  Each candidate's collision box is sized from the actual rendered text, so wider labels reserve more space and the MST drops nearby competitors that would have fit at the default width.
+
+**Output:**
+
+![isolabel_wide](../images/dali/isolabel_wide.png)
+
+---
+
+### isolabel_concentric — Concentric closed contours
+
+**Input:** [`test/input/isolabel_concentric.get`](../../test/input/isolabel_concentric.get)
+
+```
+GET /dali?customer=test&product=isolabel_concentric&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_concentric` | Product JSON: [`test/dali/customers/test/products/isolabel_concentric.json`](../../test/dali/customers/test/products/isolabel_concentric.json) |
+
+Tightens the spacing thresholds (`min_distance_self: 80`, `min_distance_same: 30`, `min_distance_other: 15`) so closely nested closed pressure rings can each carry a label.  The MST keeps the ladder placement readable instead of collapsing labels into clusters.
+
+**Output:**
+
+![isolabel_concentric](../images/dali/isolabel_concentric.png)
+
+---
+
+### isolabel_crossing — Two parameters labelled together
+
+**Input:** [`test/input/isolabel_crossing.get`](../../test/input/isolabel_crossing.get)
+
+```
+GET /dali?customer=test&product=isolabel_crossing&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_crossing` | Product JSON: [`test/dali/customers/test/products/isolabel_crossing.json`](../../test/dali/customers/test/products/isolabel_crossing.json) |
+
+Labels two parameters at once — pressure plus temperature.  The SAT-based overlap test catches places where the two label sets cross at large angles; without SAT a corner-to-corner-only test would miss those collisions.
+
+**Output:**
+
+![isolabel_crossing](../images/dali/isolabel_crossing.png)
+
+---
+
+### isolabel_dense — Dense isovalue grid
+
+**Input:** [`test/input/isolabel_dense.get`](../../test/input/isolabel_dense.get)
+
+```
+GET /dali?customer=test&product=isolabel_dense&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_dense` | Product JSON: [`test/dali/customers/test/products/isolabel_dense.json`](../../test/dali/customers/test/products/isolabel_dense.json) |
+
+Generates pressure isolines at every 1 hPa via `isovalues: { start: 990, stop: 1010, step: 1 }`.  Every divisibility class — multiples of 10, 5, 2, and others — competes for placement; the divisibility weighting keeps the round numbers visible while the rest fill in only where there is room.
+
+**Output:**
+
+![isolabel_dense](../images/dali/isolabel_dense.png)
+
+---
+
+## Location Label Placement
+
+The `LocationLayer` places labels next to city markers using one of several algorithms.  The full algorithm reference is in [`docs/labeling_algorithms.md`](../labeling_algorithms.md); the tests below exercise each placement strategy and the cross-cutting options (free-space bias, population bucketing, pan invariance).
+
+### location_labels_fixed — Fixed NE position
+
+**Input:** [`test/input/location_labels_fixed.get`](../../test/input/location_labels_fixed.get)
+
+```
+GET /dali?customer=test&product=location_labels_fixed&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_fixed` | Product JSON: [`test/dali/customers/test/products/location_labels_fixed.json`](../../test/dali/customers/test/products/location_labels_fixed.json) |
+
+Every label is placed at the NE corner with no conflict avoidance.  Labels that would cover a higher-priority marker are dropped (and so is their own marker), but labels are allowed to overlap each other.
+
+**Output:**
+
+![location_labels_fixed](../images/dali/location_labels_fixed.png)
+
+---
+
+### location_labels_greedy — Greedy placement
+
+**Input:** [`test/input/location_labels_greedy.get`](../../test/input/location_labels_greedy.get)
+
+```
+GET /dali?customer=test&product=location_labels_greedy&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_greedy` | Product JSON: [`test/dali/customers/test/products/location_labels_greedy.json`](../../test/dali/customers/test/products/location_labels_greedy.json) |
+
+For each candidate (in geonames priority order) the algorithm tries the eight Imhof positions in priority order and keeps the first one that fits without overlapping a previously placed label or another candidate's marker.  Recommended default for most weather maps.
+
+**Output:**
+
+![location_labels_greedy](../images/dali/location_labels_greedy.png)
+
+---
+
+### location_labels_priority_greedy — Population-sorted greedy
+
+**Input:** [`test/input/location_labels_priority_greedy.get`](../../test/input/location_labels_priority_greedy.get)
+
+```
+GET /dali?customer=test&product=location_labels_priority_greedy&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_priority_greedy` | Product JSON: [`test/dali/customers/test/products/location_labels_priority_greedy.json`](../../test/dali/customers/test/products/location_labels_priority_greedy.json) |
+
+Same as greedy, but candidates are pre-sorted by population descending before placement.  Use this when geonames autocomplete order does not already match the population ranking you want.
+
+**Output:**
+
+![location_labels_priority_greedy](../images/dali/location_labels_priority_greedy.png)
+
+---
+
+### location_labels_priority_greedy_bucketed — Population buckets + shorter-name tiebreak
+
+**Input:** [`test/input/location_labels_priority_greedy_bucketed.get`](../../test/input/location_labels_priority_greedy_bucketed.get)
+
+```
+GET /dali?customer=test&product=location_labels_priority_greedy_bucketed&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_priority_greedy_bucketed` | Product JSON: [`test/dali/customers/test/products/location_labels_priority_greedy_bucketed.json`](../../test/dali/customers/test/products/location_labels_priority_greedy_bucketed.json) |
+
+Adds `priority_bucket_ratio: 2.0` so cities with similar populations land in the same log-bucket and the shorter label wins ties.  On dense maps this typically places more labels overall — short names slot into prime NE positions and free up room for neighbours.
+
+**Output:**
+
+![location_labels_priority_greedy_bucketed](../images/dali/location_labels_priority_greedy_bucketed.png)
+
+---
+
+### location_labels_sa — Simulated annealing
+
+**Input:** [`test/input/location_labels_sa.get`](../../test/input/location_labels_sa.get)
+
+```
+GET /dali?customer=test&product=location_labels_sa&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_sa` | Product JSON: [`test/dali/customers/test/products/location_labels_sa.json`](../../test/dali/customers/test/products/location_labels_sa.json) |
+
+Uses Christensen-Marks-Shieber simulated annealing to minimise total label-overlap energy.  Converges toward a near-global optimum that pure greedy can miss in dense urban areas where several labels need to coordinate to fit.  The random seed is fixed so results are deterministic.
+
+**Output:**
+
+![location_labels_sa](../images/dali/location_labels_sa.png)
+
+---
+
+### location_labels_freespace — Greedy with free-space bias
+
+**Input:** [`test/input/location_labels_freespace.get`](../../test/input/location_labels_freespace.get)
+
+```
+GET /dali?customer=test&product=location_labels_freespace&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_freespace` | Product JSON: [`test/dali/customers/test/products/location_labels_freespace.json`](../../test/dali/customers/test/products/location_labels_freespace.json) |
+
+Adds `free_space_weight: 1.5, free_space_radius: 120` to the greedy run.  Each candidate scores positions by alignment with the direction away from neighbouring markers and labels, so coastal cities push their labels out into the empty water without needing a sea mask.
+
+**Output:**
+
+![location_labels_freespace](../images/dali/location_labels_freespace.png)
+
+---
+
+### location_labels_sa_freespace — Simulated annealing with free-space bias
+
+**Input:** [`test/input/location_labels_sa_freespace.get`](../../test/input/location_labels_sa_freespace.get)
+
+```
+GET /dali?customer=test&product=location_labels_sa_freespace&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_sa_freespace` | Product JSON: [`test/dali/customers/test/products/location_labels_sa_freespace.json`](../../test/dali/customers/test/products/location_labels_sa_freespace.json) |
+
+The same free-space bias on top of SA's overlap optimisation: the bias term is added to the position penalty and recomputed on every move so the bias reflects the current assignment.
+
+**Output:**
+
+![location_labels_sa_freespace](../images/dali/location_labels_sa_freespace.png)
+
+---
+
+### location_labels_pan_invariant — Pan-invariant greedy
+
+**Input:** [`test/input/location_labels_pan_invariant.get`](../../test/input/location_labels_pan_invariant.get)
+
+```
+GET /dali?customer=test&product=location_labels_pan_invariant&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_pan_invariant` | Product JSON: [`test/dali/customers/test/products/location_labels_pan_invariant.json`](../../test/dali/customers/test/products/location_labels_pan_invariant.json) |
+
+Sets `pan_invariant: true` and centres on Jyväskylä.  Candidates are filtered to a margin-buffered bbox so cities just beyond the visible edge still influence the placement of visible cities; anchors outside the original bbox are skipped at render time.
+
+**Output:**
+
+![location_labels_pan_invariant](../images/dali/location_labels_pan_invariant.png)
+
+---
+
+### location_labels_pan_invariant_shifted — Same view, panned 0.5° east
+
+**Input:** [`test/input/location_labels_pan_invariant_shifted.get`](../../test/input/location_labels_pan_invariant_shifted.get)
+
+```
+GET /dali?customer=test&product=location_labels_pan_invariant_shifted&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_pan_invariant_shifted` | Product JSON: [`test/dali/customers/test/products/location_labels_pan_invariant_shifted.json`](../../test/dali/customers/test/products/location_labels_pan_invariant_shifted.json) |
+
+Same projection as `location_labels_pan_invariant` but with `cx` shifted by +0.5°.  Cities visible in both panned views land at *identical* offsets from their markers — pan invariance verified per-city by the test harness.
+
+**Output:**
+
+![location_labels_pan_invariant_shifted](../images/dali/location_labels_pan_invariant_shifted.png)
 
 ---
 
