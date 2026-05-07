@@ -474,14 +474,20 @@ The table below shows a simple example of the location layer with greedy label p
 The table below lists the attributes that can be defined for the location layer in addition to the common layer attributes.
 
 <pre><b>LocationLayer</b></pre>
-| Name        | Type                                                  | Default value | Description                                                                            |
-| ----------- | ----------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| keyword     | string                                                | -             | The geonames keyword identifying the set of locations to render.                       |
-| mindistance | double                                                | 30            | Minimum pixel distance between symbol anchor points. Locations closer than this to an already-placed symbol are skipped (in geonames priority order). |
-| countries   | (string) or string                                    | -             | One or more ISO 3166-1 alpha-2 country codes to restrict the result set.               |
-| symbol      | (string)                                              | -             | Default symbol IRI used when `symbols` is absent.                                      |
-| symbols     | [AttributeSelection] or {string:[AttributeSelection]} | -             | Symbol selection by population, or a map from geonames feature codes (e.g. `PPLC`, `ADM2`) to per-code selections. |
-| label       | [LabelConfig](#labelconfig-settings)                  | -             | Optional text label placement. Omitting this key disables labels entirely (backward-compatible). |
+| Name             | Type                                                  | Default value | Description                                                                            |
+| ---------------- | ----------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| keyword          | string                                                | -             | The geonames keyword identifying the set of locations to render.                       |
+| mindistance      | double                                                | 30            | Minimum pixel distance between symbol anchor points. Locations closer than this to an already-placed symbol are skipped (in geonames priority order). |
+| countries        | (string) or string                                    | -             | One or more ISO 3166-1 alpha-2 country codes to restrict the result set.               |
+| symbol           | (string)                                              | -             | Default symbol IRI used when `symbols` is absent.                                      |
+| symbols          | [AttributeSelection] or {string:[AttributeSelection]} | -             | Symbol selection by population, or a map from geonames feature codes (e.g. `PPLC`, `ADM2`) to per-code selections. |
+| label            | [LabelConfig](#labelconfig-settings)                  | -             | Optional text label placement. Omitting this key disables labels entirely (backward-compatible). |
+| pan_invariant    | bool                                                  | `false`       | When `true`, the candidate set used for placement is computed from a *margin-extended* version of the request bbox so cities just outside the visible area still influence visible cities' placement decisions. The result: label-direction decisions are stable when the request bbox is shifted (panning) at the same zoom + projection. **Required for tile rendering and for WMS viewer software that pans by issuing successive overlapping GetMap requests.** Default `false` for backward compatibility. |
+| placement_margin | double                                                | -             | Optional explicit buffer in image pixels for `pan_invariant` mode. When unset the margin is auto-computed from `mindistance`, `free_space_radius`, label width, and a safety buffer (≈ 250 px for typical settings). Increase for tighter invariance at the visible edges; decrease if the auto value is too generous and you'd rather save the projection cost. |
+
+**SVG symbols requirements.** All `<symbol>` definitions referenced from the location layer must (1) place their geometry around the origin (e.g. `cx="0" cy="0"` for a circle, or `x="-N" y="-N"` for a rect) and (2) declare `overflow="visible"`. The plugin renders `<use x="..." y="..."/>` at each location's projected anchor; symbols with non-origin geometry shift off-anchor, and symbols without `overflow="visible"` get clipped by the implicit symbol viewport. See the test products under `test/dali/customers/test/products/location_labels_*.json` for the required pattern.
+
+**Render order.** Within the location layer, labels are emitted *first* (halo + fill) and markers *last*, so the marker stays visually clean even when the label halo would otherwise bleed onto it. Labels and markers for the same candidate render in reverse-priority order (highest-priority last) so on overlap the more important label stays on top. A marker is suppressed when its label is dropped — an isolated marker on a dense map is unreadable.
 
 ##### LabelConfig settings
 
@@ -493,7 +499,7 @@ The placement algorithms come from the cartographic literature. For most weather
 | Name            | Type     | Default       | Description                                                                                                     |
 | --------------- | -------- | ------------- | --------------------------------------------------------------------------------------------------------------- |
 | algorithm       | string   | `"none"`      | Placement algorithm. One of `none`, `fixed`, `greedy`, `priority-greedy`, `simulated-annealing`.                |
-| candidates      | int      | 8             | Number of candidate positions tried per label: 4, 8, or 16. Positions follow Imhof (1975) preference order (NE best, S worst). |
+| candidates      | int      | 8             | Number of candidate positions tried per label: 4, 8, or 16. Positions are tried in priority order. The order applies *right beats above* on ties: `NE > SE > NW > SW > E > W > N > S`. (Imhof 1975 published this exact priority but with `NW > SE`; we follow the modern dynamic-visualisation convention used in arxiv:1209.5765 where the right-versus-left preference dominates.) |
 | offset          | double   | 5.0           | Pixel gap between the marker rectangle and the label bounding box edge.                                         |
 | symbol_size     | double   | -             | Alias that sets both `symbol_width` and `symbol_height` to the same value. Convenient for symmetric markers (dots, circles). Not stored as a separate field; explicit width/height parsed afterwards override it. |
 | symbol_width    | double   | 8.0           | Marker bounding-box width in pixels. The marker is assumed centered on the anchor with `overflow=visible`. The placement keeps labels off this rectangle; it acts as a hard obstacle in `greedy` and as an energy term in `simulated-annealing`. Set to `0` (together with `symbol_height`) to disable the obstacle entirely. |
@@ -509,21 +515,47 @@ The placement algorithms come from the cartographic literature. For most weather
 | stroke_width    | double   | 2.0           | Halo stroke width in pixels.                                                                                    |
 | stroke_opacity  | double   | 0.75          | Halo stroke opacity (0 = transparent, 1 = opaque).                                                             |
 | max_labels      | int      | 200           | Hard cap on the number of labels processed. Applied before placement; the highest-priority (geonames sort order) locations are kept. |
+| free_space_weight  | double   | 0.0        | When `> 0`, each candidate's positions are reordered (greedy) or its position-penalty is reduced (SA) to prefer directions pointing into local empty space. Coastal cities push their labels into the sea instead of covering inland features. The "occupied" set includes both other markers and labels already placed earlier in the run. See [algorithms documentation](labeling_algorithms.md). |
+| free_space_radius  | double   | 0.0        | When `free_space_weight > 0`, neighbours beyond this image-pixel distance are ignored when computing each candidate's free direction. `0.0` means use all candidates regardless of distance. A value of `~3 × mindistance` (e.g. `120`) keeps the calculation local to each city's cluster. |
+| priority_bucket_ratio | double | 1.0       | Used only by `priority-greedy`. When `> 1`, populations falling within the same log-bucket compare as equal and the within-bucket tiebreak prefers shorter labels (smaller `label_w`). Eliminates strict-population sensitivity (e.g. 100,000 vs 100,010 census difference flipping placement). `1.5` ≈ 10 % buckets, `2.0` = power-of-two buckets, `100` = decade buckets. |
 | classes         | array    | `[]`          | Population-based style overrides; see table below. First matching class wins.                                   |
 
 **`classes` array entries** (population-range style overrides):
 
-| Name        | Type   | Default | Description                                                  |
-| ----------- | ------ | ------- | ------------------------------------------------------------ |
-| lolimit     | double | -       | Inclusive lower population bound for this class to apply.    |
-| hilimit     | double | -       | Exclusive upper population bound for this class to apply.    |
-| font_size   | double | 0       | Font size override (0 = inherit LabelConfig default).        |
-| font_weight | string | `""`    | Font weight override (`""` = inherit).                       |
-| fill        | string | `""`    | Text colour override (`""` = inherit).                       |
+| Name          | Type   | Default | Description                                                  |
+| ------------- | ------ | ------- | ------------------------------------------------------------ |
+| lolimit       | double | -       | Inclusive lower population bound for this class to apply.    |
+| hilimit       | double | -       | Exclusive upper population bound for this class to apply.    |
+| font_size     | double | 0       | Font size override (0 = inherit LabelConfig default).        |
+| font_weight   | string | `""`    | Font weight override (`""` = inherit).                       |
+| fill          | string | `""`    | Text colour override (`""` = inherit).                       |
+| symbol_size   | double | -       | Per-class shorthand to override `symbol_width` and `symbol_height` together (matches the rendered marker for this population class). Useful when small cities use a small dot and large cities use a larger dot. |
+| symbol_width  | double | 0       | Per-class marker bounding-box width override (0 = inherit). Combined with the per-class `symbol` selection in `LocationLayer.symbols` so each population tier's marker has the right obstacle. |
+| symbol_height | double | 0       | Per-class marker bounding-box height override (0 = inherit). |
+
+**Algorithm comparison gallery** — same dataset (Finnish municipalities), same projection, different placement settings. See [labeling_algorithms.md](labeling_algorithms.md) for the underlying theory.
+
+<table>
+<tr>
+  <td align="center"><b>fixed</b><br><small>NE position for everyone, no conflict avoidance.<br>Drops labels that would cover another marker.</small><br><img src="images/location_labels_fixed.png" width="200"></td>
+  <td align="center"><b>greedy</b><br><small>Imhof preference order, first non-overlap wins.<br>Geonames priority order.</small><br><img src="images/location_labels_greedy.png" width="200"></td>
+  <td align="center"><b>priority-greedy</b><br><small>Same as greedy but candidates pre-sorted by population descending.</small><br><img src="images/location_labels_priority_greedy.png" width="200"></td>
+</tr>
+<tr>
+  <td align="center"><b>simulated-annealing</b><br><small>Global label-overlap minimisation.<br>Best results for dense urban areas.</small><br><img src="images/location_labels_sa.png" width="200"></td>
+  <td align="center"><b>greedy + free-space bias</b><br><small><code>free_space_weight: 1.5, free_space_radius: 120</code><br>Coastal cities push labels into the sea.</small><br><img src="images/location_labels_freespace.png" width="200"></td>
+  <td align="center"><b>SA + free-space bias</b><br><small>Same bias on top of SA's overlap optimisation.</small><br><img src="images/location_labels_sa_freespace.png" width="200"></td>
+</tr>
+<tr>
+  <td align="center"><b>priority-greedy + bucketing</b><br><small><code>priority_bucket_ratio: 2.0</code><br>Close-population cities tied; shorter label wins.</small><br><img src="images/location_labels_priority_greedy_bucketed.png" width="200"></td>
+  <td align="center"><b>greedy + pan-invariant</b><br><small><code>pan_invariant: true</code><br>Centred on Jyväskylä.</small><br><img src="images/location_labels_pan_invariant.png" width="200"></td>
+  <td align="center"><b>same, bbox shifted +0.5°</b><br><small>Cities visible in both panned views land at <i>identical</i> offsets from their markers (verified per-city).</small><br><img src="images/location_labels_pan_invariant_shifted.png" width="200"></td>
+</tr>
+</table>
 
 **Algorithm-specific settings:**
 
-`fixed` — Places every label at a single predetermined position relative to its symbol. No conflict detection; labels may overlap.
+`fixed` — Places every label at a single predetermined position relative to its symbol. No label-vs-label conflict detection (labels may overlap each other), but a label that would cover *another* marker is dropped — and that candidate's marker is dropped with it. Processes candidates in priority order so the highest-priority kept entry always wins.
 
 | Name           | Type   | Default | Description                                                                              |
 | -------------- | ------ | ------- | ---------------------------------------------------------------------------------------- |
