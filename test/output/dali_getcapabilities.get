@@ -2105,6 +2105,62 @@
             "height" : 500,
             "width" : 500
           },
+          "name" : "isolabel_concentric",
+          "path" : 
+          [
+            "test",
+            "isolabel_concentric"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Closed concentric isolabels (pressure system, tight self-distance)",
+          "url_template" : "/dali?customer=test&product=isolabel_concentric&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 600
+          },
+          "name" : "isolabel_crossing",
+          "path" : 
+          [
+            "test",
+            "isolabel_crossing"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 600,
+            "ysize" : 600
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Crossing isolabel families (pressure + temperature)",
+          "url_template" : "/dali?customer=test&product=isolabel_crossing&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
           "name" : "isolabel_cut",
           "path" : 
           [
@@ -2126,6 +2182,34 @@
           },
           "title" : "Demo product",
           "url_template" : "/dali?customer=test&product=isolabel_cut&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "isolabel_dense",
+          "path" : 
+          [
+            "test",
+            "isolabel_dense"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Dense isovalue grid (1 hPa step, exercises divisibility weighting)",
+          "url_template" : "/dali?customer=test&product=isolabel_dense&time={time}"
         },
         {
           "image" : 
@@ -2182,6 +2266,34 @@
           },
           "title" : "Isolabel styling",
           "url_template" : "/dali?customer=test&product=isolabel_styles&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "isolabel_wide",
+          "path" : 
+          [
+            "test",
+            "isolabel_wide"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Wide isolabels (multi-character formatted text)",
+          "url_template" : "/dali?customer=test&product=isolabel_wide&time={time}"
         },
         {
           "image" : 
@@ -2364,6 +2476,31 @@
             "height" : 700,
             "width" : 400
           },
+          "name" : "location_labels_freespace",
+          "path" : 
+          [
+            "test",
+            "location_labels_freespace"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 400,
+            "ysize" : 700
+          },
+          "title" : "LocationLayer \u2014 greedy label placement with free-space bias",
+          "url_template" : "/dali?customer=test&product=location_labels_freespace&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 700,
+            "width" : 400
+          },
           "name" : "location_labels_greedy",
           "path" : 
           [
@@ -2382,6 +2519,56 @@
           },
           "title" : "LocationLayer \u2014 greedy label placement",
           "url_template" : "/dali?customer=test&product=location_labels_greedy&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 600
+          },
+          "name" : "location_labels_pan_invariant",
+          "path" : 
+          [
+            "test",
+            "location_labels_pan_invariant"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 25.75,
+            "cy" : 62.240000000000002,
+            "resolution" : 0.67000000000000004,
+            "xsize" : 600,
+            "ysize" : 600
+          },
+          "title" : "LocationLayer \u2014 greedy label placement with pan-invariant filter",
+          "url_template" : "/dali?customer=test&product=location_labels_pan_invariant&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 600
+          },
+          "name" : "location_labels_pan_invariant_shifted",
+          "path" : 
+          [
+            "test",
+            "location_labels_pan_invariant_shifted"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 26.25,
+            "cy" : 62.240000000000002,
+            "resolution" : 0.67000000000000004,
+            "xsize" : 600,
+            "ysize" : 600
+          },
+          "title" : "LocationLayer \u2014 pan-invariant filter, bbox shifted east by 0.5\u00b0",
+          "url_template" : "/dali?customer=test&product=location_labels_pan_invariant_shifted&time={time}"
         },
         {
           "image" : 
@@ -2411,6 +2598,31 @@
         {
           "image" : 
           {
+            "height" : 700,
+            "width" : 400
+          },
+          "name" : "location_labels_priority_greedy_bucketed",
+          "path" : 
+          [
+            "test",
+            "location_labels_priority_greedy_bucketed"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 400,
+            "ysize" : 700
+          },
+          "title" : "LocationLayer \u2014 priority-greedy with population bucketing + shorter-name tiebreak",
+          "url_template" : "/dali?customer=test&product=location_labels_priority_greedy_bucketed&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 600,
             "width" : 600
           },
@@ -2432,6 +2644,31 @@
           },
           "title" : "LocationLayer \u2014 simulated-annealing label placement",
           "url_template" : "/dali?customer=test&product=location_labels_sa&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 600
+          },
+          "name" : "location_labels_sa_freespace",
+          "path" : 
+          [
+            "test",
+            "location_labels_sa_freespace"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 24.5,
+            "cy" : 60.5,
+            "resolution" : 1.0,
+            "xsize" : 600,
+            "ysize" : 600
+          },
+          "title" : "LocationLayer \u2014 simulated-annealing label placement with free-space bias",
+          "url_template" : "/dali?customer=test&product=location_labels_sa_freespace&time={time}"
         },
         {
           "image" : 
@@ -2859,6 +3096,34 @@
           },
           "title" : "Pressure over Europe, Bezier fitting only (no pre-smoothing)",
           "url_template" : "/dali?customer=test&product=pressure_europe_bezier&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 820,
+            "width" : 820
+          },
+          "name" : "pressure_europe_bezier_compare",
+          "path" : 
+          [
+            "test",
+            "pressure_europe_bezier_compare"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 400,
+            "ysize" : 400
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Bezier-fit tolerance comparison: no filter, 2, 3, 5 px",
+          "url_template" : "/dali?customer=test&product=pressure_europe_bezier_compare&time={time}"
         },
         {
           "image" : 
