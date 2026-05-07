@@ -19,7 +19,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <regex>
+#include <boost/regex.hpp>
 #include <sstream>
 
 namespace SmartMet
@@ -39,9 +39,9 @@ namespace
 // Parse a cloud-layer token: FEW|SCT|BKN|OVC + 3-digit base-hft + optional CB/TCU
 bool parseCloudToken(const std::string& tok, MetarData::CloudLayer& layer)
 {
-  static const std::regex re(R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)");
-  std::smatch m;
-  if (!std::regex_match(tok, m, re))
+  static const boost::regex re(R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)");
+  boost::smatch m;
+  if (!boost::regex_match(tok, m, re))
     return false;
 
   const std::string& amt = m[1].str();
@@ -74,10 +74,10 @@ bool isWeatherToken(const std::string& tok)
 {
   if (tok.empty())
     return false;
-  static const std::regex re(
+  static const boost::regex re(
       R"(^[+-]?(?:VC)?(?:MI|PR|BC|DR|BL|SH|TS|FZ)?)"
       R"((?:DZ|RA|SN|SG|IC|PL|GR|GS|UP|BR|FG|FU|VA|DU|SA|HZ|PO|SQ|FC|SS|DS)+$)");
-  return std::regex_match(tok, re);
+  return boost::regex_match(tok, re);
 }
 
 }  // namespace
@@ -340,8 +340,8 @@ MetarData MetarLayer::parseTAC(const std::string& message,
   // Time group: DDHHMMz
   if (idx < tokens.size())
   {
-    static const std::regex time_re(R"(^\d{6}Z$)");
-    if (std::regex_match(tokens[idx], time_re))
+    static const boost::regex time_re(R"(^\d{6}Z$)");
+    if (boost::regex_match(tokens[idx], time_re))
       ++idx;
   }
 
@@ -351,21 +351,21 @@ MetarData MetarLayer::parseTAC(const std::string& message,
     ++idx;
 
   // Compiled regexes for token identification
-  static const std::regex wind_re(R"(^(VRB|\d{3})(\d{2,3})(G(\d{2,3}))?KT$)");
-  static const std::regex vis4_re(R"(^(\d{4})$)");
-  static const std::regex rvr_re(R"(^R\d{2}[LCR]?/.+$)");
-  static const std::regex cloud_re(R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)");
-  static const std::regex vv_re(R"(^VV(\d{3}|///)$)");
-  static const std::regex tempdew_re(R"(^(M?\d{2})/(M?\d{2})$)");
-  static const std::regex qnh_re(R"(^Q(\d{4})$)");
-  static const std::regex alt_re(R"(^A(\d{4})$)");
-  static const std::regex varwind_re(R"(^\d{3}V\d{3}$)");
+  static const boost::regex wind_re(R"(^(VRB|\d{3})(\d{2,3})(G(\d{2,3}))?KT$)");
+  static const boost::regex vis4_re(R"(^(\d{4})$)");
+  static const boost::regex rvr_re(R"(^R\d{2}[LCR]?/.+$)");
+  static const boost::regex cloud_re(R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)");
+  static const boost::regex vv_re(R"(^VV(\d{3}|///)$)");
+  static const boost::regex tempdew_re(R"(^(M?\d{2})/(M?\d{2})$)");
+  static const boost::regex qnh_re(R"(^Q(\d{4})$)");
+  static const boost::regex alt_re(R"(^A(\d{4})$)");
+  static const boost::regex varwind_re(R"(^\d{3}V\d{3}$)");
 
   // State machine
   enum class S { Wind, Vis, RVR, WX, Clouds, TempDew, Done };
   S state = S::Wind;
 
-  std::smatch m;
+  boost::smatch m;
 
   for (; idx < tokens.size(); ++idx)
   {
@@ -388,7 +388,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           state = S::TempDew;
           break;
         }
-        if (std::regex_match(t, m, wind_re))
+        if (boost::regex_match(t, m, wind_re))
         {
           d.has_wind = true;
           d.wind_variable = (m[1].str() == "VRB");
@@ -403,7 +403,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           state = S::Vis;
           break;
         }
-        if (std::regex_match(t, varwind_re))
+        if (boost::regex_match(t, varwind_re))
           break;  // wind direction variability group, skip
         // Token doesn't look like wind – fall through to Vis
         state = S::Vis;
@@ -426,7 +426,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           state = S::RVR;
           break;
         }
-        if (std::regex_match(t, m, vis4_re))
+        if (boost::regex_match(t, m, vis4_re))
         {
           d.has_visibility = true;
           d.visibility = std::min(std::stoi(m[1].str()), 9999);
@@ -439,7 +439,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
 
       // ----------------------------------------------------------
       case S::RVR:
-        if (std::regex_match(t, rvr_re))
+        if (boost::regex_match(t, rvr_re))
           break;  // skip RVR groups
         state = S::WX;
         [[fallthrough]];
@@ -452,7 +452,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           state = S::Clouds;
           break;
         }
-        if (std::regex_match(t, m, vv_re))
+        if (boost::regex_match(t, m, vv_re))
         {
           const std::string& vv = m[1].str();
           if (vv != "///")
@@ -463,7 +463,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           state = S::TempDew;
           break;
         }
-        if (std::regex_match(t, cloud_re))
+        if (boost::regex_match(t, cloud_re))
         {
           state = S::Clouds;
           MetarData::CloudLayer cl;
@@ -471,7 +471,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           d.clouds.push_back(cl);
           break;
         }
-        if (std::regex_match(t, tempdew_re))
+        if (boost::regex_match(t, tempdew_re))
         {
           state = S::TempDew;
           goto handle_tempdew;
@@ -492,7 +492,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           d.is_skc = true;
           break;
         }
-        if (std::regex_match(t, m, vv_re))
+        if (boost::regex_match(t, m, vv_re))
         {
           const std::string& vv = m[1].str();
           if (vv != "///")
@@ -503,7 +503,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           state = S::TempDew;
           break;
         }
-        if (std::regex_match(t, cloud_re))
+        if (boost::regex_match(t, cloud_re))
         {
           MetarData::CloudLayer cl;
           parseCloudToken(t, cl);
@@ -511,19 +511,19 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           break;
         }
         // Check for temp/dew appearing right after clouds
-        if (std::regex_match(t, tempdew_re))
+        if (boost::regex_match(t, tempdew_re))
         {
           state = S::TempDew;
           goto handle_tempdew;
         }
         // Try QNH too
-        if (std::regex_match(t, m, qnh_re))
+        if (boost::regex_match(t, m, qnh_re))
         {
           d.has_pressure = true;
           d.pressure = std::stoi(m[1].str());
           break;
         }
-        if (std::regex_match(t, m, alt_re))
+        if (boost::regex_match(t, m, alt_re))
         {
           double inHg = std::stod(m[1].str()) / 100.0;
           d.has_pressure = true;
@@ -536,7 +536,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
       // ----------------------------------------------------------
       case S::TempDew:
       handle_tempdew:
-        if (std::regex_match(t, m, tempdew_re))
+        if (boost::regex_match(t, m, tempdew_re))
         {
           auto parse_td = [](const std::string& s) -> int {
             bool neg = (!s.empty() && s[0] == 'M');
@@ -550,13 +550,13 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           state = S::Done;
           break;
         }
-        if (std::regex_match(t, m, qnh_re))
+        if (boost::regex_match(t, m, qnh_re))
         {
           d.has_pressure = true;
           d.pressure = std::stoi(m[1].str());
           break;
         }
-        if (std::regex_match(t, m, alt_re))
+        if (boost::regex_match(t, m, alt_re))
         {
           double inHg = std::stod(m[1].str()) / 100.0;
           d.has_pressure = true;
@@ -568,12 +568,12 @@ MetarData MetarLayer::parseTAC(const std::string& message,
       // ----------------------------------------------------------
       case S::Done:
         // Check for QNH that appears after temp/dew
-        if (std::regex_match(t, m, qnh_re))
+        if (boost::regex_match(t, m, qnh_re))
         {
           d.has_pressure = true;
           d.pressure = std::stoi(m[1].str());
         }
-        else if (std::regex_match(t, m, alt_re))
+        else if (boost::regex_match(t, m, alt_re))
         {
           double inHg = std::stod(m[1].str()) / 100.0;
           d.has_pressure = true;
@@ -588,13 +588,13 @@ MetarData MetarLayer::parseTAC(const std::string& message,
   {
     for (const auto& token : tokens)
     {
-      if (std::regex_match(token, m, qnh_re))
+      if (boost::regex_match(token, m, qnh_re))
       {
         d.has_pressure = true;
         d.pressure = std::stoi(m[1].str());
         break;
       }
-      if (std::regex_match(token, m, alt_re))
+      if (boost::regex_match(token, m, alt_re))
       {
         double inHg = std::stod(m[1].str()) / 100.0;
         d.has_pressure = true;
