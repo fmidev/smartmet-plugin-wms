@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.8
+Version: 26.5.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.9-1.fmi
+- BezierFit: appendBezierSvg nudges control points whose SVG-rounded coordinates collapse onto the anchor (p1==p0 or p2==p3) by one quantization step in the curve's emerging direction; without the nudge the rasterizer falls back to the chord direction at the affected endpoint and adjacent collapsed segments produce mismatched-tangent kinks visible as hairline gaps in the stroke
+- BezierFit: fit_to_cubic rejects moment-fit candidates whose control points have x outside [0, 1] in normalized chord coords; such overshoots indicate a near-cusp or self-overlap and produced visible breaks at joins, recursive subdivision now picks shorter ranges instead
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-1.fmi
 - IsolineFilter: fix isoline jaggedness — the isoline filter's per-layer VertexCounter gives count==1 for every vertex of a non-self-intersecting isoline, which the break-detection misread as a corner and reduced fitPolylineWithBreaks to one degenerate cubic per source segment; isoline LineStrings now go through fitPolyline directly with no breaks
 - IsolineFilter: reject Bezier accuracy values in (0, 2) — below ~2 px the moment-matching fitter returns extreme control points (d0/d1 in unit-chord coords blow up) that project thousands of pixels outside the view and produce visible diagonal artifacts
