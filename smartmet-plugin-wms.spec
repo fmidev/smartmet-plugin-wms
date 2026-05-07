@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.5.7
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu May  7 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.5.7-2.fmi
+- Fix MetarLayer (use boost::regex, not std::regex)
+
 * Thu May  7 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.7-1.fmi
 - LocationLayer: pan-invariant placement (margin-buffered candidate query) for stable labels under panning at the same zoom + projection; new pan_invariant and placement_margin layer fields, with a WGS84 prefilter for large keyword sets
 - LocationLayer: free-space placement bias pushes coastal labels into open water without a sea mask; new free_space_weight and free_space_radius config; greedy and SA both use placed labels (not just markers) as occupied space
