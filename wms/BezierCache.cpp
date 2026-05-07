@@ -48,7 +48,11 @@ const std::vector<Fmi::BezierFit::CubicBez>* BezierCache::find(std::size_t key) 
 {
   auto it = m_cache.find(key);
   if (it == m_cache.end())
+  {
+    ++m_misses;
     return nullptr;
+  }
+  ++m_hits;
   return &it->second;
 }
 

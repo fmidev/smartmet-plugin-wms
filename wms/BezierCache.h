@@ -54,8 +54,14 @@ class BezierCache
 
   std::size_t size() const { return m_cache.size(); }
 
+  // Hit/miss counters for diagnostics. Updated by find/insert.
+  std::size_t hits() const { return m_hits; }
+  std::size_t misses() const { return m_misses; }
+
  private:
   std::unordered_map<std::size_t, std::vector<Fmi::BezierFit::CubicBez>> m_cache;
+  mutable std::size_t m_hits = 0;
+  mutable std::size_t m_misses = 0;
 };
 
 }  // namespace Dali
