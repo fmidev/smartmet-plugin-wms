@@ -181,26 +181,45 @@ PolylineData extractPolylineData(const OGRLineString* geom,
   data.points.reserve(n);
   OGRPoint pt;
 
+  // Track which vertices land exactly on the view boundary in pixel
+  // coordinates (before rfactor rounding). These are the "fixed points"
+  // where the contour intersects the grid edge — they must be break
+  // points so neighbouring isobands' shared sub-segment endpoints line
+  // up exactly. Without this, two adjacent isobands' ghostline tails
+  // (which differ between the two) get merged with the contour
+  // sub-segment and the cache misses despite the contour itself being
+  // bit-identical.
+  std::vector<bool> onBoundary(n, false);
+  const double bx_max = static_cast<double>(box.width());
+  const double by_max = static_cast<double>(box.height());
+
   for (int i = 0; i < n; i++)
   {
     double x = geom->getX(i);
     double y = geom->getY(i);
     box.transform(x, y);
+    onBoundary[i] = (x <= 0.0 || x >= bx_max || y <= 0.0 || y >= by_max);
     x = std::round(x * rfactor) / rfactor;
     y = std::round(y * rfactor) / rfactor;
     data.points.push_back({x, y});
   }
 
-  // Use vertex counter to identify break points.
-  // count=0: isoline vertex (free) → smooth
-  // count=1: unshared isoband edge (grid boundary) → break
-  // count=2: shared isoband edge → smooth
-  // count=4: shared isoband corner (grid vertex) → break
+  // Break points fall into two categories:
+  // 1. Vertex counter says "corner" (count != 0 && count != 2):
+  //    - count=1: unshared isoband edge (only one ring touches)
+  //    - count=4: grid corner shared by 4 isobands
+  // 2. Vertex sits exactly on the view boundary, regardless of count.
+  //    These are the contour-meets-grid-edge points the user described.
+  //    Without breaking here a count=2 boundary vertex (where two
+  //    adjacent isobands' contours converge before each follows its
+  //    own ghostline tail along the boundary) would be smoothed
+  //    through, and the resulting sub-segments wouldn't share a cache
+  //    key with their neighbour.
   for (int i = 1; i < n - 1; i++)
   {
     geom->getPoint(i, &pt);
     int count = counter.getCount(pt);
-    if (count != 0 && count != 2)
+    if ((count != 0 && count != 2) || onBoundary[i])
       data.breakIndices.push_back(i);
   }
 
@@ -336,15 +355,26 @@ void IsolineFilter::writeBezierLinearRingSvg(std::string& out,
     if (data.points.size() < 3)
       return;
 
-    // Build break indices for the ring (excluding closing duplicate)
+    // Build break indices for the ring (excluding closing duplicate).
+    // Two reasons to break at a vertex:
+    // 1. Counter says corner (count != 0 && count != 2)
+    // 2. Vertex lies on the view boundary (in pixel coordinates) — these
+    //    are the contour-meets-grid-edge points where the ring's
+    //    ghostline tail diverges from the shared contour.
     int ringSize = n - 1;  // number of unique vertices
     std::vector<int> breaks;
+    const double bx_max = static_cast<double>(box.width());
+    const double by_max = static_cast<double>(box.height());
     for (int i = 0; i < ringSize; i++)
     {
       OGRPoint pt;
       geom->getPoint(i, &pt);
       int count = m_vertexCounter.getCount(pt);
-      if (count != 0 && count != 2)
+      double px = pt.getX();
+      double py = pt.getY();
+      box.transform(px, py);
+      const bool boundary = (px <= 0.0 || px >= bx_max || py <= 0.0 || py >= by_max);
+      if ((count != 0 && count != 2) || boundary)
         breaks.push_back(i);
     }
 
