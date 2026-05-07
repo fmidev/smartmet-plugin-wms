@@ -95,30 +95,12 @@
 		    "qid": "l",
 		    "layer_type": "isolabel",
 		    "parameter": "Pressure",
-		    "isolines":
-		    [
-			{ "qid": "lp_990",  "value":  990 },
-			{ "qid": "lp_991",  "value":  991 },
-			{ "qid": "lp_992",  "value":  992 },
-			{ "qid": "lp_993",  "value":  993 },
-			{ "qid": "lp_994",  "value":  994 },
-			{ "qid": "lp_995",  "value":  995 },
-			{ "qid": "lp_996",  "value":  996 },
-			{ "qid": "lp_997",  "value":  997 },
-			{ "qid": "lp_998",  "value":  998 },
-			{ "qid": "lp_999",  "value":  999 },
-			{ "qid": "lp_1000", "value": 1000 },
-			{ "qid": "lp_1001", "value": 1001 },
-			{ "qid": "lp_1002", "value": 1002 },
-			{ "qid": "lp_1003", "value": 1003 },
-			{ "qid": "lp_1004", "value": 1004 },
-			{ "qid": "lp_1005", "value": 1005 },
-			{ "qid": "lp_1006", "value": 1006 },
-			{ "qid": "lp_1007", "value": 1007 },
-			{ "qid": "lp_1008", "value": 1008 },
-			{ "qid": "lp_1009", "value": 1009 },
-			{ "qid": "lp_1010", "value": 1010 }
-		    ],
+		    "isovalues":
+		    {
+			"start": 990,
+			"stop": 1010,
+			"step": 1
+		    },
 		    "label":
 		    {
 			"orientation": "auto"

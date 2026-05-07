@@ -820,7 +820,12 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     if (!validLayer(theState))
       return;
 
-    if (isolines.empty())
+    // Rendering is driven by isovalues (which may be populated from the
+    // layer's own "isovalues" / "isobands" settings or from the parent
+    // IsolineLayer's "isolines" array). The parent's isolines vector
+    // only carries per-isoline metadata for styling and may legitimately
+    // be empty when the user sets isovalues directly.
+    if (isovalues.empty())
       return;
 
     std::unique_ptr<boost::timer::auto_cpu_timer> timer;
@@ -906,10 +911,13 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       theState.addAttributes(theGlobals, text_cdt, textattributes);
 
-      // Assign isoline styles for the point
-      for (auto i = 0UL; i < geoms.size(); i++)
+      // Assign isoline styles for the point. The isolines vector
+      // carries per-isoline metadata only when the user supplied an
+      // "isolines" array; when the layer was driven purely by
+      // "isovalues" / "isobands" it is empty and there are no per-
+      // isoline attributes to apply.
+      for (const Isoline& isoline : isolines)
       {
-        const Isoline& isoline = isolines[i];
         if (isoline.value == point.isovalue)
         {
           theState.addPresentationAttributes(text_cdt, css, attributes, isoline.attributes);
