@@ -527,6 +527,8 @@ The Bezier `accuracy` parameter is the maximum allowed deviation (in pixels) of 
 
 To eliminate gaps between adjacent isobands' shared edges, the bezier code keeps a per-request cache of fitted cubics keyed by canonical-direction polyline.  The cache works for whole rings (rotation- and direction-invariant via canonical-form lookup) and for sub-segments split at counter-flagged corners and at view-boundary vertices.  Isolines drawn over isobands hit the same cache.  Sub-pixel residual differences may remain where contour ghostlines diverge between rings, but they fall well below the chosen accuracy threshold.
 
+The fitting algorithm is a C++ port of [Raph Levien](https://raphlinus.github.io/)'s moment-matching cubic Bezier fitter from the Rust [`kurbo`](https://github.com/linebender/kurbo) library, which itself implements ideas from his 2009 UC Berkeley PhD thesis [*From Spiral to Spline: Optimal Techniques in Interactive Curve Design*](https://www.levien.com/phd/thesis.pdf).  The algorithm computes the signed area and first moment of the source curve segment and solves a quartic polynomial for cubic control points whose moments match.  The original Rust implementation is dual-licensed Apache-2.0 / MIT.
+
 ---
 
 ### TFP — Thermal-Front Parameter diagnostics
