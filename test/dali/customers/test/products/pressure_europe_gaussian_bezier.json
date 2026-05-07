@@ -26,7 +26,7 @@
                         "type": "gaussian",
                         "radius": 5.0,
                         "iterations": 2,
-                        "bezier": 0.5
+                        "bezier": 5.0
                     },
                     "attributes":
                     {
@@ -44,7 +44,7 @@
                         "type": "gaussian",
                         "radius": 5.0,
                         "iterations": 2,
-                        "bezier": 0.5
+                        "bezier": 5.0
                     },
                     "attributes":
                     {

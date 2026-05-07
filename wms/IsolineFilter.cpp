@@ -102,6 +102,11 @@ void IsolineFilter::init(Json::Value& theJson)
 
       if (m_bezierAccuracy < 0)
         throw Fmi::Exception(BCP, "Bezier fitting accuracy must be nonnegative");
+      // 0 disables fitting; below ~2 px the moment-matching fitter starts
+      // returning extreme control points that produce visible artifacts
+      // (very large d0/d1 in unit-chord coords project far outside the view).
+      if (m_bezierAccuracy > 0 && m_bezierAccuracy < 2)
+        throw Fmi::Exception(BCP, "Bezier fitting accuracy must be at least 2 pixels");
       if (m_bezierAccuracy > 100)
         throw Fmi::Exception(BCP, "Bezier fitting accuracy must be less than 100 pixels");
       if (m_bezierMaxDepth < 1 || m_bezierMaxDepth > 20)
@@ -220,8 +225,14 @@ void IsolineFilter::writeBezierLineStringSvg(std::string& out,
     if (data.points.size() < 2)
       return;
 
+    // Isolines are independent polylines that don't share edges with other
+    // geometries — fit the whole component as one smooth curve. The vertex
+    // counter built by IsolineFilter::apply gives count==1 for every vertex
+    // along a non-self-intersecting isoline, so applying the break logic
+    // here would force a corner at every interior vertex and reduce the
+    // bezier fitter to one cubic per source segment.
     auto cubics =
-        Fmi::BezierFit::fitPolylineWithBreaks(data.points, data.breakIndices, m_bezierAccuracy, m_bezierMaxDepth);
+        Fmi::BezierFit::fitPolyline(data.points, m_bezierAccuracy, m_bezierMaxDepth);
 
     if (cubics.empty())
       return;

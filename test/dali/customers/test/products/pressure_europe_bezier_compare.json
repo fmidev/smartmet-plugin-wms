@@ -1,0 +1,152 @@
+{
+    "title": "Bezier-fit tolerance comparison: no filter, 2, 3, 5 px",
+    "width": 820,
+    "height": 820,
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+        "crs": "data",
+        "xsize": 400,
+        "ysize": 400
+    },
+    "views": [
+        {
+            "qid": "v_none",
+            "attributes": { "id": "view_none", "transform": "translate(10,10)" },
+            "layers": [
+                {
+                    "qid": "bn",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/pressure.json",
+                    "css": "isobands/pressure.css",
+                    "parameter": "Pressure",
+                    "attributes": { "id": "none_isobands" }
+                },
+                {
+                    "qid": "ln",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+                    "attributes": { "id": "none_isolines", "class": "Pressure" }
+                },
+                {
+                    "layer_type": "map",
+                    "map": { "schema": "natural_earth", "table": "admin_0_countries", "minarea": 100 },
+                    "attributes": { "id": "none_map", "fill": "none", "stroke": "#222", "stroke-width": "0.3px" }
+                },
+                {
+                    "layer_type": "tag",
+                    "tag": "text",
+                    "cdata": "no bezier",
+                    "attributes": { "x": 10, "y": 18, "font-family": "Roboto", "font-size": 14, "font-weight": "bold", "fill": "#000" }
+                }
+            ]
+        },
+        {
+            "qid": "v_05",
+            "attributes": { "id": "view_05", "transform": "translate(420,10)" },
+            "layers": [
+                {
+                    "qid": "ba",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/pressure.json",
+                    "css": "isobands/pressure.css",
+                    "parameter": "Pressure",
+                    "filter": { "bezier": 2.0 },
+                    "attributes": { "id": "b05_isobands" }
+                },
+                {
+                    "qid": "la",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+                    "filter": { "bezier": 2.0 },
+                    "attributes": { "id": "b05_isolines", "class": "Pressure" }
+                },
+                {
+                    "layer_type": "map",
+                    "map": { "schema": "natural_earth", "table": "admin_0_countries", "minarea": 100 },
+                    "attributes": { "id": "b05_map", "fill": "none", "stroke": "#222", "stroke-width": "0.3px" }
+                },
+                {
+                    "layer_type": "tag",
+                    "tag": "text",
+                    "cdata": "bezier = 2 px",
+                    "attributes": { "x": 10, "y": 18, "font-family": "Roboto", "font-size": 14, "font-weight": "bold", "fill": "#000" }
+                }
+            ]
+        },
+        {
+            "qid": "v_3",
+            "attributes": { "id": "view_3", "transform": "translate(10,420)" },
+            "layers": [
+                {
+                    "qid": "bb",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/pressure.json",
+                    "css": "isobands/pressure.css",
+                    "parameter": "Pressure",
+                    "filter": { "bezier": 3.0 },
+                    "attributes": { "id": "b3_isobands" }
+                },
+                {
+                    "qid": "lb",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+                    "filter": { "bezier": 3.0 },
+                    "attributes": { "id": "b3_isolines", "class": "Pressure" }
+                },
+                {
+                    "layer_type": "map",
+                    "map": { "schema": "natural_earth", "table": "admin_0_countries", "minarea": 100 },
+                    "attributes": { "id": "b3_map", "fill": "none", "stroke": "#222", "stroke-width": "0.3px" }
+                },
+                {
+                    "layer_type": "tag",
+                    "tag": "text",
+                    "cdata": "bezier = 3 px",
+                    "attributes": { "x": 10, "y": 18, "font-family": "Roboto", "font-size": 14, "font-weight": "bold", "fill": "#000" }
+                }
+            ]
+        },
+        {
+            "qid": "v_5",
+            "attributes": { "id": "view_5", "transform": "translate(420,420)" },
+            "layers": [
+                {
+                    "qid": "bc",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/pressure.json",
+                    "css": "isobands/pressure.css",
+                    "parameter": "Pressure",
+                    "filter": { "bezier": 5.0 },
+                    "attributes": { "id": "b5_isobands" }
+                },
+                {
+                    "qid": "lc",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+                    "filter": { "bezier": 5.0 },
+                    "attributes": { "id": "b5_isolines", "class": "Pressure" }
+                },
+                {
+                    "layer_type": "map",
+                    "map": { "schema": "natural_earth", "table": "admin_0_countries", "minarea": 100 },
+                    "attributes": { "id": "b5_map", "fill": "none", "stroke": "#222", "stroke-width": "0.3px" }
+                },
+                {
+                    "layer_type": "tag",
+                    "tag": "text",
+                    "cdata": "bezier = 5 px",
+                    "attributes": { "x": 10, "y": 18, "font-family": "Roboto", "font-size": 14, "font-weight": "bold", "fill": "#000" }
+                }
+            ]
+        }
+    ]
+}
