@@ -1,15 +1,21 @@
 {
     "title": "LocationLayer — greedy label placement with pan-invariant filter",
 
+    // Center on Jyväskylä, ~1.5× more zoomed than the SA test, so that
+    // there are labels right at the edges and beyond.  This is what
+    // exercises pan-invariance: a city near or just beyond the visible
+    // edge is in the buffered set but not the visible bbox, and its
+    // presence influences the visible cities' placement decisions.  A
+    // sparse-edge view would not test the property at all.
     "projection":
     {
-        "xsize": 400,
-        "ysize": 700,
-        "crs": "EPSG:2393",
+        "xsize": 600,
+        "ysize": 600,
+        "crs": "EPSG:3067",
         "bboxcrs": "EPSG:4326",
-        "cy": 64.8,
-        "cx": 25.4,
-        "resolution": 2.5
+        "cy": 62.24,
+        "cx": 25.75,
+        "resolution": 0.67
     },
 
     "defs":

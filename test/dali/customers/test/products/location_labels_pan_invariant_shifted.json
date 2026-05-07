@@ -1,20 +1,22 @@
 {
     "title": "LocationLayer — pan-invariant filter, bbox shifted east by 0.5°",
 
-    // Same projection as location_labels_pan_invariant but cx shifted by
-    // 0.5°.  With pan_invariant: true, cities visible in BOTH bboxes
+    // Same projection as location_labels_pan_invariant but cx shifted
+    // by 0.5°.  With pan_invariant: true, cities visible in BOTH bboxes
     // should have IDENTICAL offsets from their markers (same NE/SE/etc
-    // choice).  Compare visually against location_labels_pan_invariant
-    // to verify decisions are stable under panning.
+    // choice).  The Jyväskylä-centered view at 0.67 km/px is dense
+    // enough that the buffered region holds many labels just beyond the
+    // visible edge — exactly the cells whose presence stabilises
+    // visible cities' placement decisions across panning.
     "projection":
     {
-        "xsize": 400,
-        "ysize": 700,
-        "crs": "EPSG:2393",
+        "xsize": 600,
+        "ysize": 600,
+        "crs": "EPSG:3067",
         "bboxcrs": "EPSG:4326",
-        "cy": 64.8,
-        "cx": 25.9,
-        "resolution": 2.5
+        "cy": 62.24,
+        "cx": 26.25,
+        "resolution": 0.67
     },
 
     "defs":
