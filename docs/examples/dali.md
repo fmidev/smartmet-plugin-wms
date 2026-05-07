@@ -8,7 +8,10 @@ Each request URL is decomposed into a table showing every query parameter and it
 
 - [Output Formats](#output-formats)
 - [Isoband and Isoline](#isoband-and-isoline)
+- [Pressure smoothing comparison](#pressure-smoothing-comparison)
+- [TFP — Thermal-Front Parameter diagnostics](#tfp--thermal-front-parameter-diagnostics)
 - [Isoband Labels](#isoband-labels)
+- [Isolabel examples](#isolabel-examples)
 - [Location Label Placement](#location-label-placement)
 - [SVG Customisation](#svg-customisation)
 - [Clipping to Geographic Boundaries](#clipping-to-geographic-boundaries)
@@ -507,29 +510,35 @@ Same as `t2m_p` but with a stronger smoother applied to the temperature field, p
 
 ### Pressure smoothing comparison
 
-The same European pressure field is rendered with five different smoothing pipelines so the visual effect of each can be compared side by side.
+The same European pressure field is rendered with several smoothing pipelines so the visual effect of each can be compared side by side.
 
-| Test | Smoothing | Output |
-|------|-----------|--------|
-| `pressure_europe` | None — raw isobands and isolines | ![pe](../images/dali/pressure_europe.png) |
-| `pressure_europe_bezier` | Bezier curve fitting on the contour polylines (no pre-smoothing of the field) | ![pe_b](../images/dali/pressure_europe_bezier.png) |
-| `pressure_europe_gaussian` | Gaussian filter applied to the field before contouring | ![pe_g](../images/dali/pressure_europe_gaussian.png) |
-| `pressure_europe_gaussian_bezier` | Gaussian filter on the field + Bezier fitting on the contours | ![pe_gb](../images/dali/pressure_europe_gaussian_bezier.png) |
-| `pressure_europe_tukey` | Tukey biweight filter (robust to outliers) on the field | ![pe_t](../images/dali/pressure_europe_tukey.png) |
+Each test is a `/dali?customer=test&product=pressure_europe[_variant]&time=200808050300` request.  All variants share the same product structure — only the `filter` block on the isoband/isoline layers changes.
 
-Each test is a `/dali?product=pressure_europe[_variant]&time=200808050300` request.  All five share the same product structure — only the smoothing/filter block changes.
+| Test | Filter | Product JSON | Output |
+|------|--------|--------------|--------|
+| [`pressure_europe.get`](../../test/input/pressure_europe.get) | None — raw isobands and isolines | [`pressure_europe.json`](../../test/dali/customers/test/products/pressure_europe.json) | ![pe](../images/dali/pressure_europe.png) |
+| [`pressure_europe_bezier.get`](../../test/input/pressure_europe_bezier.get) | Bezier curve fitting on the contour polylines, tension `0.5` (no pre-smoothing of the field) | [`pressure_europe_bezier.json`](../../test/dali/customers/test/products/pressure_europe_bezier.json) | ![pe_b](../images/dali/pressure_europe_bezier.png) |
+| [`pressure_europe_bezier_t1.get`](../../test/input/pressure_europe_bezier_t1.get) | Bezier curve fitting, tension `1.0` | [`pressure_europe_bezier_t1.json`](../../test/dali/customers/test/products/pressure_europe_bezier_t1.json) | ![pe_b1](../images/dali/pressure_europe_bezier_t1.png) |
+| [`pressure_europe_bezier_t2.get`](../../test/input/pressure_europe_bezier_t2.get) | Bezier curve fitting, tension `2.0` | [`pressure_europe_bezier_t2.json`](../../test/dali/customers/test/products/pressure_europe_bezier_t2.json) | ![pe_b2](../images/dali/pressure_europe_bezier_t2.png) |
+| [`pressure_europe_bezier_t3.get`](../../test/input/pressure_europe_bezier_t3.get) | Bezier curve fitting, tension `3.0` | [`pressure_europe_bezier_t3.json`](../../test/dali/customers/test/products/pressure_europe_bezier_t3.json) | ![pe_b3](../images/dali/pressure_europe_bezier_t3.png) |
+| [`pressure_europe_bezier_t5.get`](../../test/input/pressure_europe_bezier_t5.get) | Bezier curve fitting, tension `5.0` | [`pressure_europe_bezier_t5.json`](../../test/dali/customers/test/products/pressure_europe_bezier_t5.json) | ![pe_b5](../images/dali/pressure_europe_bezier_t5.png) |
+| [`pressure_europe_gaussian.get`](../../test/input/pressure_europe_gaussian.get) | Gaussian filter applied to the field before contouring | [`pressure_europe_gaussian.json`](../../test/dali/customers/test/products/pressure_europe_gaussian.json) | ![pe_g](../images/dali/pressure_europe_gaussian.png) |
+| [`pressure_europe_gaussian_bezier.get`](../../test/input/pressure_europe_gaussian_bezier.get) | Gaussian filter on the field + Bezier fitting on the contours | [`pressure_europe_gaussian_bezier.json`](../../test/dali/customers/test/products/pressure_europe_gaussian_bezier.json) | ![pe_gb](../images/dali/pressure_europe_gaussian_bezier.png) |
+| [`pressure_europe_tukey.get`](../../test/input/pressure_europe_tukey.get) | Tukey biweight filter (robust to outliers) on the field | [`pressure_europe_tukey.json`](../../test/dali/customers/test/products/pressure_europe_tukey.json) | ![pe_t](../images/dali/pressure_europe_tukey.png) |
+
+The `_t1` … `_t5` rows isolate the Bezier `tension` parameter — higher tension produces tighter, more angular curves and lower tension yields rounder, smoother polylines.
 
 ---
 
 ### TFP — Thermal-Front Parameter diagnostics
 
-The TFP (Thermal-Front Parameter) diagnostic highlights baroclinic zones — boundaries where temperature/humidity changes sharply.  These three tests apply TFP isobands to different upper-level fields to reveal jet-stream edges, moisture boundaries, and frontal surfaces.
+The TFP (Thermal-Front Parameter) diagnostic highlights baroclinic zones — boundaries where temperature/humidity changes sharply.  These three tests apply TFP isobands to different upper-level fields to reveal jet-stream edges, moisture boundaries, and frontal surfaces.  Each test is a `/dali?customer=test&product=tfp_*&type=png&time=200809101200` request.  See the [TFP metaparameter section in the reference](../reference.md) for the underlying scalar field options.
 
-| Test | Field / Level | Output |
-|------|---------------|--------|
-| `tfp_humidity` | Humidity at 850 hPa (moisture boundaries) | ![tfp_h](../images/dali/tfp_humidity.png) |
-| `tfp_theta` | Potential temperature at 850 hPa (frontal surface marker) | ![tfp_t](../images/dali/tfp_theta.png) |
-| `tfp_wind` | Wind speed at 300 hPa (jet-stream edges) | ![tfp_w](../images/dali/tfp_wind.png) |
+| Test | Field / Level | Product JSON | Output |
+|------|---------------|--------------|--------|
+| [`tfp_humidity.get`](../../test/input/tfp_humidity.get) | Humidity at 850 hPa (moisture boundaries) | [`tfp_humidity.json`](../../test/dali/customers/test/products/tfp_humidity.json) | ![tfp_h](../images/dali/tfp_humidity.png) |
+| [`tfp_theta.get`](../../test/input/tfp_theta.get) | Potential temperature at 850 hPa (frontal surface marker) | [`tfp_theta.json`](../../test/dali/customers/test/products/tfp_theta.json) | ![tfp_t](../images/dali/tfp_theta.png) |
+| [`tfp_wind.get`](../../test/input/tfp_wind.get) | Wind speed at 300 hPa (jet-stream edges) | [`tfp_wind.json`](../../test/dali/customers/test/products/tfp_wind.json) | ![tfp_w](../images/dali/tfp_wind.png) |
 
 All three use the `ecmwf_skandinavia_painepinta` pressure-level producer, render to PNG (700×500 px) over Northern Europe in Web Mercator.
 
@@ -577,7 +586,7 @@ Like `t2m_p` but the layers omit `qid` fields.  Without a `qid`, layers cannot b
 
 ## Isoband Labels
 
-Labels can be placed along isolines using the dedicated `isolabel` layer type, or directly in the isoband definition with `t2m_isoband_labels`.
+Labels can be placed directly in the isoband definition with the `t2m_isoband_labels` test, or as a separate `IsolabelLayer` — see the [Isolabel examples](#isolabel-examples) section below.
 
 ### t2m_isoband_labels — Labels embedded in isoband layer
 
@@ -598,6 +607,10 @@ Demonstrates value labels embedded directly in the isoband layer specification. 
 ![t2m_isoband_labels](../images/dali/t2m_isoband_labels.png)
 
 ---
+
+## Isolabel examples
+
+Labels along isolines using the dedicated `IsolabelLayer`.  The placement algorithm — multi-angle local-extremum scan, divisibility-weighted MST selection, data-probed orientation — is documented in [`isolabel_algorithms.md`](../isolabel_algorithms.md).  The tests below exercise each tunable in turn (angle handling, cut-through style, multi-style, wide labels, concentric/dense/crossing isolines).
 
 ### isolabel — Basic isolabels
 
