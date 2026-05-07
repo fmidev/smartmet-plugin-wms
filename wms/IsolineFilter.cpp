@@ -1,4 +1,5 @@
 #include "IsolineFilter.h"
+#include "BezierCache.h"
 #include "BezierFit.h"
 #include "JsonTools.h"
 #include <fmt/core.h>
@@ -208,11 +209,46 @@ PolylineData extractPolylineData(const OGRLineString* geom,
 
 }  // namespace
 
+std::vector<Fmi::BezierFit::CubicBez> IsolineFilter::fitWithCache(
+    const std::vector<Fmi::BezierFit::Point>& points, BezierCache* cache, bool closed) const
+{
+  if (points.size() < 2)
+    return {};
+
+  // Closed-ring fits are tied to a specific closure point, so they can't
+  // be reused in canonical-direction form. Skip the cache for those — the
+  // caller still benefits from the C1-continuous closure.
+  if (cache == nullptr || closed)
+    return Fmi::BezierFit::fitPolyline(points, m_bezierAccuracy, m_bezierMaxDepth, closed);
+
+  const bool canonical = BezierCache::isCanonical(points);
+
+  std::vector<Fmi::BezierFit::Point> reversed;
+  const std::vector<Fmi::BezierFit::Point>* canonicalPts = &points;
+  if (!canonical)
+  {
+    reversed.assign(points.rbegin(), points.rend());
+    canonicalPts = &reversed;
+  }
+
+  const std::size_t key = BezierCache::hashCanonical(*canonicalPts);
+
+  if (const auto* cached = cache->find(key))
+  {
+    return canonical ? *cached : Fmi::BezierFit::reverseCubics(*cached);
+  }
+
+  auto cubics = Fmi::BezierFit::fitPolyline(*canonicalPts, m_bezierAccuracy, m_bezierMaxDepth);
+  cache->insert(key, cubics);
+  return canonical ? std::move(cubics) : Fmi::BezierFit::reverseCubics(cubics);
+}
+
 void IsolineFilter::writeBezierLineStringSvg(std::string& out,
                                              const OGRLineString* geom,
                                              const Fmi::Box& box,
                                              double rfactor,
-                                             int decimals) const
+                                             int decimals,
+                                             BezierCache* cache) const
 {
   try
   {
@@ -226,13 +262,21 @@ void IsolineFilter::writeBezierLineStringSvg(std::string& out,
       return;
 
     // Isolines are independent polylines that don't share edges with other
-    // geometries — fit the whole component as one smooth curve. The vertex
-    // counter built by IsolineFilter::apply gives count==1 for every vertex
-    // along a non-self-intersecting isoline, so applying the break logic
-    // here would force a corner at every interior vertex and reduce the
-    // bezier fitter to one cubic per source segment.
-    auto cubics =
-        Fmi::BezierFit::fitPolyline(data.points, m_bezierAccuracy, m_bezierMaxDepth);
+    // geometries within the isoline filter's own counter — fit the whole
+    // component as one smooth curve. The vertex counter built by
+    // IsolineFilter::apply gives count==1 for every vertex along a
+    // non-self-intersecting isoline, so applying break logic here would
+    // force a corner at every interior vertex and reduce the bezier fitter
+    // to one cubic per source segment.
+    //
+    // Closed isolines (first vertex == last vertex, common for low-pressure
+    // contour loops) must be fit as rings; without the closed flag the fit
+    // has a visible kink at the start/end junction.
+    const auto& first = data.points.front();
+    const auto& last = data.points.back();
+    const bool closed = (first.x == last.x && first.y == last.y);
+
+    auto cubics = fitWithCache(data.points, cache, closed);
 
     if (cubics.empty())
       return;
@@ -249,7 +293,8 @@ void IsolineFilter::writeBezierLinearRingSvg(std::string& out,
                                              const OGRLinearRing* geom,
                                              const Fmi::Box& box,
                                              double rfactor,
-                                             int decimals) const
+                                             int decimals,
+                                             BezierCache* cache) const
 {
   try
   {
@@ -263,9 +308,11 @@ void IsolineFilter::writeBezierLinearRingSvg(std::string& out,
     // For closed rings:
     // 1. Identify break points using vertex counter (grid corners, boundary edges)
     // 2. Split the ring into sub-segments at break points
-    // 3. For shared sub-segments (vertex count=2), normalize direction so that
-    //    the same edge traversed in opposite directions by adjacent isobands
-    //    produces identical Bezier curves — preventing gaps unconditionally.
+    // 3. Each sub-segment goes through fitWithCache, which normalizes the
+    //    direction and shares the fit with the neighbouring isoband (whose
+    //    ring traverses the same sub-segment in the opposite direction).
+    //    The shared fit guarantees bit-identical SVG on both sides of the
+    //    edge — no gaps from floating-point drift.
 
     auto data = extractPolylineData(geom, box, rfactor, m_vertexCounter);
     if (data.points.size() < 3)
@@ -285,9 +332,10 @@ void IsolineFilter::writeBezierLinearRingSvg(std::string& out,
 
     if (breaks.empty())
     {
-      // No break points - the entire ring is smooth. Fit as one piece.
-      std::vector<Fmi::BezierFit::Point> ringPoints(data.points.begin(), data.points.end() - 1);
-      auto cubics = Fmi::BezierFit::fitPolyline(ringPoints, m_bezierAccuracy, m_bezierMaxDepth);
+      // No break points - the entire ring is smooth. Fit as a closed ring
+      // so the curve is C1-continuous across the closure (otherwise a
+      // straight-line 'Z' close leaves a visible corner).
+      auto cubics = fitWithCache(data.points, cache, /*closed=*/true);
       Fmi::BezierFit::appendBezierSvg(out, cubics, true, false, decimals);
       out += 'Z';
       return;
@@ -321,44 +369,10 @@ void IsolineFilter::writeBezierLinearRingSvg(std::string& out,
       if (segPoints.size() < 2)
         continue;
 
-      // Check if this segment is shared (all interior vertices have count=2)
-      bool isShared = true;
-      for (std::size_t i = 1; i + 1 < segPoints.size(); i++)
-      {
-        int idx = (startIdx + static_cast<int>(i)) % ringSize;
-        OGRPoint pt;
-        geom->getPoint(idx, &pt);
-        int count = m_vertexCounter.getCount(pt);
-        if (count != 2)
-        {
-          isShared = false;
-          break;
-        }
-      }
-
-      // Direction normalization for shared segments
-      bool reverseOutput = false;
-      std::vector<Fmi::BezierFit::Point>* fitPoints = &segPoints;
-      std::vector<Fmi::BezierFit::Point> reversedPoints;
-
-      if (isShared && segPoints.size() >= 2)
-      {
-        // Canonical direction: first point should be "less than" last point
-        auto& first = segPoints.front();
-        auto& last = segPoints.back();
-        if (last.x < first.x || (last.x == first.x && last.y < first.y))
-        {
-          // Need to reverse: fit in canonical direction, then reverse output
-          reversedPoints.assign(segPoints.rbegin(), segPoints.rend());
-          fitPoints = &reversedPoints;
-          reverseOutput = true;
-        }
-      }
-
-      auto cubics = Fmi::BezierFit::fitPolyline(*fitPoints, m_bezierAccuracy, m_bezierMaxDepth);
-
-      if (reverseOutput)
-        cubics = Fmi::BezierFit::reverseCubics(cubics);
+      // fitWithCache handles direction normalization and shared-edge reuse:
+      // each sub-segment's canonical-direction fit is cached and replayed
+      // (reversed if needed) for the neighbouring isoband's matching edge.
+      auto cubics = fitWithCache(segPoints, cache);
 
       Fmi::BezierFit::appendBezierSvg(out, cubics, firstSegment, false, decimals);
       firstSegment = false;
@@ -376,7 +390,8 @@ void IsolineFilter::writeBezierSvg(std::string& out,
                                    const OGRGeometry* geom,
                                    const Fmi::Box& box,
                                    double rfactor,
-                                   int decimals) const
+                                   int decimals,
+                                   BezierCache* cache) const
 {
   try
   {
@@ -387,38 +402,38 @@ void IsolineFilter::writeBezierSvg(std::string& out,
     switch (wkbFlatten(id))
     {
       case wkbLineString:
-        writeBezierLineStringSvg(out, dynamic_cast<const OGRLineString*>(geom), box, rfactor, decimals);
+        writeBezierLineStringSvg(out, dynamic_cast<const OGRLineString*>(geom), box, rfactor, decimals, cache);
         break;
       case wkbLinearRing:
-        writeBezierLinearRingSvg(out, dynamic_cast<const OGRLinearRing*>(geom), box, rfactor, decimals);
+        writeBezierLinearRingSvg(out, dynamic_cast<const OGRLinearRing*>(geom), box, rfactor, decimals, cache);
         break;
       case wkbPolygon:
       {
         const auto* poly = dynamic_cast<const OGRPolygon*>(geom);
-        writeBezierLinearRingSvg(out, poly->getExteriorRing(), box, rfactor, decimals);
+        writeBezierLinearRingSvg(out, poly->getExteriorRing(), box, rfactor, decimals, cache);
         for (int i = 0, nHoles = poly->getNumInteriorRings(); i < nHoles; i++)
-          writeBezierLinearRingSvg(out, poly->getInteriorRing(i), box, rfactor, decimals);
+          writeBezierLinearRingSvg(out, poly->getInteriorRing(i), box, rfactor, decimals, cache);
         break;
       }
       case wkbMultiLineString:
       {
         const auto* multi = dynamic_cast<const OGRMultiLineString*>(geom);
         for (int i = 0, ng = multi->getNumGeometries(); i < ng; i++)
-          writeBezierLineStringSvg(out, multi->getGeometryRef(i), box, rfactor, decimals);
+          writeBezierLineStringSvg(out, multi->getGeometryRef(i), box, rfactor, decimals, cache);
         break;
       }
       case wkbMultiPolygon:
       {
         const auto* multi = dynamic_cast<const OGRMultiPolygon*>(geom);
         for (int i = 0, ng = multi->getNumGeometries(); i < ng; i++)
-          writeBezierSvg(out, multi->getGeometryRef(i), box, rfactor, decimals);
+          writeBezierSvg(out, multi->getGeometryRef(i), box, rfactor, decimals, cache);
         break;
       }
       case wkbGeometryCollection:
       {
         const auto* coll = dynamic_cast<const OGRGeometryCollection*>(geom);
         for (int i = 0, ng = coll->getNumGeometries(); i < ng; i++)
-          writeBezierSvg(out, coll->getGeometryRef(i), box, rfactor, decimals);
+          writeBezierSvg(out, coll->getGeometryRef(i), box, rfactor, decimals, cache);
         break;
       }
       default:
@@ -434,7 +449,8 @@ void IsolineFilter::writeBezierSvg(std::string& out,
 
 std::string IsolineFilter::toBezierSvg(const OGRGeometry& geom,
                                        const Fmi::Box& box,
-                                       double precision) const
+                                       double precision,
+                                       BezierCache* cache) const
 {
   try
   {
@@ -443,7 +459,7 @@ std::string IsolineFilter::toBezierSvg(const OGRGeometry& geom,
     const double rfactor = std::pow(10.0, prec);
 
     std::string out;
-    writeBezierSvg(out, &geom, box, rfactor, decimals);
+    writeBezierSvg(out, &geom, box, rfactor, decimals, cache);
     return out;
   }
   catch (...)

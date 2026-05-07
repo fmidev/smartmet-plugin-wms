@@ -18,6 +18,7 @@
 #pragma once
 
 #include "Attributes.h"
+#include "BezierCache.h"
 #include <engines/geonames/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Q.h>
@@ -237,6 +238,14 @@ class State
   uint32_t getTileX() const { return *itsTileX; }
   uint32_t getTileY() const { return *itsTileY; }
 
+  // Per-request cache of bezier-fitted polyline cubics. Adjacent isobands
+  // share rings (one's exterior is the next one's hole reversed); without
+  // a shared cache they each fit the shared edge independently and tiny
+  // floating-point differences leave visible gaps. Isolines drawn over
+  // isobands also use the same cache when their geometry coincides with
+  // an isoband edge.
+  BezierCache& getBezierCache() const { return itsBezierCache; }
+
   mutable uint arcCounter = 0;
   mutable uint insertCounter = 0;
   mutable std::map<std::size_t, uint> arcHashMap;
@@ -249,6 +258,7 @@ class State
  private:
   Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;
+  mutable BezierCache itsBezierCache;
 
   // Names which have already been used for styling
   mutable std::map<std::string, std::string> itsUsedStyles;

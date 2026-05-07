@@ -895,7 +895,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           if (filter.bezierEnabled() && theState.getType() != "topojson" &&
               theState.getType() != "geojson" && theState.getType() != "kml")
           {
-            pointCoordinates = filter.toBezierSvg(*geom2, box, precision);
+            pointCoordinates = filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
           }
 
           if (pointCoordinates.empty())
@@ -1277,7 +1277,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           if (filter.bezierEnabled() && theState.getType() != "topojson" &&
               theState.getType() != "geojson" && theState.getType() != "kml")
           {
-            pointCoordinates = filter.toBezierSvg(*geom2, box, precision);
+            pointCoordinates = filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
           }
 
           if (pointCoordinates.empty())

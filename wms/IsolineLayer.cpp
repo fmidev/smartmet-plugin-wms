@@ -940,7 +940,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         if (filter.bezierEnabled() && !topojson && theState.getType() != "geojson" &&
             theState.getType() != "kml")
         {
-          pointCoordinates = filter.toBezierSvg(*geom, box, precision);
+          pointCoordinates = filter.toBezierSvg(*geom, box, precision, &theState.getBezierCache());
         }
 
         if (pointCoordinates.empty())

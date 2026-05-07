@@ -122,9 +122,14 @@ class BezPath
 // points: the polyline vertices (at least 2)
 // accuracy: maximum allowed approximation error (in the same units as the coordinates)
 // maxDepth: maximum recursion depth for subdivision (default 10)
+// closed: if true, treat the polyline as a closed ring. The caller must
+//         pass the polyline with the closing duplicate (v_0 at both ends);
+//         tangents at the start and end are forced to the centered-
+//         difference at v_0 so the fit is C1-continuous across the closure.
 std::vector<CubicBez> fitPolyline(const std::vector<Point>& points,
                                   double accuracy,
-                                  int maxDepth = 10);
+                                  int maxDepth = 10,
+                                  bool closed = false);
 
 // Fit an entire polyline with explicit break indices where corners must be preserved.
 // breakIndices: sorted indices of vertices where the curve must have a corner.

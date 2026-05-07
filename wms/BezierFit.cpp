@@ -1058,7 +1058,10 @@ void fit_to_bezpath_rec(const SourceCurve& source,
 class PolylineSource : public SourceCurve
 {
  public:
-  PolylineSource(const std::vector<Point>& pts) : m_points(pts), m_n(pts.size()) {}
+  PolylineSource(const std::vector<Point>& pts, bool closed = false)
+      : m_points(pts), m_n(pts.size()), m_closed(closed)
+  {
+  }
 
   CurveFitSample sample_pt_tangent(double t, double sign) const override
   {
@@ -1071,9 +1074,17 @@ class PolylineSource : public SourceCurve
 
     Point p = lerp(m_points[i], m_points[i + 1], frac);
 
-    // Tangent: at segment junctions, use sign to choose direction
+    // Tangent: at segment junctions, use sign to choose direction.
+    // For closed polylines (caller passes points with v_n == v_0 closing
+    // duplicate) the boundaries at t=0 and t=1 represent the same point,
+    // so we must use a wrap-around tangent there to make the fit C1
+    // continuous across the closure.
     Vec2 tangent;
-    if (frac < 1e-12 && i > 0 && sign < 0)
+    if (m_closed && frac < 1e-12 && i == 0 && sign > 0)
+      tangent = m_points[1] - m_points[m_n - 2];  // centered diff at v_0
+    else if (m_closed && frac > 1.0 - 1e-12 && i == static_cast<int>(m_n) - 2 && sign < 0)
+      tangent = m_points[1] - m_points[m_n - 2];  // same direction at the closure
+    else if (frac < 1e-12 && i > 0 && sign < 0)
       tangent = m_points[i] - m_points[i - 1];
     else if (frac > 1.0 - 1e-12 && i < static_cast<int>(m_n) - 2 && sign > 0)
       tangent = m_points[i + 2] - m_points[i + 1];
@@ -1107,6 +1118,7 @@ class PolylineSource : public SourceCurve
  private:
   const std::vector<Point>& m_points;
   std::size_t m_n;
+  bool m_closed;
 };
 
 // ======================================================================
@@ -1271,7 +1283,8 @@ std::vector<CubicBez> BezPath::toCubics() const
 
 std::vector<CubicBez> fitPolyline(const std::vector<Point>& points,
                                   double accuracy,
-                                  int maxDepth)
+                                  int maxDepth,
+                                  bool closed)
 {
   if (points.size() < 2)
     return {};
@@ -1289,7 +1302,7 @@ std::vector<CubicBez> fitPolyline(const std::vector<Point>& points,
   if (allSame)
     return {};
 
-  PolylineSource source(points);
+  PolylineSource source(points, closed);
   BezPath path;
   fit_to_bezpath_rec(source, 0.0, 1.0, accuracy, 0, maxDepth, path);
   return path.toCubics();
