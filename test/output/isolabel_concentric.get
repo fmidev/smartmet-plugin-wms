@@ -40,16 +40,16 @@
   
   <text transform="translate(209 393) rotate(177)">985</text>
   <text transform="translate(198 421) rotate(184)">990</text>
-  <text transform="translate(340 422) rotate(182)">1000</text>
-  <text transform="translate(239 297) rotate(2)">1000</text>
   <text transform="translate(216 457) rotate(181)">1000</text>
+  <text transform="translate(239 297) rotate(2)">1000</text>
+  <text transform="translate(340 422) rotate(182)">1000</text>
   <text transform="translate(60 193) rotate(-0)">1005</text>
   <text transform="translate(239 269) rotate(-0)">1005</text>
-  <text transform="translate(243 231) rotate(0)">1010</text>
   <text transform="translate(86 148) rotate(-3)">1010</text>
-  <text transform="translate(407 72) rotate(223)">1015</text>
-  <text transform="translate(351 176) rotate(2)">1015</text>
+  <text transform="translate(243 231) rotate(0)">1010</text>
   <text transform="translate(205 183) rotate(6)">1015</text>
+  <text transform="translate(351 176) rotate(2)">1015</text>
+  <text transform="translate(407 72) rotate(223)">1015</text>
   </g>
  </g>
 </g>

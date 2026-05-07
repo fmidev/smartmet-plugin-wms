@@ -78,17 +78,17 @@
   <text transform="translate(425 142) rotate(3)">6</text>
   <text transform="translate(542 356) rotate(185)">6</text>
   <text transform="translate(501 169) rotate(224)">8</text>
-  <text transform="translate(490 318) rotate(218)">10</text>
   <text transform="translate(272 282) rotate(134)">10</text>
+  <text transform="translate(490 318) rotate(218)">10</text>
   <text transform="translate(152 149) rotate(180)">12</text>
   <text transform="translate(336 359) rotate(191)">12</text>
   <text transform="translate(573 441) rotate(181)">12</text>
-  <text transform="translate(107 198) rotate(180)">14</text>
   <text transform="translate(385 374) rotate(-4)">14</text>
   <text transform="translate(349 476) rotate(172)">14</text>
+  <text transform="translate(107 198) rotate(180)">14</text>
   <text transform="translate(479 452) rotate(184)">14</text>
-  <text transform="translate(36 363) rotate(173)">16</text>
   <text transform="translate(188 548) rotate(14)">16</text>
+  <text transform="translate(36 363) rotate(173)">16</text>
   </g>
  </g>
 </g>

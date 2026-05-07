@@ -61,6 +61,23 @@
    <use xlink:href="#i.p_1009"/>
    <use xlink:href="#i.p_1010"/>
   </g>
+  <g class="Label">
+  
+  <text transform="translate(198 421) rotate(184)">990</text>
+  <text transform="translate(231 318) rotate(-0)">995</text>
+  <text transform="translate(295 364) rotate(137)">996</text>
+  <text transform="translate(358 403) rotate(228)">998</text>
+  <text transform="translate(396 443) rotate(180)">999</text>
+  <text transform="translate(216 457) rotate(181)">1000</text>
+  <text transform="translate(332 452) rotate(178)">1002</text>
+  <text transform="translate(418 485) rotate(169)">1003</text>
+  <text transform="translate(60 193) rotate(-0)">1005</text>
+  <text transform="translate(239 269) rotate(-0)">1005</text>
+  <text transform="translate(90 235) rotate(136)">1006</text>
+  <text transform="translate(75 168) rotate(-1)">1008</text>
+  <text transform="translate(131 259) rotate(3)">1009</text>
+  <text transform="translate(243 231) rotate(0)">1010</text>
+  </g>
  </g>
 </g>
 

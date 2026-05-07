@@ -41,8 +41,8 @@
   <text transform="translate(198 421) rotate(184)">990.0 hPa</text>
   <text transform="translate(231 318) rotate(-0)">995.0 hPa</text>
   <text transform="translate(216 457) rotate(181)">1000.0 hPa</text>
-  <text transform="translate(239 269) rotate(-0)">1005.0 hPa</text>
   <text transform="translate(63 245) rotate(139)">1005.0 hPa</text>
+  <text transform="translate(239 269) rotate(-0)">1005.0 hPa</text>
   <text transform="translate(243 231) rotate(0)">1010.0 hPa</text>
   </g>
  </g>
