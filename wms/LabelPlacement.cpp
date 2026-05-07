@@ -471,6 +471,15 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
   std::vector<std::pair<double, double>> placed_centroids;
   placed_centroids.reserve(n);
 
+  // Track which higher-priority candidates were dropped so their
+  // markers (which won't be rendered — see LocationLayer's marker
+  // suppression) are also removed from the obstacle set used by
+  // subsequent candidates.  An invisible marker should never push
+  // another label out of its preferred position.  Both the obstacle
+  // overlap check and the free-direction calculation skip dropped
+  // candidates' markers.
+  std::vector<bool> dropped(n, false);
+
   auto computeFreeDir = [&](size_t i) -> std::pair<double, double> {
     if (!fs_on)
       return {0.0, 0.0};
@@ -488,7 +497,7 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
       fy += dy / d2;
     };
     for (size_t j = 0; j < n; j++)
-      if (j != i)
+      if (j != i && !dropped[j])
         accumulate(candidates[j].anchor_x, candidates[j].anchor_y);
     for (const auto& c : placed_centroids)
       accumulate(c.first, c.second);
@@ -536,10 +545,14 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
         // against the label's own marker — the candidate position
         // was deliberately laid out to clear it, and applying padding
         // there would push the label uselessly far from its own
-        // anchor.
+        // anchor.  Also skip markers of higher-priority candidates
+        // whose labels have been dropped: those markers won't be
+        // rendered, so they shouldn't constrain placement either.
         for (size_t j = 0; j < n; j++)
         {
           if (j == i)
+            continue;
+          if (j < i && dropped[j])
             continue;
           const auto& ob = candidates[j].obstacle;
           if (!ob.valid())
@@ -563,7 +576,10 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
       }
     }
     if (!placed)
+    {
       result.push_back(makeDropped(cand));
+      dropped[i] = true;
+    }
   }
   return result;
 }

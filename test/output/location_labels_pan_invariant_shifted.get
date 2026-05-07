@@ -166,68 +166,6 @@
   <text fill="#222222" font-family="sans-serif" font-size="11" x="253" xml:space="preserve" y="301">Jyväskylä</text>
   <text fill="none" font-family="sans-serif" font-size="13" font-weight="bold" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2.5" x="113" xml:space="preserve" y="412">Tampere</text>
   <text fill="#111111" font-family="sans-serif" font-size="13" font-weight="bold" x="113" xml:space="preserve" y="412">Tampere</text>
-   <use x="3" xlink:href="#dot" y="394"/>
-   <use x="376" xlink:href="#dot" y="150"/>
-   <use x="258" xlink:href="#dot" y="375"/>
-   <use x="211" xlink:href="#dot" y="149"/>
-   <use x="174" xlink:href="#dot" y="161"/>
-   <use x="233" xlink:href="#dot" y="178"/>
-   <use x="518" xlink:href="#dot" y="309"/>
-   <use x="346" xlink:href="#dot" y="174"/>
-   <use x="211" xlink:href="#dot" y="115"/>
-   <use x="462" xlink:href="#dot" y="92"/>
-   <use x="193" xlink:href="#dot" y="260"/>
-   <use x="314" xlink:href="#dot" y="428"/>
-   <use x="26" xlink:href="#dot" y="562"/>
-   <use x="413" xlink:href="#dot" y="554"/>
-   <use x="285" xlink:href="#dot" y="321"/>
-   <use x="312" xlink:href="#dot" y="192"/>
-   <use x="336" xlink:href="#dot" y="392"/>
-   <use x="489" xlink:href="#dot" y="52"/>
-   <use x="308" xlink:href="#dot" y="146"/>
-   <use x="573" xlink:href="#dot" y="292"/>
-   <use x="211" xlink:href="#dot" y="402"/>
-   <use x="56" xlink:href="#dot" y="530"/>
-   <use x="93" xlink:href="#dot" y="103"/>
-   <use x="470" xlink:href="#dot" y="212"/>
-   <use x="291" xlink:href="#dot" y="563"/>
-   <use x="276" xlink:href="#dot" y="12"/>
-   <use x="166" xlink:href="#dot" y="129"/>
-   <use x="476" xlink:href="#dot" y="391"/>
-   <use x="307" xlink:href="#dot" y="229"/>
-   <use x="208" xlink:href="#dot" y="69"/>
-   <use x="47" xlink:href="#dot" y="478"/>
-   <use x="490" xlink:href="#dot" y="172"/>
-   <use x="209" xlink:href="#dot" y="446"/>
-   <use x="103" xlink:href="#dot" y="135"/>
-   <use x="236" xlink:href="#dot" y="262"/>
-   <use x="128" xlink:href="#dot" y="99"/>
-   <use x="338" xlink:href="#dot" y="233"/>
-   <use x="407" xlink:href="#dot" y="585"/>
-   <use x="400" xlink:href="#dot" y="479"/>
-   <use x="493" xlink:href="#dot" y="269"/>
-   <use x="535" xlink:href="#dot" y="442"/>
-   <use x="95" xlink:href="#dot" y="204"/>
-   <use x="358" xlink:href="#dot" y="35"/>
-   <use x="221" xlink:href="#dot" y="290"/>
-   <use x="39" xlink:href="#dot" y="258"/>
-   <use x="117" xlink:href="#dot" y="71"/>
-   <use x="259" xlink:href="#dot" y="422"/>
-   <use x="192" xlink:href="#dot" y="188"/>
-   <use x="253" xlink:href="#dot" y="105"/>
-   <use x="406" xlink:href="#dot" y="50"/>
-   <use x="535" xlink:href="#dot" y="189"/>
-   <use x="217" xlink:href="#dot" y="526"/>
-   <use x="128" xlink:href="#dot" y="342"/>
-   <use x="293" xlink:href="#dot" y="370"/>
-   <use x="335" xlink:href="#dot" y="128"/>
-   <use x="401" xlink:href="#dot" y="517"/>
-   <use x="461" xlink:href="#dot" y="158"/>
-   <use x="179" xlink:href="#dot" y="29"/>
-   <use x="419" xlink:href="#dot" y="312"/>
-   <use x="316" xlink:href="#dot" y="278"/>
-   <use x="521" xlink:href="#dot" y="138"/>
-   <use x="502" xlink:href="#dot" y="439"/>
    <use x="571" xlink:href="#dot" y="391"/>
    <use x="277" xlink:href="#dot" y="64"/>
    <use x="332" xlink:href="#dot" y="333"/>

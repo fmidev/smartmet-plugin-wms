@@ -26,8 +26,8 @@
   <text fill="#333333" font-family="sans-serif" font-size="10" x="185" xml:space="preserve" y="235">Kolari</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="66" xml:space="preserve" y="530">Kustavi</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="66" xml:space="preserve" y="530">Kustavi</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="145" xml:space="preserve" y="337">Hailuoto</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="145" xml:space="preserve" y="337">Hailuoto</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="192" xml:space="preserve" y="351">Hailuoto</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="192" xml:space="preserve" y="351">Hailuoto</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="259" xml:space="preserve" y="233">Savukoski</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="259" xml:space="preserve" y="233">Savukoski</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="233" xml:space="preserve" y="130">Utsjoki</text>
@@ -70,8 +70,8 @@
   <text fill="#333333" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="160">Inari</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="35" xml:space="preserve" y="549">Maarianhamina</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="35" xml:space="preserve" y="549">Maarianhamina</text>
-  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="132" xml:space="preserve" y="472">Virrat</text>
-  <text fill="#333333" font-family="sans-serif" font-size="10" x="132" xml:space="preserve" y="472">Virrat</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="165" xml:space="preserve" y="472">Virrat</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="165" xml:space="preserve" y="472">Virrat</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="172" xml:space="preserve" y="407">Haapajärvi</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="172" xml:space="preserve" y="407">Haapajärvi</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="190" xml:space="preserve" y="264">Kemijärvi</text>
@@ -106,6 +106,8 @@
   <text fill="#333333" font-family="sans-serif" font-size="10" x="274" xml:space="preserve" y="293">Kuusamo</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="106" xml:space="preserve" y="416">Kauhava</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="106" xml:space="preserve" y="416">Kauhava</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="160" xml:space="preserve" y="519">Forssa</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="160" xml:space="preserve" y="519">Forssa</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="88" xml:space="preserve" y="402">Pietarsaari</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="88" xml:space="preserve" y="402">Pietarsaari</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="206" xml:space="preserve" y="459">Pieksämäki</text>
@@ -205,6 +207,7 @@
    <use x="114" xlink:href="#dot" y="553"/>
    <use x="271" xlink:href="#dot" y="296"/>
    <use x="150" xlink:href="#dot" y="419"/>
+   <use x="157" xlink:href="#dot" y="522"/>
    <use x="144" xlink:href="#dot" y="398"/>
    <use x="234" xlink:href="#dot" y="462"/>
    <use x="234" xlink:href="#dot" y="408"/>

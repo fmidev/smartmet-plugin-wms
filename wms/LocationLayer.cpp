@@ -696,8 +696,16 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     const bool labels_active = !label_config.empty();
     for (size_t i = accepted.size(); i-- > 0;)
     {
-      if (labels_active && i < placed_labels.size() && !placed_labels[i].placed)
-        continue;
+      if (labels_active)
+      {
+        // No label means no marker.  Two cases:
+        //   (a) i is past placed_labels.size() because max_labels truncated
+        //       the candidate set — this candidate was never processed
+        //   (b) i is in range but the algorithm could not place its label
+        // Without a label, an isolated marker is unreadable.
+        if (i >= placed_labels.size() || !placed_labels[i].placed)
+          continue;
+      }
       if (!anchorVisible(i))
         continue;
 
