@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.7
-Release: 2%{?dist}.fmi
+Version: 26.5.8
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -171,6 +171,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-1.fmi
+- IsolineFilter: fix isoline jaggedness — the isoline filter's per-layer VertexCounter gives count==1 for every vertex of a non-self-intersecting isoline, which the break-detection misread as a corner and reduced fitPolylineWithBreaks to one degenerate cubic per source segment; isoline LineStrings now go through fitPolyline directly with no breaks
+- IsolineFilter: reject Bezier accuracy values in (0, 2) — below ~2 px the moment-matching fitter returns extreme control points (d0/d1 in unit-chord coords blow up) that project thousands of pixels outside the view and produce visible diagonal artifacts
+- BezierFit: closed-polyline support — fitPolyline gains a closed flag that forces the start and end tangents to the centered difference at the closure point, eliminating the kink at the start/end junction of a closed contour loop
+- IsolineFilter: detect closed isoline LineStrings (first==last) and fit them as rings; same for the LinearRing no-breaks case
+- BezierCache: per-request fitted-cubics cache stored on State so adjacent isobands' shared rings produce bit-identical SVG; the cache is also used by isoline layers drawn over isobands
+- BezierCache: closed rings canonicalize via rotation to the lex-smallest vertex plus direction normalization, so the same loop produces the same key regardless of OGR ring start or traversal; cubics are stored canonical and reverseCubics restores the caller's winding (CCW exterior, CW hole) on hit
+- IsolineFilter: vertices on the view boundary are forced break points so the contour-meets-grid-edge endpoint of a shared sub-segment lines up across neighbours despite divergent ghostline tails (heuristic; full fix needs ghost-edge propagation from the contour engine)
+- New pressure_europe_bezier_compare test renders the same field at no-bezier / 2 / 3 / 5 px in a 2×2 grid for direct visual comparison
+- Updated pressure_europe_bezier and pressure_europe_gaussian_bezier products from 0.5 px to 5.0 px accuracy and refreshed the documentation gallery accordingly
+
 * Thu May  7 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.5.7-2.fmi
 - Fix MetarLayer (use boost::regex, not std::regex)
 
