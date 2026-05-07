@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.6
+Version: 26.5.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,21 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu May  7 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.7-1.fmi
+- LocationLayer: pan-invariant placement (margin-buffered candidate query) for stable labels under panning at the same zoom + projection; new pan_invariant and placement_margin layer fields, with a WGS84 prefilter for large keyword sets
+- LocationLayer: free-space placement bias pushes coastal labels into open water without a sea mask; new free_space_weight and free_space_radius config; greedy and SA both use placed labels (not just markers) as occupied space
+- LocationLayer: per-population symbol_size / symbol_width / symbol_height in classes so different city tiers get the correct marker obstacle
+- LocationLayer: population bucketing for priority-greedy with shorter-name within-bucket tiebreak; new priority_bucket_ratio config eliminates 100k vs 100,010 census jitter
+- LocationLayer: rectangle-ray placement geometry with position-aware text baseline (above/below/side) so descender characters no longer drift relative to the marker
+- LocationLayer: corner-vs-cardinal preference reordered to right-then-above (NE > SE > NW > SW > E > W > N > S)
+- LocationLayer: marker rendered on top of label so halo cannot smudge the marker; markers without successfully placed labels are suppressed and removed from the obstacle set used by lower-priority candidates
+- LocationLayer: bbox_padding and bbox_quantum knobs absorb font-metric drift between distros (Rocky10 vs RHEL9 fontconfig)
+- LocationLayer: priorityGreedyPlacement returns results in input order so callers can correlate result[i] with input[i]
+- TagLayer: skip the negative-coords-as-canvas-edge-relative rewrite when inside <defs>, allowing symbols to centre their geometry on (0, 0)
+- IsolabelLayer: fix latent placement bugs; size labels per isovalue; detect oriented overlaps; deduplicate candidates from multi-angle scan
+- Documentation: new docs/labeling_algorithms.md, refreshed docs/reference.md LocationLayer section with comparison gallery
+- Tests: new location_labels_freespace, _sa_freespace, _priority_greedy_bucketed, _pan_invariant, _pan_invariant_shifted
+
 * Wed May  6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.6-1.fmi
 - Fixed broken <text> output in LocationLayer cartographic labels
 
