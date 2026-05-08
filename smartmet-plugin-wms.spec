@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.14
+Version: 26.5.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.15-1.fmi
+- Map regression suite: enable amalgamation_mainland_amalgamate=true in both map_amalgamate.json and map_amalgamate_simplified.json so the gallery shows the recommended pipeline (mainland bays close along with the inter-island merges). The standalone map_amalgamate_mainland comparison test introduced in 26.5.14 is dropped now that its output matches map_amalgamate; reference output, gallery PNG, product JSON and dali.md section removed. Reference docs ("Choosing an algorithm" + Map amalgamation gallery) and the Dali example descriptions updated to describe the bay-closing default. No code changes — the gis-library flag was already in place.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.14-1.fmi
 - MapLayer: expose the new amalgamation_mainland_amalgamate Map JSON boolean. When true (and amalgamation_mainland_area is also set), each above-threshold mainland polygon is run through the CDT by itself instead of being emitted unchanged. The bay-closing effect of the gap-triangle pass thus applies to the coastline too, producing a visibly more solid shoreline that recognisably matches what residents would expect. Costs about 220 ms extra on the gshhg.gshhs_h_l1 Northern-Baltic regression test (1.28 s -> 1.50 s) — much cheaper than putting the mainland into the global cluster CDT. Default false preserves the bypass-unchanged behaviour shipped in 26.5.13. New regression test map_amalgamate_mainland with reference output and gallery PNG; reference docs updated to describe both variants. Requires smartmet-library-gis >= 26.5.8-10.
 

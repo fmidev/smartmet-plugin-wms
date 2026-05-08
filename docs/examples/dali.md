@@ -3061,31 +3061,13 @@ GET /dali?customer=test&product=map_amalgamate HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate` | [`test/dali/customers/test/products/map_amalgamate.json`](../../test/dali/customers/test/products/map_amalgamate.json) |
 
-Same data as the baseline with `amalgamation_length=0.01` (≈ 0.6 km gap-bridging) and `minarea=2` (km²). The amalgamator triangulates the gaps between polygons via constrained Delaunay; gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline. Compared to the simplifier-only examples above, far more of the archipelago survives: nearby skerries that are individually smaller than 2 km² merge into a single landmass that exceeds the threshold and is therefore kept. About 58 % of the source vertices are removed (≈ 19 100 vertices remain). At this length the most distinct individual islands and skerry clusters are still recognisable. This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
+Same data as the baseline with `amalgamation_length=0.01` (≈ 0.6 km gap-bridging), `amalgamation_mainland_area=1000` km² with `amalgamation_mainland_amalgamate=true`, and `minarea=2` (km²). The amalgamator triangulates the gaps between polygons via constrained Delaunay; gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline. Mainland polygons (Finnish, Estonian, Latvian coasts in this view) are above the 1000 km² threshold and would otherwise dominate the CDT input vertex count, so they are routed to a per-polygon CDT pass instead — far cheaper than including them in the global cluster CDT, but it still closes their own bays/inlets below the gap-triangle threshold. The visible result is a coastline that reads as solid rather than fingered.
+
+Compared to the simplifier-only examples above, far more of the archipelago survives: nearby skerries that are individually smaller than 2 km² merge into a single landmass that exceeds the threshold and is therefore kept. This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
 
 **Output:**
 
 ![map_amalgamate](../images/dali/map_amalgamate.png)
-
----
-
-### map_amalgamate_mainland — Mainland self-amalgamation
-
-**Input:** [`test/input/map_amalgamate_mainland.get`](../../test/input/map_amalgamate_mainland.get)
-
-```
-GET /dali?customer=test&product=map_amalgamate_mainland HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `product` | `map_amalgamate_mainland` | [`test/dali/customers/test/products/map_amalgamate_mainland.json`](../../test/dali/customers/test/products/map_amalgamate_mainland.json) |
-
-Same as `map_amalgamate` with `amalgamation_mainland_amalgamate=true` added. Mainland polygons (those above `amalgamation_mainland_area=1000` km²) are run through the CDT individually so the gap-triangle pass closes their own bays. Compared to the bypass-only variant above, the Finnish, Estonian and Latvian coastlines are visibly more solid: shallow inlets shorter than the gap-triangle threshold disappear, recognisable to anyone familiar with the coast. Costs ≈ 220 ms extra on this test, much cheaper than putting the mainland into the global cluster CDT.
-
-**Output:**
-
-![map_amalgamate_mainland](../images/dali/map_amalgamate_mainland.png)
 
 ---
 
@@ -3101,8 +3083,7 @@ GET /dali?customer=test&product=map_amalgamate_simplified HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate_simplified` | [`test/dali/customers/test/products/map_amalgamate_simplified.json`](../../test/dali/customers/test/products/map_amalgamate_simplified.json) |
 
-Same amalgamation and `minarea` as `map_amalgamate` with `simplifier="visvalingam_whyatt"` and `tolerance=1.5` pixels chained on. About 90 % of the source vertices are removed in total (≈ 4 500 vertices remain).
- This combination is the recommended pipeline for archipelago and dense-coastline datasets: amalgamation gets the silhouette right by merging nearby islands, `minarea` drops the merged blobs that are still too small to render meaningfully, and the simplifier then thins out the redundant vertices on what's left.
+Same amalgamation, mainland-amalgamate flag and `minarea` as `map_amalgamate` with `simplifier="visvalingam_whyatt"` and `tolerance=1.5` pixels chained on. This combination is the recommended pipeline for archipelago and dense-coastline datasets: amalgamation gets the silhouette right by merging nearby islands and closing mainland bays, `minarea` drops the merged blobs that are still too small to render meaningfully, and the simplifier then thins out the redundant vertices on what's left.
 
 **Output:**
 

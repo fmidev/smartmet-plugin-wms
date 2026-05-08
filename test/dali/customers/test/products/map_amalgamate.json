@@ -43,6 +43,7 @@
 			"where": "the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)",
 			"amalgamation_length": 0.01,
 			"amalgamation_mainland_area": 1000,
+			"amalgamation_mainland_amalgamate": true,
 			"minarea": 2
 		    },
 		    "attributes":
