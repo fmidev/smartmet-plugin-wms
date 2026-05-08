@@ -3039,7 +3039,7 @@ GET /dali?customer=test&product=map_simplifier_dp HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_simplifier_dp` | [`test/dali/customers/test/products/map_simplifier_dp.json`](../../test/dali/customers/test/products/map_simplifier_dp.json) |
 
-Same data as the baseline with `simplifier="douglas_peucker"` and `tolerance=1.0` pixels (the pixel tolerance is converted to CRS coordinate units per request using the projection box). About 64 % of the source vertices are removed. Douglas-Peucker keeps the points furthest from the chord between consecutive anchors, which on a smoothly-curving coastline tends to keep the tips of peninsulas and straight-cut the bays in between, producing slightly angular output even at low tolerance. Use DP for polygonal/man-made features (administrative borders, building footprints) or when you need a strict "max perpendicular error" guarantee; Visvalingam-Whyatt below is usually a better fit for natural coastlines.
+Same data as the baseline with `simplifier="douglas_peucker"` and `tolerance=3.0` pixels (the pixel tolerance is converted to CRS coordinate units per request using the projection box). About 76 % of the source vertices are removed. Douglas-Peucker keeps the points furthest from the chord between consecutive anchors, which on a smoothly-curving coastline tends to keep the tips of peninsulas and straight-cut the bays in between — at this aggressive tolerance the result is visibly spiky/saw-toothed. Use DP for polygonal/man-made features (administrative borders, building footprints) or when you need a strict "max perpendicular error" guarantee; Visvalingam-Whyatt below is usually a better fit for natural coastlines.
 
 **Output:**
 
@@ -3059,7 +3059,7 @@ GET /dali?customer=test&product=map_simplifier_vw HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_simplifier_vw` | [`test/dali/customers/test/products/map_simplifier_vw.json`](../../test/dali/customers/test/products/map_simplifier_vw.json) |
 
-Same data as the baseline with `simplifier="visvalingam_whyatt"` and `tolerance=2.0` pixels. About 67 % of the source vertices are removed. VW iteratively removes the vertex whose triangle (with its neighbours) has the smallest area, which preserves overall shape character better than DP at the same vertex-reduction level — bays and peninsulas remain recognisable rather than being straight-cut. This is the recommended default for natural coastlines, rivers, and lake outlines.
+Same data as the baseline with `simplifier="visvalingam_whyatt"` and `tolerance=5.0` pixels (a pixel² area threshold for VW, applied after bbox conversion to CRS units). About 72 % of the source vertices are removed. VW iteratively removes the vertex whose triangle with its neighbours has the smallest area, which preserves the overall shape character better than DP at the same vertex-reduction level — bays and peninsulas remain recognisable rather than being straight-cut, and the silhouette is blockier rather than spiky. This is the recommended default for natural coastlines, rivers, and lake outlines.
 
 **Output:**
 
