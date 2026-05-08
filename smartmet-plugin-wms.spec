@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.12
+Version: 26.5.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.13-1.fmi
+- MapLayer: expose the new amalgamation_mainland_area Map JSON setting (km^2) that bypasses the amalgamation triangulation for huge polygons (typically continental landmasses). On dense archipelago datasets where the mainland holds most of the input vertices but cannot benefit from amalgamation anyway, dropping it from the CDT input speeds amalgamation up by another ~4.7x on the gshhg.gshhs_h_l1 Northern-Baltic regression test (1.58 s -> 0.34 s). Reference docs ("Map amalgamation and simplification") and the map_amalgamate / map_amalgamate_simplified gallery entries updated; both regression tests now use amalgamation_mainland_area=1000 km^2 with regenerated reference outputs and PNGs. Caveat: amalgamated island outlines may slightly cross into the mainland near the coastline — visually they abut at the coastline anyway. Requires smartmet-library-gis >= 26.5.8-9.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.12-1.fmi
 - MapLayer: drop Douglas-Peucker support from the Map.simplifier JSON setting. Only "visvalingam_whyatt" and "none" are accepted now; "douglas_peucker" raises an error. DP was unfit for production map rendering — visibly spiky output on natural coastlines and an O(n^2) per-ring synthetic-anchor selection that took 30+ seconds on the gshhg.gshhs_h_l1 Northern-Baltic test. The map_simplifier_dp regression test, its product JSON, saved output and reference PNG are removed; reference docs ("Choosing an algorithm" + Dali examples gallery) updated to mention VW only with a note about why DP was dropped. Requires smartmet-library-gis >= 26.5.8-6.
 

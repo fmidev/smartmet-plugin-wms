@@ -53,6 +53,8 @@ void Map::init(Json::Value& theJson, const Config& /* theConfig */)
         options.amalgamator.lengthLimit(json.asDouble());
       else if (name == "amalgamation_area")
         options.amalgamator.areaLimit(json.asDouble());
+      else if (name == "amalgamation_mainland_area")
+        options.amalgamator.mainlandArea(json.asDouble());
       else if (name == "simplifier")
       {
         const auto value = json.asString();
