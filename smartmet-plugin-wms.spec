@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.10
+Version: 26.5.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -133,7 +133,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.4.28
-#TestRequires: smartmet-test-db
+#TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.11-1.fmi
+- Map simplification regression tests now use the new gshhg.gshhs_h_l1 GSHHG-h coastline polygons (~200 m vertex spacing) instead of natural_earth.admin_0_countries (~1850 m / vertex). The previous source was already pre-generalised to roughly the rendering pixel size at this view, which prevented the simplifier from showing visible thinning at conservative tolerances. Requires smartmet-test-db >= 26.5.8 for the new schema.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.10-1.fmi
 - MapLayer: support polygon amalgamation (amalgamation_length / amalgamation_area, merges nearby polygons such as archipelago islands via constrained Delaunay triangulation) and topology-aware Douglas-Peucker / Visvalingam-Whyatt simplifiers (simplifier + tolerance in pixels, with cross-feature topology preservation so shared boundaries between adjacent polygons are simplified consistently). New Map JSON keys: amalgamation_length, amalgamation_area, simplifier ("douglas_peucker" / "visvalingam_whyatt"), tolerance (pixels, bbox-converted to CRS units per request). Pipeline order in the GIS engine is amalgamator -> minarea -> mindistance -> simplifier. Reference docs include a "Choosing an algorithm" comparison of all four operations and four new Dali integration tests with reference outputs that double as documentation examples. Requires the matching gis-engine 26.5.8.
 

@@ -38,9 +38,9 @@
 		    "precision": 0.1,
 		    "map":
 		    {
-			"schema": "natural_earth",
-			"table": "admin_0_countries",
-			"where": "iso_a2 IN ('FI','SE','AX','EE')",
+			"schema": "gshhg",
+			"table": "gshhs_h_l1",
+			"where": "the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)",
 			"simplifier": "visvalingam_whyatt",
 			"tolerance": 5.0
 		    },
