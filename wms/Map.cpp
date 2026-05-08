@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
+#include <gis/GeometrySimplifier.h>
 #include <macgyver/Exception.h>
 #include <stdexcept>
 
@@ -48,6 +49,26 @@ void Map::init(Json::Value& theJson, const Config& /* theConfig */)
         options.mindistance = json.asDouble();
       else if (name == "minarea")
         options.minarea = json.asDouble();
+      else if (name == "amalgamation_length")
+        options.amalgamator.lengthLimit(json.asDouble());
+      else if (name == "amalgamation_area")
+        options.amalgamator.areaLimit(json.asDouble());
+      else if (name == "simplifier")
+      {
+        const auto value = json.asString();
+        if (value == "douglas_peucker")
+          options.simplifier.type(Fmi::GeometrySimplifier::Type::DouglasPeucker);
+        else if (value == "visvalingam_whyatt")
+          options.simplifier.type(Fmi::GeometrySimplifier::Type::VisvalingamWhyatt);
+        else if (value == "none")
+          options.simplifier.type(Fmi::GeometrySimplifier::Type::None);
+        else
+          throw Fmi::Exception(BCP,
+                               "Unknown map simplifier '" + value +
+                                   "'; expected 'douglas_peucker', 'visvalingam_whyatt' or 'none'");
+      }
+      else if (name == "tolerance")
+        options.simplifier.tolerance(json.asDouble());
       else
         throw Fmi::Exception(BCP, "Map does not have a setting named '" + name + "'");
     }
@@ -77,6 +98,8 @@ std::size_t Map::hash_value(const State& /* theState */) const
     Fmi::hash_combine(hash, Fmi::hash_value(options.where));
     Fmi::hash_combine(hash, Fmi::hash_value(options.minarea));
     Fmi::hash_combine(hash, Fmi::hash_value(options.mindistance));
+    Fmi::hash_combine(hash, options.amalgamator.hash_value());
+    Fmi::hash_combine(hash, options.simplifier.hash_value());
     return hash;
   }
   catch (...)

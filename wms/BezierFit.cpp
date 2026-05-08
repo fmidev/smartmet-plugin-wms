@@ -976,6 +976,16 @@ std::optional<std::pair<CubicBez, double>> fit_to_cubic(const SourceCurve& sourc
 
   for (auto& [cand, cd0, cd1] : cubic_fit(th0, th1, unit_area, unit_mx))
   {
+    // Reject candidates whose control points overshoot the chord. In
+    // normalized chord coords (p0=(0,0), p3=(1,0)), well-behaved cubics
+    // keep both handles' x within [0, 1]. When the moment-fit picks
+    // d0/d1 large enough that p1.x < 0 or p2.x > 1, the resulting curve
+    // has a near-cusp or self-overlap that produces visible kinks at
+    // joins. Skipping such candidates forces fit_to_bezpath_rec to
+    // subdivide and try shorter ranges.
+    if (cand.p1.x < 0.0 || cand.p1.x > 1.0 || cand.p2.x < 0.0 || cand.p2.x > 1.0)
+      continue;
+
     auto c = affine_transform(cand, start.p, th, chord);
     auto err2_opt = curve_dist.eval_dist(source, c, acc2);
     if (err2_opt)
@@ -1152,6 +1162,73 @@ void append_coord(std::string& out, double num, int decimals)
   if (*end == '.' || *end == ',')
     --end;
   out.append(buf, end + 1);
+}
+
+// Round a value to the SVG output precision (same rule as append_coord).
+double round_to_decimals(double num, int decimals)
+{
+  if (decimals <= 0)
+    return static_cast<double>(std::lround(num));
+  double rfactor = 1.0;
+  for (int i = 0; i < decimals; i++)
+    rfactor *= 10.0;
+  return std::round(num * rfactor) / rfactor;
+}
+
+// Smallest representable offset at the SVG output precision.
+double quant_step(int decimals)
+{
+  if (decimals <= 0)
+    return 1.0;
+  double rfactor = 1.0;
+  for (int i = 0; i < decimals; i++)
+    rfactor *= 10.0;
+  return 1.0 / rfactor;
+}
+
+// If rounding has collapsed a Bezier handle onto its anchor (p1==p0 or
+// p2==p3), nudge it by one quantization step in the curve's emerging
+// direction at the anchor. Without a non-zero handle, the rasterizer falls
+// back to the chord (p3-p0) direction; at joins between two such collapsed
+// segments the chord directions of the two segments don't agree and the
+// stroke shows a hairline kink. The direction is taken from the unrounded
+// handle if non-zero (preserving moment-fit tangent), else from the cubic's
+// other handle (the curve's second-derivative direction at this endpoint),
+// else the chord direction.
+Point nudge_collapsed_handle(Point handle_round,
+                             Point anchor_round,
+                             const Point& handle,
+                             const Point& anchor,
+                             const Point& other_handle,
+                             const Point& other_endpoint,
+                             int decimals)
+{
+  if (handle_round.x != anchor_round.x || handle_round.y != anchor_round.y)
+    return handle_round;
+  double dx = handle.x - anchor.x;
+  double dy = handle.y - anchor.y;
+  if (dx == 0.0 && dy == 0.0)
+  {
+    dx = other_handle.x - anchor.x;
+    dy = other_handle.y - anchor.y;
+    if (dx == 0.0 && dy == 0.0)
+    {
+      dx = other_endpoint.x - anchor.x;
+      dy = other_endpoint.y - anchor.y;
+      if (dx == 0.0 && dy == 0.0)
+        return handle_round;
+    }
+  }
+  double step = quant_step(decimals);
+  if (std::abs(dx) >= std::abs(dy))
+  {
+    double sx = (dx >= 0) ? step : -step;
+    double sy = round_to_decimals(dy * step / std::abs(dx), decimals);
+    return {anchor_round.x + sx, anchor_round.y + sy};
+  }
+  double sy = (dy >= 0) ? step : -step;
+  double sx = round_to_decimals(dx * step / std::abs(dy), decimals);
+  return {anchor_round.x + sx, anchor_round.y + sy};
 }
 
 }  // anonymous namespace
@@ -1367,28 +1444,40 @@ void appendBezierSvg(std::string& out,
   if (cubics.empty())
     return;
 
+  Point p0r{round_to_decimals(cubics.front().p0.x, decimals),
+            round_to_decimals(cubics.front().p0.y, decimals)};
+
   if (emitMoveTo)
   {
     out += 'M';
-    append_coord(out, cubics.front().p0.x, decimals);
+    append_coord(out, p0r.x, decimals);
     out += ' ';
-    append_coord(out, cubics.front().p0.y, decimals);
+    append_coord(out, p0r.y, decimals);
   }
 
   for (const auto& c : cubics)
   {
+    Point p3r{round_to_decimals(c.p3.x, decimals), round_to_decimals(c.p3.y, decimals)};
+    Point p1r{round_to_decimals(c.p1.x, decimals), round_to_decimals(c.p1.y, decimals)};
+    Point p2r{round_to_decimals(c.p2.x, decimals), round_to_decimals(c.p2.y, decimals)};
+
+    p1r = nudge_collapsed_handle(p1r, p0r, c.p1, c.p0, c.p2, c.p3, decimals);
+    p2r = nudge_collapsed_handle(p2r, p3r, c.p2, c.p3, c.p1, c.p0, decimals);
+
     out += 'C';
-    append_coord(out, c.p1.x, decimals);
+    append_coord(out, p1r.x, decimals);
     out += ' ';
-    append_coord(out, c.p1.y, decimals);
+    append_coord(out, p1r.y, decimals);
     out += ' ';
-    append_coord(out, c.p2.x, decimals);
+    append_coord(out, p2r.x, decimals);
     out += ' ';
-    append_coord(out, c.p2.y, decimals);
+    append_coord(out, p2r.y, decimals);
     out += ' ';
-    append_coord(out, c.p3.x, decimals);
+    append_coord(out, p3r.x, decimals);
     out += ' ';
-    append_coord(out, c.p3.y, decimals);
+    append_coord(out, p3r.y, decimals);
+
+    p0r = p3r;
   }
 
   if (close)

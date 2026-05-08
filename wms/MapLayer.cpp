@@ -127,6 +127,12 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     // And the box needed for clipping
     const auto clipbox = getClipBox(box);
 
+    // Convert the simplifier tolerance from pixels to CRS units. The
+    // GeometrySimplifier::bbox() call mutates the tolerance in place, so it
+    // must happen exactly once per request. The MapLayer is reconstructed from
+    // JSON for each request, so the tolerance starts fresh in pixel units.
+    map.options.simplifier.bbox(box);
+
     // Fetch the shape in our projection
 
     OGRGeometryPtr geom;
@@ -340,6 +346,9 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 
     const auto clipbox = getClipBox(box);
 
+    // Convert simplifier pixel-tolerance to CRS units (mutates in place).
+    map.options.simplifier.bbox(box);
+
     // Fetch the features in our projection
 
     Fmi::Features features;
@@ -515,6 +524,8 @@ void MapLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     const auto& crs = projection.getCRS();
     const Fmi::Box& box = projection.getBox();
     const auto clipbox = getClipBox(box);
+
+    map.options.simplifier.bbox(box);
 
     const std::string layerName = qid.empty() ? map.options.table : qid;
 

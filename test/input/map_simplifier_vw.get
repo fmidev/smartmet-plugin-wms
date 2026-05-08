@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=map_simplifier_vw HTTP/1.0

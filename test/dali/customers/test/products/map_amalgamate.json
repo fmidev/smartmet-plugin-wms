@@ -1,0 +1,57 @@
+{
+    "title": "Archipelago amalgamation",
+    "projection":
+    {
+	"qid": "p",
+	"crs": "EPSG:4326",
+	"xsize": 900,
+	"ysize": 600,
+	"x1": 18,
+	"y1": 59,
+	"x2": 27,
+	"y2": 65
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "wkt",
+		    "layer_type": "wkt",
+		    "wkt": "POLYGON((-180 -90,-180 90,180 90,180 -90,-180 -90))",
+		    "resolution": 1000,
+		    "attributes":
+		    {
+			"fill": "#069",
+			"stroke": "none"
+		    }
+		},
+		{
+		    "qid": "map",
+		    "layer_type": "map",
+		    "precision": 0.1,
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 IN ('FI','SE','AX','EE')",
+			"amalgamation_length": 0.3,
+			"amalgamation_area": 0.02
+		    },
+		    "attributes":
+		    {
+			"fill": "#ddc",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		}
+	    ]
+	}
+    ]
+}
