@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.11
+Version: 26.5.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.12-1.fmi
+- MapLayer: drop Douglas-Peucker support from the Map.simplifier JSON setting. Only "visvalingam_whyatt" and "none" are accepted now; "douglas_peucker" raises an error. DP was unfit for production map rendering — visibly spiky output on natural coastlines and an O(n^2) per-ring synthetic-anchor selection that took 30+ seconds on the gshhg.gshhs_h_l1 Northern-Baltic test. The map_simplifier_dp regression test, its product JSON, saved output and reference PNG are removed; reference docs ("Choosing an algorithm" + Dali examples gallery) updated to mention VW only with a note about why DP was dropped. Requires smartmet-library-gis >= 26.5.8-6.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.11-1.fmi
 - Map simplification regression tests now use the new gshhg.gshhs_h_l1 GSHHG-h coastline polygons (~200 m vertex spacing) instead of natural_earth.admin_0_countries (~1850 m / vertex). The previous source was already pre-generalised to roughly the rendering pixel size at this view, which prevented the simplifier from showing visible thinning at conservative tolerances. Requires smartmet-test-db >= 26.5.8 for the new schema.
 

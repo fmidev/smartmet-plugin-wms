@@ -56,16 +56,14 @@ void Map::init(Json::Value& theJson, const Config& /* theConfig */)
       else if (name == "simplifier")
       {
         const auto value = json.asString();
-        if (value == "douglas_peucker")
-          options.simplifier.type(Fmi::GeometrySimplifier::Type::DouglasPeucker);
-        else if (value == "visvalingam_whyatt")
+        if (value == "visvalingam_whyatt")
           options.simplifier.type(Fmi::GeometrySimplifier::Type::VisvalingamWhyatt);
         else if (value == "none")
           options.simplifier.type(Fmi::GeometrySimplifier::Type::None);
         else
-          throw Fmi::Exception(BCP,
-                               "Unknown map simplifier '" + value +
-                                   "'; expected 'douglas_peucker', 'visvalingam_whyatt' or 'none'");
+          throw Fmi::Exception(
+              BCP,
+              "Unknown map simplifier '" + value + "'; expected 'visvalingam_whyatt' or 'none'");
       }
       else if (name == "tolerance")
         options.simplifier.tolerance(json.asDouble());

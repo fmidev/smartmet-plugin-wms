@@ -2998,14 +2998,14 @@ The `text` layer type renders static or parameterised text strings as SVG `<text
 The `MapLayer` honours four optional settings that thin the polygons returned by PostGIS before they are clipped, projected and rendered:
 
 - an amalgamator that merges nearby polygons via constrained Delaunay triangulation,
-- a Douglas-Peucker / Visvalingam-Whyatt simplifier with a pixel-based tolerance,
+- a Visvalingam-Whyatt simplifier with a pixel-based tolerance (Douglas-Peucker is no longer supported — see the [Map structure documentation](../reference.md#map-amalgamation-and-simplification) for why),
 - the legacy `minarea` (km²) and `mindistance` (km) filters.
 
 The GIS engine applies them in the order amalgamator → `minarea` → `mindistance` → simplifier, so that `minarea` and the new simplifier operate on the merged outline. See the [Map structure documentation](../reference.md#map-amalgamation-and-simplification) for the algorithmic background and a "Choosing an algorithm" comparison.
 
-The five examples below all render the same Northern-Baltic view (lon 18°–27°, lat 59°–65°, 900×600 px) using the `gshhg.gshhs_h_l1` table (the GSHHG high-resolution L1 land polygons, ≈ 200 m vertex spacing). A bbox prefilter (`the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)`) is added to every test so that the engine reads only the ~14 000 polygons in the area instead of all 144 000 globally — without that filter the amalgamator would attempt a Delaunay triangulation of every island in the world. They are directly comparable so that the visual effect of each option is easy to read.
+The four examples below all render the same Northern-Baltic view (lon 18°–27°, lat 59°–65°, 900×600 px) using the `gshhg.gshhs_h_l1` table (the GSHHG high-resolution L1 land polygons, ≈ 200 m vertex spacing). A bbox prefilter (`the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)`) is added to every test so that the engine reads only the ~14 000 polygons in the area instead of all 144 000 globally — without that filter the amalgamator would attempt a Delaunay triangulation of every island in the world. They are directly comparable so that the visual effect of each option is easy to read.
 
-Apart from the baseline (which keeps every vertex), all four examples apply `minarea=2` (km²) after simplification / amalgamation. This is the standard "drop islands that are below ~2 px² at the rendered scale" filter; the point of running the amalgamator first is that nearby small islands first merge into one larger landmass and only then face the area filter, so an archipelago survives as a chunky shape instead of being thrown away entirely.
+Apart from the baseline (which keeps every vertex), all three other examples apply `minarea=2` (km²) after simplification / amalgamation. This is the standard "drop islands that are below ~2 px² at the rendered scale" filter; the point of running the amalgamator first is that nearby small islands first merge into one larger landmass and only then face the area filter, so an archipelago survives as a chunky shape instead of being thrown away entirely.
 
 > **Units.** `amalgamation_length` is in **CRS coordinate units** — at this latitude (≈ 60° N), 1° lat ≈ 111 km and 1° lon ≈ 56 km, so `amalgamation_length=0.01` ≈ 0.6 km. The simplifier's `tolerance` is in **pixels** at the active projection. `minarea` is in **km²**.
 
@@ -3029,26 +3029,6 @@ The unfiltered source data from `gshhg.gshhs_h_l1`: every coastline vertex from 
 
 ---
 
-### map_simplifier_dp — Douglas-Peucker simplification
-
-**Input:** [`test/input/map_simplifier_dp.get`](../../test/input/map_simplifier_dp.get)
-
-```
-GET /dali?customer=test&product=map_simplifier_dp HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `product` | `map_simplifier_dp` | [`test/dali/customers/test/products/map_simplifier_dp.json`](../../test/dali/customers/test/products/map_simplifier_dp.json) |
-
-Same data as the baseline with `simplifier="douglas_peucker"`, `tolerance=3.0` pixels, and `minarea=2` (km²). About 90 % of the source vertices are removed (≈ 4 700 vertices remain): the simplifier itself drops vertices and `minarea` then drops every individual island below 2 km². The per-island silhouette becomes visibly saw-toothed because Douglas-Peucker keeps the points furthest from the chord between consecutive anchors — on a smoothly-curving coastline that tends to keep the tips of peninsulas and straight-cut the bays in between. Use DP for polygonal/man-made features (administrative borders, building footprints) or when you need a strict "max perpendicular error" guarantee; Visvalingam-Whyatt below is usually a better fit for natural coastlines.
-
-**Output:**
-
-![map_simplifier_dp](../images/dali/map_simplifier_dp.png)
-
----
-
 ### map_simplifier_vw — Visvalingam-Whyatt simplification
 
 **Input:** [`test/input/map_simplifier_vw.get`](../../test/input/map_simplifier_vw.get)
@@ -3061,7 +3041,7 @@ GET /dali?customer=test&product=map_simplifier_vw HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_simplifier_vw` | [`test/dali/customers/test/products/map_simplifier_vw.json`](../../test/dali/customers/test/products/map_simplifier_vw.json) |
 
-Same data as the baseline with `simplifier="visvalingam_whyatt"`, `tolerance=5.0` pixels, and `minarea=2` (km²). About 89 % of the source vertices are removed (≈ 5 200 vertices remain). VW iteratively removes the vertex whose triangle with its neighbours has the smallest area, which preserves the overall shape character better than DP at the same vertex-reduction level — bays and peninsulas remain recognisable rather than being straight-cut, and the silhouette is blockier rather than spiky. This is the recommended default for natural coastlines, rivers, and lake outlines. Note that without amalgamation, `minarea` deletes every individual island that is below the threshold; large stretches of the archipelago that would survive amalgamation are lost.
+Same data as the baseline with `simplifier="visvalingam_whyatt"`, `tolerance=5.0` pixels, and `minarea=2` (km²). About 89 % of the source vertices are removed (≈ 5 200 vertices remain). VW iteratively removes the vertex whose triangle with its neighbours has the smallest area, which preserves the overall shape character — bays and peninsulas remain recognisable, and the silhouette is blockier rather than ragged. Note that without amalgamation, `minarea` deletes every individual island that is below the threshold; large stretches of the archipelago that would survive amalgamation are lost.
 
 **Output:**
 
