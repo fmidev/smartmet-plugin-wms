@@ -2995,7 +2995,37 @@ The `text` layer type renders static or parameterised text strings as SVG `<text
 
 ## Map simplification
 
-The `MapLayer` honours four optional settings that thin the polygons returned by PostGIS before they are clipped, projected and rendered: an amalgamator that merges nearby polygons via constrained Delaunay triangulation, a topology-aware Douglas-Peucker / Visvalingam-Whyatt simplifier with a pixel-based tolerance, and the legacy `minarea` (km²) and `mindistance` (km) filters.  The GIS engine applies them in the order amalgamator → `minarea` → `mindistance` → simplifier so that the area filter and the new simplifier operate on the merged outline.  See the [Map structure documentation](../reference.md#map-amalgamation-and-simplification) for the algorithmic background and a "Choosing an algorithm" comparison; the four examples below show the visual effect of each option.
+The `MapLayer` honours four optional settings that thin the polygons returned by PostGIS before they are clipped, projected and rendered:
+
+- an amalgamator that merges nearby polygons via constrained Delaunay triangulation,
+- a Douglas-Peucker / Visvalingam-Whyatt simplifier with a pixel-based tolerance,
+- the legacy `minarea` (km²) and `mindistance` (km) filters.
+
+The GIS engine applies them in the order amalgamator → `minarea` → `mindistance` → simplifier, so that `minarea` and the new simplifier operate on the merged outline. See the [Map structure documentation](../reference.md#map-amalgamation-and-simplification) for the algorithmic background and a "Choosing an algorithm" comparison.
+
+The five examples below all render the same Northern-Baltic view (lon 18°–27°, lat 59°–65°, 900×600 px) of `natural_earth.admin_0_countries` filtered to Sweden, Finland, Åland and Estonia (`where = "iso_a2 IN ('FI','SE','AX','EE')"`). They are directly comparable so that the visual effect of each option is easy to read.
+
+> **Units.** `amalgamation_length` and `amalgamation_area` are in **CRS coordinate units** — at this latitude (≈ 60° N), 1° lat ≈ 111 km and 1° lon ≈ 56 km, so `amalgamation_length=0.05` ≈ 3 km and `amalgamation_area=0.0005` ≈ 1.5 km². The simplifier's `tolerance` is in **pixels** at the active projection.
+
+### map_baseline — No simplification (reference image)
+
+**Input:** [`test/input/map_baseline.get`](../../test/input/map_baseline.get)
+
+```
+GET /dali?customer=test&product=map_baseline HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_baseline` | [`test/dali/customers/test/products/map_baseline.json`](../../test/dali/customers/test/products/map_baseline.json) |
+
+The unfiltered source data drawn from `natural_earth.admin_0_countries` at 1:50m resolution: every coastline vertex from the source is kept (≈ 4 080 vertices total for the four-country selection). The Stockholm archipelago, Finland's southwestern archipelago and Åland are visible as dense clusters of skerries; this image is the reference against which the simplification settings below should be compared.
+
+**Output:**
+
+![map_baseline](../images/dali/map_baseline.png)
+
+---
 
 ### map_simplifier_dp — Douglas-Peucker simplification
 
@@ -3009,7 +3039,7 @@ GET /dali?customer=test&product=map_simplifier_dp HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_simplifier_dp` | [`test/dali/customers/test/products/map_simplifier_dp.json`](../../test/dali/customers/test/products/map_simplifier_dp.json) |
 
-Renders `natural_earth.admin_0_countries` over a Robinson world map with `simplifier="douglas_peucker"` and `tolerance=2.0` pixels.  The pixel tolerance is converted to CRS coordinate units once per request using the projection box; topology-aware vertex counting keeps shared country borders consistent with no visible slivers.  The resulting SVG path is roughly 30 % smaller than the unsimplified `map_robin` reference.
+Same data as the baseline with `simplifier="douglas_peucker"` and `tolerance=1.0` pixels (the pixel tolerance is converted to CRS coordinate units per request using the projection box). About 64 % of the source vertices are removed. Douglas-Peucker keeps the points furthest from the chord between consecutive anchors, which on a smoothly-curving coastline tends to keep the tips of peninsulas and straight-cut the bays in between, producing slightly angular output even at low tolerance. Use DP for polygonal/man-made features (administrative borders, building footprints) or when you need a strict "max perpendicular error" guarantee; Visvalingam-Whyatt below is usually a better fit for natural coastlines.
 
 **Output:**
 
@@ -3029,7 +3059,7 @@ GET /dali?customer=test&product=map_simplifier_vw HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_simplifier_vw` | [`test/dali/customers/test/products/map_simplifier_vw.json`](../../test/dali/customers/test/products/map_simplifier_vw.json) |
 
-Same projection and pixel tolerance as `map_simplifier_dp` but with `simplifier="visvalingam_whyatt"`.  VW removes vertices by smallest triangle area rather than perpendicular distance, so smooth coastline curves preserve their character better while sharp features are kept.  Useful when Douglas-Peucker leaves visible kinks on rivers or rounded bays.
+Same data as the baseline with `simplifier="visvalingam_whyatt"` and `tolerance=2.0` pixels. About 67 % of the source vertices are removed. VW iteratively removes the vertex whose triangle (with its neighbours) has the smallest area, which preserves overall shape character better than DP at the same vertex-reduction level — bays and peninsulas remain recognisable rather than being straight-cut. This is the recommended default for natural coastlines, rivers, and lake outlines.
 
 **Output:**
 
@@ -3049,7 +3079,7 @@ GET /dali?customer=test&product=map_amalgamate HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate` | [`test/dali/customers/test/products/map_amalgamate.json`](../../test/dali/customers/test/products/map_amalgamate.json) |
 
-A geographic view of the northern Baltic (lon 18°–27°, lat 59°–65°) showing Sweden, Finland, Åland and Estonia (`where = "iso_a2 IN ('FI','SE','AX','EE')"`).  With `amalgamation_length=0.3` (degrees in EPSG:4326, ≈ 33 km) and `amalgamation_area=0.02`, hundreds of small archipelago islands are merged into a handful of larger outlines via constrained Delaunay triangulation: gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged region.  This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
+Same data as the baseline with `amalgamation_length=0.05` (≈ 3 km gap-bridging) and `amalgamation_area=0.0005` (≈ 1.5 km² minimum island area). The amalgamator triangulates the gaps between polygons via constrained Delaunay; gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline. The Stockholm archipelago and Finland's southwestern archipelago consolidate into chunkier landmasses while distinct islands and the mainland coast keep their identity. About 42 % of the source vertices are removed. This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
 
 **Output:**
 
@@ -3069,7 +3099,7 @@ GET /dali?customer=test&product=map_amalgamate_simplified HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate_simplified` | [`test/dali/customers/test/products/map_amalgamate_simplified.json`](../../test/dali/customers/test/products/map_amalgamate_simplified.json) |
 
-The same archipelago view as `map_amalgamate` with the simplifier chained on: `simplifier="visvalingam_whyatt"` at `tolerance=1.5` pixels, applied to the merged outline.  Combining amalgamation with the simplifier is the recommended pipeline for archipelago and dense-coastline datasets — amalgamation gets the silhouette right by merging nearby islands, and the simplifier then thins out the redundant vertices on the merged boundary.
+Same amalgamation as `map_amalgamate` with `simplifier="visvalingam_whyatt"` and `tolerance=1.5` pixels chained on. About 75 % of the source vertices are removed in total. This combination is the recommended pipeline for archipelago and dense-coastline datasets: amalgamation gets the silhouette right by merging nearby islands, and the simplifier then thins out the redundant vertices on the merged boundary.
 
 **Output:**
 

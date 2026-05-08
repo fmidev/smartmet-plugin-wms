@@ -1,5 +1,5 @@
 {
-    "title": "Archipelago amalgamation",
+    "title": "Northern Baltic archipelago amalgamation",
     "projection":
     {
 	"qid": "p",
@@ -41,8 +41,8 @@
 			"schema": "natural_earth",
 			"table": "admin_0_countries",
 			"where": "iso_a2 IN ('FI','SE','AX','EE')",
-			"amalgamation_length": 0.3,
-			"amalgamation_area": 0.02
+			"amalgamation_length": 0.05,
+			"amalgamation_area": 0.0005
 		    },
 		    "attributes":
 		    {

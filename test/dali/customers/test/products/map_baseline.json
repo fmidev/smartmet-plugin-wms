@@ -1,5 +1,5 @@
 {
-    "title": "Northern Baltic with Douglas-Peucker simplification",
+    "title": "Northern Baltic baseline (no simplification)",
     "projection":
     {
 	"qid": "p",
@@ -40,9 +40,7 @@
 		    {
 			"schema": "natural_earth",
 			"table": "admin_0_countries",
-			"where": "iso_a2 IN ('FI','SE','AX','EE')",
-			"simplifier": "douglas_peucker",
-			"tolerance": 1.0
+			"where": "iso_a2 IN ('FI','SE','AX','EE')"
 		    },
 		    "attributes":
 		    {
