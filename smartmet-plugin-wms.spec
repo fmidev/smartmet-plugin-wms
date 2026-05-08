@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.15
+Version: 26.5.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.16-1.fmi
+- Map regression suite: add map_amalgamate_wide.json — same as map_amalgamate but with amalgamation_length doubled from 0.01 to 0.02 (about 1.2 km gap at 60 N). Acts as a calibration reference for how aggressive the gap distance should be at a given rendering pixel scale: at this view the silhouette still reads cleanly along the Finnish coast, but the Stockholm and Åland archipelagos dissolve further into solid blobs and clusters of small skerries start to merge into single landmasses. Reference output, gallery PNG, dali.md gallery section and reference.md gallery row added.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.15-1.fmi
 - Map regression suite: enable amalgamation_mainland_amalgamate=true in both map_amalgamate.json and map_amalgamate_simplified.json so the gallery shows the recommended pipeline (mainland bays close along with the inter-island merges). The standalone map_amalgamate_mainland comparison test introduced in 26.5.14 is dropped now that its output matches map_amalgamate; reference output, gallery PNG, product JSON and dali.md section removed. Reference docs ("Choosing an algorithm" + Map amalgamation gallery) and the Dali example descriptions updated to describe the bay-closing default. No code changes — the gis-library flag was already in place.
 

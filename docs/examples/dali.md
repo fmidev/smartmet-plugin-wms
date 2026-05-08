@@ -3071,6 +3071,26 @@ Compared to the simplifier-only examples above, far more of the archipelago surv
 
 ---
 
+### map_amalgamate_wide — Doubled gap distance
+
+**Input:** [`test/input/map_amalgamate_wide.get`](../../test/input/map_amalgamate_wide.get)
+
+```
+GET /dali?customer=test&product=map_amalgamate_wide HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_amalgamate_wide` | [`test/dali/customers/test/products/map_amalgamate_wide.json`](../../test/dali/customers/test/products/map_amalgamate_wide.json) |
+
+Same as `map_amalgamate` with `amalgamation_length` doubled from `0.01` to `0.02` (≈ 1.2 km gap-bridging at 60° N). Useful for calibrating how aggressive the gap distance should be at a given rendering pixel scale: at this view the silhouette still reads cleanly along the Finnish coast, but the Stockholm and Åland archipelagos dissolve further into solid blobs and clusters of small skerries in the southern bbox start to merge into single landmasses. Pushing the distance further would eventually produce a coastline that no longer looks like the source dataset — at twice the default the result is still recognisable but visibly more abstract than `map_amalgamate`.
+
+**Output:**
+
+![map_amalgamate_wide](../images/dali/map_amalgamate_wide.png)
+
+---
+
 ### map_amalgamate_simplified — Amalgamation followed by Visvalingam-Whyatt
 
 **Input:** [`test/input/map_amalgamate_simplified.get`](../../test/input/map_amalgamate_simplified.get)

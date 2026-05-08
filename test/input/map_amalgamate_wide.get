@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=map_amalgamate_wide HTTP/1.0
