@@ -3005,7 +3005,9 @@ The GIS engine applies them in the order amalgamator → `minarea` → `mindista
 
 The five examples below all render the same Northern-Baltic view (lon 18°–27°, lat 59°–65°, 900×600 px) using the `gshhg.gshhs_h_l1` table (the GSHHG high-resolution L1 land polygons, ≈ 200 m vertex spacing). A bbox prefilter (`the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)`) is added to every test so that the engine reads only the ~14 000 polygons in the area instead of all 144 000 globally — without that filter the amalgamator would attempt a Delaunay triangulation of every island in the world. They are directly comparable so that the visual effect of each option is easy to read.
 
-> **Units.** `amalgamation_length` and `amalgamation_area` are in **CRS coordinate units** — at this latitude (≈ 60° N), 1° lat ≈ 111 km and 1° lon ≈ 56 km, so `amalgamation_length=0.05` ≈ 3 km and `amalgamation_area=0.0005` ≈ 1.5 km². The simplifier's `tolerance` is in **pixels** at the active projection.
+Apart from the baseline (which keeps every vertex), all four examples apply `minarea=2` (km²) after simplification / amalgamation. This is the standard "drop islands that are below ~2 px² at the rendered scale" filter; the point of running the amalgamator first is that nearby small islands first merge into one larger landmass and only then face the area filter, so an archipelago survives as a chunky shape instead of being thrown away entirely.
+
+> **Units.** `amalgamation_length` is in **CRS coordinate units** — at this latitude (≈ 60° N), 1° lat ≈ 111 km and 1° lon ≈ 56 km, so `amalgamation_length=0.02` ≈ 1.2 km. The simplifier's `tolerance` is in **pixels** at the active projection. `minarea` is in **km²**.
 
 ### map_baseline — No simplification (reference image)
 
@@ -3039,7 +3041,7 @@ GET /dali?customer=test&product=map_simplifier_dp HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_simplifier_dp` | [`test/dali/customers/test/products/map_simplifier_dp.json`](../../test/dali/customers/test/products/map_simplifier_dp.json) |
 
-Same data as the baseline with `simplifier="douglas_peucker"` and `tolerance=3.0` pixels (the pixel tolerance is converted to CRS coordinate units per request using the projection box). About 20 % of the source vertices are removed (≈ 36 000 vertices remain) and the per-island silhouette becomes visibly saw-toothed. Douglas-Peucker keeps the points furthest from the chord between consecutive anchors, which on a smoothly-curving coastline tends to keep the tips of peninsulas and straight-cut the bays in between. Use DP for polygonal/man-made features (administrative borders, building footprints) or when you need a strict "max perpendicular error" guarantee; Visvalingam-Whyatt below is usually a better fit for natural coastlines.
+Same data as the baseline with `simplifier="douglas_peucker"`, `tolerance=3.0` pixels, and `minarea=2` (km²). About 90 % of the source vertices are removed (≈ 4 700 vertices remain): the simplifier itself drops vertices and `minarea` then drops every individual island below 2 km². The per-island silhouette becomes visibly saw-toothed because Douglas-Peucker keeps the points furthest from the chord between consecutive anchors — on a smoothly-curving coastline that tends to keep the tips of peninsulas and straight-cut the bays in between. Use DP for polygonal/man-made features (administrative borders, building footprints) or when you need a strict "max perpendicular error" guarantee; Visvalingam-Whyatt below is usually a better fit for natural coastlines.
 
 **Output:**
 
@@ -3059,7 +3061,7 @@ GET /dali?customer=test&product=map_simplifier_vw HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_simplifier_vw` | [`test/dali/customers/test/products/map_simplifier_vw.json`](../../test/dali/customers/test/products/map_simplifier_vw.json) |
 
-Same data as the baseline with `simplifier="visvalingam_whyatt"` and `tolerance=5.0` pixels (a pixel² area threshold for VW, applied after bbox conversion to CRS units). About 19 % of the source vertices are removed (≈ 37 000 vertices remain). VW iteratively removes the vertex whose triangle with its neighbours has the smallest area, which preserves the overall shape character better than DP at the same vertex-reduction level — bays and peninsulas remain recognisable rather than being straight-cut, and the silhouette is blockier rather than spiky. This is the recommended default for natural coastlines, rivers, and lake outlines.
+Same data as the baseline with `simplifier="visvalingam_whyatt"`, `tolerance=5.0` pixels, and `minarea=2` (km²). About 89 % of the source vertices are removed (≈ 5 200 vertices remain). VW iteratively removes the vertex whose triangle with its neighbours has the smallest area, which preserves the overall shape character better than DP at the same vertex-reduction level — bays and peninsulas remain recognisable rather than being straight-cut, and the silhouette is blockier rather than spiky. This is the recommended default for natural coastlines, rivers, and lake outlines. Note that without amalgamation, `minarea` deletes every individual island that is below the threshold; large stretches of the archipelago that would survive amalgamation are lost.
 
 **Output:**
 
@@ -3079,7 +3081,7 @@ GET /dali?customer=test&product=map_amalgamate HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate` | [`test/dali/customers/test/products/map_amalgamate.json`](../../test/dali/customers/test/products/map_amalgamate.json) |
 
-Same data as the baseline with `amalgamation_length=0.05` (≈ 3 km gap-bridging) and `amalgamation_area=0.0005` (≈ 1.5 km² minimum island area). The amalgamator triangulates the gaps between polygons via constrained Delaunay; gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline. The Stockholm archipelago and Finland's southwestern archipelago consolidate into chunkier landmasses while the larger distinct islands and the mainland coast keep their identity. About 94 % of the source vertices are removed (≈ 2 500 vertices remain) — far more than the simplifier alone could achieve while still leaving the coastline silhouette recognisable, because amalgamation can collapse hundreds of small skerries into a single outline. This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
+Same data as the baseline with `amalgamation_length=0.02` (≈ 1.2 km gap-bridging) and `minarea=2` (km²). The amalgamator triangulates the gaps between polygons via constrained Delaunay; gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline. Compared to the simplifier-only examples above, far more of the archipelago survives: nearby skerries that are individually smaller than 2 km² merge into a single landmass that exceeds the threshold and is therefore kept. About 77 % of the source vertices are removed (≈ 10 500 vertices remain). This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
 
 **Output:**
 
@@ -3099,7 +3101,7 @@ GET /dali?customer=test&product=map_amalgamate_simplified HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate_simplified` | [`test/dali/customers/test/products/map_amalgamate_simplified.json`](../../test/dali/customers/test/products/map_amalgamate_simplified.json) |
 
-Same amalgamation as `map_amalgamate` with `simplifier="visvalingam_whyatt"` and `tolerance=1.5` pixels chained on. About 97 % of the source vertices are removed in total (≈ 1 300 vertices remain). This combination is the recommended pipeline for archipelago and dense-coastline datasets: amalgamation gets the silhouette right by merging nearby islands, and the simplifier then thins out the redundant vertices on the merged boundary.
+Same amalgamation and `minarea` as `map_amalgamate` with `simplifier="visvalingam_whyatt"` and `tolerance=1.5` pixels chained on. About 92 % of the source vertices are removed in total (≈ 3 400 vertices remain). This combination is the recommended pipeline for archipelago and dense-coastline datasets: amalgamation gets the silhouette right by merging nearby islands, `minarea` drops the merged blobs that are still too small to render meaningfully, and the simplifier then thins out the redundant vertices on what's left.
 
 **Output:**
 

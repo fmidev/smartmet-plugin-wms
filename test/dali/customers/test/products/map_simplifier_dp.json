@@ -42,7 +42,8 @@
 			"table": "gshhs_h_l1",
 			"where": "the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)",
 			"simplifier": "douglas_peucker",
-			"tolerance": 3.0
+			"tolerance": 3.0,
+			"minarea": 2
 		    },
 		    "attributes":
 		    {
