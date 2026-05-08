@@ -2699,6 +2699,106 @@
           "image" : 
           {
             "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_amalgamate",
+          "path" : 
+          [
+            "test",
+            "map_amalgamate"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Archipelago amalgamation",
+          "url_template" : "/dali?customer=test&product=map_amalgamate&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_amalgamate_simplified",
+          "path" : 
+          [
+            "test",
+            "map_amalgamate_simplified"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Archipelago amalgamation + Visvalingam-Whyatt simplification",
+          "url_template" : "/dali?customer=test&product=map_amalgamate_simplified&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "map_simplifier_dp",
+          "path" : 
+          [
+            "test",
+            "map_simplifier_dp"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+proj=robin",
+            "cx" : 0,
+            "cy" : 0,
+            "resolution" : 50,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "title" : "Map with Douglas-Peucker simplification",
+          "url_template" : "/dali?customer=test&product=map_simplifier_dp&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "map_simplifier_vw",
+          "path" : 
+          [
+            "test",
+            "map_simplifier_vw"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+proj=robin",
+            "cx" : 0,
+            "cy" : 0,
+            "resolution" : 50,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "title" : "Map with Visvalingam-Whyatt simplification",
+          "url_template" : "/dali?customer=test&product=map_simplifier_vw&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
             "width" : 700
           },
           "name" : "metar_basic",
