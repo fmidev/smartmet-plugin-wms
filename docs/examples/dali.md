@@ -3069,6 +3069,26 @@ Same data as the baseline with `amalgamation_length=0.01` (≈ 0.6 km gap-bridgi
 
 ---
 
+### map_amalgamate_mainland — Mainland self-amalgamation
+
+**Input:** [`test/input/map_amalgamate_mainland.get`](../../test/input/map_amalgamate_mainland.get)
+
+```
+GET /dali?customer=test&product=map_amalgamate_mainland HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_amalgamate_mainland` | [`test/dali/customers/test/products/map_amalgamate_mainland.json`](../../test/dali/customers/test/products/map_amalgamate_mainland.json) |
+
+Same as `map_amalgamate` with `amalgamation_mainland_amalgamate=true` added. Mainland polygons (those above `amalgamation_mainland_area=1000` km²) are run through the CDT individually so the gap-triangle pass closes their own bays. Compared to the bypass-only variant above, the Finnish, Estonian and Latvian coastlines are visibly more solid: shallow inlets shorter than the gap-triangle threshold disappear, recognisable to anyone familiar with the coast. Costs ≈ 220 ms extra on this test, much cheaper than putting the mainland into the global cluster CDT.
+
+**Output:**
+
+![map_amalgamate_mainland](../images/dali/map_amalgamate_mainland.png)
+
+---
+
 ### map_amalgamate_simplified — Amalgamation followed by Visvalingam-Whyatt
 
 **Input:** [`test/input/map_amalgamate_simplified.get`](../../test/input/map_amalgamate_simplified.get)

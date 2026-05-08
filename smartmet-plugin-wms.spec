@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.13
+Version: 26.5.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.14-1.fmi
+- MapLayer: expose the new amalgamation_mainland_amalgamate Map JSON boolean. When true (and amalgamation_mainland_area is also set), each above-threshold mainland polygon is run through the CDT by itself instead of being emitted unchanged. The bay-closing effect of the gap-triangle pass thus applies to the coastline too, producing a visibly more solid shoreline that recognisably matches what residents would expect. Costs about 220 ms extra on the gshhg.gshhs_h_l1 Northern-Baltic regression test (1.28 s -> 1.50 s) — much cheaper than putting the mainland into the global cluster CDT. Default false preserves the bypass-unchanged behaviour shipped in 26.5.13. New regression test map_amalgamate_mainland with reference output and gallery PNG; reference docs updated to describe both variants. Requires smartmet-library-gis >= 26.5.8-10.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.13-1.fmi
 - MapLayer: expose the new amalgamation_mainland_area Map JSON setting (km^2) that bypasses the amalgamation triangulation for huge polygons (typically continental landmasses). On dense archipelago datasets where the mainland holds most of the input vertices but cannot benefit from amalgamation anyway, dropping it from the CDT input speeds amalgamation up by another ~4.7x on the gshhg.gshhs_h_l1 Northern-Baltic regression test (1.58 s -> 0.34 s). Reference docs ("Map amalgamation and simplification") and the map_amalgamate / map_amalgamate_simplified gallery entries updated; both regression tests now use amalgamation_mainland_area=1000 km^2 with regenerated reference outputs and PNGs. Caveat: amalgamated island outlines may slightly cross into the mainland near the coastline — visually they abut at the coastline anyway. Requires smartmet-library-gis >= 26.5.8-9.
 
