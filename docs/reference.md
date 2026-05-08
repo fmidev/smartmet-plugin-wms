@@ -4212,14 +4212,61 @@ The table below contains a list of attributes used in the Map structure.
 
 
 <pre><b>Map</b></pre>
-| Name        | Type    | Default value | Description                                                                                                                                                                                                  |
-| ----------- | ------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| schema      | string  | ""            | The database schema.                                                                                                                                                                                         |
-| table       | string  | ""            | The database table.                                                                                                                                                                                          |
-| where       | string  | ""            | The optional where clause for the PostGIS query. For example "cntryname='Finland'"                                                                                                                           |
-| lines       | boolean | false         | Should the data be handled as if it would be stroked or filled. This will alter how the data will be clipped to the view - polygons will either be preserved for filling or cut into polylines for stroking. |
-| minarea     | double  | -             | Minimum area for polygons in square kilometers. For Finland useful values are around 10-100.                                                                                                                 |
-| mindistance | double  | -             | Feature generalization tolerance in kilometers. For Finland useful values are around 1-4.                                                                                                                    |
+| Name                | Type    | Default value | Description                                                                                                                                                                                                  |
+| ------------------- | ------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| schema              | string  | ""            | The database schema.                                                                                                                                                                                         |
+| table               | string  | ""            | The database table.                                                                                                                                                                                          |
+| where               | string  | ""            | The optional where clause for the PostGIS query. For example "cntryname='Finland'"                                                                                                                           |
+| lines               | boolean | false         | Should the data be handled as if it would be stroked or filled. This will alter how the data will be clipped to the view - polygons will either be preserved for filling or cut into polylines for stroking. |
+| minarea             | double  | -             | Minimum area for polygons in square kilometers. For Finland useful values are around 10-100.                                                                                                                 |
+| mindistance         | double  | -             | Feature generalization tolerance in kilometers. For Finland useful values are around 1-4.                                                                                                                    |
+| amalgamation_length | double  | -             | Maximum gap length, in CRS coordinate units, that the polygon amalgamator may bridge to merge nearby polygons (e.g. archipelago islands). See [Map amalgamation and simplification](#map-amalgamation-and-simplification). |
+| amalgamation_area   | double  | -             | After amalgamation, drop polygons whose area, in CRS coordinate units squared, is below this threshold.                                                                                                      |
+| simplifier          | string  | -             | Polygon/line simplification algorithm: `douglas_peucker` (distance-based vertex removal) or `visvalingam_whyatt` (area-based vertex removal). Topology is preserved across shared boundaries.                |
+| tolerance           | double  | -             | Simplification tolerance in **pixels**. Converted to CRS coordinate units using the projection box before being applied. For Douglas-Peucker this is the perpendicular distance threshold; for Visvalingam-Whyatt the area threshold of the squared pixel size.                                                                       |
+
+##### Map amalgamation and simplification
+
+The `amalgamation_*` and `simplifier`/`tolerance` options thin the polygons returned by PostGIS before they are clipped, projected, and rendered. They reduce SVG path length on dense coastlines, archipelagos, and high-resolution country borders, and let a single map dataset render cleanly across multiple zoom levels.
+
+The pipeline applied by the GIS engine, in order:
+
+1. **Amalgamator** (`amalgamation_length` / `amalgamation_area`): merges nearby polygons by triangulating the gaps between them with a constrained Delaunay triangulation. Gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline; the shapetools `amalgamate` tool used the same idea. `amalgamation_area` filters polygons inside this step; setting only `amalgamation_area` filters small polygons without merging.
+2. **minarea**: drops individual polygons whose area is below this km² threshold. Still useful after amalgamation to remove the small islands the amalgamator could not merge into a neighbour.
+3. **mindistance**: runs GEOS `SimplifyPreserveTopology` with a kilometre tolerance. Independent of the new pixel-based simplifier and may be combined with it.
+4. **Simplifier** (`simplifier` + `tolerance`): topology-aware Douglas-Peucker or Visvalingam-Whyatt vertex removal. Shared boundaries between adjacent polygons are simplified consistently so that no slivers appear at the seams.
+
+Amalgamation runs first so that the subsequent `minarea` and the new simplifier see the merged outline rather than each input island in isolation, and so that `amalgamation_area` does not pre-empt the more familiar `minarea` filter on un-merged polygons.
+
+`tolerance` is specified in output pixels and converted to CRS coordinate units once per request using the active projection. A larger value gives a more aggressive simplification; values around 1–3 pixels typically remove redundant vertices without visibly changing the silhouette at the chosen resolution.
+
+###### Choosing an algorithm
+
+The four operations attack different problems and can be combined freely. A short comparison:
+
+| Operation                       | What it does                                                                                                                                                                                                                                  | When to reach for it                                                                                                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `minarea`                       | Drops whole polygons below a km² threshold (despeckle). Vertex count of surviving polygons is unchanged.                                                                                                                                      | Removing slivers and tiny islands from a coastline at a given zoom. Cheap and predictable; keep it on by default for high-resolution country tables.                                       |
+| `mindistance` (GEOS DP, in km)  | Per-geometry Douglas-Peucker via GEOS `SimplifyPreserveTopology`. Each input polygon is simplified independently; tolerance is absolute (km).                                                                                                 | Single feature, unrelated to its neighbours, where you just want lighter geometry. Not safe for tables where adjacent features share a boundary — the shared edge will drift apart and leave slivers between them. |
+| `amalgamation_length` / `_area` | Merges nearby polygons by triangulating the gaps between them and accepting gap triangles with edges shorter than `amalgamation_length`; then optionally drops merged outlines below `amalgamation_area`. **Topology change.**               | Archipelagos and any dataset with hundreds of small islands close together (Stockholm archipelago, Saimaa lakes, fjord coastlines). Equivalent to the old shapetools `amalgamate` tool.   |
+| `simplifier=douglas_peucker`    | Distance-based vertex removal: drops a vertex if its perpendicular distance to the chord between its neighbours is below tolerance. Topology-aware across features — shared boundaries are simplified once, identically for both neighbours. | Default choice for vertex thinning when neighbouring polygons share borders (e.g. `natural_earth.admin_0_countries`). Predictable behaviour and a clear "max error" interpretation.        |
+| `simplifier=visvalingam_whyatt` | Area-based vertex removal: repeatedly removes the vertex whose triangle with its neighbours has the smallest area. Same cross-feature topology preservation as Douglas-Peucker.                                                              | Smooth coastlines and rivers where Douglas-Peucker can leave visible kinks. Tends to preserve the visual character (bays, peninsulas) better, at slightly higher cost.                    |
+
+Rules of thumb:
+
+- For a politically-divided map (countries, municipalities, watersheds), prefer the new `simplifier` over `mindistance`: only it preserves shared edges between neighbours. Use `mindistance` only on standalone features.
+- For an archipelago or a coastline with thousands of small islands, run the amalgamator first; the simplifier alone will leave you with thousands of triangles instead of fewer, recognisable outlines.
+- `minarea` after amalgamation is still useful to trim the small islands that were too far from a neighbour to be merged.
+- Douglas-Peucker tolerance is a max perpendicular error; Visvalingam-Whyatt tolerance is roughly an area in pixel² (the squared pixel size). Equivalent visual aggressiveness usually corresponds to similar numeric values, but a side-by-side comparison at the target zoom is the only reliable way to pick.
+
+The four examples below are drawn from the regression suite (`test/dali/customers/test/products/map_*.json`) and double as reference outputs.
+
+| Description                                                                                                                                          | Map JSON snippet                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| World map, Robinson projection, Douglas-Peucker simplification at 2 px tolerance. Reduces the SVG path size by roughly 30 % vs. the unsimplified output (`map_simplifier_dp.json`). | `{ "schema": "natural_earth", "table": "admin_0_countries", "simplifier": "douglas_peucker", "tolerance": 2.0 }`                       |
+| Same projection and tolerance with Visvalingam-Whyatt (`map_simplifier_vw.json`). VW tends to preserve overall area better and produces smoother corners.                          | `{ "schema": "natural_earth", "table": "admin_0_countries", "simplifier": "visvalingam_whyatt", "tolerance": 2.0 }`                    |
+| Northern Baltic / Finnish archipelago with amalgamation only (`map_amalgamate.json`). Hundreds of islands collapse into a handful of merged outlines. | `{ "schema": "natural_earth", "table": "admin_0_countries", "where": "iso_a2 IN ('FI','SE','AX','EE')", "amalgamation_length": 0.3, "amalgamation_area": 0.02 }` |
+| Same archipelago with amalgamation followed by Visvalingam-Whyatt smoothing (`map_amalgamate_simplified.json`).                                      | `{ ..., "amalgamation_length": 0.3, "amalgamation_area": 0.02, "simplifier": "visvalingam_whyatt", "tolerance": 1.5 }`                 |
 
 #### MapStyles structure
 
