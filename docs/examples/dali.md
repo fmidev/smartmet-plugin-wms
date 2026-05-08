@@ -3007,7 +3007,7 @@ The five examples below all render the same Northern-Baltic view (lon 18°–27�
 
 Apart from the baseline (which keeps every vertex), all four examples apply `minarea=2` (km²) after simplification / amalgamation. This is the standard "drop islands that are below ~2 px² at the rendered scale" filter; the point of running the amalgamator first is that nearby small islands first merge into one larger landmass and only then face the area filter, so an archipelago survives as a chunky shape instead of being thrown away entirely.
 
-> **Units.** `amalgamation_length` is in **CRS coordinate units** — at this latitude (≈ 60° N), 1° lat ≈ 111 km and 1° lon ≈ 56 km, so `amalgamation_length=0.02` ≈ 1.2 km. The simplifier's `tolerance` is in **pixels** at the active projection. `minarea` is in **km²**.
+> **Units.** `amalgamation_length` is in **CRS coordinate units** — at this latitude (≈ 60° N), 1° lat ≈ 111 km and 1° lon ≈ 56 km, so `amalgamation_length=0.01` ≈ 0.6 km. The simplifier's `tolerance` is in **pixels** at the active projection. `minarea` is in **km²**.
 
 ### map_baseline — No simplification (reference image)
 
@@ -3081,7 +3081,7 @@ GET /dali?customer=test&product=map_amalgamate HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate` | [`test/dali/customers/test/products/map_amalgamate.json`](../../test/dali/customers/test/products/map_amalgamate.json) |
 
-Same data as the baseline with `amalgamation_length=0.02` (≈ 1.2 km gap-bridging) and `minarea=2` (km²). The amalgamator triangulates the gaps between polygons via constrained Delaunay; gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline. Compared to the simplifier-only examples above, far more of the archipelago survives: nearby skerries that are individually smaller than 2 km² merge into a single landmass that exceeds the threshold and is therefore kept. About 77 % of the source vertices are removed (≈ 10 500 vertices remain). This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
+Same data as the baseline with `amalgamation_length=0.01` (≈ 0.6 km gap-bridging) and `minarea=2` (km²). The amalgamator triangulates the gaps between polygons via constrained Delaunay; gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged outline. Compared to the simplifier-only examples above, far more of the archipelago survives: nearby skerries that are individually smaller than 2 km² merge into a single landmass that exceeds the threshold and is therefore kept. About 54 % of the source vertices are removed (≈ 20 700 vertices remain). At this length the most distinct individual islands and skerry clusters are still recognisable. This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
 
 **Output:**
 
@@ -3101,7 +3101,7 @@ GET /dali?customer=test&product=map_amalgamate_simplified HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `map_amalgamate_simplified` | [`test/dali/customers/test/products/map_amalgamate_simplified.json`](../../test/dali/customers/test/products/map_amalgamate_simplified.json) |
 
-Same amalgamation and `minarea` as `map_amalgamate` with `simplifier="visvalingam_whyatt"` and `tolerance=1.5` pixels chained on. About 92 % of the source vertices are removed in total (≈ 3 400 vertices remain). This combination is the recommended pipeline for archipelago and dense-coastline datasets: amalgamation gets the silhouette right by merging nearby islands, `minarea` drops the merged blobs that are still too small to render meaningfully, and the simplifier then thins out the redundant vertices on what's left.
+Same amalgamation and `minarea` as `map_amalgamate` with `simplifier="visvalingam_whyatt"` and `tolerance=1.5` pixels chained on. About 90 % of the source vertices are removed in total (≈ 4 500 vertices remain). This combination is the recommended pipeline for archipelago and dense-coastline datasets: amalgamation gets the silhouette right by merging nearby islands, `minarea` drops the merged blobs that are still too small to render meaningfully, and the simplifier then thins out the redundant vertices on what's left.
 
 **Output:**
 

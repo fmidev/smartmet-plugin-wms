@@ -41,7 +41,7 @@
 			"schema": "gshhg",
 			"table": "gshhs_h_l1",
 			"where": "the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)",
-			"amalgamation_length": 0.02,
+			"amalgamation_length": 0.01,
 			"minarea": 2
 		    },
 		    "attributes":
