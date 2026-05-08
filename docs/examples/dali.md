@@ -36,6 +36,7 @@ Each request URL is decomposed into a table showing every query parameter and it
 - [METAR Layer](#metar-layer)
 - [Fire Weather](#fire-weather)
 - [Text Layer](#text-layer)
+- [Map simplification](#map-simplification)
 - [World Map Products](#world-map-products)
 
 ---
@@ -2989,6 +2990,90 @@ The `text` layer type renders static or parameterised text strings as SVG `<text
 **Output:**
 
 ![text](../images/dali/text.png)
+
+---
+
+## Map simplification
+
+The `MapLayer` honours four optional settings that thin the polygons returned by PostGIS before they are clipped, projected and rendered: an amalgamator that merges nearby polygons via constrained Delaunay triangulation, a topology-aware Douglas-Peucker / Visvalingam-Whyatt simplifier with a pixel-based tolerance, and the legacy `minarea` (km²) and `mindistance` (km) filters.  The GIS engine applies them in the order amalgamator → `minarea` → `mindistance` → simplifier so that the area filter and the new simplifier operate on the merged outline.  See the [Map structure documentation](../reference.md#map-amalgamation-and-simplification) for the algorithmic background and a "Choosing an algorithm" comparison; the four examples below show the visual effect of each option.
+
+### map_simplifier_dp — Douglas-Peucker simplification
+
+**Input:** [`test/input/map_simplifier_dp.get`](../../test/input/map_simplifier_dp.get)
+
+```
+GET /dali?customer=test&product=map_simplifier_dp HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_simplifier_dp` | [`test/dali/customers/test/products/map_simplifier_dp.json`](../../test/dali/customers/test/products/map_simplifier_dp.json) |
+
+Renders `natural_earth.admin_0_countries` over a Robinson world map with `simplifier="douglas_peucker"` and `tolerance=2.0` pixels.  The pixel tolerance is converted to CRS coordinate units once per request using the projection box; topology-aware vertex counting keeps shared country borders consistent with no visible slivers.  The resulting SVG path is roughly 30 % smaller than the unsimplified `map_robin` reference.
+
+**Output:**
+
+![map_simplifier_dp](../images/dali/map_simplifier_dp.png)
+
+---
+
+### map_simplifier_vw — Visvalingam-Whyatt simplification
+
+**Input:** [`test/input/map_simplifier_vw.get`](../../test/input/map_simplifier_vw.get)
+
+```
+GET /dali?customer=test&product=map_simplifier_vw HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_simplifier_vw` | [`test/dali/customers/test/products/map_simplifier_vw.json`](../../test/dali/customers/test/products/map_simplifier_vw.json) |
+
+Same projection and pixel tolerance as `map_simplifier_dp` but with `simplifier="visvalingam_whyatt"`.  VW removes vertices by smallest triangle area rather than perpendicular distance, so smooth coastline curves preserve their character better while sharp features are kept.  Useful when Douglas-Peucker leaves visible kinks on rivers or rounded bays.
+
+**Output:**
+
+![map_simplifier_vw](../images/dali/map_simplifier_vw.png)
+
+---
+
+### map_amalgamate — Polygon amalgamation
+
+**Input:** [`test/input/map_amalgamate.get`](../../test/input/map_amalgamate.get)
+
+```
+GET /dali?customer=test&product=map_amalgamate HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_amalgamate` | [`test/dali/customers/test/products/map_amalgamate.json`](../../test/dali/customers/test/products/map_amalgamate.json) |
+
+A geographic view of the northern Baltic (lon 18°–27°, lat 59°–65°) showing Sweden, Finland, Åland and Estonia (`where = "iso_a2 IN ('FI','SE','AX','EE')"`).  With `amalgamation_length=0.3` (degrees in EPSG:4326, ≈ 33 km) and `amalgamation_area=0.02`, hundreds of small archipelago islands are merged into a handful of larger outlines via constrained Delaunay triangulation: gap triangles whose edges are all shorter than `amalgamation_length` are accepted as part of the merged region.  This is a topology change that GEOS' `SimplifyPreserveTopology` cannot perform — that simplifier would leave each tiny island as its own (simplified) polygon.
+
+**Output:**
+
+![map_amalgamate](../images/dali/map_amalgamate.png)
+
+---
+
+### map_amalgamate_simplified — Amalgamation followed by Visvalingam-Whyatt
+
+**Input:** [`test/input/map_amalgamate_simplified.get`](../../test/input/map_amalgamate_simplified.get)
+
+```
+GET /dali?customer=test&product=map_amalgamate_simplified HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_amalgamate_simplified` | [`test/dali/customers/test/products/map_amalgamate_simplified.json`](../../test/dali/customers/test/products/map_amalgamate_simplified.json) |
+
+The same archipelago view as `map_amalgamate` with the simplifier chained on: `simplifier="visvalingam_whyatt"` at `tolerance=1.5` pixels, applied to the merged outline.  Combining amalgamation with the simplifier is the recommended pipeline for archipelago and dense-coastline datasets — amalgamation gets the silhouette right by merging nearby islands, and the simplifier then thins out the redundant vertices on the merged boundary.
+
+**Output:**
+
+![map_amalgamate_simplified](../images/dali/map_amalgamate_simplified.png)
 
 ---
 
