@@ -3003,9 +3003,9 @@ The `MapLayer` honours four optional settings that thin the polygons returned by
 
 The GIS engine applies them in the order amalgamator → `minarea` → `mindistance` → simplifier, so that `minarea` and the new simplifier operate on the merged outline. See the [Map structure documentation](../reference.md#map-amalgamation-and-simplification) for the algorithmic background and a "Choosing an algorithm" comparison.
 
-The six examples below all render the same Northern-Baltic view (lon 18°–27°, lat 59°–65°, 900×600 px) using the `gshhg.gshhs_h_l1` table (the GSHHG high-resolution L1 land polygons, ≈ 200 m vertex spacing). A bbox prefilter (`the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)`) is added to every test so that the engine reads only the ~14 000 polygons in the area instead of all 144 000 globally — without that filter the amalgamator would attempt a Delaunay triangulation of every island in the world. They are directly comparable so that the visual effect of each option is easy to read.
+The seven examples below all render the same Northern-Baltic view (lon 18°–27°, lat 59°–65°, 900×600 px) using the `gshhg.gshhs_h_l1` table (the GSHHG high-resolution L1 land polygons, ≈ 200 m vertex spacing). A bbox prefilter (`the_geom && ST_MakeEnvelope(17, 58, 28, 66, 4326)`) is added to every test so that the engine reads only the ~14 000 polygons in the area instead of all 144 000 globally — without that filter the amalgamator would attempt a Delaunay triangulation of every island in the world. They are directly comparable so that the visual effect of each option is easy to read.
 
-The three middle examples (`map_amalgamate`, `map_amalgamate_wide`, `map_amalgamate_extreme`) form a deliberate calibration sequence at `amalgamation_length` 0.01 → 0.02 → 0.05, so that the visual cost of pushing the gap distance past a sensible value for the rendering pixel scale is easy to read off the gallery PNGs.
+The four amalgamation examples (`map_amalgamate`, `map_amalgamate_wide`, `map_amalgamate_extreme`, `map_amalgamate_pathological`) form a deliberate calibration sequence at `amalgamation_length` 0.01 → 0.02 → 0.05 → 0.1, so that the visual cost of pushing the gap distance past a sensible value for the rendering pixel scale is easy to read off the gallery PNGs. The pathological case is included to show that the algorithm degrades gracefully — it produces valid topology even at clearly absurd distances.
 
 Apart from the baseline (which keeps every vertex), every other example applies `minarea=2` (km²) after simplification / amalgamation. This is the standard "drop islands that are below ~2 px² at the rendered scale" filter; the point of running the amalgamator first is that nearby small islands first merge into one larger landmass and only then face the area filter, so an archipelago survives as a chunky shape instead of being thrown away entirely.
 
@@ -3110,6 +3110,26 @@ Same as `map_amalgamate` with `amalgamation_length` raised to `0.05` (≈ 3 km g
 **Output:**
 
 ![map_amalgamate_extreme](../images/dali/map_amalgamate_extreme.png)
+
+---
+
+### map_amalgamate_pathological — Algorithm breakdown at 10× the recommended distance
+
+**Input:** [`test/input/map_amalgamate_pathological.get`](../../test/input/map_amalgamate_pathological.get)
+
+```
+GET /dali?customer=test&product=map_amalgamate_pathological HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_amalgamate_pathological` | [`test/dali/customers/test/products/map_amalgamate_pathological.json`](../../test/dali/customers/test/products/map_amalgamate_pathological.json) |
+
+`amalgamation_length=0.1` (≈ 6 km gap-bridging at 60° N), 10 × the recommended default and well past the source data's natural island spacing. Mainland coastlines reduce to cartoonish silhouettes, the Stockholm archipelago is fully fused with the Swedish mainland, and the gap-triangle pass starts producing scattered "ghost" white spots in the Bothnian Sea and Gulf of Finland — narrow interior holes inside the merged region that survive the boundary walk. The algorithm is degrading gracefully (it still produces valid topology, just nonsensical output) rather than failing. Included to make the upper edge of the calibration sequence visible.
+
+**Output:**
+
+![map_amalgamate_pathological](../images/dali/map_amalgamate_pathological.png)
 
 ---
 
