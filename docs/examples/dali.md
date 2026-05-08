@@ -3091,6 +3091,26 @@ Same as `map_amalgamate` with `amalgamation_length` doubled from `0.01` to `0.02
 
 ---
 
+### map_amalgamate_extreme — Excessive gap distance (do not exceed)
+
+**Input:** [`test/input/map_amalgamate_extreme.get`](../../test/input/map_amalgamate_extreme.get)
+
+```
+GET /dali?customer=test&product=map_amalgamate_extreme HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `map_amalgamate_extreme` | [`test/dali/customers/test/products/map_amalgamate_extreme.json`](../../test/dali/customers/test/products/map_amalgamate_extreme.json) |
+
+Same as `map_amalgamate` with `amalgamation_length` raised to `0.05` (≈ 3 km gap-bridging at 60° N) — five times the recommended default. Included as a deliberate "do not exceed" reference: the Stockholm archipelago has dissolved into the Swedish mainland, Åland has become a single solid blob no longer recognisable as an archipelago, the Estonian and Latvian coasts have lost most of their detail, and shallow Finnish bays have filled in. The output is faster to render than the default (less geometry to draw) but is no longer a faithful representation of the source dataset. Useful for calibrating an upper limit when picking `amalgamation_length` for a new view or zoom level.
+
+**Output:**
+
+![map_amalgamate_extreme](../images/dali/map_amalgamate_extreme.png)
+
+---
+
 ### map_amalgamate_simplified — Amalgamation followed by Visvalingam-Whyatt
 
 **Input:** [`test/input/map_amalgamate_simplified.get`](../../test/input/map_amalgamate_simplified.get)

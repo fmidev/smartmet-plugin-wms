@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.16
+Version: 26.5.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.17-1.fmi
+- Map regression suite: add map_amalgamate_extreme.json — same as map_amalgamate but with amalgamation_length raised to 0.05 (about 3 km gap at 60 N), 5x the recommended default. Included as a deliberate "do not exceed" reference: the Stockholm archipelago dissolves into the Swedish mainland, Åland becomes a single solid blob no longer recognisable as an archipelago, the Estonian and Latvian coasts lose most of their detail, and shallow Finnish bays fill in. Useful for calibrating an upper limit when picking amalgamation_length for a new view or zoom level. Reference output, gallery PNG, dali.md gallery section and reference.md gallery row added.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.16-1.fmi
 - Map regression suite: add map_amalgamate_wide.json — same as map_amalgamate but with amalgamation_length doubled from 0.01 to 0.02 (about 1.2 km gap at 60 N). Acts as a calibration reference for how aggressive the gap distance should be at a given rendering pixel scale: at this view the silhouette still reads cleanly along the Finnish coast, but the Stockholm and Åland archipelagos dissolve further into solid blobs and clusters of small skerries start to merge into single landmasses. Reference output, gallery PNG, dali.md gallery section and reference.md gallery row added.
 
