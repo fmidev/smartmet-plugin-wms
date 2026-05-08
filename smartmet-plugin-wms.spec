@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.9
+Version: 26.5.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.10-1.fmi
+- MapLayer: support polygon amalgamation (amalgamation_length / amalgamation_area, merges nearby polygons such as archipelago islands via constrained Delaunay triangulation) and topology-aware Douglas-Peucker / Visvalingam-Whyatt simplifiers (simplifier + tolerance in pixels, with cross-feature topology preservation so shared boundaries between adjacent polygons are simplified consistently). New Map JSON keys: amalgamation_length, amalgamation_area, simplifier ("douglas_peucker" / "visvalingam_whyatt"), tolerance (pixels, bbox-converted to CRS units per request). Pipeline order in the GIS engine is amalgamator -> minarea -> mindistance -> simplifier. Reference docs include a "Choosing an algorithm" comparison of all four operations and four new Dali integration tests with reference outputs that double as documentation examples. Requires the matching gis-engine 26.5.8.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.9-1.fmi
 - BezierFit: appendBezierSvg nudges control points whose SVG-rounded coordinates collapse onto the anchor (p1==p0 or p2==p3) by one quantization step in the curve's emerging direction; without the nudge the rasterizer falls back to the chord direction at the affected endpoint and adjacent collapsed segments produce mismatched-tangent kinks visible as hairline gaps in the stroke
 - BezierFit: fit_to_cubic rejects moment-fit candidates whose control points have x outside [0, 1] in normalized chord coords; such overshoots indicate a near-cusp or self-overlap and produced visible breaks at joins, recursive subdivision now picks shorter ranges instead
