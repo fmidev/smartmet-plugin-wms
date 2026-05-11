@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.18
+Version: 26.5.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon May 11 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.5.11-1.fmi
+- Repackage to avoid date in version to be in future
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.18-1.fmi
 - Map regression suite: add map_amalgamate_pathological.json — same as map_amalgamate but with amalgamation_length=0.1 (about 6 km gap at 60 N), 10x the recommended default and well past the source data's natural island spacing. Demonstrates outright algorithm breakdown: mainland coastlines reduce to cartoonish silhouettes, the Stockholm archipelago is fully fused with the Swedish mainland, and the gap-triangle pass produces scattered "ghost" white spots in the Bothnian Sea and Gulf of Finland (narrow interior holes inside the merged region that survive the boundary walk). Included to show that the algorithm degrades gracefully rather than failing — it still produces valid topology, just nonsensical output. Reference output, gallery PNG, dali.md gallery section, reference.md gallery row added; gallery intros updated to describe the now-four-step calibration sequence (0.01 -> 0.02 -> 0.05 -> 0.1).
 
