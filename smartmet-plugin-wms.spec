@@ -174,34 +174,35 @@ rm -rf $RPM_BUILD_ROOT
 * Mon May 11 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.5.11-1.fmi
 - Repackage to avoid date in version to be in future
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.18-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-18.fmi
+>>>>>>> 9350475e (Fixed RPM versions messed up by Claude)
 - Map regression suite: add map_amalgamate_pathological.json — same as map_amalgamate but with amalgamation_length=0.1 (about 6 km gap at 60 N), 10x the recommended default and well past the source data's natural island spacing. Demonstrates outright algorithm breakdown: mainland coastlines reduce to cartoonish silhouettes, the Stockholm archipelago is fully fused with the Swedish mainland, and the gap-triangle pass produces scattered "ghost" white spots in the Bothnian Sea and Gulf of Finland (narrow interior holes inside the merged region that survive the boundary walk). Included to show that the algorithm degrades gracefully rather than failing — it still produces valid topology, just nonsensical output. Reference output, gallery PNG, dali.md gallery section, reference.md gallery row added; gallery intros updated to describe the now-four-step calibration sequence (0.01 -> 0.02 -> 0.05 -> 0.1).
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.17-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.18-17.fmi
 - Map regression suite: add map_amalgamate_extreme.json — same as map_amalgamate but with amalgamation_length raised to 0.05 (about 3 km gap at 60 N), 5x the recommended default. Included as a deliberate "do not exceed" reference: the Stockholm archipelago dissolves into the Swedish mainland, Åland becomes a single solid blob no longer recognisable as an archipelago, the Estonian and Latvian coasts lose most of their detail, and shallow Finnish bays fill in. Useful for calibrating an upper limit when picking amalgamation_length for a new view or zoom level. Reference output, gallery PNG, dali.md gallery section and reference.md gallery row added.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.16-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-16.fmi
 - Map regression suite: add map_amalgamate_wide.json — same as map_amalgamate but with amalgamation_length doubled from 0.01 to 0.02 (about 1.2 km gap at 60 N). Acts as a calibration reference for how aggressive the gap distance should be at a given rendering pixel scale: at this view the silhouette still reads cleanly along the Finnish coast, but the Stockholm and Åland archipelagos dissolve further into solid blobs and clusters of small skerries start to merge into single landmasses. Reference output, gallery PNG, dali.md gallery section and reference.md gallery row added.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.15-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-15.fmi
 - Map regression suite: enable amalgamation_mainland_amalgamate=true in both map_amalgamate.json and map_amalgamate_simplified.json so the gallery shows the recommended pipeline (mainland bays close along with the inter-island merges). The standalone map_amalgamate_mainland comparison test introduced in 26.5.14 is dropped now that its output matches map_amalgamate; reference output, gallery PNG, product JSON and dali.md section removed. Reference docs ("Choosing an algorithm" + Map amalgamation gallery) and the Dali example descriptions updated to describe the bay-closing default. No code changes — the gis-library flag was already in place.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.14-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-14.fmi
 - MapLayer: expose the new amalgamation_mainland_amalgamate Map JSON boolean. When true (and amalgamation_mainland_area is also set), each above-threshold mainland polygon is run through the CDT by itself instead of being emitted unchanged. The bay-closing effect of the gap-triangle pass thus applies to the coastline too, producing a visibly more solid shoreline that recognisably matches what residents would expect. Costs about 220 ms extra on the gshhg.gshhs_h_l1 Northern-Baltic regression test (1.28 s -> 1.50 s) — much cheaper than putting the mainland into the global cluster CDT. Default false preserves the bypass-unchanged behaviour shipped in 26.5.13. New regression test map_amalgamate_mainland with reference output and gallery PNG; reference docs updated to describe both variants. Requires smartmet-library-gis >= 26.5.8-10.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.13-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-13.fmi
 - MapLayer: expose the new amalgamation_mainland_area Map JSON setting (km^2) that bypasses the amalgamation triangulation for huge polygons (typically continental landmasses). On dense archipelago datasets where the mainland holds most of the input vertices but cannot benefit from amalgamation anyway, dropping it from the CDT input speeds amalgamation up by another ~4.7x on the gshhg.gshhs_h_l1 Northern-Baltic regression test (1.58 s -> 0.34 s). Reference docs ("Map amalgamation and simplification") and the map_amalgamate / map_amalgamate_simplified gallery entries updated; both regression tests now use amalgamation_mainland_area=1000 km^2 with regenerated reference outputs and PNGs. Caveat: amalgamated island outlines may slightly cross into the mainland near the coastline — visually they abut at the coastline anyway. Requires smartmet-library-gis >= 26.5.8-9.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.12-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-12.fmi
 - MapLayer: drop Douglas-Peucker support from the Map.simplifier JSON setting. Only "visvalingam_whyatt" and "none" are accepted now; "douglas_peucker" raises an error. DP was unfit for production map rendering — visibly spiky output on natural coastlines and an O(n^2) per-ring synthetic-anchor selection that took 30+ seconds on the gshhg.gshhs_h_l1 Northern-Baltic test. The map_simplifier_dp regression test, its product JSON, saved output and reference PNG are removed; reference docs ("Choosing an algorithm" + Dali examples gallery) updated to mention VW only with a note about why DP was dropped. Requires smartmet-library-gis >= 26.5.8-6.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.11-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-4.fmi
 - Map simplification regression tests now use the new gshhg.gshhs_h_l1 GSHHG-h coastline polygons (~200 m vertex spacing) instead of natural_earth.admin_0_countries (~1850 m / vertex). The previous source was already pre-generalised to roughly the rendering pixel size at this view, which prevented the simplifier from showing visible thinning at conservative tolerances. Requires smartmet-test-db >= 26.5.8 for the new schema.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.10-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-3.fmi
 - MapLayer: support polygon amalgamation (amalgamation_length / amalgamation_area, merges nearby polygons such as archipelago islands via constrained Delaunay triangulation) and topology-aware Douglas-Peucker / Visvalingam-Whyatt simplifiers (simplifier + tolerance in pixels, with cross-feature topology preservation so shared boundaries between adjacent polygons are simplified consistently). New Map JSON keys: amalgamation_length, amalgamation_area, simplifier ("douglas_peucker" / "visvalingam_whyatt"), tolerance (pixels, bbox-converted to CRS units per request). Pipeline order in the GIS engine is amalgamator -> minarea -> mindistance -> simplifier. Reference docs include a "Choosing an algorithm" comparison of all four operations and four new Dali integration tests with reference outputs that double as documentation examples. Requires the matching gis-engine 26.5.8.
 
-* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.9-1.fmi
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.8-2.fmi
 - BezierFit: appendBezierSvg nudges control points whose SVG-rounded coordinates collapse onto the anchor (p1==p0 or p2==p3) by one quantization step in the curve's emerging direction; without the nudge the rasterizer falls back to the chord direction at the affected endpoint and adjacent collapsed segments produce mismatched-tangent kinks visible as hairline gaps in the stroke
 - BezierFit: fit_to_cubic rejects moment-fit candidates whose control points have x outside [0, 1] in normalized chord coords; such overshoots indicate a near-cusp or self-overlap and produced visible breaks at joins, recursive subdivision now picks shorter ranges instead
 
