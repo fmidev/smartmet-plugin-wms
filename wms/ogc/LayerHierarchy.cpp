@@ -293,6 +293,16 @@ std::vector<LayerGroup> group_children(
     // (for geo/proj).
     auto leaves = get_leaf_layers(*child);
 
+    // Representative leaves for each dimension. We must pick a leaf rather
+    // than the intermediate `child`, because the per-dimension emit_*()
+    // helpers bail when the node has no dimension set. If `*Source` ever
+    // pointed at an intermediate, emit_*() would silently produce nothing
+    // while emit_group() still poisoned child_inh.*Key, which suppressed
+    // the dimension throughout the subtree.
+    const LayerHierarchy* geo_repr = nullptr;
+    const LayerHierarchy* time_repr = nullptr;
+    const LayerHierarchy* elev_repr = nullptr;
+
     // geo: unanimous only
     std::string g;
     bool geo_unanimous = true;
@@ -300,7 +310,11 @@ std::vector<LayerGroup> group_children(
     {
       std::string k = geo_key(*leaf);
       if (g.empty())
+      {
         g = k;
+        if (!k.empty())
+          geo_repr = leaf;
+      }
       else if (k != g)
       {
         geo_unanimous = false;
@@ -308,11 +322,19 @@ std::vector<LayerGroup> group_children(
       }
     }
     std::string child_geo = geo_unanimous ? g : "";
+    if (child_geo.empty())
+      geo_repr = nullptr;
 
     // time: most common across leaves
     std::map<std::string, int> time_counts;
+    std::map<std::string, const LayerHierarchy*> time_first;
     for (const auto* leaf : leaves)
-      time_counts[time_key(*leaf)]++;
+    {
+      std::string k = time_key(*leaf);
+      time_counts[k]++;
+      if (!k.empty() && !time_first.count(k))
+        time_first[k] = leaf;
+    }
     std::string child_time;
     int best = 0;
     for (const auto& [k, v] : time_counts)
@@ -321,11 +343,23 @@ std::vector<LayerGroup> group_children(
         best = v;
         child_time = k;
       }
+    if (!child_time.empty())
+    {
+      auto it = time_first.find(child_time);
+      if (it != time_first.end())
+        time_repr = it->second;
+    }
 
     // elev: most common across leaves
     std::map<std::string, int> elev_counts;
+    std::map<std::string, const LayerHierarchy*> elev_first;
     for (const auto* leaf : leaves)
-      elev_counts[elev_key(*leaf)]++;
+    {
+      std::string k = elev_key(*leaf);
+      elev_counts[k]++;
+      if (!k.empty() && !elev_first.count(k))
+        elev_first[k] = leaf;
+    }
     std::string child_elev;
     best = 0;
     for (const auto& [k, v] : elev_counts)
@@ -334,18 +368,24 @@ std::vector<LayerGroup> group_children(
         best = v;
         child_elev = k;
       }
+    if (!child_elev.empty())
+    {
+      auto it = elev_first.find(child_elev);
+      if (it != elev_first.end())
+        elev_repr = it->second;
+    }
 
     auto key = std::make_tuple(child_geo, child_time, child_elev);
     auto& grp = groups[key];
     grp.geoKey = child_geo;
     grp.timeKey = child_time;
     grp.elevKey = child_elev;
-    if (!child_geo.empty() && !grp.geoSource)
-      grp.geoSource = child.get();
-    if (!child_time.empty() && !grp.timeSource)
-      grp.timeSource = child.get();
-    if (!child_elev.empty() && !grp.elevSource)
-      grp.elevSource = child.get();
+    if (geo_repr && !grp.geoSource)
+      grp.geoSource = geo_repr;
+    if (time_repr && !grp.timeSource)
+      grp.timeSource = time_repr;
+    if (elev_repr && !grp.elevSource)
+      grp.elevSource = elev_repr;
     grp.members.push_back(child.get());
   }
 
@@ -558,11 +598,15 @@ void emit_group(bool multiple_intervals,
 
   if (need_virtual_node)
   {
-    // Emit shared attributes into virtual_node
+    // Emit shared attributes into virtual_node. Only update child_inh after
+    // confirming the emit actually produced content — otherwise the children
+    // would inherit a key the virtual node never declared and suppress their
+    // own emission, dropping the dimension from the whole subtree.
     if (grp.geoSource && !grp.geoKey.empty() && grp.geoKey != inh.geoKey)
     {
       emit_geo(virtual_node, *grp.geoSource, inh);
-      child_inh.geoKey = grp.geoKey;
+      if (virtual_node.Exists("ex_geographic_bounding_box"))
+        child_inh.geoKey = grp.geoKey;
     }
     if (grp.timeSource && !grp.timeKey.empty() && grp.timeKey != inh.timeKey)
     {
@@ -575,17 +619,23 @@ void emit_group(bool multiple_intervals,
                 reference_time,
                 ref_time_children,
                 inh);
-      child_inh.timeKey = grp.timeKey;
-      child_inh.timeDimLayer =
-          grp.timeSource->timeDimension ? grp.timeSource->timeDimension->getLayer() : nullptr;
+      if (virtual_node.Exists("time_dimension"))
+      {
+        child_inh.timeKey = grp.timeKey;
+        child_inh.timeDimLayer =
+            grp.timeSource->timeDimension ? grp.timeSource->timeDimension->getLayer() : nullptr;
+      }
     }
     if (grp.elevSource && !grp.elevKey.empty() && grp.elevKey != inh.elevKey)
     {
       emit_elev(virtual_node, *grp.elevSource, inh);
-      child_inh.elevKey = grp.elevKey;
-      child_inh.elevDimLayer = grp.elevSource->elevationDimension
-                                   ? grp.elevSource->elevationDimension->getLayer()
-                                   : nullptr;
+      if (virtual_node.Exists("elevation_dimension"))
+      {
+        child_inh.elevKey = grp.elevKey;
+        child_inh.elevDimLayer = grp.elevSource->elevationDimension
+                                     ? grp.elevSource->elevationDimension->getLayer()
+                                     : nullptr;
+      }
     }
     if (!grp.sharedProj.empty())
     {
