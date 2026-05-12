@@ -1,0 +1,32 @@
+{
+    "title": "Regression test layer 1 (under intermediate aaa)",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 256,
+	"ysize": 256
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "number",
+                    "parameter": "Temperature",
+		    "label":
+		    {
+			"missing": "-"
+		    },
+		    "positions":
+		    {
+			"layout": "grid",
+			"dx": 60,
+			"dy": 60
+		    }
+                }
+            ]
+        }
+    ]
+}

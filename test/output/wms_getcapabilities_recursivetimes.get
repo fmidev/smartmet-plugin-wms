@@ -99,10 +99,6 @@
       
         <Layer queryable="0">
       <Title>test</Title>
-
-	
-	  <Layer queryable="0">
-      <Title>test:netatmo5min</Title>
       <CRS>AUTO2:42001</CRS>
       <CRS>AUTO2:42002</CRS>
       <CRS>AUTO2:42003</CRS>
@@ -110,6 +106,18 @@
       <CRS>AUTO2:97001</CRS>
       <CRS>AUTO2:97002</CRS>
       <CRS>AUTO2:97003</CRS>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      
+      <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
+      
+
+	
+	  <Layer queryable="0">
+      <Title>test</Title>
+
+	  
+	    <Layer queryable="0">
+      <Title>test:netatmo5min</Title>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -141,8 +149,8 @@
       <Dimension name="interval_end" units="minute" default="0" multipleValues="0" nearestValue="0">0</Dimension>
       
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>test:netatmo5min</Name>
       <Title>NetAtmo obervations for 5 minute period</Title>
       <Style>
@@ -155,8 +163,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:roadcloud5min</Name>
       <Title>RoadCloud obervations for 5 minute period</Title>
       <Style>
@@ -169,17 +177,10 @@
       </Style>
       </Layer>
 
-	    </Layer>
-	  <Layer queryable="1">
+	      </Layer>
+	    <Layer queryable="1">
       <Name>test:backgroundmap</Name>
       <Title>Background map</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -214,16 +215,9 @@
       </Style>
       </Layer>
 
-	  
-	  <Layer queryable="0">
+	    
+	    <Layer queryable="0">
       <Title>test:cities</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -248,13 +242,9 @@
       <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11988575.3708"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.098706" miny="51.3" maxx="49" maxy="72.642084"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      
-      <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>test:cities</Name>
       <Title>City location map</Title>
       <Style>
@@ -267,15 +257,15 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:frame_layer</Name>
       <Title>Legend</Title>
       <Abstract>Icemap legend</Abstract>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:isolabel</Name>
       <Title>Demo product</Title>
       <Style>
@@ -304,8 +294,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:nonvariant_pal</Name>
       <Title>PAL Skandinavia Temperature</Title>
       <Abstract>PAL abstract</Abstract>
@@ -319,8 +309,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:precipitation</Name>
       <Title>Demo product</Title>
       <Style>
@@ -357,8 +347,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:precipitation_areas</Name>
       <Title>Precipitation map</Title>
       <Style>
@@ -387,8 +377,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:precipitation_isoband_labels</Name>
       <Title>Precipitation isobands with legend labels</Title>
       <Style>
@@ -401,8 +391,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:precipitation_modified</Name>
       <Title>Demo product</Title>
       <Style>
@@ -415,8 +405,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:precipitationform_symbols</Name>
       <Title>Precipitation form symbols with legend labels</Title>
       <Style>
@@ -429,8 +419,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:pressure_isoline_groups</Name>
       <Title>Demo product</Title>
       <Style>
@@ -443,8 +433,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:pressure_isoline_groups_aggregate_max</Name>
       <Title>Demo product</Title>
       <Style>
@@ -457,8 +447,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:pressure_isoline_groups_aggregate_min</Name>
       <Title>Demo product</Title>
       <Style>
@@ -471,8 +461,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:snow_drift_index</Name>
       <Title>HARMONIE Snow Drift Index</Title>
       <Abstract>Snow drift index from HARMONIE forecast model</Abstract>
@@ -486,8 +476,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:t2m</Name>
       <Title>Demo product</Title>
       <Style>
@@ -524,8 +514,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:t2m_isoband_labels</Name>
       <Title>How to change labels from isoband settings</Title>
       <Style>
@@ -538,8 +528,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:t2m_numbers</Name>
       <Title>Temperature numbers</Title>
       <Style>
@@ -552,8 +542,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:t2m_p</Name>
       <Title>Demo product</Title>
       <Style>
@@ -566,8 +556,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
+	      
+	      <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:wind</Name>
       <Title>Wind demo</Title>
       <Abstract>Test abstract</Abstract>
@@ -609,8 +599,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
+	      
+	      <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:wind_alternative_legend_style</Name>
       <Title>Wind demo - alternative legend style</Title>
       <Abstract>Test abstract - alternative legend style</Abstract>
@@ -628,8 +618,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
+	      
+	      <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:windarrows</Name>
       <Title>Wind demo</Title>
       <Abstract>Test abstract</Abstract>
@@ -655,8 +645,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
+	      
+	      <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:windarrows_aggregate_max</Name>
       <Title>Wind demo</Title>
       <Abstract>Test abstract</Abstract>
@@ -682,8 +672,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
+	      
+	      <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:windarrows_aggregate_min</Name>
       <Title>Wind demo</Title>
       <Abstract>Test abstract</Abstract>
@@ -709,8 +699,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:windnumbers</Name>
       <Title>Wind demo</Title>
       <Style>
@@ -731,8 +721,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:windnumbers_aggregate_max</Name>
       <Title>Wind demo</Title>
       <Style>
@@ -753,8 +743,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:windnumbers_aggregate_min</Name>
       <Title>Wind demo</Title>
       <Style>
@@ -775,18 +765,61 @@
       </Style>
       </Layer>
 
-	    </Layer>
-	  <Layer queryable="1">
+	      
+	      <Layer queryable="0">
+      <Title>test:zzregtime</Title>
+
+	      
+	        <Layer queryable="0">
+      <Title>test:zzregtime:aaa</Title>
+
+		
+		  <Layer queryable="1">
+      <Name>test:zzregtime:aaa:leaf1</Name>
+      <Title>Regression test layer 1 (under intermediate aaa)</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf1&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+		  
+		  <Layer queryable="1">
+      <Name>test:zzregtime:aaa:leaf2</Name>
+      <Title>Regression test layer 2 (under intermediate aaa)</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf2&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+		  </Layer>
+	        <Layer queryable="1">
+      <Name>test:zzregtime:zzz</Name>
+      <Title>Regression test sibling leaf (zzz, sorts after intermediate aaa)</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Azzz&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+		</Layer></Layer>
+	    <Layer queryable="1">
       <Name>test:nonvariant_ground</Name>
       <Title>PAL Skandinavia GroundTemperature</Title>
       <Abstract>PAL Ground abstract</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -825,17 +858,10 @@
       </Style>
       </Layer>
 
-	  
-	  <Layer queryable="1">
+	    
+	    <Layer queryable="1">
       <Name>test:t2m_circles</Name>
       <Title>Temperature with circles</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -870,18 +896,11 @@
       </Style>
       </Layer>
 
-	  
-	  <Layer queryable="1">
+	    
+	    <Layer queryable="1">
       <Name>test:mean_temperature</Name>
       <Title>Mean temperature</Title>
       <Abstract>Sea surface mean temperature (1971-2000)</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -908,16 +927,9 @@
       <BoundingBox CRS="EPSG:4326" minx="11.30011" miny="54.150085" maxx="26.30011" maxy="65.000122"/>
       </Layer>
 
-	  
-	  <Layer queryable="0">
+	    
+	    <Layer queryable="0">
       <Title>test:opendata_meteorological_windarrows</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -943,8 +955,8 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Dimension>
       
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -957,8 +969,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_aggregate_max</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -971,8 +983,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_aggregate_min</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -985,8 +997,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -999,8 +1011,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_array</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -1013,8 +1025,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_extrema</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -1027,8 +1039,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_max</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -1041,8 +1053,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_min</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -1055,8 +1067,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_none</Name>
       <Title>Wind observations</Title>
       <Style>
@@ -1069,8 +1081,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers</Name>
       <Title>Temperature observations</Title>
       <Style>
@@ -1083,8 +1095,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_max</Name>
       <Title>Temperature observations - time aggregation max_t</Title>
       <Style>
@@ -1097,8 +1109,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_min</Name>
       <Title>Temperature observations - time aggregation max_t</Title>
       <Style>
@@ -1111,8 +1123,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance</Name>
       <Title>Temperature observations</Title>
       <Style>
@@ -1125,8 +1137,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_array</Name>
       <Title>Temperature observations</Title>
       <Style>
@@ -1139,8 +1151,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_extrema</Name>
       <Title>Temperature observations</Title>
       <Style>
@@ -1153,8 +1165,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_max</Name>
       <Title>Temperature observations</Title>
       <Style>
@@ -1167,8 +1179,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_min</Name>
       <Title>Temperature observations</Title>
       <Style>
@@ -1181,8 +1193,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_none</Name>
       <Title>Temperature observations</Title>
       <Style>
@@ -1195,115 +1207,108 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_symbols</Name>
       <Title>Temperature observations as coloured circles</Title>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance</Name>
       <Title>Temperature observations as coloured circles</Title>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_array</Name>
       <Title>Temperature observations as coloured circles</Title>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_extrema</Name>
       <Title>Temperature observations as coloured circles</Title>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_max</Name>
       <Title>Temperature observations as coloured circles</Title>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_min</Name>
       <Title>Temperature observations as coloured circles</Title>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_none</Name>
       <Title>Temperature observations as coloured circles</Title>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
       </Layer>
 
-	    </Layer>
-	  <Layer queryable="1">
+	      </Layer>
+	    <Layer queryable="1">
       <Name>test:flash15min</Name>
       <Title>Lightning for 15 minute period</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1342,17 +1347,10 @@
       </Style>
       </Layer>
 
-	  
-	  <Layer queryable="1">
+	    
+	    <Layer queryable="1">
       <Name>test:roadcondition_isoband</Name>
       <Title>Road condition isobands with legend labels</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1389,18 +1387,11 @@
       </Style>
       </Layer>
 
-	  
-	  <Layer queryable="1">
+	    
+	    <Layer queryable="1">
       <Name>test:coordinate_grid</Name>
       <Title>Coordinate grid</Title>
       <Abstract>Coordinate grid</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1427,16 +1418,9 @@
       <BoundingBox CRS="EPSG:4326" minx="7.586122" miny="52.085626" maxx="32.050825" maxy="67.468186"/>
       </Layer>
 
-	  
-	  <Layer queryable="0">
+	    
+	    <Layer queryable="0">
       <Title>test:icechart_legend</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1462,32 +1446,25 @@
       <BoundingBox CRS="EPSG:3857" minx="853757.569097" miny="6823164.64118" maxx="3558697.61818" maxy="10278682.831"/>
       <BoundingBox CRS="EPSG:4326" minx="7.669435" miny="52.127239" maxx="31.968325" maxy="67.42662"/>
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>test:icechart_legend</Name>
       <Title>Legend</Title>
       <Abstract>Icemap legend</Abstract>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:land_mask</Name>
       <Title>Landmask</Title>
       <Abstract>Landmask</Abstract>
       </Layer>
 
-	    </Layer>
-	  <Layer queryable="1">
+	      </Layer>
+	    <Layer queryable="1">
       <Name>test:temperature_isotherm</Name>
       <Title>Temperature isotherm</Title>
       <Abstract>Temperature isotherm</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1516,16 +1493,9 @@
       
       </Layer>
 
-	  
-	  <Layer queryable="0">
+	    
+	    <Layer queryable="0">
       <Title>test:ice_pg</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1553,8 +1523,8 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>test:ice_pg</Name>
       <Title>Ice map</Title>
       <Style>
@@ -1567,15 +1537,15 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_areas</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_bob_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bay of Bothnia Ice Chart (black and white)</Abstract>
@@ -1589,8 +1559,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_bob_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bay of Bothnia Ice Chart</Abstract>
@@ -1604,8 +1574,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_fmi_bw</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -1619,8 +1589,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_fmi_color</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -1634,8 +1604,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_fmi_smhi_bw</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -1649,8 +1619,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_fmi_smhi_color</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -1664,8 +1634,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_gof_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Gulf of Finland Ice Chart (black and white)</Abstract>
@@ -1679,8 +1649,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_gof_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Gulf of Finland Ice Chart</Abstract>
@@ -1694,8 +1664,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_nsp2_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Nord Stream II Ice Chart</Abstract>
@@ -1709,8 +1679,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_nsp2_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Nord Stream II Ice Chart</Abstract>
@@ -1724,8 +1694,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_sob_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bothnian Sea Ice Chart (black and white)</Abstract>
@@ -1739,8 +1709,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_sob_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bothnian Sea Ice Chart</Abstract>
@@ -1754,8 +1724,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_wgof_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Western Gulf of Finland Ice Chart (black and white)</Abstract>
@@ -1769,8 +1739,8 @@
       </Style>
       </Layer>
 
-	    
-	    <Layer queryable="1">
+	      
+	      <Layer queryable="1">
       <Name>test:icechart_wgof_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Western Golf of Finland Ice Chart</Abstract>
@@ -1784,18 +1754,11 @@
       </Style>
       </Layer>
 
-	    </Layer>
-	  <Layer queryable="1">
+	      </Layer>
+	    <Layer queryable="1">
       <Name>test:lighthouses</Name>
       <Title>Lighthouses</Title>
       <Abstract>Lighthouses</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1822,18 +1785,11 @@
       <BoundingBox CRS="EPSG:4326" minx="9.180592" miny="54.208571" maxx="29.702992" maxy="65.519717"/>
       </Layer>
 
-	  
-	  <Layer queryable="1">
+	    
+	    <Layer queryable="1">
       <Name>test:harbours</Name>
       <Title>Harbours</Title>
       <Abstract>Harbours</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1860,26 +1816,19 @@
       <BoundingBox CRS="EPSG:4326" minx="9.5172" miny="53.4362" maxx="30.2764" maxy="65.8346"/>
       </Layer>
 
-	  </Layer>
-        <Layer queryable="0">
+	    </Layer>
+	  <Layer queryable="0">
       <Title>variant</Title>
 
-	
-	  <Layer queryable="0">
+	  
+	    <Layer queryable="0">
       <Title>variant:ecmwf</Title>
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>variant:ecmwf:temperature</Name>
       <Title>EC Title</Title>
       <Abstract>ECMWF abstract</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1918,22 +1867,15 @@
       </Style>
       </Layer>
 
-	    </Layer>
-	  <Layer queryable="0">
+	      </Layer>
+	    <Layer queryable="0">
       <Title>variant:pal</Title>
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>variant:pal:temperature</Name>
       <Title>PAL Title</Title>
       <Abstract>PAL abstract</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1958,10 +1900,6 @@
       <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11988575.3708"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.098706" miny="51.3" maxx="49" maxy="72.642084"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      
-      <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1972,22 +1910,15 @@
       </Style>
       </Layer>
 
-	    </Layer>
-	  <Layer queryable="0">
+	      </Layer>
+	    <Layer queryable="0">
       <Title>variant:ground</Title>
 
-	  
-	    <Layer queryable="1">
+	    
+	      <Layer queryable="1">
       <Name>variant:ground:groundtemperature</Name>
       <Title>PAL Skandinavia GroundTemperature</Title>
       <Abstract>PAL Ground abstract</Abstract>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -2026,7 +1957,7 @@
       </Style>
       </Layer>
 
-	    </Layer></Layer>
+	      </Layer></Layer></Layer>
         <Layer queryable="0">
       <Title>ely</Title>
 
