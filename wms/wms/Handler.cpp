@@ -64,9 +64,9 @@ namespace
 // one rendered ~4.5 MB response body. The realistic working set with the
 // allowlist in computeCapabilitiesCacheKey() is low double digits — a few
 // distinct combinations of (apikey, namespace, layout, language, format,
-// host) — so 100 is generous headroom and bounds the absolute memory
-// ceiling at ~450 MB even under adversarial input.
-constexpr std::size_t kCapabilitiesCacheMaxEntries = 100;
+// host) — so 25 is comfortable headroom and bounds the absolute memory
+// ceiling at ~110 MB even under adversarial input.
+constexpr std::size_t kCapabilitiesCacheMaxEntries = 25;
 
 // Cache entries are considered stale this many seconds after they were
 // rendered, even if Config::getCapabilitiesModificationTime() has not

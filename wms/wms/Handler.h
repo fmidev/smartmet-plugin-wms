@@ -78,8 +78,8 @@ class Handler
   // Sized by entry count (the structural cardinality is bounded by
   // the allowlist — a misconfigured client randomizing a query
   // param does not fragment the cache because unknown params are
-  // ignored in the key). 100 entries gives ~450 MB worst case
-  // (100 * 4.5 MB body); in practice the population sits in the
+  // ignored in the key). 25 entries gives ~110 MB worst case
+  // (25 * 4.5 MB body); in practice the population sits in the
   // low double digits.
   // ------------------------------------------------------------
 
