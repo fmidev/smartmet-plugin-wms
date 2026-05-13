@@ -10,6 +10,8 @@
 #include "Exception.h"
 #include "../ogc/QueryStatus.h"
 #include <json/value.h>
+#include <macgyver/Cache.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/JsonCache.h>
@@ -57,6 +59,41 @@ class Handler
   const Dali::Config& itsDaliConfig;
   Spine::JsonCache& itsJsonCache;
   std::unique_ptr<Config> itsWMSConfig;
+
+  // ------------------------------------------------------------
+  // Server-side cache for GetCapabilities responses.
+  //
+  // GetCapabilities is the dominant URL on this plugin for some
+  // workloads (aviation/observation hardware clients polling every
+  // few seconds, ~4.5 MB body per response). Rendering it costs
+  // ~440 ms per call and is invariant for the vast majority of
+  // requests, since clients normally use no filter parameters.
+  //
+  // The cache key is a hash over the allow-listed request inputs
+  // that actually affect the body. The cache value caches both the
+  // rendered string and its ETag, plus enough freshness metadata
+  // (config version + wall-clock built_at + TTL) to decide whether
+  // a hit is still serveable.
+  //
+  // Sized by entry count (the structural cardinality is bounded by
+  // the allowlist — a misconfigured client randomizing a query
+  // param does not fragment the cache because unknown params are
+  // ignored in the key). 10k entries is well above any realistic
+  // working set; in practice the population sits in the low
+  // double digits.
+  // ------------------------------------------------------------
+
+  struct CachedCapabilities
+  {
+    std::shared_ptr<std::string> body;  // shared so 304/204 paths can drop the body cheaply
+    std::size_t product_hash;           // == Fmi::hash_value(*body); passed to formatResponse
+    std::string etag;                   // == fmt::sprintf("\"%x\"", product_hash)
+    Fmi::DateTime config_version;       // == Config::getCapabilitiesModificationTime() at render
+    Fmi::DateTime built_at;             // wall-clock at render; used for TTL
+  };
+
+  using CapabilitiesCache = Fmi::Cache::Cache<std::size_t, CachedCapabilities>;
+  std::unique_ptr<CapabilitiesCache> itsCapabilitiesCache;
 
   bool authenticate(const Spine::HTTP::Request& theRequest) const;
 

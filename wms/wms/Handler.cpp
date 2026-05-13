@@ -56,6 +56,80 @@ using Dali::mimeType;
 using OGC::useStyle;
 namespace
 {
+// ----------------------------------------------------------------------
+// GetCapabilities response cache configuration
+// ----------------------------------------------------------------------
+
+// Max entries in the per-Handler GetCapabilities cache. Each entry holds
+// one rendered ~4.5 MB response body. The structural cardinality is bounded
+// by the allowlist in computeCapabilitiesCacheKey() below, so this is a
+// safety ceiling rather than an expected working-set size.
+constexpr std::size_t kCapabilitiesCacheMaxEntries = 10000;
+
+// Cache entries are considered stale this many seconds after they were
+// rendered, even if Config::getCapabilitiesModificationTime() has not
+// advanced. This bounds staleness of layer time-dimension upper bounds
+// (observation `metaData.period.end()` advances with wall clock).
+constexpr long kCapabilitiesCacheTtlSeconds = 30;
+
+// Names of URL parameters that influence the GetCapabilities response body.
+// Spine's getParameter() is case-insensitive, so these are listed in their
+// canonical lowercase form for readability. Anything not on this list is
+// ignored in the cache key, which makes the cache robust against
+// adversarial / accidental cache-busting query params.
+constexpr std::array<const char *, 11> kCapabilitiesKeyParams = {
+    "dim_reference_time",
+    "enableintervals",
+    "endtime",
+    "format",
+    "language",
+    "layout",
+    "namespace",
+    "show_hidden",
+    "starttime",
+    "service",
+    "version",
+};
+
+// Names of request headers that influence the response body. Spine's
+// getHeader() is case-insensitive too. These headers are used by
+// GetCapabilities to construct absolute URLs (legend graphics, online
+// resources) and to control apikey embedding, so they must participate
+// in the cache key.
+constexpr std::array<const char *, 3> kCapabilitiesKeyHeaders = {
+    "Host",
+    "X-Forwarded-Proto",
+    "omit-fmi-apikey",
+};
+
+// Compute the cache key for a GetCapabilities request. The key is a hash
+// of (param_name, param_value) and (header_name, header_value) pairs from
+// the allowlists above, plus the apikey (which is sourced from the
+// authentication context, not the URL). Names are hashed alongside values
+// so that e.g. ?starttime=foo and ?endtime=foo cannot collide.
+std::size_t computeCapabilitiesCacheKey(const Spine::HTTP::Request &theRequest,
+                                        const std::optional<std::string> &apikey)
+{
+  std::size_t h = 0;
+
+  for (const auto *name : kCapabilitiesKeyParams)
+  {
+    Fmi::hash_combine(h, Fmi::hash_value(std::string{name}));
+    Fmi::hash_combine(h, Fmi::hash_value(theRequest.getParameter(name).value_or("")));
+  }
+
+  for (const auto *name : kCapabilitiesKeyHeaders)
+  {
+    Fmi::hash_combine(h, Fmi::hash_value(std::string{name}));
+    Fmi::hash_combine(h, Fmi::hash_value(theRequest.getHeader(name).value_or("")));
+  }
+
+  Fmi::hash_combine(h, Fmi::hash_value(std::string{"apikey"}));
+  Fmi::hash_combine(h, Fmi::hash_value(apikey.value_or("")));
+
+  return h;
+}
+
 void check_remaining_wms_json(Json::Value &json, const std::string &name)
 {
   std::vector<std::string> deletions{"abstract",
@@ -371,6 +445,12 @@ Handler::~Handler() = default;
 void Handler::init(std::unique_ptr<Config> wmsConfig)
 {
   itsWMSConfig = std::move(wmsConfig);
+
+  // Server-side cache for GetCapabilities responses. Sized by entry count;
+  // the cardinality is structurally bounded by the allowlist of request
+  // inputs used to compute the cache key (see computeCapabilitiesCacheKey
+  // below), so 10k entries is comfortably above any realistic working set.
+  itsCapabilitiesCache = std::make_unique<CapabilitiesCache>(kCapabilitiesCacheMaxEntries);
 }
 
 void Handler::shutdown()
@@ -885,31 +965,72 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
 {
   try
   {
-    std::string format = Spine::optional_string(theRequest.getParameter("format"), "xml");
+    const std::string format = Spine::optional_string(theRequest.getParameter("format"), "xml");
 
-    theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
-    auto tmpl = theState.getPlugin().getTemplate("wms_get_capabilities_" +
-                                                 getCapabilityFormat(format));
-    auto msg =
-        GetCapabilities::response(tmpl, theRequest, theState.getPlugin().getQEngine(), *itsWMSConfig);
+    // Look up in the server-side cache before doing any rendering work. The
+    // cache is keyed on a fixed allowlist of request inputs (see
+    // computeCapabilitiesCacheKey above), so unknown / adversarial query
+    // params don't fragment the cache. apikey is sourced from the auth
+    // context, not the URL.
+    const auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
+    const auto cache_key = computeCapabilitiesCacheKey(theRequest, apikey);
+    const auto current_version = itsWMSConfig->getCapabilitiesModificationTime();
+    const auto now = Fmi::SecondClock::universal_time();
 
-    // Compute an ETag from the rendered response body. The body is stable across
-    // requests with identical parameters until the layer registry's modification
-    // time advances, so clients sending If-None-Match get a 304 short-circuit
-    // and skip the 4.5 MB transfer on every poll. Without this header the WMS
-    // GetCapabilities path serves the full body on every request; for hardware
-    // observation/aviation clients polling every few seconds this dominates
-    // egress on the production backends.
-    const auto product_hash = Fmi::hash_value(msg);
-    const auto etag = fmt::sprintf("\"%x\"", product_hash);
+    std::shared_ptr<std::string> body;
+    std::string etag;
+    std::size_t product_hash = 0;
+    bool cache_hit = false;
+
+    if (itsCapabilitiesCache)
+    {
+      if (auto hit = itsCapabilitiesCache->find(cache_key))
+      {
+        const bool fresh = hit->config_version == current_version &&
+                           (now - hit->built_at) < Fmi::Seconds(kCapabilitiesCacheTtlSeconds);
+        if (fresh)
+        {
+          body = hit->body;
+          etag = hit->etag;
+          product_hash = hit->product_hash;
+          cache_hit = true;
+        }
+      }
+    }
+
+    // Cache miss or stale: render fresh and store before serving so concurrent
+    // requests with the same key see a populated entry on their next lookup.
+    if (!cache_hit)
+    {
+      auto tmpl = theState.getPlugin().getTemplate("wms_get_capabilities_" +
+                                                   getCapabilityFormat(format));
+      auto msg = GetCapabilities::response(
+          tmpl, theRequest, theState.getPlugin().getQEngine(), *itsWMSConfig);
+
+      product_hash = Fmi::hash_value(msg);
+      etag = fmt::sprintf("\"%x\"", product_hash);
+      body = std::make_shared<std::string>(std::move(msg));
+
+      if (itsCapabilitiesCache)
+      {
+        CachedCapabilities entry;
+        entry.body = body;
+        entry.product_hash = product_hash;
+        entry.etag = etag;
+        entry.config_version = current_version;
+        entry.built_at = now;
+        itsCapabilitiesCache->insert(cache_key, std::move(entry));
+      }
+    }
+
+    // Attach the standard cache headers regardless of hit/miss.
     theResponse.setHeader("ETag", etag);
-
     theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
     theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
 
     // If the client already has this exact version, return 304 Not Modified
-    // (no body, no Content-Type). The Expires/Last-Modified headers attached
-    // by the state above remain in the response.
+    // (no body, no Content-Type). The Expires / Last-Modified headers
+    // attached by the state above remain in the response per RFC 7232.
     if (auto if_none_match = theRequest.getHeader("If-None-Match"))
     {
       if (*if_none_match == etag)
@@ -919,8 +1040,9 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
       }
     }
 
-    // X-Request-ETag is the internal "just give me the hash, no body" shortcut
-    // used elsewhere by the WMS handler. Honour it here too for symmetry.
+    // X-Request-ETag is the internal "just give me the hash, no body"
+    // shortcut used by the SmartMet frontend's ResponseCache to probe the
+    // backend before deciding whether to fetch the body.
     if (theRequest.getHeader("X-Request-ETag"))
     {
       theResponse.setHeader("Content-Type", mimeType(getCapabilityFormat(format)));
@@ -928,7 +1050,12 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
       return QueryStatus::OK;
     }
 
-    theState.getPlugin().formatResponse(msg, format, theRequest, theResponse, theState.useTimer());
+    // 200 with body. Pass product_hash into formatResponse so it sets the
+    // ETag from our hash instead of falling back to its placeholder (which
+    // would render as ETag: "0" and break the frontend's ResponseCache by
+    // making the probe ETag differ from the content-response ETag).
+    theState.getPlugin().formatResponse(
+        *body, format, theRequest, theResponse, theState.useTimer(), Dali::Product(), product_hash);
     return QueryStatus::OK;
   }
   catch (const Fmi::Exception &wmsException)
