@@ -461,6 +461,13 @@ void Handler::shutdown()
     itsWMSConfig->shutdown();
 }
 
+Fmi::Cache::CacheStats Handler::getCapabilitiesCacheStats() const
+{
+  if (itsCapabilitiesCache)
+    return itsCapabilitiesCache->statistics();
+  return {};
+}
+
 // ----------------------------------------------------------------------
 
 std::string Handler::getExceptionFormat(const std::string &theFormat) const

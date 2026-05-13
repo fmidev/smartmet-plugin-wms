@@ -55,6 +55,12 @@ class Handler
                     const Spine::HTTP::Request& theRequest,
                     Spine::HTTP::Response& theResponse);
 
+  // Statistics for the per-Handler GetCapabilities response cache.
+  // Returns the LRU shard-aggregated stats from macgyver's Cache.
+  // Returns a default-constructed CacheStats if the cache hasn't been
+  // initialised yet (e.g., between construction and init()).
+  Fmi::Cache::CacheStats getCapabilitiesCacheStats() const;
+
  private:
   const Dali::Config& itsDaliConfig;
   Spine::JsonCache& itsJsonCache;

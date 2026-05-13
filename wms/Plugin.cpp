@@ -1639,6 +1639,8 @@ Fmi::Cache::CacheStatistics Plugin::getCacheStats() const
   ret["Wms::image_cache::memory_cache [B]"] = itsImageCache->getMemoryCacheStats();
   ret["Wms::image_cache::file_cache [B]"] = itsImageCache->getFileCacheStats();
   ret["Wms::css_cache"] = itsStyleSheetCache.statistics();
+  if (itsWMSHandler)
+    ret["Wms::capabilities_cache"] = itsWMSHandler->getCapabilitiesCacheStats();
   // TextUtility.cpp uses LRUCache which is not yet comparible
   // ret["Wms::text_extent_cache"] = getTextCacheStats();
 

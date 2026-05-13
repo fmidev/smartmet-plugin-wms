@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.13
+Version: 26.5.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed May 13 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.5.14-1.fmi
+- Expose GetCapabilities response cache statistics to admin queries (Wms::capabilities_cache)
+
 * Wed May 13 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.5.13-1.fmi
 - GetCapabilities: emit ETag, honour If-None-Match (304) and X-Request-ETag (204), and memoize the rendered response in a per-Handler LRU (25 entries, 30 s TTL) keyed on an allowlist of body-affecting request inputs
 
