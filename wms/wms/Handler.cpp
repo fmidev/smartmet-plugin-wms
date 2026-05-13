@@ -892,9 +892,43 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
                                                  getCapabilityFormat(format));
     auto msg =
         GetCapabilities::response(tmpl, theRequest, theState.getPlugin().getQEngine(), *itsWMSConfig);
-    theState.getPlugin().formatResponse(msg, format, theRequest, theResponse, theState.useTimer());
+
+    // Compute an ETag from the rendered response body. The body is stable across
+    // requests with identical parameters until the layer registry's modification
+    // time advances, so clients sending If-None-Match get a 304 short-circuit
+    // and skip the 4.5 MB transfer on every poll. Without this header the WMS
+    // GetCapabilities path serves the full body on every request; for hardware
+    // observation/aviation clients polling every few seconds this dominates
+    // egress on the production backends.
+    const auto product_hash = Fmi::hash_value(msg);
+    const auto etag = fmt::sprintf("\"%x\"", product_hash);
+    theResponse.setHeader("ETag", etag);
+
     theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
     theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
+
+    // If the client already has this exact version, return 304 Not Modified
+    // (no body, no Content-Type). The Expires/Last-Modified headers attached
+    // by the state above remain in the response.
+    if (auto if_none_match = theRequest.getHeader("If-None-Match"))
+    {
+      if (*if_none_match == etag)
+      {
+        theResponse.setStatus(Spine::HTTP::Status::not_modified);
+        return QueryStatus::OK;
+      }
+    }
+
+    // X-Request-ETag is the internal "just give me the hash, no body" shortcut
+    // used elsewhere by the WMS handler. Honour it here too for symmetry.
+    if (theRequest.getHeader("X-Request-ETag"))
+    {
+      theResponse.setHeader("Content-Type", mimeType(getCapabilityFormat(format)));
+      theResponse.setStatus(Spine::HTTP::Status::no_content);
+      return QueryStatus::OK;
+    }
+
+    theState.getPlugin().formatResponse(msg, format, theRequest, theResponse, theState.useTimer());
     return QueryStatus::OK;
   }
   catch (const Fmi::Exception &wmsException)
