@@ -78,9 +78,9 @@ class Handler
   // Sized by entry count (the structural cardinality is bounded by
   // the allowlist — a misconfigured client randomizing a query
   // param does not fragment the cache because unknown params are
-  // ignored in the key). 10k entries is well above any realistic
-  // working set; in practice the population sits in the low
-  // double digits.
+  // ignored in the key). 100 entries gives ~450 MB worst case
+  // (100 * 4.5 MB body); in practice the population sits in the
+  // low double digits.
   // ------------------------------------------------------------
 
   struct CachedCapabilities

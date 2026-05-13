@@ -61,10 +61,12 @@ namespace
 // ----------------------------------------------------------------------
 
 // Max entries in the per-Handler GetCapabilities cache. Each entry holds
-// one rendered ~4.5 MB response body. The structural cardinality is bounded
-// by the allowlist in computeCapabilitiesCacheKey() below, so this is a
-// safety ceiling rather than an expected working-set size.
-constexpr std::size_t kCapabilitiesCacheMaxEntries = 10000;
+// one rendered ~4.5 MB response body. The realistic working set with the
+// allowlist in computeCapabilitiesCacheKey() is low double digits — a few
+// distinct combinations of (apikey, namespace, layout, language, format,
+// host) — so 100 is generous headroom and bounds the absolute memory
+// ceiling at ~450 MB even under adversarial input.
+constexpr std::size_t kCapabilitiesCacheMaxEntries = 100;
 
 // Cache entries are considered stale this many seconds after they were
 // rendered, even if Config::getCapabilitiesModificationTime() has not
