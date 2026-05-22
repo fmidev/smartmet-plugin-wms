@@ -403,9 +403,9 @@ else
 }
 
 # Compare the PNG images
-my $difference_str = `smartimgdiff_psnr $RESULT_PNG $EXPECTED_PNG $DIFFERENCE_PNG`;
+my $difference_str = `smartimagediff_psnr $RESULT_PNG $EXPECTED_PNG $DIFFERENCE_PNG`;
 if ($? != 0) {
-    die "smartimgdiff_psnr failed: $difference_str";
+    die "smartimagediff_psnr failed: $difference_str";
 }
 
 if ($difference_str =~ m/PSNR:\s+inf\s+dB/) {
@@ -415,7 +415,7 @@ if ($difference_str =~ m/PSNR:\s+inf\s+dB/) {
 }
 
 $difference_str =~ m/PSNR:\s+((?:\d+\.\d+|inf))\s+dB/ or
-    die "Failed to get PSNR value from smartimgdiff_psnr output: $difference_str";
+    die "Failed to get PSNR value from smartimagediff_psnr output: $difference_str";
 
 my $dbz = $1;
 if ($dbz >= 50)
