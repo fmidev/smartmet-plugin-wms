@@ -413,6 +413,11 @@ elsif ($MIME eq 'application/pdf')
     $image->Set(magick => 'PNG');
     $image->Set(depth => 8);  # Set depth to 8 bits per channel
     $image->Set(ColorSpace => 'RGB');
+    # Drop the RGB ICC profile that ghostscript embeds when rasterising the
+    # PDF; otherwise smartimagediff_psnr inherits it for the difference PNG
+    # and libpng rejects an RGB profile on grayscale-encoded output (some
+    # builds escalate the warning to a fatal write failure).
+    $image->Strip();
     $image->Write($RESULT_PNG); # Write the image to PNG format. Discard errors if any.
 }
 elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg') {
@@ -637,6 +642,7 @@ elsif ($MIME eq 'application/pdf')
     $image->Set(magick => 'PNG');
     $image->Set(depth => 8);  # Set depth to 8 bits per channel
     $image->Set(ColorSpace => 'RGB');
+    $image->Strip();   # see matching comment in the RESULT_PNG branch above
     $status = $image->Write($EXPECTED_PNG); # Write the image to PNG format. Discard errors if any.
     if (defined $status && $status >= 400) { # Check for error status, ignore warnings
         die "Failed to write PNG file '$EXPECTED_PNG': $status";
@@ -649,18 +655,6 @@ elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg')
 else
 {
     die "Unsupported MIME type '$MIME' for expected file conversion.\n";
-}
-
-# Strip ICC profiles and other metadata from the input PNGs before diffing.
-# smartimagediff_psnr inherits source profiles when writing the difference
-# image; if the diff data happens to encode as grayscale (common when the
-# inputs differ only slightly), libpng rejects the inherited 'RGB ' ICC
-# profile with "RGB color space not permitted on grayscale PNG", and some
-# builds (notably the CI image) escalate this from a warning to a failure.
-for my $png ($RESULT_PNG, $EXPECTED_PNG) {
-    next unless -e $png;
-    system($CONVERT, $png, "-strip", $png) == 0
-        or warn "Failed to strip profiles from '$png': $!";
 }
 
 # Compare the PNG images
