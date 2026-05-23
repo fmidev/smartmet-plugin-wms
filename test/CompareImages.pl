@@ -651,6 +651,18 @@ else
     die "Unsupported MIME type '$MIME' for expected file conversion.\n";
 }
 
+# Strip ICC profiles and other metadata from the input PNGs before diffing.
+# smartimagediff_psnr inherits source profiles when writing the difference
+# image; if the diff data happens to encode as grayscale (common when the
+# inputs differ only slightly), libpng rejects the inherited 'RGB ' ICC
+# profile with "RGB color space not permitted on grayscale PNG", and some
+# builds (notably the CI image) escalate this from a warning to a failure.
+for my $png ($RESULT_PNG, $EXPECTED_PNG) {
+    next unless -e $png;
+    system($CONVERT, $png, "-strip", $png) == 0
+        or warn "Failed to strip profiles from '$png': $!";
+}
+
 # Compare the PNG images
 my $difference_str = `smartimagediff_psnr $RESULT_PNG $EXPECTED_PNG $DIFFERENCE_PNG`;
 if ($? != 0) {
