@@ -2717,8 +2717,58 @@
             "y2" : 65,
             "ysize" : 600
           },
-          "title" : "Archipelago amalgamation",
+          "title" : "Northern Baltic archipelago amalgamation",
           "url_template" : "/dali?customer=test&product=map_amalgamate&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_amalgamate_extreme",
+          "path" : 
+          [
+            "test",
+            "map_amalgamate_extreme"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Northern Baltic archipelago amalgamation, excessive gap distance",
+          "url_template" : "/dali?customer=test&product=map_amalgamate_extreme&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_amalgamate_pathological",
+          "path" : 
+          [
+            "test",
+            "map_amalgamate_pathological"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Northern Baltic archipelago amalgamation, pathological gap distance",
+          "url_template" : "/dali?customer=test&product=map_amalgamate_pathological&time={time}"
         },
         {
           "image" : 
@@ -2742,39 +2792,64 @@
             "y2" : 65,
             "ysize" : 600
           },
-          "title" : "Archipelago amalgamation + Visvalingam-Whyatt simplification",
+          "title" : "Northern Baltic archipelago amalgamation + Visvalingam-Whyatt simplification",
           "url_template" : "/dali?customer=test&product=map_amalgamate_simplified&time={time}"
         },
         {
           "image" : 
           {
-            "height" : 800,
-            "width" : 800
+            "height" : 600,
+            "width" : 900
           },
-          "name" : "map_simplifier_dp",
+          "name" : "map_amalgamate_wide",
           "path" : 
           [
             "test",
-            "map_simplifier_dp"
+            "map_amalgamate_wide"
           ],
           "projection" : 
           {
-            "bboxcrs" : "WGS84",
-            "crs" : "+proj=robin",
-            "cx" : 0,
-            "cy" : 0,
-            "resolution" : 50,
-            "xsize" : 800,
-            "ysize" : 800
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
           },
-          "title" : "Map with Douglas-Peucker simplification",
-          "url_template" : "/dali?customer=test&product=map_simplifier_dp&time={time}"
+          "title" : "Northern Baltic archipelago amalgamation, doubled gap distance",
+          "url_template" : "/dali?customer=test&product=map_amalgamate_wide&time={time}"
         },
         {
           "image" : 
           {
-            "height" : 800,
-            "width" : 800
+            "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_baseline",
+          "path" : 
+          [
+            "test",
+            "map_baseline"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Northern Baltic baseline (no simplification)",
+          "url_template" : "/dali?customer=test&product=map_baseline&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 900
           },
           "name" : "map_simplifier_vw",
           "path" : 
@@ -2784,15 +2859,15 @@
           ],
           "projection" : 
           {
-            "bboxcrs" : "WGS84",
-            "crs" : "+proj=robin",
-            "cx" : 0,
-            "cy" : 0,
-            "resolution" : 50,
-            "xsize" : 800,
-            "ysize" : 800
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
           },
-          "title" : "Map with Visvalingam-Whyatt simplification",
+          "title" : "Northern Baltic with Visvalingam-Whyatt simplification",
           "url_template" : "/dali?customer=test&product=map_simplifier_vw&time={time}"
         },
         {
