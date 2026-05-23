@@ -200,13 +200,103 @@ sub SegmentCapabilities {
 }
 
 sub DiffSection {
-    my ($label, $exp_ref, $res_ref) = @_;
-    return '' if LineSequenceMatches($exp_ref, $res_ref);
+    my ($label, $exp_ref, $res_ref, $matcher) = @_;
+    $matcher //= \&LineSequenceMatches;
+    return '' if $matcher->($exp_ref, $res_ref);
     my $ep = WriteTempLines("cmp_exp", $exp_ref);
     my $rp = WriteTempLines("cmp_res", $res_ref);
     my $d = GitHistogramDiff($ep, $rp);
     unlink $ep, $rp;
     return "[$label differs]\n" . TrimDiff($d, 60, 128) . "\n";
+}
+
+# JSON counterpart to LineSequenceMatches. Preserves the original JSON-path
+# behaviour: trim leading/trailing whitespace before comparing, and tolerate
+# "width": N differences of up to 3 (both direct and embedded in xlink:href
+# query strings).
+sub LineSequenceMatchesJson {
+    my ($exp_ref, $res_ref) = @_;
+    return 0 if scalar(@$exp_ref) != scalar(@$res_ref);
+    for (my $i = 0; $i <= $#{$exp_ref}; $i++) {
+        my $e = $exp_ref->[$i];
+        my $r = $res_ref->[$i];
+        my $et = $e; $et =~ s/^\s+//; $et =~ s/\s+$//;
+        my $rt = $r; $rt =~ s/^\s+//; $rt =~ s/\s+$//;
+        next if $et eq $rt;
+        if ($rt =~ m/"width"\s*:\s*(\d+)/) {
+            my $rw = $1;
+            if ($et =~ m/"width"\s*:\s*(\d+)/) {
+                my $ew = $1;
+                next if abs($rw - $ew) <= 3;
+            }
+        }
+        if ($rt =~ m/"xlink:href"/ && $et =~ m/"xlink:href"/) {
+            if ($rt =~ m/;width=(\d+)/ && $et =~ m/;width=(\d+)/) {
+                my $rw = ($rt =~ m/;width=(\d+)/)[0];
+                my $ew = ($et =~ m/;width=(\d+)/)[0];
+                next if abs($rw - $ew) <= 3;
+            }
+        }
+        return 0;
+    }
+    return 1;
+}
+
+# JSON counterpart to SegmentCapabilities. jq --raw-output emits the inner
+# WMS layers array at indent 4 ("    \"Layer\": ["), each layer object opens
+# with "      {" and closes with "      }," or "      }" at indent 6, and
+# the array itself closes with "    ]". Anything that doesn't match the
+# capabilities structure leaves header populated and blocks empty.
+sub SegmentCapabilitiesJson {
+    my @lines = @_;
+    my (@header, @footer, %blocks, @order);
+
+    my $i = 0;
+    while ($i < @lines && $lines[$i] !~ m{^    "Layer":\s*\[\s*$}) {
+        push @header, $lines[$i++];
+    }
+    if ($i >= @lines) {
+        return (\@header, \%blocks, \@order, \@footer);
+    }
+    push @header, $lines[$i++];   # the '    "Layer": [' line
+
+    while ($i < @lines) {
+        my $line = $lines[$i];
+        if ($line =~ m{^      \{\s*$}) {
+            my $start = $i;
+            $i++;
+            while ($i < @lines && $lines[$i] !~ m{^      \},?\s*$}) {
+                $i++;
+            }
+            if ($i < @lines) {
+                $i++;  # include the close line in the block
+            }
+            my @block = @lines[$start..$i-1];
+            my $name;
+            for my $bl (@block) {
+                if ($bl =~ m{^        "Name":\s*"([^"]+)"}) { $name = $1; last; }
+            }
+            $name //= "(unnamed-layer-at-line-" . ($start + 1) . ")";
+            if (exists $blocks{$name}) {
+                $name .= "#" . scalar(@order);
+            }
+            $blocks{$name} = \@block;
+            push @order, $name;
+        }
+        elsif ($line =~ m{^    \]}) {
+            push @footer, $line;
+            $i++;
+            last;
+        }
+        else {
+            push @header, $line;
+            $i++;
+        }
+    }
+    while ($i < @lines) {
+        push @footer, $lines[$i++];
+    }
+    return (\@header, \%blocks, \@order, \@footer);
 }
 
 if (!defined $RESULT || !defined $RESULT) {
@@ -453,64 +543,77 @@ if ($MIME eq 'application/xml' || $MIME eq 'text/xml')
     exit(1);
 }
 
-# FIXME: handle JSON output similarly to XML
-# Also: RHEL8 file command returns text/plain for JSON
+# JSON GetCapabilities is segmented the same way as the XML branch: by
+# <Layer><Name>, with added/removed layers reported as one-line entries, a
+# common-set reorder flagged on its own, and per-layer content diffs
+# localised so a change inside one layer doesn't smear into its neighbours.
+# RHEL8 file command returns text/plain for JSON, so accept that too.
 if ($MIME eq 'application/json' || $MIME eq 'text/json' || $MIME eq 'text/plain')
 {
-    my @result_lines = ReadJsonFile $RESULT;
+    my @result_lines   = ReadJsonFile $RESULT;
     my @expected_lines = ReadJsonFile $EXPECTED;
 
-    if ($#result_lines == $#expected_lines) {
-        for (my $i = 0; $i <= $#result_lines; $i++) {
-            my $result_line = $result_lines[$i];
-            my $expected_line = $expected_lines[$i];
-            $result_line =~ s/^\s*//;  # Remove leading whitespace
-            $result_line =~ s/\s*$//;  # Remove trailing whitespace
-            $expected_line =~ s/^\s*//;  # Remove leading whitespace
-            $expected_line =~ s/\s*$//;  # Remove trailing whitespace
-            if ($result_line eq $expected_line) {
-                next;  # Lines match, continue to next line
-            }
-            # Lines does not match - look for accepted differences
-            if ($result_line =~ m/"width"\s*:\s*(\d+)/gm)
-            {
-                my $result_width = $1;
-                if ($expected_line =~ m/^\s*"width"\s*:\s*(\d+)/) {
-                    my $expected_width = $1;
+    my ($exp_header, $exp_blocks, $exp_order, $exp_footer) = SegmentCapabilitiesJson(@expected_lines);
+    my ($res_header, $res_blocks, $res_order, $res_footer) = SegmentCapabilitiesJson(@result_lines);
 
-                    if (abs($result_width - $expected_width) <= 3)
-                    {
-                        next;  # Small width differences are acceptable
-                    }
-                }
-            }
-            if ($result_line =~ m/"xlink:href"/ && $expected_line =~ m/"xlink:href"/)  {
-                if ($result_line =~ m/;width=(\d+)/)
-                {
-                    my $result_width = $1;
-                    if ($expected_line =~ m/;width=(\d+)/)
-                    {
-                        my $expected_width = $1;
+    my $has_layers = (scalar(@$exp_order) || scalar(@$res_order));
 
-                        if (abs($result_width - $expected_width) <= 3)
-                        {
-                            next;  # Small width differences are acceptable
-                        }
-                    }
-                }
-            }
-
-            print "FAIL: JSON output differs: $RESULT <> $EXPECTED\n";
-            print TrimDiff(GitHistogramDiff($EXPECTED, $RESULT), 100, 1024);
-            exit (1);
+    if (!$has_layers) {
+        if (LineSequenceMatchesJson(\@expected_lines, \@result_lines)) {
+            print "OK     ";
+            Cleanup();
+            exit(0);
         }
+        print "FAIL: JSON output differs: $RESULT <> $EXPECTED\n";
+        print TrimDiff(GitHistogramDiff($EXPECTED, $RESULT), 100, 1024);
+        exit(1);
+    }
+
+    my @report;
+    my $section = DiffSection("Capabilities header", $exp_header, $res_header, \&LineSequenceMatchesJson);
+    push @report, $section if $section ne '';
+
+    my %exp_set = map { $_ => 1 } @$exp_order;
+    my %res_set = map { $_ => 1 } @$res_order;
+    my @added   = grep { !$exp_set{$_} } @$res_order;
+    my @removed = grep { !$res_set{$_} } @$exp_order;
+    if (@removed) {
+        push @report, join("", map { "- Removed layer '$_'\n" } @removed);
+    }
+    if (@added) {
+        push @report, join("", map { "+ Added layer '$_'\n" } @added);
+    }
+
+    my @common_exp = grep { $res_set{$_} } @$exp_order;
+    my @common_res = grep { $exp_set{$_} } @$res_order;
+    if (join("\0", @common_exp) ne join("\0", @common_res)) {
+        my @exp_ord_lines = map { "$_\n" } @common_exp;
+        my @res_ord_lines = map { "$_\n" } @common_res;
+        my $ep = WriteTempLines("order_exp", \@exp_ord_lines);
+        my $rp = WriteTempLines("order_res", \@res_ord_lines);
+        my $d = GitHistogramDiff($ep, $rp);
+        unlink $ep, $rp;
+        push @report, "[Layer order changed]\n" . TrimDiff($d, 40, 128) . "\n";
+    }
+
+    for my $name (@$exp_order) {
+        next unless exists $res_blocks->{$name};
+        my $sec = DiffSection("Layer '$name'", $exp_blocks->{$name}, $res_blocks->{$name}, \&LineSequenceMatchesJson);
+        push @report, $sec if $sec ne '';
+    }
+
+    $section = DiffSection("Capabilities footer", $exp_footer, $res_footer, \&LineSequenceMatchesJson);
+    push @report, $section if $section ne '';
+
+    if (!@report) {
         print "OK     ";
         Cleanup();
         exit(0);
-    } else {
-        print "FAIL\tXML output has different number of lines.";
-        exit(1);
     }
+
+    print "FAIL: JSON output differs: $RESULT <> $EXPECTED\n";
+    print TrimDiff(join("\n", @report), 200, 1024);
+    exit(1);
 }
 
 
