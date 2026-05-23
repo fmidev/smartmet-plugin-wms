@@ -56,6 +56,159 @@ sub CreateWebp {
     }
 }
 
+# Run git diff with the histogram algorithm: it anchors on unique lines
+# (e.g. <Name> values), so a layer inserted into capabilities shows up as
+# one inserted block rather than smearing across neighbours the way Myers
+# diff (GNU diff default) does. Strips the diff --git / index / --- / +++
+# header lines because the temp file names they expose are noise.
+sub GitHistogramDiff {
+    my ($file1, $file2) = @_;
+    my $raw = `git diff --no-index --no-color --diff-algorithm=histogram -U4 -- "$file1" "$file2" 2>/dev/null`;
+    my @out;
+    for my $line (split /\n/, $raw, -1) {
+        next if $line =~ m{^diff --git };
+        next if $line =~ m{^index [0-9a-f]+\.\.[0-9a-f]+};
+        next if $line =~ m{^--- (a/|/dev/null)};
+        next if $line =~ m{^\+\+\+ (b/|/dev/null)};
+        push @out, $line;
+    }
+    return join("\n", @out);
+}
+
+sub TrimDiff {
+    my ($text, $max_lines, $max_cols) = @_;
+    my @lines = split /\n/, $text, -1;
+    my $truncated = (scalar(@lines) > $max_lines) ? 1 : 0;
+    @lines = @lines[0..$max_lines-1] if $truncated;
+    @lines = map { length($_) > $max_cols ? substr($_, 0, $max_cols) : $_ } @lines;
+    my $result = join("\n", @lines);
+    $result .= "\n... (output truncated)\n" if $truncated;
+    return $result;
+}
+
+sub WriteTempLines {
+    my ($prefix, $lines_ref) = @_;
+    my $path = sprintf("/tmp/%s_%d_%d", $prefix, $$, int(rand(1_000_000)));
+    open my $fh, '>', $path or die "Cannot write '$path': $!";
+    print $fh @$lines_ref;
+    close $fh;
+    return $path;
+}
+
+# Compare two arrays of lines using the same fuzz rules previously applied
+# only on the equal-line-count path (LegendURL / OnlineResource width/height
+# differences up to 3 are tolerated). Returns 1 if equal within fuzz, else 0.
+sub LineSequenceMatches {
+    my ($exp_ref, $res_ref) = @_;
+    return 0 if scalar(@$exp_ref) != scalar(@$res_ref);
+    for (my $i = 0; $i <= $#{$exp_ref}; $i++) {
+        my $e = $exp_ref->[$i];
+        my $r = $res_ref->[$i];
+        next if $e eq $r;
+        if ($r =~ m/.*?<LegendURL\s+width="(\d+)"\s+height="(\d+)".*?>/) {
+            my ($rw, $rh) = ($1, $2);
+            if ($e =~ m/.*?<LegendURL\s+width="(\d+)"\s*height="(\d+)".*?>/) {
+                my ($ew, $eh) = ($1, $2);
+                my $wd = abs($rw - $ew);
+                my $hd = abs($rh - $eh);
+                next if (($wd > 0 && $wd <= 3) || ($hd > 0 && $hd <= 3));
+            }
+        }
+        if ($r =~ m{^.*?<OnlineResource\s.*?;width=(\d+).*?;height=(\d+).*?>}) {
+            my ($rw, $rh) = ($1, $2);
+            if ($e =~ m{^.*?<OnlineResource\s.*?;width=(\d+).*?;height=(\d+).*?>}) {
+                my ($ew, $eh) = ($1, $2);
+                my $wd = abs($rw - $ew);
+                my $hd = abs($rh - $eh);
+                next if (($wd > 0 && $wd <= 3) || ($hd > 0 && $hd <= 3));
+            }
+        }
+        if ($r =~ m/<LegendURL\s.*?width=(\d+).*?height=(\d+)/) {
+            my ($rw, $rh) = ($1, $2);
+            if ($e =~ m/<LegendURL\s.*?width=(\d+).*?height=(\d+)/) {
+                my ($ew, $eh) = ($1, $2);
+                my $wd = abs($rw - $ew);
+                my $hd = abs($rh - $eh);
+                next if (($wd > 0 && $wd <= 3) || ($hd > 0 && $hd <= 3));
+            }
+        }
+        return 0;
+    }
+    return 1;
+}
+
+# Split xmllint-formatted capabilities output into:
+#   header:   lines up to and including the root <Layer> container's open tag
+#             plus any non-Layer children (e.g. <Title>) before the first child
+#   blocks:   { Name => arrayref of lines } for each direct child <Layer>
+#   order:    [ Name, ... ] preserving the original order
+#   footer:   the root container's </Layer> close and everything after
+# Key for each block is the first <Name>...</Name> inside it (the outermost
+# layer name); nested layers stay inside the parent block. Documents with no
+# <Layer> at all yield empty blocks/order and put every line into header.
+sub SegmentCapabilities {
+    my @lines = @_;
+    my (@header, @footer, %blocks, @order);
+
+    my $i = 0;
+    while ($i < @lines && $lines[$i] !~ m{^\s*<Layer[\s>]}) {
+        push @header, $lines[$i++];
+    }
+    if ($i >= @lines) {
+        return (\@header, \%blocks, \@order, \@footer);
+    }
+    push @header, $lines[$i++];   # root <Layer ...> open
+
+    while ($i < @lines) {
+        my $line = $lines[$i];
+        if ($line =~ m{^\s*<Layer\b} && $line !~ m{/>\s*$}) {
+            my $start = $i;
+            my $depth = 1;
+            $i++;
+            while ($i < @lines && $depth > 0) {
+                my $l = $lines[$i];
+                if ($l =~ m{^\s*<Layer\b} && $l !~ m{/>\s*$}) { $depth++; }
+                elsif ($l =~ m{^\s*</Layer>})                  { $depth--; }
+                $i++;
+            }
+            my @block = @lines[$start..$i-1];
+            my $name;
+            for my $bl (@block) {
+                if ($bl =~ m{<Name>(.+?)</Name>}) { $name = $1; last; }
+            }
+            $name //= "(unnamed-layer-at-line-" . ($start + 1) . ")";
+            if (exists $blocks{$name}) {
+                $name .= "#" . scalar(@order);
+            }
+            $blocks{$name} = \@block;
+            push @order, $name;
+        }
+        elsif ($line =~ m{^\s*</Layer>}) {
+            push @footer, $line;
+            $i++;
+            last;
+        }
+        else {
+            push @header, $line;
+            $i++;
+        }
+    }
+    while ($i < @lines) {
+        push @footer, $lines[$i++];
+    }
+    return (\@header, \%blocks, \@order, \@footer);
+}
+
+sub DiffSection {
+    my ($label, $exp_ref, $res_ref) = @_;
+    return '' if LineSequenceMatches($exp_ref, $res_ref);
+    my $ep = WriteTempLines("cmp_exp", $exp_ref);
+    my $rp = WriteTempLines("cmp_res", $res_ref);
+    my $d = GitHistogramDiff($ep, $rp);
+    unlink $ep, $rp;
+    return "[$label differs]\n" . TrimDiff($d, 60, 128) . "\n";
+}
+
 if (!defined $RESULT || !defined $RESULT) {
     die "Usage: CompareImages.pl <result>\n";
 }
@@ -121,7 +274,7 @@ if ($MIME eq 'application/vnd.mapbox-vector-tile' || $MIME eq 'application/octet
         close $tmpfh;
 
         print "FAIL: MVT output differs: $RESULT <> $EXPECTED\n";
-        system("diff -U4 $EXPECTED $tmpfile | head -n 100 | cut -c 1-128");
+        print TrimDiff(GitHistogramDiff($EXPECTED, $tmpfile), 100, 128);
         unlink $tmpfile;
         exit(1);
     }
@@ -149,7 +302,7 @@ if ($MIME eq 'image/tiff')
     close $tmpfh;
 
     print "FAIL: GeoTiff metadata differs: $RESULT <> $EXPECTED\n";
-    system("diff -U4 $EXPECTED $tmpfile | head -n 100 | cut -c 1-128");
+    print TrimDiff(GitHistogramDiff($EXPECTED, $tmpfile), 100, 128);
     unlink $tmpfile;
     exit(1);
 }
@@ -219,92 +372,85 @@ if ($is_plain_html)
         exit(0);
     }
     print "FAIL: HTML output differs: $RESULT <> $EXPECTED\n";
-    system("diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-128");
+    print TrimDiff(GitHistogramDiff($EXPECTED, $RESULT), 100, 128);
     exit(1);
 }
 
-#  We need special handling for XML (there could be small accepted differences)
+#  We need special handling for XML (there could be small accepted differences).
+#  Capabilities documents are segmented by <Layer><Name> so that adding or
+#  removing a layer reports as a one-line summary instead of cascading through
+#  every following layer's bounding boxes and styles.
 
 if ($MIME eq 'application/xml' || $MIME eq 'text/xml')
 {
-    my @result_lines = ReadXmlFile $RESULT;
+    my @result_lines   = ReadXmlFile $RESULT;
     my @expected_lines = ReadXmlFile $EXPECTED;
 
-    if ($#result_lines == $#expected_lines) {
-        for (my $i = 0; $i <= $#result_lines; $i++) {
-            my $result_line = $result_lines[$i];
-            my $expected_line = $expected_lines[$i];
-            if ($result_line eq $expected_line) {
-                next;  # Lines match, continue to next line
-            }
-            # Lines does not match - look for accepted differences
-            my $result_width = -1;
-            my $result_height = -1;
-            my $expected_width = -1;
-            my $expected_height = -1;
-            if ($result_line =~ m/.*?<LegendURL\s+width="(\d+)"\s+height="(\d+)".*?>/)
-            {
-                $result_width = $1;
-                $result_height = $2;
-                if ($expected_line =~ m/.*?<LegendURL\s+width="(\d+)"\s*height="(\d+)".*?>/) {
-                    $expected_width = $1;
-                    $expected_height = $2;
-		    my $wdiff = abs($result_width - $expected_width);
-		    my $hdiff = abs($result_height - $expected_height);
-		    if( (($wdiff > 0) && ($wdiff <= 3)) ||
-			(($hdiff > 0) && ($hdiff <= 3)) )
-                    {
-                        next;  # Width and height differences are acceptable
-                    }
-                }
-            }
-            if ($result_line =~ m/^.*?<OnlineResource\s.*?;width=(\d+).*?;height=(\d+).*?>/)
-            {
-                $result_width = $1;
-                $result_height = $2;
-                if ($expected_line =~ m/^.*?<OnlineResource\s.*?;width=(\d+).*?;height=(\d+).*?>/)
-                {
-                    $expected_width = $1;
-                    $expected_height = $2;
-		    my $wdiff = abs($result_width - $expected_width);
-		    my $hdiff = abs($result_height - $expected_height);
-		    if( (($wdiff > 0) && ($wdiff <= 3)) ||
-			(($hdiff > 0) && ($hdiff <= 3)) )
-                    {
-                        next;  # Width and height differences are acceptable
-                    }
-                }
-            }
-            # WMTS/Tiles: <LegendURL format="..." xlink:href="...&amp;width=X&amp;height=Y"/>
-            if ($result_line =~ m/<LegendURL\s.*?width=(\d+).*?height=(\d+)/)
-            {
-                $result_width = $1;
-                $result_height = $2;
-                if ($expected_line =~ m/<LegendURL\s.*?width=(\d+).*?height=(\d+)/)
-                {
-                    $expected_width = $1;
-                    $expected_height = $2;
-		    my $wdiff = abs($result_width - $expected_width);
-		    my $hdiff = abs($result_height - $expected_height);
-		    if( (($wdiff > 0) && ($wdiff <= 3)) ||
-			(($hdiff > 0) && ($hdiff <= 3)) )
-                    {
-                        next;  # Width and height differences are acceptable
-                    }
-                }
-            }
+    my ($exp_header, $exp_blocks, $exp_order, $exp_footer) = SegmentCapabilities(@expected_lines);
+    my ($res_header, $res_blocks, $res_order, $res_footer) = SegmentCapabilities(@result_lines);
 
-            print "FAIL: XML output differs: $RESULT <> $EXPECTED\n";
-            system("diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-128");
-            exit (1);
+    my $has_layers = (scalar(@$exp_order) || scalar(@$res_order));
+
+    if (!$has_layers) {
+        # Not a capabilities-style document — whole-file fuzz compare.
+        if (LineSequenceMatches(\@expected_lines, \@result_lines)) {
+            print "OK     ";
+            Cleanup();
+            exit(0);
         }
+        print "FAIL: XML output differs: $RESULT <> $EXPECTED\n";
+        print TrimDiff(GitHistogramDiff($EXPECTED, $RESULT), 100, 128);
+        exit(1);
+    }
+
+    my @report;
+    my $section = DiffSection("Capabilities header", $exp_header, $res_header);
+    push @report, $section if $section ne '';
+
+    my %exp_set = map { $_ => 1 } @$exp_order;
+    my %res_set = map { $_ => 1 } @$res_order;
+    my @added   = grep { !$exp_set{$_} } @$res_order;
+    my @removed = grep { !$res_set{$_} } @$exp_order;
+    if (@removed) {
+        push @report, join("", map { "- Removed layer '$_'\n" } @removed);
+    }
+    if (@added) {
+        push @report, join("", map { "+ Added layer '$_'\n" } @added);
+    }
+
+    # Layer order matters in WMS (layers are emitted alphabetically); flag a
+    # reorder of the common set so a stale expected file gets caught instead of
+    # silently passing when only positions shift.
+    my @common_exp = grep { $res_set{$_} } @$exp_order;
+    my @common_res = grep { $exp_set{$_} } @$res_order;
+    if (join("\0", @common_exp) ne join("\0", @common_res)) {
+        my @exp_lines = map { "$_\n" } @common_exp;
+        my @res_lines = map { "$_\n" } @common_res;
+        my $ep = WriteTempLines("order_exp", \@exp_lines);
+        my $rp = WriteTempLines("order_res", \@res_lines);
+        my $d = GitHistogramDiff($ep, $rp);
+        unlink $ep, $rp;
+        push @report, "[Layer order changed]\n" . TrimDiff($d, 40, 128) . "\n";
+    }
+
+    for my $name (@$exp_order) {
+        next unless exists $res_blocks->{$name};
+        my $sec = DiffSection("Layer '$name'", $exp_blocks->{$name}, $res_blocks->{$name});
+        push @report, $sec if $sec ne '';
+    }
+
+    $section = DiffSection("Capabilities footer", $exp_footer, $res_footer);
+    push @report, $section if $section ne '';
+
+    if (!@report) {
         print "OK     ";
         Cleanup();
         exit(0);
-    } else {
-        print "FAIL\tXML output has different number of lines.";
-        exit(1);
     }
+
+    print "FAIL: XML output differs: $RESULT <> $EXPECTED\n";
+    print TrimDiff(join("\n", @report), 200, 128);
+    exit(1);
 }
 
 # FIXME: handle JSON output similarly to XML
@@ -355,7 +501,7 @@ if ($MIME eq 'application/json' || $MIME eq 'text/json' || $MIME eq 'text/plain'
             }
 
             print "FAIL: JSON output differs: $RESULT <> $EXPECTED\n";
-            system("diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-1024");
+            print TrimDiff(GitHistogramDiff($EXPECTED, $RESULT), 100, 1024);
             exit (1);
         }
         print "OK     ";
