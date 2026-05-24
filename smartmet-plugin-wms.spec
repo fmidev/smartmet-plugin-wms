@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.14
+Version: 26.5.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -138,6 +138,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-regression >= 26.5.21
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
+#TestRequires: protobuf-compiler
 #TestRequires: zlib-devel
 #TestRequires: libcurl-devel
 #TestRequires: cairo-devel
@@ -172,6 +173,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun May 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.24-1.fmi
+- Dependency fixes
+- Improved tests
+
 * Wed May 13 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.5.14-1.fmi
 - Expose GetCapabilities response cache statistics to admin queries (Wms::capabilities_cache)
 
