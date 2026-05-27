@@ -4702,6 +4702,10 @@ The `<subdir>` is `markers/`, `patterns/`, `filters/`, or `gradients/` depending
 attribute type.  An absolute path (starting with `/`) skips the customer directory and
 searches from the Dali root directly.
 
+Filters are a special case: after steps 1–2 they are searched only in
+`<root>/resources/filters/<name>.svg` (they do not fall back through the
+`resources/layers/` and `resources/` locations used by the other resource types).
+
 
 # Dali querystring parameters
 
@@ -4727,6 +4731,8 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 | `interval_end` | int | – | End of observation time interval in minutes after `time + time_offset`. |
 | `timestep` | int | – | Timestep in minutes. |
 | `level` | double | – | Pressure level in hPa. |
+| `elevation` | double | – | Grid-data level value; takes precedence over `level` when both are given. |
+| `elevation_unit` | string | – | Unit of the `elevation` value. |
 | `levelId` / `levelid` | int | – | Level type ID. |
 | `forecastNumber` | int | – | Ensemble member number. |
 | `forecastType` | int | – | Forecast type. |
@@ -4745,6 +4751,7 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 | `xmargin` | int | 0 | X-margin for symbol clipping (pixels). |
 | `ymargin` | int | 0 | Y-margin for symbol clipping (pixels). |
 | `clip` | bool | false | Wrap each layer in a `<clipPath>`. |
+| `precision` | double | – | Number of decimals used when writing coordinates into the SVG output. |
 
 **Overriding JSON structure fields:**
 
@@ -4982,11 +4989,20 @@ or stripped by the allowed-parameter filter if not in the `allowed_keys` set.
 | `printparams=1` | Print the grid parameter list used by the product. |
 | `timer=1` | Print timing information per product generation stage. |
 | `stage=1`–`4` | Return the intermediate JSON at the given [pipeline stage](#processing-pipeline) instead of rendering. |
+| `debug=1` | Include exception/backtrace details in error responses instead of a terse message. |
+| `quiet=1` | Suppress server-side logging of the error when a request fails. |
 
 
 # WMS querystring parameters
 
-The WMS endpoint (default URL `/wms`) implements OGC WMS 1.3.0.
+The WMS endpoint (default URL `/wms`) implements OGC WMS 1.3.0.  The set of accepted
+versions is configured by the `supported_versions` setting (see the `wms` group in the
+[plugin configuration](#wms-group)); `1.3.0` is the standard version.  When an older
+version such as `1.1.1` is enabled, the axis-order rules and the `SRS` parameter name of
+that version apply.
+
+Parameter names are matched case-insensitively, so `REQUEST`, `request`, and `Request` are
+equivalent.
 
 ### GetCapabilities
 
@@ -4994,8 +5010,21 @@ The WMS endpoint (default URL `/wms`) implements OGC WMS 1.3.0.
 GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 ```
 
-Returns the capabilities XML document listing all available layers, CRS, and formats.
-The optional `FORMAT` parameter selects `text/xml` (default) or `application/json`.
+Returns the capabilities document listing all available layers, CRS, and formats.
+
+| Parameter | Description |
+|-----------|-------------|
+| `SERVICE=WMS` | Must be `WMS`. |
+| `VERSION` | WMS version. |
+| `REQUEST=GetCapabilities` | Request type. |
+| `FORMAT` | `text/xml` (default) or `application/json`. |
+| `LANGUAGE` | Language code for titles/abstracts; defaults to the configured default language. |
+| `NAMESPACE` | Restrict the listing to layers in the given namespace. |
+| `LAYOUT` | Layer hierarchy in the response: `flat` (default), `recursive`, or `recursivetimes`. Overrides the configured default. |
+| `STARTTIME` / `ENDTIME` | Limit the advertised time dimension to the given range (ISO 8601). |
+| `DIM_REFERENCE_TIME` | Advertise the time dimension for the given model run (origin time). |
+| `ENABLEINTERVALS` | `1` / `0`: force the multi-interval time dimension on or off, overriding the configured default. |
+| `SHOW_HIDDEN` | `1`: include layers flagged `hidden` in the response. |
 
 ### GetMap
 
@@ -5004,7 +5033,7 @@ Required parameters:
 | Parameter | Description |
 |-----------|-------------|
 | `SERVICE=WMS` | Must be `WMS`. |
-| `VERSION=1.3.0` | WMS version (also `1.1.1` / `1.1.0` are accepted for backward compatibility). |
+| `VERSION` | WMS version, e.g. `1.3.0`. Must be one of the configured `supported_versions`. |
 | `REQUEST=GetMap` | Request type. |
 | `LAYERS` | Comma-separated list of layer names. |
 | `STYLES` | Comma-separated list of styles (may be empty: `STYLES=`). |
@@ -5012,27 +5041,61 @@ Required parameters:
 | `BBOX` | Bounding box: `minx,miny,maxx,maxy`. Axis order follows the CRS definition in WMS 1.3. |
 | `WIDTH` | Image width in pixels. |
 | `HEIGHT` | Image height in pixels. |
-| `FORMAT` | MIME type: `image/png`, `image/svg+xml`, `application/pdf`, `application/geo+json`, `application/topo+json`. |
+| `FORMAT` | Output MIME type; must be one of the server's configured formats. Common values: `image/png`, `image/webp`, `image/svg+xml`, `application/pdf`, `application/geo+json`, `application/topo+json`, `image/tiff` (GeoTIFF), `application/vnd.mapbox-vector-tile` (MVT), `application/x-datatile+png` ([DataTile](#datatile-output)). |
 
 Optional parameters:
 
 | Parameter | Description |
 |-----------|-------------|
-| `TRANSPARENT=TRUE\|FALSE` | Whether the background is transparent. |
+| `TRANSPARENT=TRUE\|FALSE` | Whether the background is transparent (default `FALSE`). |
 | `BGCOLOR=0xRRGGBB` | Background colour (used only when `TRANSPARENT=FALSE`). |
-| `EXCEPTIONS=XML\|application/json` | Exception reporting format. |
-| `TIME` | ISO 8601 time value or comma-separated list of times. |
+| `EXCEPTIONS` | Exception reporting format: `XML` (default), `JSON`, `INIMAGE`, or `BLANK`. |
+| `TIME` | Time selection. Accepts `current`, a single ISO 8601 time, a comma-separated list (`t1,t2,…`), an interval `min/max/resolution`, or a comma-separated list of such intervals. |
 | `ELEVATION` | Elevation value (forwarded to the layer as the `level` parameter). |
-| `INTERVAL_START` | Extension: start of observation time interval in minutes before `TIME`. |
-| `INTERVAL_END` | Extension: end of observation time interval in minutes after `TIME`. |
+| `DIM_REFERENCE_TIME` / `ORIGINTIME` | Select the model run (origin time). `DIM_REFERENCE_TIME` is the standard WMS dimension name; `ORIGINTIME` is an equivalent alias. Both are forwarded to Dali as `origintime`. An invalid reference time for a grid producer is rejected. |
+| `DIM_INTERVAL_START` | Extension: start of observation time interval in minutes before `TIME` (integer). |
+| `DIM_INTERVAL_END` | Extension: end of observation time interval in minutes after `TIME` (integer). |
+
+### GetFeatureInfo
+
+```
+GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=<name>&QUERY_LAYERS=<name>
+        &CRS=EPSG:4326&BBOX=...&WIDTH=...&HEIGHT=...&STYLES=&I=<col>&J=<row>
+```
+
+`GetFeatureInfo` reuses the full GetMap parameter set (`LAYERS`, `STYLES`, `CRS`/`SRS`,
+`BBOX`, `WIDTH`, `HEIGHT`, `TIME`, …) to reconstruct the map, plus:
+
+| Parameter | Description |
+|-----------|-------------|
+| `QUERY_LAYERS` | Comma-separated list of layers to query (subset of `LAYERS`). Required. |
+| `I` / `J` | Pixel column / row of the query point (WMS 1.3 names). Required. |
+| `INFO_FORMAT` | Response MIME type; defaults to `application/json`. |
 
 ### GetLegendGraphic
 
 ```
-GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=<name>&FORMAT=image/png
+GET /wms?SERVICE=WMS&VERSION=1.3.0&SLD_VERSION=1.1.0&REQUEST=GetLegendGraphic&LAYER=<name>&FORMAT=image/png
 ```
 
 Returns a legend image for the named layer.
+
+Required parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `VERSION` | WMS version. |
+| `SLD_VERSION` | SLD specification version, e.g. `1.1.0`. |
+| `LAYER` | Layer name (singular, unlike GetMap's `LAYERS`). |
+| `FORMAT` | Output MIME type, e.g. `image/png`. |
+
+Optional parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `STYLE` | Style name; defaults to `default`. |
+| `WIDTH` / `HEIGHT` | Legend size in pixels; default `500` × `500`. |
+| `TIME` | Time used to resolve a time-dependent legend; defaults to `current`. |
 
 
 # WMS GetMap and GetCapabilities configuration
