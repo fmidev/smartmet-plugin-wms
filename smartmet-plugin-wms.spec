@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.5.27
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed May 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.27-2.fmi
+- GetCapabilities: fix interval dimensions collapsing to a single value when sibling layers sharing a time period are grouped (track and emit the interval dimension independently of the time dimension)
+
 * Wed May 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.27-1.fmi
 - Reject invalid reference times for grid producers instead of silently using the latest available analysis time
 

@@ -171,6 +171,20 @@ std::string time_key(const LayerHierarchy& lh)
   return (*info)["time_dimension"].RecursiveDump();
 }
 
+// The interval dimension has no hierarchy node of its own: it lives on the
+// time dimension's layer. It is keyed and suppressed independently of the
+// time dimension, so siblings that share a time period but offer different
+// intervals each declare their own.
+std::string interval_key(const LayerHierarchy& lh)
+{
+  if (!lh.timeDimension)
+    return "";
+  auto info = lh.timeDimension->getLayer()->getIntervalDimensionInfo();
+  if (!info || !info->Exists("interval_dimension"))
+    return "";
+  return (*info)["interval_dimension"].RecursiveDump();
+}
+
 std::string elev_key(const LayerHierarchy& lh)
 {
   if (!lh.elevationDimension)
@@ -249,6 +263,7 @@ struct InheritedState
 {
   std::string geoKey;           // empty = not yet declared
   std::string timeKey;          // empty = not yet declared
+  std::string intervalKey;      // empty = not yet declared
   std::string elevKey;          // empty = not yet declared
   ProjMap projDeclared;         // crs_id -> bbox_key already declared
   SharedLayer timeDimLayer;  // for actual CTPP output
@@ -267,10 +282,12 @@ struct LayerGroup
 {
   std::string geoKey;
   std::string timeKey;
+  std::string intervalKey;
   std::string elevKey;
   // The representative layer for each shared attribute
   const LayerHierarchy* geoSource = nullptr;
   const LayerHierarchy* timeSource = nullptr;
+  const LayerHierarchy* intervalSource = nullptr;
   const LayerHierarchy* elevSource = nullptr;
   // Per-CRS entries shared by all members
   ProjMap sharedProj;
@@ -301,6 +318,7 @@ std::vector<LayerGroup> group_children(
     // the dimension throughout the subtree.
     const LayerHierarchy* geo_repr = nullptr;
     const LayerHierarchy* time_repr = nullptr;
+    const LayerHierarchy* interval_repr = nullptr;
     const LayerHierarchy* elev_repr = nullptr;
 
     // geo: unanimous only
@@ -375,6 +393,33 @@ std::vector<LayerGroup> group_children(
         elev_repr = it->second;
     }
 
+    // interval: most common across leaves. Not part of the group key — group
+    // members may share geo/time/elev yet differ in intervals; the per-key
+    // suppression in emit_interval() lets the odd ones out declare their own.
+    std::map<std::string, int> interval_counts;
+    std::map<std::string, const LayerHierarchy*> interval_first;
+    for (const auto* leaf : leaves)
+    {
+      std::string k = interval_key(*leaf);
+      interval_counts[k]++;
+      if (!k.empty() && !interval_first.count(k))
+        interval_first[k] = leaf;
+    }
+    std::string child_interval;
+    best = 0;
+    for (const auto& [k, v] : interval_counts)
+      if (v > best)
+      {
+        best = v;
+        child_interval = k;
+      }
+    if (!child_interval.empty())
+    {
+      auto it = interval_first.find(child_interval);
+      if (it != interval_first.end())
+        interval_repr = it->second;
+    }
+
     auto key = std::make_tuple(child_geo, child_time, child_elev);
     auto& grp = groups[key];
     grp.geoKey = child_geo;
@@ -386,6 +431,14 @@ std::vector<LayerGroup> group_children(
       grp.timeSource = time_repr;
     if (elev_repr && !grp.elevSource)
       grp.elevSource = elev_repr;
+    // Interval is not in the group key, so keep grp.intervalKey consistent
+    // with grp.intervalSource by setting both from the first member that
+    // actually carries an interval dimension.
+    if (interval_repr && !grp.intervalSource)
+    {
+      grp.intervalSource = interval_repr;
+      grp.intervalKey = child_interval;
+    }
     grp.members.push_back(child.get());
   }
 
@@ -499,12 +552,23 @@ void emit_time(CTPP::CDT& capa,
         wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, reference_time);
 
   if (time_dim)
-  {
     capa.MergeCDT(*time_dim);
-    auto iv = wmslayer->getIntervalDimensionInfo();
-    if (iv)
-      capa.MergeCDT(*iv);
-  }
+}
+
+// Emit interval dimension CDT if not already declared. Tracked separately
+// from the time dimension (see interval_key): a layer that shares its time
+// period with siblings must still declare its own intervals instead of
+// silently inheriting a neighbour's.
+void emit_interval(CTPP::CDT& capa, const LayerHierarchy& src, const InheritedState& inh)
+{
+  if (!src.timeDimension)
+    return;
+  std::string k = interval_key(src);
+  if (k.empty() || k == inh.intervalKey)
+    return;
+  auto info = src.timeDimension->getLayer()->getIntervalDimensionInfo();
+  if (info)
+    capa.MergeCDT(*info);
 }
 
 // Emit elevation dimension CDT if not already declared
@@ -626,6 +690,12 @@ void emit_group(bool multiple_intervals,
             grp.timeSource->timeDimension ? grp.timeSource->timeDimension->getLayer() : nullptr;
       }
     }
+    if (grp.intervalSource && !grp.intervalKey.empty() && grp.intervalKey != inh.intervalKey)
+    {
+      emit_interval(virtual_node, *grp.intervalSource, inh);
+      if (virtual_node.Exists("interval_dimension"))
+        child_inh.intervalKey = grp.intervalKey;
+    }
     if (grp.elevSource && !grp.elevKey.empty() && grp.elevKey != inh.elevKey)
     {
       emit_elev(virtual_node, *grp.elevSource, inh);
@@ -646,6 +716,7 @@ void emit_group(bool multiple_intervals,
 
     bool has_content = virtual_node.Exists("ex_geographic_bounding_box") ||
                        virtual_node.Exists("time_dimension") ||
+                       virtual_node.Exists("interval_dimension") ||
                        virtual_node.Exists("elevation_dimension") || virtual_node.Exists("crs");
 
     if (has_content)
@@ -736,6 +807,10 @@ void add_layer_info(bool multiple_intervals,
               sublayer_is_reference_time_layer,
               inh);
 
+  // ---- interval dimension (rides on the time dim layer, tracked apart) ----
+  if (lh.timeDimension)
+    emit_interval(capa, lh, inh);
+
   // ---- elevation dimension ----
   if (lh.elevationDimension)
     emit_elev(capa, lh, inh);
@@ -775,6 +850,9 @@ void add_layer_info(bool multiple_intervals,
       child_inh.timeKey = k;
       child_inh.timeDimLayer = lh.timeDimension->getLayer();
     }
+    std::string ik = interval_key(lh);
+    if (!ik.empty() && ik != inh.intervalKey)
+      child_inh.intervalKey = ik;
   }
   if (lh.elevationDimension)
   {
