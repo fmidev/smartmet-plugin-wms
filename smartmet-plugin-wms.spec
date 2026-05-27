@@ -29,11 +29,11 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.4.27
-BuildRequires: smartmet-library-grid-content-devel >= 26.4.24
-BuildRequires: smartmet-library-grid-files-devel >= 26.4.22
-BuildRequires: smartmet-library-macgyver-devel >= 26.4.13
+BuildRequires: smartmet-library-grid-content-devel >= 26.5.26
+BuildRequires: smartmet-library-grid-files-devel >= 26.5.26
+BuildRequires: smartmet-library-macgyver-devel >= 26.5.21
 BuildRequires: smartmet-library-spine-devel >= 26.4.27
-BuildRequires: smartmet-library-timeseries-devel >= 26.4.13
+BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.4.13
 %endif
@@ -41,12 +41,12 @@ BuildRequires: smartmet-engine-authentication-devel >= 26.4.13
 BuildRequires: smartmet-engine-observation-devel >= 26.4.13
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.4.28
-BuildRequires: smartmet-engine-gis-devel >= 26.5.5
+BuildRequires: smartmet-engine-gis-devel >= 26.5.8
 BuildRequires: smartmet-engine-grid-devel >= 26.4.24
 BuildRequires: smartmet-engine-geonames-devel >= 26.4.28
 BuildRequires: smartmet-engine-querydata-devel >= 26.4.13
 BuildRequires: smartmet-engine-contour-devel >= 26.5.5
-BuildRequires: smartmet-library-gis-devel >= 26.4.13
+BuildRequires: smartmet-library-gis-devel >= 26.5.21
 BuildRequires: smartmet-library-trax-devel >= 26.4.22
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -78,13 +78,13 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
-Requires: smartmet-library-grid-content >= 26.4.24
-Requires: smartmet-library-grid-files >= 26.4.22
-Requires: smartmet-library-gis >= 26.4.13
+Requires: smartmet-library-grid-content >= 26.5.26
+Requires: smartmet-library-grid-files >= 26.5.26
+Requires: smartmet-library-gis >= 26.5.21
 Requires: smartmet-library-trax >= 26.4.22
-Requires: smartmet-library-macgyver >= 26.4.13
+Requires: smartmet-library-macgyver >= 26.5.21
 Requires: smartmet-library-spine >= 26.4.27
-Requires: smartmet-library-timeseries >= 26.4.13
+Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.4.27
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.4.13
@@ -92,7 +92,7 @@ Requires: smartmet-engine-authentication >= 26.4.13
 Requires: smartmet-engine-avi >= 26.4.28
 Requires: smartmet-engine-querydata >= 26.4.13
 Requires: smartmet-engine-contour >= 26.5.5
-Requires: smartmet-engine-gis >= 26.5.5
+Requires: smartmet-engine-gis >= 26.5.8
 Requires: smartmet-engine-grid >= 26.4.24
 Requires: smartmet-engine-geonames >= 26.4.28
 Requires: smartmet-server >= 26.4.16
@@ -120,22 +120,22 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-avi-devel >= 26.4.28
 #TestRequires: smartmet-engine-contour-devel >= 26.5.5
 #TestRequires: smartmet-engine-geonames-devel >= 26.4.28
-#TestRequires: smartmet-engine-gis-devel >= 26.5.5
+#TestRequires: smartmet-engine-gis-devel >= 26.5.8
 #TestRequires: smartmet-engine-querydata-devel >= 26.4.13
 #TestRequires: smartmet-engine-authentication-devel >= 26.4.13
 #TestRequires: smartmet-library-giza-devel >= 26.4.27
 #TestRequires: smartmet-library-trax-devel >= 26.4.22
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
-#TestRequires: smartmet-library-macgyver-devel >= 26.4.13
+#TestRequires: smartmet-library-macgyver-devel >= 26.5.21
 #TestRequires: smartmet-library-spine-devel >= 26.4.27
-#TestRequires: smartmet-library-timeseries-devel >= 26.4.13
+#TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.4.24
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
-#TestRequires: smartmet-utils-devel >= 26.4.28
+#TestRequires: smartmet-utils-devel >= 26.5.22
 #TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
-#TestRequires: smartmet-library-regression >= 26.5.21
+#TestRequires: smartmet-library-regression >= 26.5.22
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: protobuf-compiler
