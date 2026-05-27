@@ -104,6 +104,13 @@ class Layer : public Properties
   // Get the model data
   Engine::Querydata::Q getModel(const State& theState) const;
 
+  // For grid-backed layers with an explicit origintime, verify the requested
+  // origintime is one of the producer's advertised analysis times. Throws a
+  // WMS_INVALID_DIMENSION_VALUE exception if not. No-op when origintime is
+  // not set, when the layer is not grid-backed, or when the producer has no
+  // advertised generations yet (the static-layer escape hatch).
+  void validateGridOrigintime(const State& theState) const;
+
   // Generate clipPath to the output if needed
   void addClipRect(CTPP::CDT& theCdt,
                    CTPP::CDT& theGlobals,

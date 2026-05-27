@@ -23,8 +23,10 @@
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
+#include <engines/grid/Engine.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include "wms/Exception.h"
 #include <macgyver/Cache.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
@@ -234,6 +236,59 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to get required model data!");
+  }
+}
+
+void Layer::validateGridOrigintime(const State& theState) const
+{
+  try
+  {
+    if (!origintime)
+      return;
+    if (paraminfo.source != std::string("grid"))
+      return;
+
+    const auto* gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      return;
+
+    const std::string producer =
+        (paraminfo.producer ? *paraminfo.producer : theState.getConfig().defaultModel());
+    if (producer.empty())
+      return;
+
+    auto contentServer = gridEngine->getContentServer_sptr();
+    T::ProducerInfo producerInfo;
+    if (contentServer->getProducerInfoByName(0, producer, producerInfo) != 0)
+      return;
+
+    T::GenerationInfoList generationInfoList;
+    if (contentServer->getGenerationInfoListByProducerId(
+            0, producerInfo.mProducerId, generationInfoList) != 0)
+      return;
+
+    const auto len = generationInfoList.getLength();
+    if (len == 0)
+      return;  // no advertised generations: static-layer escape hatch
+
+    for (unsigned int i = 0; i < len; ++i)
+    {
+      const T::GenerationInfo* gInfo = generationInfoList.getGenerationInfoByIndex(i);
+      if (gInfo == nullptr || gInfo->mStatus != T::GenerationInfo::Status::Ready)
+        continue;
+      if (toTimeStamp(gInfo->mAnalysisTime) == *origintime)
+        return;
+    }
+
+    throw Fmi::Exception(BCP, "Invalid reference time requested!")
+        .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+        .addParameter("Requested reference time", Fmi::to_iso_string(*origintime))
+        .addParameter("Producer", producer)
+        .disableLogging();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Origin time validation failed!");
   }
 }
 
@@ -861,11 +916,16 @@ void Layer::getGridValue(CTPP::CDT& theInfo, const State& theState)
     attributeList.addAttribute("timezone", "UTC");
 
     if (origintime)
+    {
+      validateGridOrigintime(theState);
       attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    }
 
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
     originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+    if (origintime)
+      originalGridQuery->mFlags |= QueryServer::Query::Flags::AnalysisTimeMatchRequired;
 
     auto crs = projection.getCRS();
 

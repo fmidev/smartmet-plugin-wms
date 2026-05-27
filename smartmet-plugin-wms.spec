@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.24
+Version: 26.5.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed May 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.27-1.fmi
+- Reject invalid reference times for grid producers instead of silently using the latest available analysis time
+
 * Sun May 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.24-1.fmi
 - Dependency fixes
 - Improved tests
