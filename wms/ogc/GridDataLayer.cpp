@@ -69,6 +69,7 @@ bool GridDataLayer::updateLayerMetaData()
     std::string fparam;
     std::string lastParam;
     std::set<int> functionGeometries;
+    std::set<std::string> producers;
 
     if (!itsParameter.empty())
     {
@@ -89,8 +90,6 @@ bool GridDataLayer::updateLayerMetaData()
       }
       *pp = '\0';
 
-      // printf("PP [%s]\n",startpoint);
-
       // Function might have several parameters.
 
       std::vector<std::string> fp;
@@ -106,6 +105,7 @@ bool GridDataLayer::updateLayerMetaData()
         if (!producer.empty())
         {
           // The produce is not empty. Let's try to find a parameter with the same producer.
+
           std::vector<std::string> p;
           splitString(ps, ':', p);
 
@@ -114,9 +114,19 @@ bool GridDataLayer::updateLayerMetaData()
             functionGeometries.insert(toInt32(p[2]));
           }
 
-          if (p.size() >= 2 && strcasecmp(p[1].c_str(), producer.c_str()) == 0)
+          if (p.size() >= 2)
           {
-            fparam = *it;
+            if (strcasecmp(p[1].c_str(), producer.c_str()) == 0)
+            {
+              fparam = *it;
+            }
+            else
+            {
+              // Parameter/Function uses a producer that is not the main producer. This
+              // might cause problems if all producers do not have same reference times.
+
+              producers.insert(p[1]);
+            }
           }
         }
       }
@@ -155,9 +165,6 @@ bool GridDataLayer::updateLayerMetaData()
         forecastNumber = toInt32(p[6]);
     }
 
-    // printf("PRODUCER
-    // [%s][%s][%s][%d]\n",producer.c_str(),itsParameter.c_str(),fparam.c_str(),itsGeometryId);
-
     T::ProducerInfo producerInfo;
     if (contentServer->getProducerInfoByName(0, producer, producerInfo) != 0)
       return true;
@@ -168,8 +175,69 @@ bool GridDataLayer::updateLayerMetaData()
         generationInfoList.getLength() == 0)
       return true;
 
-    std::set<int> validGeometries;
+    T::GenerationInfoList newGenerationInfoList;
+    if (producers.size() > 0)
+    {
+      // A parameter (=> function) contains more than one producer. If producers
+      // do not have same reference_times then we should accept only the latest
+      // reference time.
 
+      T::GenerationInfo *newGen = nullptr;
+      for (auto prod = producers.begin(); prod != producers.end(); ++prod)
+      {
+        T::ProducerInfo prodInfo;
+        if (contentServer->getProducerInfoByName(0, *prod, prodInfo) == 0)
+        {
+          T::GenerationInfoList genInfoList;
+          if (contentServer->getGenerationInfoListByProducerId(
+                0, prodInfo.mProducerId, genInfoList) == 0  && generationInfoList.getLength() > 0)
+          {
+            // Checking if the producer have the same reference times as the main producer.
+
+            bool refTimesAreEqual = true;
+            if (genInfoList.getLength() != generationInfoList.getLength())
+            {
+              refTimesAreEqual = false;
+            }
+            else
+            {
+              for (unsigned int i = 0; i < generationInfoList.getLength(); i++)
+              {
+                T::GenerationInfo* g1 = generationInfoList.getGenerationInfoByIndex(i);
+                if (refTimesAreEqual && !genInfoList.getGenerationInfoByAnalysisTime(g1->mAnalysisTime))
+                  refTimesAreEqual = false;
+              }
+            }
+
+            if (!refTimesAreEqual)
+            {
+              // Producers do not have same reference times. So, we should use only the latest
+              // reference time.
+
+              T::GenerationInfo *lastGen1 = generationInfoList.getLastGenerationInfoByAnalysisTime(1);
+
+              if (lastGen1)
+              {
+                if (!newGen)
+                {
+                  newGen = lastGen1->duplicate();
+                  newGenerationInfoList.addGenerationInfo(newGen);
+                }
+
+                auto lastGen2 = genInfoList.getLastGenerationInfoByAnalysisTime(1);
+                if (lastGen2  &&  newGen->mAnalysisTime < lastGen2->mAnalysisTime)
+                  newGen->mAnalysisTime = lastGen2->mAnalysisTime;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (newGenerationInfoList.getLength() == 0)
+      newGenerationInfoList = generationInfoList;
+
+    std::set<int> validGeometries;
     Identification::FmiGeometryGroupDef geometryGroupDef;
     if (Identification::gridDef.getFmiGeometryGroupDef(
             producerInfo.mName.c_str(), 1, geometryGroupDef))
@@ -183,23 +251,19 @@ bool GridDataLayer::updateLayerMetaData()
       itsGeometryId = -1;
     }
 
-    // printf("VALIDGEOMS %ld   FUNC %ld
-    // geomId=%d\n",validGeometries.size(),functionGeometries.size(),itsGeometryId);
-
     if (validGeometries.empty() && !functionGeometries.empty())
       validGeometries = functionGeometries;
 
+
     std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
-    for (unsigned int i = 0; i < generationInfoList.getLength(); i++)
+    for (unsigned int i = 0; i < newGenerationInfoList.getLength(); i++)
     {
-      T::GenerationInfo* generationInfo = generationInfoList.getGenerationInfoByIndex(i);
+      T::GenerationInfo* generationInfo = newGenerationInfoList.getGenerationInfoByIndex(i);
 
       // generation must exist and be marked complete (1)
       if (generationInfo == nullptr || generationInfo->mStatus != 1)
         continue;
 
-      // printf("-- GENERATION %s %u  (geom=%d fparam=%s  itsParam=%s
-      // geoms=%ld)\n",generationInfo->mName.c_str(),generationInfo->mGenerationId,itsGeometryId,fparam.c_str(),itsParameter.c_str(),validGeometries.size());
       if (itsGeometryId <= 0 && validGeometries.empty())
       {
         std::set<T::GeometryId> geometryIdList;
@@ -240,9 +304,6 @@ bool GridDataLayer::updateLayerMetaData()
         }
       }
 
-      // printf("#### VALIDGEOMS %ld   FUNC %ld  geomId=%d
-      // PARAM=%s\n",validGeometries.size(),functionGeometries.size(),itsGeometryId,parameterKey.c_str());
-
       std::set<std::string> contentTimeList;
 
       if (itsParameter > "")
@@ -267,7 +328,6 @@ bool GridDataLayer::updateLayerMetaData()
           return true;
 
         uint len = contentInfoList.getLength();
-        // printf("CONTENTINFOLIST %u\n",len);
         if (len == 0)
         {
           // Parameter name can be an alias name. Trying to find it from the parameter mappings.
@@ -281,7 +341,6 @@ bool GridDataLayer::updateLayerMetaData()
                                               false,
                                               mappings);
 
-          // printf("MAPPINGS %ld\n",mappings.size());
           if (mappings.empty())
           {
             // Trying to find parameter mappings without levels.
@@ -289,13 +348,11 @@ bool GridDataLayer::updateLayerMetaData()
             itsGridEngine->getParameterMappings(
                 producerInfo.mName, parameterKey, tmpGeometryId, true, mappings);
 
-            // printf("# MAPPINGS %ld\n",mappings.size());
             if (mappings.empty())
             {
               // Trying to find parameter mappings without geometry.
               itsGridEngine->getParameterMappings(producerInfo.mName, parameterKey, true, mappings);
             }
-            // printf("## MAPPINGS %ld\n",mappings.size());
           }
 
           if (!mappings.empty())
@@ -329,8 +386,13 @@ bool GridDataLayer::updateLayerMetaData()
           T::ContentInfo* info = contentInfoList.getContentInfoByIndex(t);
           if (validGeometries.find(info->mGeometryId) != validGeometries.end())
           {
-            if (contentTimeList.find(info->getForecastTime()) == contentTimeList.end())
-              contentTimeList.insert(std::string(info->getForecastTime()));
+            // We should not accept forecast times that are earlier than the reference time.
+
+            if (generationInfo->mAnalysisTime <= info->getForecastTime())
+            {
+              if (contentTimeList.find(info->getForecastTime()) == contentTimeList.end())
+                contentTimeList.insert(std::string(info->getForecastTime()));
+            }
           }
         }
 
@@ -389,7 +451,7 @@ bool GridDataLayer::updateLayerMetaData()
         for (const auto& stime : contentTimeList)
           timesteps.push_back(toTimeStamp(stime));
 
-	apply_timestep(timesteps, timestep);
+	      apply_timestep(timesteps, timestep);
 	
         time_intervals intervals = get_intervals(timesteps);
 
