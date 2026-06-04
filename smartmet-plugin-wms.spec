@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.5.28
+Version: 26.6.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Jun  4 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.4-1.fmi
+- Fixed reference time handling for Finnish VIRENWC + VIRE combination
+
 * Thu May 28 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.28-1.fmi
 - GetCapabilities: advertise reference_time dimension in flat layout mode (previously only recursive/recursivetimes emitted it). Also fix a latent stray-comma bug in the JSON capabilities template that this exposed.
 
