@@ -15,6 +15,7 @@
 #include "Properties.h"
 #include "Text.h"
 #include "Views.h"
+#include "Webp.h"
 #include <json/json.h>
 #include <macgyver/DateTime.h>
 #include <optional>
@@ -76,6 +77,9 @@ class Product : public Properties
 
   // PNG rendering options
   Png png;
+
+  // WebP rendering options
+  Webp webp;
 
  private:
 };  // class Product

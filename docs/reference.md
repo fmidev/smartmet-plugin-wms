@@ -232,6 +232,13 @@ PNG output formatting can be tuned using the following settings inside a top lev
 | maxcolors   | (int)    | 0             | Desired maximum number of colors in the palette. Zero implies no maximum, and palette fitting will be fully adaptive |
 | truecolor   | (bool)   | false         | Set to avoid color reduction completely                                                                              |
 
+WebP output uses the same color reduction settings from the "png" tag, and adds its
+own compression speed control in a top level "webp" tag:
+
+| Name  | Type  | Default value | Description                                                                                                                                                          |
+| ----- | ----- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| level | (int) | -             | The WebP lossless compression preset level, 0...9. 0 = fastest encoding with the largest file, 9 = slowest encoding with the smallest file. If omitted, the libwebp default is used. |
+
 ### Product level attributes
 
 The product level is the highest structural level used in the product configuration file. The product attributes are used in order to define product level properties for the current product. On the other hand, the product attributes define the substructures related to the current product. 

@@ -1,8 +1,8 @@
 #include "Product.h"
 #include "Config.h"
 #include "Hash.h"
-#include "Layer.h"
 #include "JsonTools.h"
+#include "Layer.h"
 #include "MapboxVectorTile.h"
 #include "State.h"
 #include "Warnings.h"
@@ -63,6 +63,10 @@ void Product::init(Json::Value& theJson, const State& theState, const Config& th
     json = JsonTools::remove(theJson, "png");
     if (!json.isNull())
       png.init(json, theConfig);
+
+    json = JsonTools::remove(theJson, "webp");
+    if (!json.isNull())
+      webp.init(json, theConfig);
 
     // refs is also allowed here
 
@@ -236,6 +240,7 @@ std::size_t Product::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     Fmi::hash_combine(hash, Dali::hash_value(views, theState));
     Fmi::hash_combine(hash, Dali::hash_value(png, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(webp, theState));
     Fmi::hash_combine(hash, animation.hash_value(theState));
     return hash;
   }

@@ -14,11 +14,11 @@
 #include "Product.h"
 #include "State.h"
 #include "TextUtility.h"
+#include "ogc/QueryStatus.h"
+#include "tiles/Config.h"
 #include "wms/Config.h"
 #include "wms/Exception.h"
 #include "wmts/Config.h"
-#include "tiles/Config.h"
-#include "ogc/QueryStatus.h"
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
@@ -87,8 +87,8 @@ const std::set<std::string, Spine::HTTP::ParamMap::key_compare> allowed_keys = {
     "language",     "level",      "levelId",  "levelid",      "margin",
     "origintime",   "png",        "producer", "projection",   "source",
     "source",       "svg_tmpl",   "time",     "time_offset",  "timestep",
-    "title",        "type",       "tz",       "views",        "width",
-    "xmargin",      "ymargin"};
+    "title",        "type",       "tz",       "views",        "webp",
+    "width",        "xmargin",    "ymargin"};
 
 void check_remaining_dali_json(Json::Value &json, const std::string &name)
 {
@@ -468,7 +468,8 @@ void Plugin::formatResponse(const std::string &theSvg,
       if (theType == "png")
         buffer = std::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
       else if (theType == "webp")
-        buffer = std::make_shared<std::string>(Giza::Svg::towebp(theSvg));
+        buffer = std::make_shared<std::string>(
+            Giza::Svg::towebp(theSvg, theProduct.png.options, theProduct.webp.options));
       else if (theType == "pdf")
         buffer = std::make_shared<std::string>(Giza::Svg::topdf(theSvg));
       else if (theType == "ps")
@@ -516,7 +517,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       using Fmi::DateTime;
 
-      const std::string& resource = theRequest.getResource();
+      const std::string &resource = theRequest.getResource();
 
       if (resource == "/wms")
       {
@@ -527,7 +528,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
         // may modify HTTP status set above
         try
         {
-          OGC::QueryStatus status = itsWMSHandler->query(theReactor, state, theRequest, theResponse);
+          OGC::QueryStatus status =
+              itsWMSHandler->query(theReactor, state, theRequest, theResponse);
 
           switch (status)
           {
@@ -831,19 +833,19 @@ void Plugin::init()
                                                 itsGisEngine.get(),
                                                 itsGridEngine.get());
 #else
-      wmsConfig = std::make_unique<WMS::Config>(
-          itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
+      wmsConfig =
+          std::make_unique<WMS::Config>(itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
 #endif
     }
 
 #else
 #ifndef WITHOUT_OBSERVATION
     std::unique_ptr<WMS::Config> wmsConfig = std::make_unique<WMS::Config>(itsConfig,
-                                                                            itsJsonCache,
-                                                                            itsQEngine.get(),
-                                                                            itsObsEngine.get(),
-                                                                            itsGisEngine.get(),
-                                                                            itsGridEngine.get());
+                                                                           itsJsonCache,
+                                                                           itsQEngine.get(),
+                                                                           itsObsEngine.get(),
+                                                                           itsGisEngine.get(),
+                                                                           itsGridEngine.get());
 #else
     std::unique_ptr<WMS::Config> wmsConfig = std::make_unique<WMS::Config>(
         itsConfig, itsJsonCache, itsQEngine.get(), itsGisEngine.get(), itsGridEngine.get());
@@ -906,7 +908,7 @@ void Plugin::init()
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
             { callRequestHandler(theReactor, theRequest, theResponse); },
-            {},    // supportedPostContentTypes
+            {},  // supportedPostContentTypes
             true /* handlesUriPrefix */))
       throw Fmi::Exception(BCP, "Failed to register WMTS content handler");
 
@@ -919,7 +921,7 @@ void Plugin::init()
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
             { callRequestHandler(theReactor, theRequest, theResponse); },
-            {},    // supportedPostContentTypes
+            {},  // supportedPostContentTypes
             true /* handlesUriPrefix */))
       throw Fmi::Exception(BCP, "Failed to register OGC API - Tiles content handler");
   }
@@ -971,7 +973,7 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
   try
   {
     // WMS/WMTS/Tiles requests should be handled ASAP, others, not so much
-    const std::string& res = theRequest.getResource();
+    const std::string &res = theRequest.getResource();
     return (res == "/wms" || (res.size() >= 5 && res.substr(0, 5) == "/wmts") ||
             (res.size() >= 6 && res.substr(0, 6) == "/tiles"));
   }

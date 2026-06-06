@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.6.4
+Version: 26.6.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,7 +28,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
-BuildRequires: smartmet-library-giza-devel >= 26.4.27
+BuildRequires: smartmet-library-giza-devel >= 26.6.6
 BuildRequires: smartmet-library-grid-content-devel >= 26.5.26
 BuildRequires: smartmet-library-grid-files-devel >= 26.5.26
 BuildRequires: smartmet-library-macgyver-devel >= 26.5.21
@@ -85,7 +85,7 @@ Requires: smartmet-library-trax >= 26.4.22
 Requires: smartmet-library-macgyver >= 26.5.21
 Requires: smartmet-library-spine >= 26.4.27
 Requires: smartmet-library-timeseries >= 26.5.5
-Requires: smartmet-library-giza >= 26.4.27
+Requires: smartmet-library-giza >= 26.6.6
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.4.13
 %endif
@@ -123,7 +123,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 26.5.8
 #TestRequires: smartmet-engine-querydata-devel >= 26.4.13
 #TestRequires: smartmet-engine-authentication-devel >= 26.4.13
-#TestRequires: smartmet-library-giza-devel >= 26.4.27
+#TestRequires: smartmet-library-giza-devel >= 26.6.6
 #TestRequires: smartmet-library-trax-devel >= 26.4.22
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
 #TestRequires: smartmet-library-macgyver-devel >= 26.5.21
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Jun  6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.6-1.fmi
+- Added a "webp" product setting with a "level" (0...9) to control WebP lossless compression speed
+
 * Thu Jun  4 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.4-1.fmi
 - Fixed reference time handling for Finnish VIRENWC + VIRE combination
 
