@@ -75,6 +75,10 @@ class IsolineFilter
   double m_radiusMetric = 0;
   uint m_iterations = 1;
 
+  // Taubin lambda|mu parameters (only used when type == taubin).
+  double m_lambda = 0.5;
+  double m_mu = -0.53;
+
   // Bezier fitting settings
   double m_bezierAccuracy = 0;  // 0 = disabled; accuracy in pixels
   int m_bezierMaxDepth = 10;

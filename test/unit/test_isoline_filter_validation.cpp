@@ -115,3 +115,57 @@ BOOST_AUTO_TEST_CASE(small_radius_is_unaffected_by_validation)
   BOOST_CHECK(a[0]->IsValid());
   BOOST_CHECK(b[0]->Equals(a[0].get()));
 }
+
+// The "taubin" filter type is accepted and smooths the geometry. Taubin
+// reduces but does not by itself guarantee validity (its inflating pass can
+// still push a thin feature across itself) -- that is what the validate
+// backoff below is for -- so this only checks that it runs and smooths.
+BOOST_AUTO_TEST_CASE(taubin_type_is_accepted_and_smooths)
+{
+  OGRGeometryPtr original = makeSpiral(3, 1.5);
+  std::vector<OGRGeometryPtr> geoms{OGRGeometryPtr(original->clone())};
+
+  Json::Value json(Json::objectValue);
+  json["type"] = "taubin";
+  json["radius"] = 4.0;
+  json["iterations"] = 1;
+  IsolineFilter f;
+  f.init(json);
+  f.bbox(Fmi::Box::identity());
+  BOOST_REQUIRE_NO_THROW(f.apply(geoms, false));
+
+  BOOST_REQUIRE(geoms[0] && !geoms[0]->IsEmpty());
+  BOOST_CHECK_MESSAGE(!geoms[0]->Equals(original.get()), "taubin did not smooth the geometry");
+}
+
+// Taubin combined with the validate backoff yields a valid geometry even at a
+// radius where plain Taubin self-intersects.
+BOOST_AUTO_TEST_CASE(taubin_with_validation_is_valid)
+{
+  std::vector<OGRGeometryPtr> geoms{makeSpiral(3, 1.5)};
+
+  Json::Value json(Json::objectValue);
+  json["type"] = "taubin";
+  json["radius"] = 12.0;
+  json["iterations"] = 1;
+  json["validate"] = true;
+  IsolineFilter f;
+  f.init(json);
+  f.bbox(Fmi::Box::identity());
+  f.apply(geoms, false);
+
+  BOOST_REQUIRE(geoms[0] && !geoms[0]->IsEmpty());
+  BOOST_CHECK(geoms[0]->IsValid());
+}
+
+// Invalid Taubin parameters are rejected at init().
+BOOST_AUTO_TEST_CASE(taubin_rejects_bad_lambda_mu)
+{
+  Json::Value json(Json::objectValue);
+  json["type"] = "taubin";
+  json["radius"] = 8.0;
+  json["lambda"] = 0.5;
+  json["mu"] = -0.4;  // |mu| < lambda is not allowed
+  IsolineFilter f;
+  BOOST_CHECK_THROW(f.init(json), std::exception);
+}

@@ -41,6 +41,8 @@ Fmi::GeometrySmoother::Type parse_filter_name(const std::string& name)
       return Fmi::GeometrySmoother::Type::Gaussian;
     if (name == "tukey")
       return Fmi::GeometrySmoother::Type::Tukey;
+    if (name == "taubin")
+      return Fmi::GeometrySmoother::Type::Taubin;
     throw Fmi::Exception(BCP, "Unknown isoline filter type '" + name + "'");
   }
   catch (...)
@@ -93,9 +95,23 @@ void IsolineFilter::init(Json::Value& theJson)
     if (iterations > 100)
       throw Fmi::Exception(BCP, "Isoline filter number of iterations must be less than 100");
 
+    // Taubin lambda|mu parameters (only meaningful for type=taubin). Defaults
+    // match GeometrySmoother (lambda 0.5, mu -0.53).
+    JsonTools::remove_double(m_lambda, theJson, "lambda");
+    JsonTools::remove_double(m_mu, theJson, "mu");
+    if (type == Fmi::GeometrySmoother::Type::Taubin)
+    {
+      if (m_lambda <= 0 || m_lambda >= 1)
+        throw Fmi::Exception(BCP, "Taubin filter lambda must be in the open interval (0,1)");
+      if (m_mu >= -m_lambda)
+        throw Fmi::Exception(BCP, "Taubin filter mu must be negative with |mu| > lambda");
+    }
+
     smoother.type(type);
     smoother.radius(radius);
     smoother.iterations(iterations);
+    smoother.lambda(m_lambda);
+    smoother.mu(m_mu);
 
     // Retain the parameters so the adaptive validity backoff can drive a
     // private trial smoother at varying radius (see apply()).
@@ -193,6 +209,8 @@ void IsolineFilter::apply(std::vector<OGRGeometryPtr>& geoms, bool preserve_topo
     Fmi::GeometrySmoother trial;
     trial.type(m_type);
     trial.iterations(m_iterations);
+    trial.lambda(m_lambda);
+    trial.mu(m_mu);
 
     double r = m_radiusMetric;
     double last_bad = -1;

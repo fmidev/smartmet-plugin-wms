@@ -4156,12 +4156,16 @@ Isolines and isobands can be smoothened by postprocessing the calculated polygon
 <pre><b>Isofilter</b></pre>
 | Name       | Type    | Default value | Description                                                                                                |
 | ---------- | ------- | ------------- | ---------------------------------------------------------------------------------------------------------- |
-| type       | string  | none          | Smoother type: none, average, linear, gaussian, tukey. Gaussian filtering seems to work best.              |
+| type       | string  | none          | Smoother type: none, average, linear, gaussian, tukey, taubin. Gaussian filtering seems to work best for plain smoothing; taubin additionally preserves feature sizes (see below). |
 | radius     | double  | 0             | Filtering distance along the isoline in pixels. Zero disables filtering. Depending on the roughness of the data good values tend to be in the range 10-30 pixels. |
 | iterations | integer | 1             | Number of passes. Zero disables filtering. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
+| lambda     | double  | 0.5           | Taubin shrinking-pass factor, in the open interval (0,1). Only used when type=taubin. |
+| mu         | double  | -0.53         | Taubin inflating-pass factor. Must be negative with magnitude greater than `lambda`. Only used when type=taubin. |
 | validate   | bool or object | false    | Adaptive validity backoff. With wide radii the smoother can pull a narrow isoband across itself, producing a self-intersecting polygon that is invalid for clipping. When enabled, the whole set of geometries is re-smoothed at a halved radius until every polygon is valid; this keeps the shared edges between adjacent isobands coherent (gap-free), unlike repairing a single band. See below. |
 
 Note that zooming into an image reduces the amount of smoothing since the set radius now covers a smaller area of the original data, and hence original details can be seen better.
+
+The plain moving-average smoothers (average, linear, gaussian, tukey) always shrink: they pull every vertex towards the local average, so feature sizes collapse and a narrow isoband can fold onto itself. The `taubin` type alternates a shrinking pass (factor `lambda`) with an inflating pass (factor `mu`), so the overall shape and feature sizes (areas) are preserved while small details are still removed. This keeps isoband areas truer and reduces — but does not eliminate — smoothing-induced self-intersections, so it combines well with the `validate` setting.
 
 The `validate` setting may be given as a boolean (`true` to enable with defaults) or as an object for finer control:
 

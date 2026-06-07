@@ -46,7 +46,7 @@ BuildRequires: smartmet-engine-grid-devel >= 26.4.24
 BuildRequires: smartmet-engine-geonames-devel >= 26.4.28
 BuildRequires: smartmet-engine-querydata-devel >= 26.4.13
 BuildRequires: smartmet-engine-contour-devel >= 26.5.5
-BuildRequires: smartmet-library-gis-devel >= 26.5.21
+BuildRequires: smartmet-library-gis-devel >= 26.6.8
 BuildRequires: smartmet-library-trax-devel >= 26.4.22
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -80,7 +80,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
 Requires: smartmet-library-grid-content >= 26.5.26
 Requires: smartmet-library-grid-files >= 26.5.26
-Requires: smartmet-library-gis >= 26.5.21
+Requires: smartmet-library-gis >= 26.6.8
 Requires: smartmet-library-trax >= 26.4.22
 Requires: smartmet-library-macgyver >= 26.5.21
 Requires: smartmet-library-spine >= 26.4.27
@@ -175,6 +175,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Jun  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.8-1.fmi
 - Added an optional isoline/isoband filter "validate" setting that re-smooths at a halved radius until the geometry is valid, avoiding self-intersecting isobands that are invalid for clipping
+- Added a "taubin" isoline/isoband filter type (with "lambda"/"mu" settings) that preserves feature sizes instead of shrinking them, reducing smoothing-induced self-intersections (requires smartmet-library-gis 26.6.8)
 
 * Sat Jun  6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.6-1.fmi
 - Added a "webp" product setting with a "level" (0...9) to control WebP lossless compression speed
