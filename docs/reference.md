@@ -4159,8 +4159,21 @@ Isolines and isobands can be smoothened by postprocessing the calculated polygon
 | type       | string  | none          | Smoother type: none, average, linear, gaussian, tukey. Gaussian filtering seems to work best.              |
 | radius     | double  | 0             | Filtering distance along the isoline in pixels. Zero disables filtering. Depending on the roughness of the data good values tend to be in the range 10-30 pixels. |
 | iterations | integer | 1             | Number of passes. Zero disables filtering. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
+| validate   | bool or object | false    | Adaptive validity backoff. With wide radii the smoother can pull a narrow isoband across itself, producing a self-intersecting polygon that is invalid for clipping. When enabled, the whole set of geometries is re-smoothed at a halved radius until every polygon is valid; this keeps the shared edges between adjacent isobands coherent (gap-free), unlike repairing a single band. See below. |
 
 Note that zooming into an image reduces the amount of smoothing since the set radius now covers a smaller area of the original data, and hence original details can be seen better.
+
+The `validate` setting may be given as a boolean (`true` to enable with defaults) or as an object for finer control:
+
+<pre><b>Isofilter validate</b></pre>
+| Name    | Type | Default | Description |
+| ------- | ---- | ------- | ----------- |
+| enabled | bool | true    | Whether the backoff is active. |
+| tries   | int  | 4       | Maximum number of radius halvings before giving up. After exhausting the budget the geometry is left unsmoothed (which is always valid) rather than emitted invalid. Allowed range 1–10. |
+| bisect  | bool | true    | After halving finds a valid radius, take one bisection step back towards the previous (larger, invalid) radius to retain as much smoothing as possible while staying valid. |
+| debug   | bool | false   | Log a line whenever a backoff fires, reporting the initial and final smoothing radius. |
+
+Validation only re-smooths when an actual radius/type is set, and for isolines it is effectively a no-op (a self-crossing line is still OGC-valid). It is most useful for isobands rendered with a wide gaussian radius.
 
 #### LegendLabels structure
 

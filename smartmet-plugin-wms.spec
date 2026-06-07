@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.6.6
+Version: 26.6.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Jun  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.8-1.fmi
+- Added an optional isoline/isoband filter "validate" setting that re-smooths at a halved radius until the geometry is valid, avoiding self-intersecting isobands that are invalid for clipping
+
 * Sat Jun  6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.6-1.fmi
 - Added a "webp" product setting with a "level" (0...9) to control WebP lossless compression speed
 

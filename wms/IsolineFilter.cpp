@@ -8,9 +8,11 @@
 #include <gis/VertexCounter.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
-#include <ogr_geometry.h>
+#include <spine/Convenience.h>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
+#include <ogr_geometry.h>
 #include <string>
 #include <vector>
 
@@ -45,6 +47,18 @@ Fmi::GeometrySmoother::Type parse_filter_name(const std::string& name)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// Are all (non-empty) geometries OGC-valid? Used by the adaptive validity
+// backoff. For isobands this catches self-intersections introduced by
+// smoothing; for isolines IsValid is essentially always true (a line may be
+// non-simple yet valid), so the backoff never triggers for them.
+bool all_valid(const std::vector<OGRGeometryPtr>& geoms)
+{
+  for (const auto& geom_ptr : geoms)
+    if (geom_ptr && !geom_ptr->IsEmpty() && !geom_ptr->IsValid())
+      return false;
+  return true;
 }
 
 }  // namespace
@@ -83,6 +97,12 @@ void IsolineFilter::init(Json::Value& theJson)
     smoother.radius(radius);
     smoother.iterations(iterations);
 
+    // Retain the parameters so the adaptive validity backoff can drive a
+    // private trial smoother at varying radius (see apply()).
+    m_type = type;
+    m_radiusPixels = radius;
+    m_iterations = iterations;
+
     // Bezier fitting settings (optional)
     // Can be specified as a number (accuracy in pixels) or as an object with settings
     if (theJson.isMember("bezier"))
@@ -113,6 +133,30 @@ void IsolineFilter::init(Json::Value& theJson)
       if (m_bezierMaxDepth < 1 || m_bezierMaxDepth > 20)
         throw Fmi::Exception(BCP, "Bezier fitting maxdepth must be between 1 and 20");
     }
+
+    // Adaptive validity backoff settings (optional; disabled by default).
+    // Accepts a boolean to enable with defaults, or an object for finer control.
+    if (theJson.isMember("validate"))
+    {
+      auto& validateJson = theJson["validate"];
+      if (validateJson.isBool())
+        m_validate = validateJson.asBool();
+      else if (validateJson.isObject())
+      {
+        bool enabled = true;
+        JsonTools::remove_bool(enabled, validateJson, "enabled");
+        m_validate = enabled;
+        JsonTools::remove_int(m_validateTries, validateJson, "tries");
+        JsonTools::remove_bool(m_validateBisect, validateJson, "bisect");
+        JsonTools::remove_bool(m_validateDebug, validateJson, "debug");
+      }
+      else
+        throw Fmi::Exception(BCP, "Isoline filter 'validate' must be a boolean or an object");
+      theJson.removeMember("validate");
+
+      if (m_validateTries < 1 || m_validateTries > 10)
+        throw Fmi::Exception(BCP, "Isoline filter validate.tries must be between 1 and 10");
+    }
   }
   catch (...)
   {
@@ -123,8 +167,78 @@ void IsolineFilter::init(Json::Value& theJson)
 // Apply smoother and prepare vertex counter for Bezier fitting
 void IsolineFilter::apply(std::vector<OGRGeometryPtr>& geoms, bool preserve_topology)
 {
-  // Apply the weighted average smoother as before
-  smoother.apply(geoms, preserve_topology);
+  // The smoother is a no-op unless a real radius/type/iteration count is set.
+  const bool smoothing =
+      (m_type != Fmi::GeometrySmoother::Type::None && m_radiusMetric > 0 && m_iterations > 0);
+
+  if (!m_validate || !smoothing)
+  {
+    // Original behaviour: smooth once (or do nothing).
+    smoother.apply(geoms, preserve_topology);
+  }
+  else
+  {
+    // Adaptive validity backoff. Smoothing can move vertices enough to make an
+    // isoband self-intersect, which makes it invalid for clipping. Re-smooth the
+    // whole set at a halved radius until every geometry is valid. Re-smoothing
+    // the whole set (rather than repairing one band) keeps the shared edges
+    // between adjacent isobands coherent and gap-free. If no valid radius is
+    // found within the budget, fall back to the unsmoothed (simple) input.
+    //
+    // A shallow copy is enough to preserve the originals: the smoother replaces
+    // each shared_ptr (geom.reset(newgeom)) rather than mutating in place, so the
+    // copied pointers keep the originals alive across retries.
+    const std::vector<OGRGeometryPtr> original = geoms;
+
+    Fmi::GeometrySmoother trial;
+    trial.type(m_type);
+    trial.iterations(m_iterations);
+
+    double r = m_radiusMetric;
+    double last_bad = -1;
+    bool ok = false;
+
+    for (int t = 0; t < m_validateTries && r > 0; ++t)
+    {
+      geoms = original;
+      trial.radius(r);
+      trial.apply(geoms, preserve_topology);
+      if (all_valid(geoms))
+      {
+        ok = true;
+        break;
+      }
+      last_bad = r;
+      r *= 0.5;
+    }
+
+    // One bisection step back towards a larger (less aggressively reduced) radius
+    // to retain as much smoothing as possible while staying valid.
+    if (ok && m_validateBisect && last_bad > 0)
+    {
+      const double rmid = 0.5 * (r + last_bad);
+      std::vector<OGRGeometryPtr> trial_geoms = original;
+      trial.radius(rmid);
+      trial.apply(trial_geoms, preserve_topology);
+      if (all_valid(trial_geoms))
+      {
+        geoms = std::move(trial_geoms);
+        r = rmid;
+      }
+    }
+
+    if (!ok)
+      geoms = original;  // emit unsmoothed geometry rather than an invalid one
+
+    if (m_validateDebug && r != m_radiusMetric)
+      std::cerr << Spine::log_time_str()
+                << fmt::format(
+                       " WMS IsolineFilter validity backoff: smoothing radius {} -> {} ({})",
+                       m_radiusMetric,
+                       (ok ? r : 0.0),
+                       (ok ? "valid" : "unsmoothed fallback"))
+                << '\n';
+  }
 
   // When Bezier fitting is enabled, always count vertices across all geometries.
   // The VertexCounter identifies shared edges (count=2) and grid corners (count=4)
@@ -145,6 +259,16 @@ void IsolineFilter::apply(std::vector<OGRGeometryPtr>& geoms, bool preserve_topo
 void IsolineFilter::bbox(const Fmi::Box& box)
 {
   smoother.bbox(box);
+
+  // Mirror the pixel->metric radius conversion (see GeometrySmoother::bbox) so
+  // the adaptive validity backoff can drive a trial smoother at varying radius.
+  double x1 = 0;
+  double y1 = 0;
+  double x2 = m_radiusPixels;
+  double y2 = 0;
+  box.itransform(x1, y1);
+  box.itransform(x2, y2);
+  m_radiusMetric = std::hypot(x2 - x1, y2 - y1);
 }
 
 // ======================================================================
@@ -450,10 +574,12 @@ void IsolineFilter::writeBezierSvg(std::string& out,
     switch (wkbFlatten(id))
     {
       case wkbLineString:
-        writeBezierLineStringSvg(out, dynamic_cast<const OGRLineString*>(geom), box, rfactor, decimals, cache);
+        writeBezierLineStringSvg(
+            out, dynamic_cast<const OGRLineString*>(geom), box, rfactor, decimals, cache);
         break;
       case wkbLinearRing:
-        writeBezierLinearRingSvg(out, dynamic_cast<const OGRLinearRing*>(geom), box, rfactor, decimals, cache);
+        writeBezierLinearRingSvg(
+            out, dynamic_cast<const OGRLinearRing*>(geom), box, rfactor, decimals, cache);
         break;
       case wkbPolygon:
       {
@@ -524,6 +650,14 @@ std::size_t IsolineFilter::hash_value() const
     auto hash = smoother.hash_value();
     Fmi::hash_combine(hash, Fmi::hash_value(m_bezierAccuracy));
     Fmi::hash_combine(hash, Fmi::hash_value(m_bezierMaxDepth));
+    // Only perturb the hash when validation is enabled, so the disabled-mode
+    // cache keys stay identical to before. m_validateDebug is excluded: logging
+    // does not change the rendered output.
+    if (m_validate)
+    {
+      Fmi::hash_combine(hash, Fmi::hash_value(m_validateTries));
+      Fmi::hash_combine(hash, Fmi::hash_value(static_cast<int>(m_validateBisect)));
+    }
     return hash;
   }
   catch (...)
