@@ -31,7 +31,7 @@ BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.6.6
 BuildRequires: smartmet-library-grid-content-devel >= 26.5.26
 BuildRequires: smartmet-library-grid-files-devel >= 26.5.26
-BuildRequires: smartmet-library-macgyver-devel >= 26.5.21
+BuildRequires: smartmet-library-macgyver-devel >= 26.6.2
 BuildRequires: smartmet-library-spine-devel >= 26.4.27
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
@@ -82,7 +82,7 @@ Requires: smartmet-library-grid-content >= 26.5.26
 Requires: smartmet-library-grid-files >= 26.5.26
 Requires: smartmet-library-gis >= 26.6.8
 Requires: smartmet-library-trax >= 26.4.22
-Requires: smartmet-library-macgyver >= 26.5.21
+Requires: smartmet-library-macgyver >= 26.6.2
 Requires: smartmet-library-spine >= 26.4.27
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.6.6
@@ -126,7 +126,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 26.6.6
 #TestRequires: smartmet-library-trax-devel >= 26.4.22
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
-#TestRequires: smartmet-library-macgyver-devel >= 26.5.21
+#TestRequires: smartmet-library-macgyver-devel >= 26.6.2
 #TestRequires: smartmet-library-spine-devel >= 26.4.27
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.4.24
