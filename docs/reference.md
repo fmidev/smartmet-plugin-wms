@@ -4161,7 +4161,7 @@ Isolines and isobands can be smoothened by postprocessing the calculated polygon
 | iterations | integer | 1             | Number of passes. Zero disables filtering. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
 | lambda     | double  | 0.5           | Taubin shrinking-pass factor, in the open interval (0,1). Only used when type=taubin. |
 | mu         | double  | -0.53         | Taubin inflating-pass factor. Must be negative with magnitude greater than `lambda`. Only used when type=taubin. |
-| validate   | bool or object | false    | Adaptive validity backoff. With wide radii the smoother can pull a narrow isoband across itself, producing a self-intersecting polygon that is invalid for clipping. When enabled, the whole set of geometries is re-smoothed at a halved radius until every polygon is valid; this keeps the shared edges between adjacent isobands coherent (gap-free), unlike repairing a single band. See below. |
+| validate   | bool or object | true     | Adaptive validity backoff (enabled by default; set to `false` to disable). With wide radii the smoother can pull a narrow isoband across itself, producing a self-intersecting polygon that is invalid for clipping. The whole set of geometries is re-smoothed at a halved radius until every polygon is valid; this keeps the shared edges between adjacent isobands coherent (gap-free), unlike repairing a single band. Only active when a smoothing filter is configured (`type`/`radius` set), so unsmoothed geometry is never validity-checked. See below. |
 
 Note that zooming into an image reduces the amount of smoothing since the set radius now covers a smaller area of the original data, and hence original details can be seen better.
 
@@ -4172,7 +4172,7 @@ The `validate` setting may be given as a boolean (`true` to enable with defaults
 <pre><b>Isofilter validate</b></pre>
 | Name    | Type | Default | Description |
 | ------- | ---- | ------- | ----------- |
-| enabled | bool | true    | Whether the backoff is active. |
+| enabled | bool | true    | Whether the backoff is active. The backoff is enabled by default; pass `"validate": false` (or `{"enabled": false}`) to turn it off. |
 | tries   | int  | 4       | Maximum number of radius halvings before giving up. After exhausting the budget the geometry is left unsmoothed (which is always valid) rather than emitted invalid. Allowed range 1–10. |
 | bisect  | bool | true    | After halving finds a valid radius, take one bisection step back towards the previous (larger, invalid) radius to retain as much smoothing as possible while staying valid. |
 | debug   | bool | false   | Log a line whenever a backoff fires, reporting the initial and final smoothing radius. |

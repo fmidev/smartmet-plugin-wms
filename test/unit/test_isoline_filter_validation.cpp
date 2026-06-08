@@ -72,11 +72,22 @@ IsolineFilter makeFilter(double radius, const Json::Value& validate)
 BOOST_AUTO_TEST_CASE(smoothing_without_validation_self_intersects)
 {
   std::vector<OGRGeometryPtr> geoms{makeSpiral(3, 1.5)};
-  auto filter = makeFilter(12.0, Json::Value());  // no "validate"
+  auto filter = makeFilter(12.0, Json::Value(false));  // validation explicitly off
   filter.apply(geoms, false);
   BOOST_REQUIRE(geoms[0] && !geoms[0]->IsEmpty());
   BOOST_CHECK_MESSAGE(!geoms[0]->IsValid(),
                       "fixture no longer folds at radius 12; pick a wider radius");
+}
+
+// Validation is enabled by default: a wide radius that would self-intersect is
+// repaired even with no explicit "validate" setting.
+BOOST_AUTO_TEST_CASE(validation_is_on_by_default)
+{
+  std::vector<OGRGeometryPtr> geoms{makeSpiral(3, 1.5)};
+  auto filter = makeFilter(12.0, Json::Value());  // no "validate" key -> default
+  filter.apply(geoms, false);
+  BOOST_REQUIRE(geoms[0] && !geoms[0]->IsEmpty());
+  BOOST_CHECK(geoms[0]->IsValid());
 }
 
 // With validation enabled, the output must be valid...
@@ -109,8 +120,8 @@ BOOST_AUTO_TEST_CASE(small_radius_is_unaffected_by_validation)
 {
   std::vector<OGRGeometryPtr> a{makeSpiral(3, 1.5)};
   std::vector<OGRGeometryPtr> b{makeSpiral(3, 1.5)};
-  makeFilter(3.0, Json::Value()).apply(a, false);
-  makeFilter(3.0, Json::Value(true)).apply(b, false);
+  makeFilter(3.0, Json::Value(false)).apply(a, false);  // plain, no validation
+  makeFilter(3.0, Json::Value(true)).apply(b, false);   // validated
   BOOST_REQUIRE(a[0] && b[0]);
   BOOST_CHECK(a[0]->IsValid());
   BOOST_CHECK(b[0]->Equals(a[0].get()));

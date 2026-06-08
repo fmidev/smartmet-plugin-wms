@@ -174,7 +174,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Jun  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.8-1.fmi
-- Added an optional isoline/isoband filter "validate" setting that re-smooths at a halved radius until the geometry is valid, avoiding self-intersecting isobands that are invalid for clipping
+- Added an isoline/isoband filter "validate" setting (enabled by default, set to false to disable) that re-smooths at a halved radius until the geometry is valid, avoiding self-intersecting isobands that are invalid for clipping
 - Added a "taubin" isoline/isoband filter type (with "lambda"/"mu" settings) that preserves feature sizes instead of shrinking them, reducing smoothing-induced self-intersections (requires smartmet-library-gis 26.6.8)
 
 * Sat Jun  6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.6-1.fmi

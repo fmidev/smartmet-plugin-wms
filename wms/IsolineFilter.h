@@ -55,14 +55,16 @@ class IsolineFilter
  private:
   Fmi::GeometrySmoother smoother;
 
-  // Adaptive validity backoff settings (optional; disabled by default).
-  // When enabled, after smoothing we test geometry validity and, if any isoband
-  // self-intersects (which makes it invalid for clipping), re-smooth the whole
-  // set at a halved radius until every geometry is valid. Re-smoothing the whole
-  // set keeps the shared edges between adjacent isobands coherent (gap-free),
-  // unlike a per-band repair such as MakeValid. Falls back to the unsmoothed
-  // (and thus simple) input if no valid radius is found within the budget.
-  bool m_validate = false;
+  // Adaptive validity backoff settings (enabled by default; set "validate":false
+  // to turn off). When enabled, after smoothing we test geometry validity and,
+  // if any isoband self-intersects (which makes it invalid for clipping),
+  // re-smooth the whole set at a halved radius until every geometry is valid.
+  // Re-smoothing the whole set keeps the shared edges between adjacent isobands
+  // coherent (gap-free), unlike a per-band repair such as MakeValid. Falls back
+  // to the unsmoothed (and thus simple) input if no valid radius is found within
+  // the budget. Only active when a smoothing filter is configured, so no
+  // validity check is done on unsmoothed geometry.
+  bool m_validate = true;
   int m_validateTries = 4;       // max halvings before giving up
   bool m_validateBisect = true;  // one step back towards a larger valid radius
   bool m_validateDebug = false;  // log when a backoff fires

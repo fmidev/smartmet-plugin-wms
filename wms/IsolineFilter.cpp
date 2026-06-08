@@ -150,8 +150,8 @@ void IsolineFilter::init(Json::Value& theJson)
         throw Fmi::Exception(BCP, "Bezier fitting maxdepth must be between 1 and 20");
     }
 
-    // Adaptive validity backoff settings (optional; disabled by default).
-    // Accepts a boolean to enable with defaults, or an object for finer control.
+    // Adaptive validity backoff settings (enabled by default; "validate":false
+    // turns it off). Accepts a boolean, or an object for finer control.
     if (theJson.isMember("validate"))
     {
       auto& validateJson = theJson["validate"];
