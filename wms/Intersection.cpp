@@ -400,6 +400,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
+    options.smoother = smoother.trax_options;
 
     if (interpolation == "linear")
       options.interpolation = Trax::InterpolationType::Linear;

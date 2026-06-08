@@ -2,17 +2,17 @@
 
 #include "IsolineLayer.h"
 #include "Config.h"
-#include "Geometry.h"
 #include "DataTile.h"
+#include "Geometry.h"
 #include "GridDataGeoTiff.h"
-#include "MapboxVectorTile.h"
-#include "SubdivideGate.h"
 #include "Hash.h"
 #include "Isoline.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "State.h"
 #include "StyleSheet.h"
+#include "SubdivideGate.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -522,8 +522,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
                                                    Fmi::to_string(*smoother.degree));
 
   if (subdivide > 0)
-    originalGridQuery->mAttributeList.addAttribute("contour.subdivide",
-                                                   Fmi::to_string(subdivide));
+    originalGridQuery->mAttributeList.addAttribute("contour.subdivide", Fmi::to_string(subdivide));
   /*
     if (minarea)
     {
@@ -776,6 +775,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   options.filter_size = smoother.size;
   options.filter_degree = smoother.degree;
+  options.smoother = smoother.trax_options;
 
   options.extrapolation = extrapolation;
 
