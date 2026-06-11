@@ -237,7 +237,7 @@ own compression speed control in a top level "webp" tag:
 
 | Name  | Type  | Default value | Description                                                                                                                                                          |
 | ----- | ----- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| level | (int) | -             | The WebP lossless compression preset level, 0...9. 0 = fastest encoding with the largest file, 9 = slowest encoding with the smallest file. If omitted, the libwebp default is used. |
+| level | (int) | 1             | The WebP lossless compression preset level, 0...9. 0 = fastest encoding with the largest file, 9 = slowest encoding with the smallest file. The default 1 is roughly 2.5 times faster to encode than the libwebp default settings at the cost of a slightly larger file. |
 
 ### Product level attributes
 

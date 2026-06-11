@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.6.8
+Version: 26.6.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,7 +28,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
-BuildRequires: smartmet-library-giza-devel >= 26.6.6
+BuildRequires: smartmet-library-giza-devel >= 26.6.11
 BuildRequires: smartmet-library-grid-content-devel >= 26.5.26
 BuildRequires: smartmet-library-grid-files-devel >= 26.5.26
 BuildRequires: smartmet-library-macgyver-devel >= 26.6.2
@@ -85,7 +85,7 @@ Requires: smartmet-library-trax >= 26.4.22
 Requires: smartmet-library-macgyver >= 26.6.2
 Requires: smartmet-library-spine >= 26.4.27
 Requires: smartmet-library-timeseries >= 26.5.5
-Requires: smartmet-library-giza >= 26.6.6
+Requires: smartmet-library-giza >= 26.6.11
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.4.13
 %endif
@@ -123,7 +123,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 26.5.8
 #TestRequires: smartmet-engine-querydata-devel >= 26.4.13
 #TestRequires: smartmet-engine-authentication-devel >= 26.4.13
-#TestRequires: smartmet-library-giza-devel >= 26.6.6
+#TestRequires: smartmet-library-giza-devel >= 26.6.11
 #TestRequires: smartmet-library-trax-devel >= 26.4.22
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
 #TestRequires: smartmet-library-macgyver-devel >= 26.6.2
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Jun 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.11-1.fmi
+- Default WebP lossless compression level is now 1, the fastest setting that still compresses well; override per product with webp.level (requires smartmet-library-giza 26.6.11 for fast PNG encoding as well)
+
 * Mon Jun  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.8-1.fmi
 - Added an isoline/isoband filter "validate" setting (enabled by default, set to false to disable) that re-smooths at a halved radius until the geometry is valid, avoiding self-intersecting isobands that are invalid for clipping
 - Added a "taubin" isoline/isoband filter type (with "lambda"/"mu" settings) that preserves feature sizes instead of shrinking them, reducing smoothing-induced self-intersections (requires smartmet-library-gis 26.6.8)

@@ -424,6 +424,16 @@ elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg') {
     File::Copy::copy($RESULT, $RESULT_PNG)
         or die "Failed to copy result $RESULT to PNG: $!";
 }
+elsif ($MIME eq 'image/webp') {
+    my $image = Image::Magick->new;
+    my $status = $image->Read($RESULT);
+    if (defined $status and $status >= 400) { # Check for error status, ignore warnings
+        die "Failed to read WEBP file '$RESULT': $status";
+    }
+    $image->Set(magick => 'PNG');
+    $image->Set(depth => 8);
+    $image->Write($RESULT_PNG); # Write the image to PNG format. Discard errors if any.
+}
 
 # Check expected output exists after result image has been created
 
@@ -651,6 +661,20 @@ elsif ($MIME eq 'application/pdf')
 elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg')
 {
     copy($EXPECTED, $EXPECTED_PNG);
+}
+elsif ($MIME eq 'image/webp')
+{
+    my $image = Image::Magick->new;
+    my $status = $image->Read($EXPECTED);
+    if (defined $status and $status >= 400) { # Check for error status, ignore warnings
+        die "Failed to read WEBP file '$EXPECTED': $status";
+    }
+    $image->Set(magick => 'PNG');
+    $image->Set(depth => 8);
+    $status = $image->Write($EXPECTED_PNG);
+    if (defined $status && $status >= 400) { # Check for error status, ignore warnings
+        die "Failed to write PNG file '$EXPECTED_PNG': $status";
+    }
 }
 else
 {
