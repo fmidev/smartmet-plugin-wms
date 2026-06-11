@@ -255,6 +255,11 @@ class State
   mutable int animation_timesteps = 0;
   mutable int animation_loopsteps = 0;
 
+  // Animated WebP output: layers supporting time animation (flash symbols)
+  // bucket their elements by observation time into this many frames over the
+  // layer time interval (Product webp 'frames' setting)
+  mutable std::optional<int> time_animation_frames;
+
  private:
   Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;

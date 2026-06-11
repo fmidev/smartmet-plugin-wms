@@ -68,6 +68,10 @@ void Product::init(Json::Value& theJson, const State& theState, const Config& th
     if (!json.isNull())
       webp.init(json, theConfig);
 
+    // Let time-animating layers (flash symbols) know the animation frame count
+    if (webp.frames)
+      theState.time_animation_frames = webp.frames;
+
     // refs is also allowed here
 
     // If SVG sizes are missing, take them from the top level projection if possible

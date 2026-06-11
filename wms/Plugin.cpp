@@ -108,6 +108,39 @@ void check_remaining_dali_json(Json::Value &json, const std::string &name)
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Inject a style element showing only one time animation frame
+ *
+ * Layers supporting time animation tag their elements with classes
+ * "flashanim flashanim-f<N>". Each animation frame is rendered from the
+ * same SVG with a style toggling the visibility of the buckets.
+ */
+// ----------------------------------------------------------------------
+
+std::string injectFrameStyle(const std::string &theSvg, int theFrame, bool theAccumulate)
+{
+  std::string style = "<style type=\"text/css\">.flashanim{display:none}";
+  if (theAccumulate)
+    for (int i = 0; i <= theFrame; i++)
+      style += ".flashanim-f" + Fmi::to_string(i) + "{display:inline}";
+  else
+    style += ".flashanim-f" + Fmi::to_string(theFrame) + "{display:inline}";
+  style += "</style>";
+
+  auto svgpos = theSvg.find("<svg");
+  auto pos = (svgpos == std::string::npos ? svgpos : theSvg.find('>', svgpos));
+  if (pos == std::string::npos)
+    throw Fmi::Exception(BCP, "Cannot animate non-SVG content");
+
+  std::string out;
+  out.reserve(theSvg.size() + style.size());
+  out.append(theSvg, 0, pos + 1);
+  out += style;
+  out.append(theSvg, pos + 1, std::string::npos);
+  return out;
+}
+
 }  // namespace
 
 // Keep only acceptable querystring replacements (allowed keys or names with dots)
@@ -468,8 +501,26 @@ void Plugin::formatResponse(const std::string &theSvg,
       if (theType == "png")
         buffer = std::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
       else if (theType == "webp")
-        buffer = std::make_shared<std::string>(
-            Giza::Svg::towebp(theSvg, theProduct.png.options, theProduct.webp.options));
+      {
+        if (theProduct.webp.frames)
+        {
+          // Animated WebP: render one frame per time animation bucket
+          const int nframes = *theProduct.webp.frames;
+          std::vector<std::string> svgs;
+          svgs.reserve(nframes);
+          for (int i = 0; i < nframes; i++)
+            svgs.push_back(injectFrameStyle(theSvg, i, theProduct.webp.accumulate));
+          std::vector<int> durations(nframes, theProduct.webp.frame_duration);
+          buffer = std::make_shared<std::string>(Giza::Svg::towebpanim(svgs,
+                                                                       durations,
+                                                                       theProduct.webp.loop,
+                                                                       theProduct.png.options,
+                                                                       theProduct.webp.options));
+        }
+        else
+          buffer = std::make_shared<std::string>(
+              Giza::Svg::towebp(theSvg, theProduct.png.options, theProduct.webp.options));
+      }
       else if (theType == "pdf")
         buffer = std::make_shared<std::string>(Giza::Svg::topdf(theSvg));
       else if (theType == "ps")

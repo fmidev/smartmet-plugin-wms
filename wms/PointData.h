@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Positions.h"
+#include <macgyver/DateTime.h>
+#include <optional>
 #include <vector>
 
 namespace SmartMet
@@ -30,9 +32,14 @@ class PointData
 
   double priorityValue() const { return itsValues[0]; }
 
+  // Observation time, currently set for flash and mobile observations only
+  void time(const Fmi::DateTime& theTime) { itsTime = theTime; }
+  const std::optional<Fmi::DateTime>& time() const { return itsTime; }
+
  private:
   Positions::Point itsPoint;
   std::vector<double> itsValues;
+  std::optional<Fmi::DateTime> itsTime;
 };
 }  // namespace Dali
 }  // namespace Plugin
