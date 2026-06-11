@@ -233,11 +233,35 @@ PNG output formatting can be tuned using the following settings inside a top lev
 | truecolor   | (bool)   | false         | Set to avoid color reduction completely                                                                              |
 
 WebP output uses the same color reduction settings from the "png" tag, and adds its
-own compression speed control in a top level "webp" tag:
+own compression speed and animation controls in a top level "webp" tag:
 
-| Name  | Type  | Default value | Description                                                                                                                                                          |
-| ----- | ----- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| level | (int) | 1             | The WebP lossless compression preset level, 0...9. 0 = fastest encoding with the largest file, 9 = slowest encoding with the smallest file. The default 1 is roughly 2.5 times faster to encode than the libwebp default settings at the cost of a slightly larger file. |
+| Name           | Type   | Default value | Description                                                                                                                                                          |
+| -------------- | ------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| level          | (int)  | 1             | The WebP lossless compression preset level, 0...9. 0 = fastest encoding with the largest file, 9 = slowest encoding with the smallest file. The default 1 is roughly 2.5 times faster to encode than the libwebp default settings at the cost of a slightly larger file. |
+| frames         | (int)  | -             | Setting this enables animated WebP output with the given number of frames, 1...1000. See [WebP time animation](#webp-time-animation) below.                          |
+| frame_duration | (int)  | 100           | The display duration of each animation frame in milliseconds.                                                                                                        |
+| loop           | (int)  | 0             | The animation loop count. Zero loops forever.                                                                                                                        |
+| accumulate     | (bool) | false         | If true, the animated elements accumulate over the loop instead of each frame showing only its own time bucket.                                                      |
+
+#### WebP time animation
+
+When "frames" is set and the output type is `webp`, layers supporting time animation
+divide the layer time interval (see [Time intervals](#time-intervals)) into the given
+number of frames, and each rendered element is assigned to a frame based on its actual
+observation time. The frames are then encoded into a single looping animated WebP image.
+All other layers (backgrounds, maps etc.) render identically into every frame.
+
+Currently the symbol-layer observation rendering supports time animation, the main use
+case being lightning data: with for example `"interval_start": 30, "interval_end": 30`
+and `"frames": 6`, each frame replays ten minutes of flash strokes in stroke time order.
+Setting `"accumulate": true` makes the strokes pile up during the loop instead, which
+shows where lightning activity has moved during the interval. A typical flash layer
+interval is 5, 15, 30 or 60 minutes to match the available radar data time period.
+
+The SVG content is generated only once; each frame is rasterized from the same SVG with
+a different visibility selection, so rendering cost grows only with rasterization and
+encoding, not with data queries. Note that this product-level setting is separate from
+the WMS GetMap "animation" block, which animates over consecutive valid times.
 
 ### Product level attributes
 
@@ -1158,6 +1182,10 @@ The table below contains a list of attributes that can be defined for the symbol
 | rendering_order | string                  | "normal"      | Rendering order of the symbol is normal or reverse with respect to priority                   |
 
 Note that assigning a proper scale for symbols with CSS or SVG attributes alone  is difficult. Using the scale-attribute eases the  scaling of the symbols.
+
+Observation symbols (in particular lightning data) can be replayed in observation time
+order as an animated WebP image by setting "frames" in the product level "webp" tag, see
+[WebP time animation](#webp-time-animation).
 
 ##### mindistance and priority
 
