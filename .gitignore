@@ -15,6 +15,6 @@ compile_commands.json
 .gdb_history
 /smartmet-plugin-wms.tar.gz
 local.conf
-§.cache
-test/unit/test_label_placement
-test/unit/test_subdivide_gate
+.cache/
+test/unit/test_*
+!test/unit/test_*.cpp
