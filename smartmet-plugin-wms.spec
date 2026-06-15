@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.6.11
+Version: 26.6.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,10 +29,10 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.6.11
-BuildRequires: smartmet-library-grid-content-devel >= 26.5.26
-BuildRequires: smartmet-library-grid-files-devel >= 26.5.26
-BuildRequires: smartmet-library-macgyver-devel >= 26.6.2
-BuildRequires: smartmet-library-spine-devel >= 26.4.27
+BuildRequires: smartmet-library-grid-content-devel >= 26.6.15
+BuildRequires: smartmet-library-grid-files-devel >= 26.6.15
+BuildRequires: smartmet-library-macgyver-devel >= 26.6.6
+BuildRequires: smartmet-library-spine-devel >= 26.6.9
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.4.13
@@ -42,7 +42,7 @@ BuildRequires: smartmet-engine-observation-devel >= 26.5.27
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.4.28
 BuildRequires: smartmet-engine-gis-devel >= 26.5.8
-BuildRequires: smartmet-engine-grid-devel >= 26.4.24
+BuildRequires: smartmet-engine-grid-devel >= 26.6.15
 BuildRequires: smartmet-engine-geonames-devel >= 26.4.28
 BuildRequires: smartmet-engine-querydata-devel >= 26.4.13
 BuildRequires: smartmet-engine-contour-devel >= 26.5.5
@@ -78,12 +78,12 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
-Requires: smartmet-library-grid-content >= 26.5.26
-Requires: smartmet-library-grid-files >= 26.5.26
+Requires: smartmet-library-grid-content >= 26.6.15
+Requires: smartmet-library-grid-files >= 26.6.15
 Requires: smartmet-library-gis >= 26.6.8
 Requires: smartmet-library-trax >= 26.4.22
-Requires: smartmet-library-macgyver >= 26.6.2
-Requires: smartmet-library-spine >= 26.4.27
+Requires: smartmet-library-macgyver >= 26.6.6
+Requires: smartmet-library-spine >= 26.6.9
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.6.11
 %if %{with authentication}
@@ -93,10 +93,10 @@ Requires: smartmet-engine-avi >= 26.4.28
 Requires: smartmet-engine-querydata >= 26.4.13
 Requires: smartmet-engine-contour >= 26.5.5
 Requires: smartmet-engine-gis >= 26.5.8
-Requires: smartmet-engine-grid >= 26.4.24
+Requires: smartmet-engine-grid >= 26.6.15
 Requires: smartmet-engine-geonames >= 26.4.28
 Requires: smartmet-server >= 26.4.16
-Requires: smartmet-library-spine >= 26.4.27
+Requires: smartmet-library-spine >= 26.6.9
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -126,10 +126,10 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 26.6.11
 #TestRequires: smartmet-library-trax-devel >= 26.4.22
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
-#TestRequires: smartmet-library-macgyver-devel >= 26.6.2
-#TestRequires: smartmet-library-spine-devel >= 26.4.27
+#TestRequires: smartmet-library-macgyver-devel >= 26.6.6
+#TestRequires: smartmet-library-spine-devel >= 26.6.9
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
-#TestRequires: smartmet-engine-grid-devel >= 26.4.24
+#TestRequires: smartmet-engine-grid-devel >= 26.6.15
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.5.22
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Jun 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.15-1.fmi
+- Repackaged due to ABI changes
+
 * Thu Jun 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.11-1.fmi
 - Default WebP lossless compression level is now 1, the fastest setting that still compresses well; override per product with webp.level (requires smartmet-library-giza 26.6.11 for fast PNG encoding as well)
 
