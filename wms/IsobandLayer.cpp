@@ -632,6 +632,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("contour.subdivide",
                                                      Fmi::to_string(subdivide));
 
+    if (contour_threads)
+      originalGridQuery->mAttributeList.addAttribute("contour.threads",
+                                                     Fmi::to_string(*contour_threads));
+
     if (interpolation == "linear")
       originalGridQuery->mAttributeList.addAttribute(
           "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
@@ -1143,6 +1147,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     options.validate = validate;
     options.desliver = desliver;
     options.subdivide = subdivide;
+    options.threads = contour_threads;
 
     // Do the actual contouring, either full grid or just
     // a sampled section
@@ -1603,6 +1608,7 @@ void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     options.validate = validate;
     options.desliver = desliver;
     options.subdivide = subdivide;
+    options.threads = contour_threads;
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;

@@ -70,6 +70,10 @@ class Config
 
   unsigned maxHeatmapPoints() const;
 
+  // Size of the process-wide Trax contouring worker pool (0 = disabled). Capped to the number
+  // of cores. Configured via "contour.worker_threads" (absolute count or "NN%" of cores).
+  unsigned int contourWorkerThreads() const { return itsContourWorkerThreads; }
+
   const libconfig::Config& getConfig() const { return itsConfig; }
   bool quiet() const;
 
@@ -112,6 +116,8 @@ class Config
   unsigned itsMaxHeatmapPoints = 2000 * 2000;
   unsigned int itsWmtsTileWidth = 1024;
   unsigned int itsWmtsTileHeight = 1024;
+
+  unsigned int itsContourWorkerThreads = 0;  // Trax worker pool size (0 = disabled)
 
   std::string itsWmsUrl = "/wms";
   std::string itsWmtsUrl = "/wmts";

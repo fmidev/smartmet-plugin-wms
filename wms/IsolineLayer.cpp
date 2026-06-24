@@ -524,6 +524,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (subdivide > 0)
     originalGridQuery->mAttributeList.addAttribute("contour.subdivide",
                                                    Fmi::to_string(subdivide));
+
+  if (contour_threads)
+    originalGridQuery->mAttributeList.addAttribute("contour.threads",
+                                                   Fmi::to_string(*contour_threads));
   /*
     if (minarea)
     {
@@ -790,6 +794,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   options.validate = validate;
   options.desliver = desliver;
   options.subdivide = subdivide;
+  options.threads = contour_threads;
 
   // Do the actual contouring, either full grid or just
   // a sampled section

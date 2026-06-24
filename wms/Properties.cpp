@@ -80,6 +80,7 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
     JsonTools::remove_time(origintime, theJson, "origintime");
     const auto& zones = theState.getGeoEngine().getTimeZones();
     JsonTools::remove_int(timestep, theJson, "timestep");
+    JsonTools::remove_int(contour_threads, theJson, "contour_threads");
     JsonTools::remove_tz(tz, theJson, "tz", zones);
     JsonTools::remove_time(time, theJson, "time", tz);  // after tz handling
 
@@ -172,6 +173,8 @@ void Properties::init(Json::Value& theJson,
     JsonTools::remove_tz(tz, theJson, "tz", zones, theProperties.tz);
     JsonTools::remove_time(time, theJson, "time", tz, theProperties.time);  // after tz
     JsonTools::remove_int(timestep, theJson, "timestep", theProperties.timestep);
+    JsonTools::remove_int(
+        contour_threads, theJson, "contour_threads", theProperties.contour_threads);
 
     JsonTools::remove_int(time_offset, theJson, "time_offset", theProperties.time_offset);
     JsonTools::remove_int(interval_start, theJson, "interval_start", theProperties.interval_start);

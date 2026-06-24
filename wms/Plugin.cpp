@@ -38,6 +38,7 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <trax/Contour.h>
 #include <memory>
 #include <stdexcept>
 
@@ -706,6 +707,10 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
           ANSI_BOLD_OFF);
       return;
     }
+
+    // Size the process-wide Trax contouring worker pool once at startup. Without this the
+    // band-parallel engine stays dormant; n == 0 (the default) keeps contouring single-threaded.
+    Trax::Contour::set_worker_threads(itsConfig.contourWorkerThreads());
   }
   catch (...)
   {
