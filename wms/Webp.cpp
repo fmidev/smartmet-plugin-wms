@@ -36,6 +36,27 @@ void Webp::init(Json::Value& theJson, const Config& /* theConfig */)
           throw Fmi::Exception(BCP, "Webp 'level' must be in the range 0...9");
         options.level = level;
       }
+      else if (name == "frames")
+      {
+        int n = json.asInt();
+        if (n < 1 || n > 1000)
+          throw Fmi::Exception(BCP, "Webp 'frames' must be in the range 1...1000");
+        frames = n;
+      }
+      else if (name == "frame_duration")
+      {
+        frame_duration = json.asInt();
+        if (frame_duration < 1)
+          throw Fmi::Exception(BCP, "Webp 'frame_duration' must be at least 1 millisecond");
+      }
+      else if (name == "loop")
+      {
+        loop = json.asInt();
+        if (loop < 0)
+          throw Fmi::Exception(BCP, "Webp 'loop' must be nonnegative, zero meaning forever");
+      }
+      else if (name == "accumulate")
+        accumulate = json.asBool();
       else
         throw Fmi::Exception(BCP, "Webp does not have a setting named '" + name + "'");
     }
@@ -56,7 +77,12 @@ std::size_t Webp::hash_value(const State& /* theState */) const
 {
   try
   {
-    return Fmi::hash_value(options.level);
+    auto hash = Fmi::hash_value(options.level);
+    Fmi::hash_combine(hash, Fmi::hash_value(frames));
+    Fmi::hash_combine(hash, Fmi::hash_value(frame_duration));
+    Fmi::hash_combine(hash, Fmi::hash_value(loop));
+    Fmi::hash_combine(hash, Fmi::hash_value(accumulate));
+    return hash;
   }
   catch (...)
   {

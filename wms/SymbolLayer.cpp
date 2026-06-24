@@ -2,7 +2,6 @@
 #include "SymbolLayer.h"
 #include "AggregationUtility.h"
 #include "Config.h"
-#include "MapboxVectorTile.h"
 #include "DataTile.h"
 #include "GridDataGeoTiff.h"
 #include "Hash.h"
@@ -10,6 +9,7 @@
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "ObservationReader.h"
 #include "PointData.h"
 #include "Select.h"
@@ -36,6 +36,7 @@
 #include <spine/Json.h>
 #include <timeseries/ParameterFactory.h>
 #include <timeseries/ParameterTools.h>
+#include <algorithm>
 #include <iomanip>
 
 namespace SmartMet
@@ -886,6 +887,26 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
           tmp += fmt::sprintf(" scale(%g)", newscale);
 
         tag_cdt["attributes"]["transform"] = tmp;
+
+        // Animated WebP output: tag the symbol with its time animation frame
+        // bucket class so that formatResponse can toggle frame visibility
+        if (theState.time_animation_frames && pointvalue.time())
+        {
+          const int nframes = *theState.time_animation_frames;
+          const auto duration =
+              (valid_time_period.end() - valid_time_period.begin()).total_seconds();
+          int bucket = 0;
+          if (duration > 0 && nframes > 1)
+          {
+            const auto elapsed = (*pointvalue.time() - valid_time_period.begin()).total_seconds();
+            bucket = std::clamp(
+                static_cast<int>(static_cast<long>(nframes) * elapsed / duration), 0, nframes - 1);
+          }
+          std::string cls = "flashanim flashanim-f" + Fmi::to_string(bucket);
+          if (tag_cdt["attributes"].Exists("class"))
+            cls = tag_cdt["attributes"]["class"].GetString() + " " + cls;
+          tag_cdt["attributes"]["class"] = cls;
+        }
 
         group_cdt["tags"].PushBack(tag_cdt);
       }

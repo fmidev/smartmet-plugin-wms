@@ -159,6 +159,9 @@ PointValues read_flash_observations(const State& state,
       for (auto i = 0UL; i < parameters.size(); i++)
         pv.add(get_double(values.at(i).at(row)));
 
+      // The observation time (flash stroke time) enables time animation
+      pv.time(values.at(lon_idx).at(row).time.utc_time());
+
       pointvalues.push_back(pv);
     }
 
