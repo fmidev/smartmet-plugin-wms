@@ -4065,15 +4065,31 @@ The table below contains a list of attributes used in this structure.
 
 #### Smoother structure
 
-Currently only the  2D Savitzky-Golay filters are supported. The filter is good at preserving local minima and maxima  if at least the degree 2 is used. Larger sizes with degree 2 tend to smooth data well while preserving extrema, higher degrees preserve original data better.
+Two independent smoothers are available; only one runs per layer.
+
+**Savitzky-Golay** (`size`/`degree`) is good at preserving local minima and maxima if at least degree 2 is used. Larger sizes with degree 2 tend to smooth data well while preserving extrema, higher degrees preserve original data better.
+
+**Trax grid smoother** (`method`) is selected by giving a `method`. It supersedes `size`/`degree` when both are present. The methods are:
+
+- `box` — separable box blur (normalized convolution). With `passes` >= 3 it approximates a Gaussian. Cheap and smooth, but it attenuates extrema like any low-pass filter.
+- `median` — per-window median. Removes spikes of either sign, keeps step edges sharp, and never invents a value that was not in the data (no overshoot). Preserves the value of features broader than the window.
+- `morphology` — grayscale opening/closing with a box element. Opening removes bright features smaller than the element while preserving the value of larger ones; closing does the same for dark features; `openclose` does both. Preserves the magnitude of broad extrema.
+
+The radius/passes are in grid cells (index space), not projected distance.
 
 The table below contains a list of attributes used in this structure.
 
 <pre><b>Smoother</b></pre>
-| Name   | Type | Default value | Description                                                                      |
-| ------ | ---- | ------------- | -------------------------------------------------------------------------------- |
-| size   | int  | -             | Size of the filter. Implies 2*N+1 adjacent points are used in the weighted mean. |
-| degree | int  | -             | Degree of the polynomial to fit to the data.                                     |
+| Name             | Type   | Default value | Description                                                                      |
+| ---------------- | ------ | ------------- | -------------------------------------------------------------------------------- |
+| size             | int    | -             | Savitzky-Golay: implies 2*N+1 adjacent points are used in the weighted mean.     |
+| degree           | int    | -             | Savitzky-Golay: degree of the polynomial to fit to the data.                     |
+| method           | string | -             | Trax smoother: `box`, `median` or `morphology`. Enables the Trax smoother path.  |
+| radius           | int    | -             | Trax smoother: window/element half-width in grid cells (2*radius+1 wide).        |
+| passes           | int    | 3             | Trax smoother: number of repeats (box: passes>=3 approximates a Gaussian).       |
+| boundary         | string | normalized    | Trax smoother: edge handling — `normalized`, `replicate` or `reflect`.           |
+| morphology       | string | openclose     | Morphology only: `open`, `close` or `openclose`.                                 |
+| preserve_missing | bool   | true          | Trax smoother: keep input NaN cells missing instead of filling from neighbours.  |
 
 
 ### Sampling structure

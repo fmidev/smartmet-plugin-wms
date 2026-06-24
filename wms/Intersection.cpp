@@ -266,6 +266,48 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     if (smoother.degree)
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                      Fmi::to_string(*smoother.degree));
+
+    // Opt-in Trax grid smoother: forward as contour.smooth.* attributes that
+    // grid-content parses back into Trax::SmoothOptions. Independent of the
+    // legacy size/degree above.
+    if (smoother.trax_options)
+    {
+      const auto& so = *smoother.trax_options;
+      const char* method = nullptr;
+      switch (so.method)
+      {
+        case Trax::SmoothMethod::Box:
+          method = "box";
+          break;
+        case Trax::SmoothMethod::Median:
+          method = "median";
+          break;
+        case Trax::SmoothMethod::Morphology:
+          method = "morphology";
+          break;
+        default:
+          break;  // None / Pyramid: nothing to send
+      }
+      if (method != nullptr)
+      {
+        auto& attrs = originalGridQuery->mAttributeList;
+        attrs.addAttribute("contour.smooth.method", method);
+        attrs.addAttribute("contour.smooth.radius", Fmi::to_string(so.radius));
+        attrs.addAttribute("contour.smooth.passes", Fmi::to_string(so.passes));
+        const char* boundary = (so.boundary == Trax::SmoothBoundary::Replicate) ? "replicate"
+                               : (so.boundary == Trax::SmoothBoundary::Reflect) ? "reflect"
+                                                                                : "normalized";
+        attrs.addAttribute("contour.smooth.boundary", boundary);
+        if (so.method == Trax::SmoothMethod::Morphology)
+        {
+          const char* op = (so.morphology == Trax::MorphologyOp::Open)    ? "open"
+                           : (so.morphology == Trax::MorphologyOp::Close) ? "close"
+                                                                          : "openclose";
+          attrs.addAttribute("contour.smooth.morphology", op);
+        }
+        attrs.addAttribute("contour.smooth.preserve_missing", so.preserve_missing ? "1" : "0");
+      }
+    }
     if (interpolation == "linear")
       originalGridQuery->mAttributeList.addAttribute(
           "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
@@ -400,6 +442,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
+    options.smoother = smoother.trax_options;
 
     if (interpolation == "linear")
       options.interpolation = Trax::InterpolationType::Linear;

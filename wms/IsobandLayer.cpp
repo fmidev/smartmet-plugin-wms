@@ -3,17 +3,17 @@
 #include "IsobandLayer.h"
 #include "AggregationUtility.h"
 #include "Config.h"
-#include "Geometry.h"
 #include "DataTile.h"
+#include "Geometry.h"
 #include "GridDataGeoTiff.h"
-#include "SubdivideGate.h"
-#include "MapboxVectorTile.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "State.h"
 #include "StyleSheet.h"
+#include "SubdivideGate.h"
 #include "ValueTools.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -899,7 +899,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           if (filter.bezierEnabled() && theState.getType() != "topojson" &&
               theState.getType() != "geojson" && theState.getType() != "kml")
           {
-            pointCoordinates = filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
+            pointCoordinates =
+                filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
           }
 
           if (pointCoordinates.empty())
@@ -1129,6 +1130,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
+    options.smoother = smoother.trax_options;
 
     options.extrapolation = extrapolation;
 
@@ -1282,7 +1284,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           if (filter.bezierEnabled() && theState.getType() != "topojson" &&
               theState.getType() != "geojson" && theState.getType() != "kml")
           {
-            pointCoordinates = filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
+            pointCoordinates =
+                filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
           }
 
           if (pointCoordinates.empty())
@@ -1591,6 +1594,7 @@ void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
+    options.smoother = smoother.trax_options;
     options.extrapolation = extrapolation;
 
     if (interpolation == "linear")

@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.6.24
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -173,6 +173,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Jun 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.24-2.fmi
+- Expose the Trax grid smoother in layer config and forward it to the grid-engine contouring path
 * Wed Jun 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.24-1.fmi
 - Added contour.worker_threads configuration and a contour_threads layer override for band-parallel contouring
 
