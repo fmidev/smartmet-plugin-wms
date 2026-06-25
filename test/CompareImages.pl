@@ -61,6 +61,36 @@ sub CreateWebp {
 # one inserted block rather than smearing across neighbours the way Myers
 # diff (GNU diff default) does. Strips the diff --git / index / --- / +++
 # header lines because the temp file names they expose are noise.
+# Convert a WebP file to a single PNG for the PSNR comparison.
+#
+# Animated WebP decodes to a multi-frame image sequence, and the frames are
+# stored as delta regions (e.g. 500x448+0+26), not full canvases. Writing such
+# a sequence straight to a .png makes ImageMagick emit numbered files
+# (_result-0.png, _result-1.png, ...) and never create the plain _result.png
+# the comparison expects -- the symptom seen on RHEL8. So we coalesce the delta
+# frames into full canvases and stack them vertically into one PNG, which lets
+# the existing single-file smartimagediff_psnr path compare every frame at once.
+# Single-frame WebP is written directly, preserving the previous behaviour.
+sub WebpToPng {
+    my ($src, $dst) = @_;
+    my $image = Image::Magick->new;
+    my $status = $image->Read($src);
+    if (defined $status and $status >= 400) { # Check for error status, ignore warnings
+        die "Failed to read WEBP file '$src': $status";
+    }
+    my $out = $image;
+    if (defined $image->[1]) {
+        my $coalesced = $image->Coalesce();
+        $out = $coalesced->Append(stack => 'true');
+    }
+    $out->Set(magick => 'PNG');
+    $out->Set(depth => 8);
+    $status = $out->Write($dst);
+    if (defined $status && $status >= 400) { # Check for error status, ignore warnings
+        die "Failed to write PNG file '$dst': $status";
+    }
+}
+
 sub GitHistogramDiff {
     my ($file1, $file2) = @_;
     my $raw = `git diff --no-index --no-color --diff-algorithm=histogram -U4 -- "$file1" "$file2" 2>/dev/null`;
@@ -425,14 +455,7 @@ elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg') {
         or die "Failed to copy result $RESULT to PNG: $!";
 }
 elsif ($MIME eq 'image/webp') {
-    my $image = Image::Magick->new;
-    my $status = $image->Read($RESULT);
-    if (defined $status and $status >= 400) { # Check for error status, ignore warnings
-        die "Failed to read WEBP file '$RESULT': $status";
-    }
-    $image->Set(magick => 'PNG');
-    $image->Set(depth => 8);
-    $image->Write($RESULT_PNG); # Write the image to PNG format. Discard errors if any.
+    WebpToPng($RESULT, $RESULT_PNG);
 }
 
 # Check expected output exists after result image has been created
@@ -664,17 +687,7 @@ elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg')
 }
 elsif ($MIME eq 'image/webp')
 {
-    my $image = Image::Magick->new;
-    my $status = $image->Read($EXPECTED);
-    if (defined $status and $status >= 400) { # Check for error status, ignore warnings
-        die "Failed to read WEBP file '$EXPECTED': $status";
-    }
-    $image->Set(magick => 'PNG');
-    $image->Set(depth => 8);
-    $status = $image->Write($EXPECTED_PNG);
-    if (defined $status && $status >= 400) { # Check for error status, ignore warnings
-        die "Failed to write PNG file '$EXPECTED_PNG': $status";
-    }
+    WebpToPng($EXPECTED, $EXPECTED_PNG);
 }
 else
 {
