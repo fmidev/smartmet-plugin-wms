@@ -1,0 +1,39 @@
+{
+    "title": "Trax box smoothing works inside missing data",
+    "producer": "climate_tmax",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "NormalMaxTemperatureF50",
+		    "smoother":
+		    {
+			"method": "box",
+			"radius": 2,
+			"passes": 3
+		    },
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                }
+            ]
+        }
+    ]
+}
