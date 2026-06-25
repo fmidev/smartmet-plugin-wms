@@ -3634,6 +3634,34 @@
         {
           "image" : 
           {
+            "height" : 350,
+            "width" : 1610
+          },
+          "name" : "smoother_compare_small",
+          "path" : 
+          [
+            "test",
+            "smoother_compare_small"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 310,
+            "ysize" : 310
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Grid smoothers at minimal cost (Savitzky-Golay 5x5 reference)",
+          "url_template" : "/dali?customer=test&product=smoother_compare_small&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 600,
             "width" : 500
           },
