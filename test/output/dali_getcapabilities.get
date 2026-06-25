@@ -3606,6 +3606,34 @@
         {
           "image" : 
           {
+            "height" : 350,
+            "width" : 1610
+          },
+          "name" : "smoother_compare",
+          "path" : 
+          [
+            "test",
+            "smoother_compare"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 310,
+            "ysize" : 310
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Grid smoothers at equal scale (matched to Savitzky-Golay 7x7)",
+          "url_template" : "/dali?customer=test&product=smoother_compare&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 600,
             "width" : 500
           },
@@ -4219,6 +4247,34 @@
           },
           "title" : "TimeLayer test",
           "url_template" : "/dali?customer=test&product=timelayer&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "tmax_box_smooth",
+          "path" : 
+          [
+            "test",
+            "tmax_box_smooth"
+          ],
+          "producer" : "climate_tmax",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20011231T120000",
+            "origintime" : "20011231T120000",
+            "values" : "20010101T120000/20011231T120000/PT24H"
+          },
+          "title" : "Trax box smoothing works inside missing data",
+          "url_template" : "/dali?customer=test&product=tmax_box_smooth&time={time}"
         },
         {
           "image" : 
