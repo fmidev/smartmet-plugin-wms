@@ -10,6 +10,7 @@ Each request URL is decomposed into a table showing every query parameter and it
 - [Isoband and Isoline](#isoband-and-isoline)
 - [Pressure smoothing comparison](#pressure-smoothing-comparison)
 - [Grid smoother comparison](#grid-smoother-comparison)
+- [Grid smoother comparison — low cost](#grid-smoother-comparison--low-cost)
 - [TFP — Thermal-Front Parameter diagnostics](#tfp--thermal-front-parameter-diagnostics)
 - [Isoband Labels](#isoband-labels)
 - [Isolabel examples](#isolabel-examples)
@@ -553,6 +554,27 @@ At this matched scale the differences are qualitative: **Savitzky-Golay** keeps 
 **Output:**
 
 ![smoother_compare](../images/smoother_compare.png)
+
+---
+
+### Grid smoother comparison — low cost
+
+**Input:** [`test/input/smoother_compare_small.get`](../../test/input/smoother_compare_small.get)
+
+```
+GET /dali?customer=test&product=smoother_compare_small&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `smoother_compare_small` | Product JSON: [`test/dali/customers/test/products/smoother_compare_small.json`](../../test/dali/customers/test/products/smoother_compare_small.json) |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+The companion to the comparison above, but with every method at its **minimal setting** (Savitzky-Golay reduced to a 5×5 window; `box`, `median` and `morphology` to a single 3×3-class pass). The previous example is tuned to equal smoothing *quality*, which makes Savitzky-Golay look like the obvious choice — but it is the slowest filter, whereas `box` and `morphology` cost O(N) per pass independent of radius and `median` grows with radius. This panel answers the practical question on a loaded server: *which is the cheapest filter that smooths well enough?* A single cheap `box r1 p1` pass already removes the grid speckle nearly as well as the much more expensive Savitzky-Golay fit. Prefer `box` for plain smoothing, `median`/`morphology` for their edge/speckle behaviour, and reserve Savitzky-Golay for when exact extremum-height preservation is genuinely required. See the [Smoother structure section of the reference](../reference.md) for the per-method cost notes.
+
+**Output:**
+
+![smoother_compare_small](../images/smoother_compare_small.png)
 
 ---
 

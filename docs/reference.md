@@ -4099,8 +4099,8 @@ Two independent smoothers are available; only one runs per layer.
 
 **Trax grid smoother** (`method`) is selected by giving a `method`. It supersedes `size`/`degree` when both are present. The methods are:
 
-- `box` — separable box blur (normalized convolution). With `passes` >= 3 it approximates a Gaussian. Cheap and smooth, but it attenuates extrema like any low-pass filter.
-- `median` — per-window median. Removes spikes of either sign, keeps step edges sharp, and never invents a value that was not in the data (no overshoot). Preserves the value of features broader than the window.
+- `box` — separable box blur (normalized convolution). With `passes` >= 3 it approximates a Gaussian. Cheap and smooth, but it attenuates extrema like any low-pass filter. Cost is O(N) per pass *independent of radius* (running sums), so it is the cheapest way to smooth at any scale.
+- `median` — per-window median. Removes spikes of either sign, keeps step edges sharp, and never invents a value that was not in the data (no overshoot). Preserves the value of features broader than the window. Uses an exact 2D window, so unlike `box`/`morphology` its cost grows with radius.
 - `morphology` — grayscale opening/closing with a box element. Opening removes bright features smaller than the element while preserving the value of larger ones; closing does the same for dark features; `openclose` does both. Preserves the magnitude of broad extrema. Unlike `box` and Savitzky-Golay it never averages or interpolates: it takes the window minimum (erode) or maximum (dilate), so the output is the exact value of some input cell, and the structuring element is a flat, axis-aligned square (separable min/max along x then y, chosen because it runs in O(N) per pass independent of radius). The result is therefore terraced into square-cornered plateaus, which the contourer traces as visibly **blocky, axis-aligned boundaries** — a circular element would round them but would not be separable. Use `morphology` when you specifically want to delete small bright and/or dark speckles while preserving the exact magnitude of the larger features (e.g. cleaning isolated spurious pixels without flattening real peaks); prefer `box` or `median` when smooth-looking contours matter more than exact extremum values.
 
 The radius/passes are in grid cells (index space), not projected distance.
@@ -4113,6 +4113,10 @@ The radius/passes are in grid cells (index space), not projected distance.
 - `morphology` (openclose) keeps the magnitude of the broad extrema but leaves visibly blocky, axis-aligned boundaries from its flat box structuring element.
 
 <p><img src="images/smoother_compare.png" width="100%"></p>
+
+**Cost matters as much as character.** The gallery above is tuned to equal smoothing *quality*, which flatters Savitzky-Golay — but it is the slowest filter, while `box` and `morphology` are O(N) per pass independent of radius and `median` sits in between (its cost grows with radius). On a busy server the right question is usually not "which preserves extrema best?" but "which is the cheapest filter that smooths well enough?" — and for plain speckle removal that is almost always `box`. The gallery below repeats the comparison at each method's **minimal setting** (Savitzky-Golay reduced to a 5&times;5 window, the others to a single 3&times;3-class pass): a single cheap `box` pass already removes the grid speckle nearly as well as the much more expensive Savitzky-Golay fit. Reach for Savitzky-Golay only when you genuinely need its exact extremum-height preservation and can afford the CPU; otherwise prefer `box` (general smoothing), `median` (spike/edge preservation) or `morphology` (speckle removal with magnitude preservation).
+
+<p><img src="images/smoother_compare_small.png" width="100%"></p>
 
 `box` also smooths correctly inside a missing-data footprint: the smoothing stays within the valid region and the missing-data boundary is preserved (the `preserve_missing` default).
 
