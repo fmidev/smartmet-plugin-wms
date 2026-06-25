@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.6.24
-Release: 3%{?dist}.fmi
+Version: 26.6.25
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -41,12 +41,12 @@ BuildRequires: smartmet-engine-authentication-devel >= 26.6.24
 BuildRequires: smartmet-engine-observation-devel >= 26.6.24
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.6.24
-BuildRequires: smartmet-engine-gis-devel >= 26.6.24
+BuildRequires: smartmet-engine-gis-devel >= 26.6.25
 BuildRequires: smartmet-engine-grid-devel >= 26.6.24
 BuildRequires: smartmet-engine-geonames-devel >= 26.6.24
 BuildRequires: smartmet-engine-querydata-devel >= 26.6.24
 BuildRequires: smartmet-engine-contour-devel >= 26.6.24
-BuildRequires: smartmet-library-gis-devel >= 26.6.15
+BuildRequires: smartmet-library-gis-devel >= 26.6.25
 BuildRequires: smartmet-library-trax-devel >= 26.6.23
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -80,7 +80,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
 Requires: smartmet-library-grid-content >= 26.6.24
 Requires: smartmet-library-grid-files >= 26.6.24
-Requires: smartmet-library-gis >= 26.6.15
+Requires: smartmet-library-gis >= 26.6.25
 Requires: smartmet-library-trax >= 26.6.23
 Requires: smartmet-library-macgyver >= 26.6.15
 Requires: smartmet-library-spine >= 26.6.24
@@ -92,7 +92,7 @@ Requires: smartmet-engine-authentication >= 26.6.24
 Requires: smartmet-engine-avi >= 26.6.24
 Requires: smartmet-engine-querydata >= 26.6.24
 Requires: smartmet-engine-contour >= 26.6.24
-Requires: smartmet-engine-gis >= 26.6.24
+Requires: smartmet-engine-gis >= 26.6.25
 Requires: smartmet-engine-grid >= 26.6.24
 Requires: smartmet-engine-geonames >= 26.6.24
 Requires: smartmet-server >= 26.6.24
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-avi-devel >= 26.6.24
 #TestRequires: smartmet-engine-contour-devel >= 26.6.24
 #TestRequires: smartmet-engine-geonames-devel >= 26.6.24
-#TestRequires: smartmet-engine-gis-devel >= 26.6.24
+#TestRequires: smartmet-engine-gis-devel >= 26.6.25
 #TestRequires: smartmet-engine-querydata-devel >= 26.6.24
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.24
 #TestRequires: smartmet-library-giza-devel >= 26.6.23
@@ -132,7 +132,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-grid-devel >= 26.6.24
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
-#TestRequires: smartmet-utils-devel >= 26.6.17
+#TestRequires: smartmet-utils-devel >= 26.6.24
 #TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
 #TestRequires: smartmet-library-regression >= 26.5.22
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Jun 25 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.25-1.fmi
+- Repackaged with the latest GIS library/engine
+
 * Wed Jun 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.24-3.fmi
 - Added animated WebP output replaying flash strokes by actual stroke time
 * Wed Jun 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.24-2.fmi
