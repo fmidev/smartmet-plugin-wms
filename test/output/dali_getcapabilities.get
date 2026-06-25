@@ -1040,6 +1040,56 @@
             "height" : 500,
             "width" : 500
           },
+          "name" : "flash_symbols_webp_animation",
+          "path" : 
+          [
+            "test",
+            "flash_symbols_webp_animation"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Flash observations animated by stroke time",
+          "url_template" : "/dali?customer=test&product=flash_symbols_webp_animation&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "flash_symbols_webp_animation_accumulate",
+          "path" : 
+          [
+            "test",
+            "flash_symbols_webp_animation_accumulate"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Flash observations accumulating by stroke time",
+          "url_template" : "/dali?customer=test&product=flash_symbols_webp_animation_accumulate&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
           "name" : "forestfire",
           "path" : 
           [
