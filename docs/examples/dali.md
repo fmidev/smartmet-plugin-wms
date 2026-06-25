@@ -9,6 +9,7 @@ Each request URL is decomposed into a table showing every query parameter and it
 - [Output Formats](#output-formats)
 - [Isoband and Isoline](#isoband-and-isoline)
 - [Pressure smoothing comparison](#pressure-smoothing-comparison)
+- [Grid smoother comparison](#grid-smoother-comparison)
 - [TFP — Thermal-Front Parameter diagnostics](#tfp--thermal-front-parameter-diagnostics)
 - [Isoband Labels](#isoband-labels)
 - [Isolabel examples](#isolabel-examples)
@@ -529,6 +530,29 @@ The Bezier `accuracy` parameter is the maximum allowed deviation (in pixels) of 
 To eliminate gaps between adjacent isobands' shared edges, the bezier code keeps a per-request cache of fitted cubics keyed by canonical-direction polyline.  The cache works for whole rings (rotation- and direction-invariant via canonical-form lookup) and for sub-segments split at counter-flagged corners and at view-boundary vertices.  Isolines drawn over isobands hit the same cache.  Sub-pixel residual differences may remain where contour ghostlines diverge between rings, but they fall well below the chosen accuracy threshold.
 
 The fitting algorithm is a C++ port of [Raph Levien](https://raphlinus.github.io/)'s moment-matching cubic Bezier fitter from the Rust [`kurbo`](https://github.com/linebender/kurbo) library, which itself implements ideas from his 2009 UC Berkeley PhD thesis [*From Spiral to Spline: Optimal Techniques in Interactive Curve Design*](https://www.levien.com/phd/thesis.pdf).  The algorithm computes the signed area and first moment of the source curve segment and solves a quartic polynomial for cubic control points whose moments match.  The original Rust implementation is dual-licensed Apache-2.0 / MIT.
+
+---
+
+### Grid smoother comparison
+
+**Input:** [`test/input/smoother_compare.get`](../../test/input/smoother_compare.get)
+
+```
+GET /dali?customer=test&product=smoother_compare&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `smoother_compare` | Product JSON: [`test/dali/customers/test/products/smoother_compare.json`](../../test/dali/customers/test/products/smoother_compare.json) |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+Five panels over the same `pal_skandinavia` temperature field: the unsmoothed original followed by the four grid smoothers applied **at a matched scale** so the comparison is about each filter's *character* rather than how hard it happens to be pushed. The Savitzky-Golay `size 3` (7×7) window sets the reference scale; `box`, `median` and `morphology` are tuned to remove the same spatial scale (`box radius 1, passes 3`; `median radius 2`; `morphology radius 2`) — note that at equal `radius` the rank/morphological filters would remove far more than the polynomial fit, which is what made the earlier per-method gallery misleading.
+
+At this matched scale the differences are qualitative: **Savitzky-Golay** keeps the most fine detail and the strongest extrema (and costs the most); **box** removes the same scale of structure but, as a linear low-pass, attenuates the cold pockets the most; **median** gives sharp, overshoot-free edges (every output value existed in the input) and holds features broader than its window; **morphology** (openclose) keeps the magnitude of the broad extrema but leaves visibly blocky, axis-aligned boundaries. See the [Smoother structure section of the reference](../reference.md) for the full parameter list and the [Trax grid smoother docs](https://github.com/fmidev/smartmet-library-trax) for the algorithms.
+
+**Output:**
+
+![smoother_compare](../images/smoother_compare.png)
 
 ---
 

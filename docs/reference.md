@@ -4105,22 +4105,18 @@ Two independent smoothers are available; only one runs per layer.
 
 The radius/passes are in grid cells (index space), not projected distance.
 
-**Method gallery** — same temperature field, same projection. In each image the left panel is the unsmoothed original and the right panel applies the named smoother. Note how `box` flattens the cold pockets, `median` removes speckle while keeping the larger features sharper, `morphology` (openclose) preserves the magnitude of the broad extrema, and the legacy Savitzky-Golay filter preserves extrema best of all (at a notably higher cost).
+**Method gallery** — the same temperature field and projection, smoothed by each method at a **matched scale**. The point of a smoother comparison is to judge how each method treats features of a given size, so the parameters here are deliberately tuned to remove roughly the same spatial scale rather than to a fixed `radius` value: at equal `radius` the rank/morphological filters remove much more than the polynomial Savitzky-Golay fit, which would make the comparison misleading. The Savitzky-Golay `size 3` window (7&times;7) sets the reference scale, and `box`/`median`/`morphology` are dialed to match it (`box radius 1, passes 3`; `median radius 2`; `morphology radius 2`). At this matched scale the differences are about *character*, not amount:
 
-<table>
-<tr>
-  <td align="center"><b>box</b><br><small><code>radius: 3, passes: 3</code><br>Gaussian-like low-pass; attenuates extrema.</small><br><img src="images/smoother_box.png" width="320"></td>
-  <td align="center"><b>median</b><br><small><code>radius: 3</code><br>Removes spikes, no overshoot, sharper edges.</small><br><img src="images/smoother_median.png" width="320"></td>
-</tr>
-<tr>
-  <td align="center"><b>morphology</b><br><small><code>radius: 3, morphology: openclose</code><br>Removes small bright/dark features, keeps broad extrema.</small><br><img src="images/smoother_morphology.png" width="320"></td>
-  <td align="center"><b>Savitzky-Golay 7&times;7</b><br><small><code>size: 3, degree: 2</code> (legacy path)<br>Best extremum preservation, but the slowest filter.</small><br><img src="images/smoother_savgol.png" width="320"></td>
-</tr>
-<tr>
-  <td align="center"><b>box, inside missing data</b><br><small><code>radius: 2, passes: 3</code><br>Smoothing stays within the data footprint; the missing-data boundary is preserved (<code>preserve_missing</code> default).</small><br><img src="images/smoother_missing.png" width="320"></td>
-  <td></td>
-</tr>
-</table>
+- `Savitzky-Golay` keeps the most fine structure and the strongest extrema (a local polynomial fit), at the highest cost.
+- `box` removes the same scale of detail but, being a linear low-pass, attenuates the cold pockets the most.
+- `median` gives sharp, overshoot-free edges — every output value existed in the input — and preserves the value of features broader than the window.
+- `morphology` (openclose) keeps the magnitude of the broad extrema but leaves visibly blocky, axis-aligned boundaries from its flat box structuring element.
+
+<p><img src="images/smoother_compare.png" width="100%"></p>
+
+`box` also smooths correctly inside a missing-data footprint: the smoothing stays within the valid region and the missing-data boundary is preserved (the `preserve_missing` default).
+
+<p><img src="images/smoother_missing.png" width="320"></p>
 
 The table below contains a list of attributes used in this structure.
 

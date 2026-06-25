@@ -1,0 +1,2 @@
+GET /dali?customer=test&product=smoother_compare&time=200808050300 HTTP/1.0
+
