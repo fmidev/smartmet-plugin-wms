@@ -854,7 +854,7 @@ void Config::init()
 
   if (!itsCapabilityUpdatesDisabled)
   {
-    itsGetCapabilitiesTask.reset(new Fmi::AsyncTask("Config: capabilities update task",
+    itsGetCapabilitiesTask.reset(new Fmi::AsyncTask("upd-wms-caps",
                                                     [this]() { capabilitiesUpdateLoop(); }));
   }
 }
