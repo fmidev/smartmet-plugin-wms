@@ -32,6 +32,8 @@
   <text fill="#333333" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="160">Inari</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="76" xml:space="preserve" y="549">Maarianhamina</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="76" xml:space="preserve" y="549">Maarianhamina</text>
+  <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="201" xml:space="preserve" y="393">Haapajärvi</text>
+  <text fill="#333333" font-family="sans-serif" font-size="10" x="201" xml:space="preserve" y="393">Haapajärvi</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="233" xml:space="preserve" y="216">Sodankylä</text>
   <text fill="#333333" font-family="sans-serif" font-size="10" x="233" xml:space="preserve" y="216">Sodankylä</text>
   <text fill="none" font-family="sans-serif" font-size="10" stroke="white" stroke-linejoin="round" stroke-opacity="0.8" stroke-width="2" x="273" xml:space="preserve" y="337">Suomussalmi</text>
@@ -90,6 +92,7 @@
    <use x="198" xlink:href="#dot" y="217"/>
    <use x="230" xlink:href="#dot" y="163"/>
    <use x="73" xlink:href="#dot" y="552"/>
+   <use x="198" xlink:href="#dot" y="396"/>
    <use x="230" xlink:href="#dot" y="219"/>
    <use x="270" xlink:href="#dot" y="340"/>
    <use x="284" xlink:href="#dot" y="374"/>
