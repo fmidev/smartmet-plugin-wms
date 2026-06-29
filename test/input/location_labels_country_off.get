@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=location_labels_country_off&type=svg HTTP/1.0

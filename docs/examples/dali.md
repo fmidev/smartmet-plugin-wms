@@ -1024,6 +1024,47 @@ Same projection as `location_labels_pan_invariant` but with `cx` shifted by +0.5
 
 ---
 
+### location_labels_country_off / _on — Country constraint
+
+This pair demonstrates the `country_constraint` option, zoomed to the
+Finland–Russia border around Lappeenranta / Imatra (Finland) and Viipuri /
+Vyborg (Russia).  Finland is tinted blue and Russia red so it is obvious which
+side of the border each label lands on.  The keyword `ajax_fi_all` is a
+worldwide place set, so non-Finnish names (e.g. Viipuri) appear alongside the
+Finnish towns.  Both products are identical except for the single
+`"country_constraint": true` flag.
+
+**Input:** [`test/input/location_labels_country_off.get`](../../test/input/location_labels_country_off.get) · [`test/input/location_labels_country_on.get`](../../test/input/location_labels_country_on.get)
+
+```
+GET /dali?customer=test&product=location_labels_country_off&type=svg HTTP/1.0
+GET /dali?customer=test&product=location_labels_country_on&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_country_off` | Product JSON: [`test/dali/customers/test/products/location_labels_country_off.json`](../../test/dali/customers/test/products/location_labels_country_off.json) — greedy placement, no constraint |
+| `product` | `location_labels_country_on` | Product JSON: [`test/dali/customers/test/products/location_labels_country_on.json`](../../test/dali/customers/test/products/location_labels_country_on.json) — same, with `"country_constraint": true` |
+
+Watch the border-hugging towns **Nuijamaa**, **Vainikkala**, **Hiivaniemi** and
+**Ahola**.  Without the constraint their labels lean east, across the border
+into Russia (red).  With the constraint enabled every label is forced to stay
+within its own country's polygon, so those labels flip west into Finland
+(blue).  Towns far from the border — Viipuri (RU), Lappeenranta and Imatra (FI)
+— are unaffected: the constraint only intervenes where a label would otherwise
+cross a border.
+
+**Output — without `country_constraint` (left) vs with it (right):**
+
+<table>
+<tr>
+  <td align="center"><b>country_constraint: off</b><br><img src="../images/dali/location_labels_country_off.png" width="340"></td>
+  <td align="center"><b>country_constraint: on</b><br><img src="../images/dali/location_labels_country_on.png" width="340"></td>
+</tr>
+</table>
+
+---
+
 ## SVG Customisation
 
 ### t2m_p_shadow — SVG drop shadow

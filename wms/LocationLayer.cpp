@@ -15,6 +15,7 @@
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/OGR.h>
 #include <macgyver/Exception.h>
 #include <macgyver/NearTree.h>
 #include <macgyver/StringConversion.h>
@@ -122,6 +123,16 @@ LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
   // Fixed-specific
   JsonTools::remove_string(cfg.fixed_position, json, "fixed_position");
 
+  // Country constraint: keep labels out of foreign territory.  The boolean
+  // toggles it; the source fields select which PostGIS layer supplies the
+  // country polygons (defaults target Natural Earth admin_0_countries with
+  // iso_a2 codes, matching the borders maps used by existing products).
+  JsonTools::remove_bool(cfg.country_constraint, json, "country_constraint");
+  JsonTools::remove_string(cfg.country_schema, json, "country_schema");
+  JsonTools::remove_string(cfg.country_table, json, "country_table");
+  JsonTools::remove_string(cfg.country_field, json, "country_field");
+  JsonTools::remove_string(cfg.country_pgname, json, "country_pgname");
+
   // SA sub-object
   auto sa_json = JsonTools::remove(json, "simulated_annealing");
   if (!sa_json.isNull())
@@ -202,6 +213,11 @@ std::size_t hashLabelConfig(const LabelConfig& cfg)
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.free_space_weight));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.free_space_radius));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.priority_bucket_ratio));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.country_constraint));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.country_schema));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.country_table));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.country_field));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.country_pgname));
   for (const auto& cls : cfg.classes)
   {
     if (cls.lolimit) Fmi::hash_combine(hash, Fmi::hash_value(*cls.lolimit));
@@ -486,6 +502,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       double y = 0;
       std::string name;
       std::string feature;
+      std::string iso2;  // country code, for the optional country constraint
       int population = 0;
     };
 
@@ -523,7 +540,8 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         selected_coordinates.insert(xy);
       }
 
-      accepted.push_back({x, y, location->name, location->feature, location->population});
+      accepted.push_back(
+          {x, y, location->name, location->feature, location->iso2, location->population});
     }
 
     // ----------------------------------------------------------------
@@ -536,6 +554,109 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     if (!label_config.empty())
     {
+      // ----------------------------------------------------------------
+      // Country constraint dataset (optional).  Fetch the country polygons
+      // once and index them by a small integer id per iso2 code.  The
+      // feasibility predicate built below tests candidate label boxes
+      // against these polygons so that no label is placed inside a country
+      // other than its own.
+      //
+      // The polygons are fetched and tested in WGS84, NOT in the map CRS:
+      // the whole world's borders are loaded, and projecting far-away
+      // geometry (e.g. all of Russia) into a local CRS such as ETRS-TM35FIN
+      // produces degenerate coordinates that break the point-in-polygon
+      // test.  Working in lon/lat keeps every polygon well-formed; the
+      // predicate inverse-projects each sampled label pixel to WGS84.
+      // ----------------------------------------------------------------
+      struct CountryPoly
+      {
+        int id = -1;
+        OGRGeometryPtr geom;
+        OGREnvelope env;
+      };
+      std::map<std::string, int> iso2_to_id;
+      std::vector<CountryPoly> country_polys;
+      Fmi::SpatialReference wgs84("WGS84");
+      Fmi::CoordinateTransformation to_wgs84(crs, wgs84);
+
+      if (label_config.country_constraint)
+      {
+        Engine::Gis::MapOptions opts;
+        opts.pgname = label_config.country_pgname;
+        opts.schema = label_config.country_schema;
+        opts.table = label_config.country_table;
+        opts.fieldnames.insert(label_config.country_field);
+
+        const auto& gis = theState.getGisEngine();
+        const auto features = gis.getFeatures(wgs84, opts);
+        for (const auto& feature : features)
+        {
+          if (!feature->geom || feature->geom->IsEmpty() != 0)
+            continue;
+          const auto it = feature->attributes.find(label_config.country_field);
+          if (it == feature->attributes.end())
+            continue;
+          const auto* iso2 = std::get_if<std::string>(&it->second);
+          if (iso2 == nullptr || iso2->empty())
+            continue;
+
+          // Assign (or reuse) the id for this country.  A country may
+          // appear as several feature rows; they all share one id.
+          int id = 0;
+          const auto mit = iso2_to_id.find(*iso2);
+          if (mit == iso2_to_id.end())
+          {
+            id = static_cast<int>(iso2_to_id.size());
+            iso2_to_id.emplace(*iso2, id);
+          }
+          else
+            id = mit->second;
+
+          CountryPoly cp;
+          cp.id = id;
+          cp.geom = feature->geom;
+          cp.geom->getEnvelope(&cp.env);
+          country_polys.push_back(std::move(cp));
+        }
+      }
+
+      // Feasibility predicate: reject a candidate box if any of its
+      // representative points (centroid + corners) falls inside a country
+      // polygon whose id differs from the location's own country id.  Sea,
+      // unlabelled land and the home country are all allowed.  Empty when
+      // the constraint is off or no polygons were found → no restriction.
+      FeasibilityFn feasible;
+      if (label_config.country_constraint && !country_polys.empty())
+      {
+        feasible = [&box, &to_wgs84, &country_polys](const LabelCandidate& cand,
+                                                     const LabelBBox& bbox) -> bool
+        {
+          if (cand.region_id < 0)
+            return true;  // home country unknown → impose nothing
+
+          const double xs[5] = {(bbox.x1 + bbox.x2) / 2.0, bbox.x1, bbox.x2, bbox.x1, bbox.x2};
+          const double ys[5] = {(bbox.y1 + bbox.y2) / 2.0, bbox.y1, bbox.y1, bbox.y2, bbox.y2};
+          for (int p = 0; p < 5; p++)
+          {
+            double wx = xs[p];
+            double wy = ys[p];
+            box.itransform(wx, wy);       // image pixels → map CRS
+            if (!to_wgs84.transform(wx, wy))
+              continue;                    // unprojectable point → can't judge, allow
+            for (const auto& cp : country_polys)
+            {
+              if (cp.id == cand.region_id)
+                continue;  // a label may always sit on its own country
+              if (wx < cp.env.MinX || wx > cp.env.MaxX || wy < cp.env.MinY || wy > cp.env.MaxY)
+                continue;  // cheap envelope reject before point-in-polygon
+              if (Fmi::OGR::inside(*cp.geom, wx, wy))
+                return false;  // a sampled point lies in a foreign country
+            }
+          }
+          return true;
+        };
+      }
+
       std::vector<LabelCandidate> label_candidates;
       label_candidates.reserve(accepted.size());
 
@@ -555,6 +676,13 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         cand.font_size = label_config.effective_font_size(cand.population);
         cand.font_weight = label_config.effective_font_weight(cand.population);
         cand.fill = label_config.effective_fill(cand.population);
+
+        // Home country id for the constraint (-1 = unknown → unconstrained).
+        if (label_config.country_constraint)
+        {
+          const auto it = iso2_to_id.find(al.iso2);
+          cand.region_id = (it != iso2_to_id.end()) ? it->second : -1;
+        }
 
         text_style_t style;
         style.fontfamily = label_config.font_family;
@@ -593,7 +721,8 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       placed_labels = placeLabels(label_config,
                                   std::move(label_candidates),
                                   static_cast<double>(box.width()),
-                                  static_cast<double>(box.height()));
+                                  static_cast<double>(box.height()),
+                                  feasible);
     }
 
     // ----------------------------------------------------------------

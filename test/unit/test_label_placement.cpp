@@ -884,3 +884,129 @@ BOOST_AUTO_TEST_CASE(bbox_padding_does_not_clip_against_map_bounds)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+// ======================================================================
+// Country constraint (injected feasibility predicate)
+//
+// These tests use a synthetic predicate, so no GIS/PostGIS dependency is
+// needed — they verify only that the placement algorithms honour the
+// predicate.  The real geographic test (point-in-country) lives in
+// LocationLayer.cpp.
+// ======================================================================
+
+BOOST_AUTO_TEST_SUITE(country_constraint)
+
+// Synthetic "border": everything at x >= border_x is foreign territory.
+// Forbids any candidate whose box centroid lands on the foreign side,
+// while leaving locations with an unknown home country (region_id < 0)
+// unconstrained — mirroring the LocationLayer predicate's policy.
+static FeasibilityFn borderAt(double border_x)
+{
+  return [border_x](const LabelCandidate& cand, const LabelBBox& bbox) -> bool
+  {
+    if (cand.region_id < 0)
+      return true;
+    const double cx = (bbox.x1 + bbox.x2) / 2.0;
+    return cx < border_x;
+  };
+}
+
+BOOST_AUTO_TEST_CASE(greedy_keeps_label_on_home_side)
+{
+  auto cfg = makeConfig(PlacementAlgorithm::Greedy);
+  // Anchor sits just west of the border; the preferred eastward positions
+  // would cross it, so greedy must fall back to a westward position.
+  auto cand = makeCandidate(100, 100, "Border City");
+  cand.region_id = 0;
+  std::vector<LabelCandidate> in{cand};
+
+  auto result = placeLabels(cfg, in, 1000, 1000, borderAt(105));
+  BOOST_REQUIRE_EQUAL(result.size(), 1u);
+  BOOST_REQUIRE(result[0].placed);
+  const double cx = (result[0].bbox.x1 + result[0].bbox.x2) / 2.0;
+  BOOST_CHECK_LT(cx, 105.0);  // label kept on the home (west) side
+}
+
+BOOST_AUTO_TEST_CASE(sa_keeps_label_on_home_side)
+{
+  auto cfg = makeConfig(PlacementAlgorithm::SimulatedAnnealing);
+  auto cand = makeCandidate(100, 100, "Border City");
+  cand.region_id = 0;
+  std::vector<LabelCandidate> in{cand};
+
+  auto result = placeLabels(cfg, in, 1000, 1000, borderAt(105));
+  BOOST_REQUIRE_EQUAL(result.size(), 1u);
+  BOOST_REQUIRE(result[0].placed);
+  const double cx = (result[0].bbox.x1 + result[0].bbox.x2) / 2.0;
+  BOOST_CHECK_LT(cx, 105.0);
+}
+
+BOOST_AUTO_TEST_CASE(label_dropped_when_no_position_is_feasible)
+{
+  FeasibilityFn forbid_all = [](const LabelCandidate&, const LabelBBox&) { return false; };
+
+  auto cand = makeCandidate(100, 100, "Trapped");
+  cand.region_id = 0;
+  std::vector<LabelCandidate> in{cand};
+
+  for (auto algo : {PlacementAlgorithm::Greedy, PlacementAlgorithm::PriorityGreedy,
+                    PlacementAlgorithm::SimulatedAnnealing, PlacementAlgorithm::Fixed})
+  {
+    auto cfg = makeConfig(algo);
+    auto result = placeLabels(cfg, in, 1000, 1000, forbid_all);
+    BOOST_REQUIRE_EQUAL(result.size(), 1u);
+    BOOST_CHECK(!result[0].placed);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(unknown_region_is_unconstrained)
+{
+  // region_id < 0 → home country unknown.  The label must be placed exactly
+  // where the unconstrained algorithm would put it, even though the border
+  // would otherwise forbid the preferred eastward position.
+  auto cfg = makeConfig(PlacementAlgorithm::Greedy);
+  auto cand = makeCandidate(100, 100, "No Country");
+  cand.region_id = -1;
+  std::vector<LabelCandidate> in{cand};
+
+  auto constrained = placeLabels(cfg, in, 1000, 1000, borderAt(105));
+  auto baseline = placeLabels(cfg, in, 1000, 1000);
+  BOOST_REQUIRE_EQUAL(constrained.size(), 1u);
+  BOOST_REQUIRE(constrained[0].placed);
+  BOOST_CHECK_EQUAL(constrained[0].bbox.x1, baseline[0].bbox.x1);
+  BOOST_CHECK_EQUAL(constrained[0].bbox.y1, baseline[0].bbox.y1);
+}
+
+BOOST_AUTO_TEST_CASE(empty_predicate_matches_unconstrained)
+{
+  // An empty FeasibilityFn must reproduce the legacy (no-constraint) output
+  // for every algorithm — the regression guard for the default-off path.
+  std::vector<LabelCandidate> in;
+  for (int i = 0; i < 8; i++)
+  {
+    auto c = makeCandidate(100 + 30.0 * i, 100 + 7.0 * i,
+                           "City" + std::to_string(i), 1000.0 * (i + 1));
+    c.region_id = 0;
+    in.push_back(c);
+  }
+
+  for (auto algo : {PlacementAlgorithm::Greedy, PlacementAlgorithm::PriorityGreedy,
+                    PlacementAlgorithm::SimulatedAnnealing, PlacementAlgorithm::Fixed})
+  {
+    auto cfg = makeConfig(algo);
+    auto without = placeLabels(cfg, in, 1000, 1000);       // no predicate arg
+    auto empty = placeLabels(cfg, in, 1000, 1000, {});     // explicit empty predicate
+    BOOST_REQUIRE_EQUAL(without.size(), empty.size());
+    for (size_t i = 0; i < without.size(); i++)
+    {
+      BOOST_CHECK_EQUAL(without[i].placed, empty[i].placed);
+      if (without[i].placed && empty[i].placed)
+      {
+        BOOST_CHECK_EQUAL(without[i].bbox.x1, empty[i].bbox.x1);
+        BOOST_CHECK_EQUAL(without[i].bbox.y1, empty[i].bbox.y1);
+      }
+    }
+  }
+}
+
+BOOST_AUTO_TEST_SUITE_END()

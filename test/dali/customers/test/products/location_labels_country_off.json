@@ -1,0 +1,135 @@
+{
+    "title": "LocationLayer — cross-border labels WITHOUT country constraint",
+
+    // Zoomed to the Finland–Russia border around Lappeenranta / Imatra (FI)
+    // and Vyborg (RU).  Finland is tinted blue and Russia red so it is
+    // immediately obvious which side of the border each label lands on.
+    // The keyword 'ajax_fi_all' is a worldwide place set, so non-Finnish
+    // names (e.g. Vyborg) appear alongside the Finnish towns.
+    "projection":
+    {
+        "xsize": 750,
+        "ysize": 850,
+        "crs": "EPSG:3067",
+        "bboxcrs": "EPSG:4326",
+        "cx": 28.4,
+        "cy": 60.95,
+        "resolution": 0.1
+    },
+
+    "defs":
+    {
+        "layers":
+        [
+            {
+                "tag": "symbol",
+                "attributes": { "id": "dot", "overflow": "visible" },
+                "layers":
+                [
+                    {
+                        "tag": "circle",
+                        "attributes": { "r": "3", "cx": "0", "cy": "0" }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "land",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 1
+                    },
+                    "attributes": { "fill": "#f3f3f0", "stroke": "none" }
+                },
+                {
+                    "qid": "finland",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "where": "iso_a2 IN ('FI','AX')"
+                    },
+                    "attributes": { "fill": "#e6efff", "stroke": "none" }
+                },
+                {
+                    "qid": "russia",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "where": "iso_a2 = 'RU'"
+                    },
+                    "attributes": { "fill": "#ffe6e6", "stroke": "none" }
+                },
+                {
+                    "qid": "borders",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries"
+                    },
+                    "attributes": { "fill": "none", "stroke": "#888", "stroke-width": "1.2" }
+                },
+                {
+                    "qid": "cities",
+                    "layer_type": "location",
+                    "keyword": "ajax_fi_all",
+                    "mindistance": 85,
+                    "symbols":
+                    {
+                        "default":
+                        [
+                            { "symbol": "dot" }
+                        ]
+                    },
+                    "attributes": { "fill": "#c00000", "stroke": "none" },
+                    // Greedy placement, NO country constraint: labels are free to
+                    // fall on the wrong side of the border (e.g. the Vyborg label
+                    // may drift north onto the Finnish side).
+                    "label":
+                    {
+                        "algorithm": "greedy",
+                        "candidates": 8,
+                        "offset": 3,
+                        "symbol_size": 6,
+                        "font_family": "sans-serif",
+                        "font_size": 11,
+                        "fill": "#222222",
+                        "stroke": "white",
+                        "stroke_width": 2.5,
+                        "stroke_opacity": 0.85,
+                        "max_labels": 200,
+                        "classes":
+                        [
+                            {
+                                "lolimit": 50000,
+                                "font_size": 14,
+                                "font_weight": "bold",
+                                "fill": "#000000"
+                            },
+                            {
+                                "lolimit": 20000,
+                                "font_size": 12
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

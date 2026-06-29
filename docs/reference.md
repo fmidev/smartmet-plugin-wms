@@ -549,6 +549,11 @@ The placement algorithms come from the cartographic literature. For most weather
 | free_space_weight  | double   | 0.0        | When `> 0`, each candidate's positions are reordered (greedy) or its position-penalty is reduced (SA) to prefer directions pointing into local empty space. Coastal cities push their labels into the sea instead of covering inland features. The "occupied" set includes both other markers and labels already placed earlier in the run. See [algorithms documentation](labeling_algorithms.md). |
 | free_space_radius  | double   | 0.0        | When `free_space_weight > 0`, neighbours beyond this image-pixel distance are ignored when computing each candidate's free direction. `0.0` means use all candidates regardless of distance. A value of `~3 × mindistance` (e.g. `120`) keeps the calculation local to each city's cluster. |
 | priority_bucket_ratio | double | 1.0       | Used only by `priority-greedy`. When `> 1`, populations falling within the same log-bucket compare as equal and the within-bucket tiebreak prefers shorter labels (smaller `label_w`). Eliminates strict-population sensitivity (e.g. 100,000 vs 100,010 census difference flipping placement). `1.5` ≈ 10 % buckets, `2.0` = power-of-two buckets, `100` = decade buckets. |
+| country_constraint | bool   | `false`    | When `true`, a candidate label position is rejected if it would render the label inside a *different* country than the location's own. Sea, no-man's-land, and the home country all stay allowed (a deliberately permissive "negative" rule, so coastal and small-country labels are not dropped). Prevents a label from appearing to belong to a neighbouring country across a border. Works with `greedy`, `priority-greedy` and `simulated-annealing`; `fixed` simply drops a label whose one position is foreign. Default `false` = no change. See [algorithms documentation](labeling_algorithms.md#country-constraint). |
+| country_schema  | string   | `"natural_earth"`     | PostGIS schema holding the country polygons used by `country_constraint`. |
+| country_table   | string   | `"admin_0_countries"` | PostGIS table of country polygons. Each row is one country. |
+| country_field   | string   | `"iso_a2"`            | Column holding the country code that is matched against each location's ISO-3166 alpha-2 code. |
+| country_pgname  | string   | -                     | PostGIS connection name for the country query. Empty uses the GIS engine default connection. |
 | classes         | array    | `[]`          | Population-based style overrides; see table below. First matching class wins.                                   |
 
 **`classes` array entries** (population-range style overrides):
@@ -581,6 +586,15 @@ The placement algorithms come from the cartographic literature. For most weather
   <td align="center"><b>priority-greedy + bucketing</b><br><small><code>priority_bucket_ratio: 2.0</code><br>Close-population cities tied; shorter label wins.</small><br><img src="images/location_labels_priority_greedy_bucketed.png" width="200"></td>
   <td align="center"><b>greedy + pan-invariant</b><br><small><code>pan_invariant: true</code><br>Centred on Jyväskylä.</small><br><img src="images/location_labels_pan_invariant.png" width="200"></td>
   <td align="center"><b>same, bbox shifted +0.5°</b><br><small>Cities visible in both panned views land at <i>identical</i> offsets from their markers (verified per-city).</small><br><img src="images/location_labels_pan_invariant_shifted.png" width="200"></td>
+</tr>
+</table>
+
+**`country_constraint`** — zoomed to the Finland (blue) – Russia (red) border. Same product, constraint off vs on. Without it, the border-hugging labels (Nuijamaa, Vainikkala, Hiivaniemi, Ahola) lean east across the border into Russia; with it they flip west to stay inside Finland. See [labeling_algorithms.md](labeling_algorithms.md#country-constraint).
+
+<table>
+<tr>
+  <td align="center"><b>country_constraint: off</b><br><small>Labels free to cross the border.</small><br><img src="images/location_labels_country_off.png" width="220"></td>
+  <td align="center"><b>country_constraint: on</b><br><small>Every label kept inside its own country.</small><br><img src="images/location_labels_country_on.png" width="220"></td>
 </tr>
 </table>
 
