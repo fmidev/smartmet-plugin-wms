@@ -357,6 +357,9 @@ my $DIFFERENCE_PNG = "failures/${NAME}_difference.png";
 my $rsvg_params = "--unlimited --width=1024 --keep-aspect-ratio --background-color=white --format=png";
 
 sub Cleanup {
+    # On a clean pass remove the raw result the harness wrote into failures/
+    # too, so a passing test leaves nothing behind to wade through.
+    unlink $RESULT if -e $RESULT;
     unlink $EXPECTED_PNG if -e $EXPECTED_PNG;
     unlink $RESULT_PNG if -e $RESULT_PNG;
     unlink $DIFFERENCE_PNG if -e $DIFFERENCE_PNG;
