@@ -2498,6 +2498,56 @@
         {
           "image" : 
           {
+            "height" : 850,
+            "width" : 750
+          },
+          "name" : "location_labels_country_off",
+          "path" : 
+          [
+            "test",
+            "location_labels_country_off"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 28.399999999999999,
+            "cy" : 60.950000000000003,
+            "resolution" : 0.10000000000000001,
+            "xsize" : 750,
+            "ysize" : 850
+          },
+          "title" : "LocationLayer \u2014 cross-border labels WITHOUT country constraint",
+          "url_template" : "/dali?customer=test&product=location_labels_country_off&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 850,
+            "width" : 750
+          },
+          "name" : "location_labels_country_on",
+          "path" : 
+          [
+            "test",
+            "location_labels_country_on"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 28.399999999999999,
+            "cy" : 60.950000000000003,
+            "resolution" : 0.10000000000000001,
+            "xsize" : 750,
+            "ysize" : 850
+          },
+          "title" : "LocationLayer \u2014 cross-border labels WITH country constraint",
+          "url_template" : "/dali?customer=test&product=location_labels_country_on&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 700,
             "width" : 400
           },
