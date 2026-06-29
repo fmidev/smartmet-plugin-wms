@@ -694,40 +694,68 @@ else
     die "Unsupported MIME type '$MIME' for expected file conversion.\n";
 }
 
-# Compare the PNG images
+# Compare the PNG images.
+#
+# Transition design: smartimagediff_psnr stays the AUTHORITATIVE gate -- it
+# alone sets the exit code, preserving today's OK / WARNING / FAIL behaviour.
+# The structural, anti-aliasing-aware comparator (smartimagediff) runs
+# alongside in SHADOW mode: its verdict is appended to every status line as
+# "[sid:...]" and it writes the red-boxed overlay, but it does not yet change
+# pass/fail. Cases where the two verdicts disagree are flagged with a loud
+# "SHADOW-DISAGREE" marker so a real test run can be grepped for them. Once the
+# verdicts have been compared, smartimagediff becomes the gate and PSNR is
+# retired. See docs/structural-image-diff.md in smartmet-library-regression.
+
 my $difference_str = `smartimagediff_psnr $RESULT_PNG $EXPECTED_PNG $DIFFERENCE_PNG`;
 if ($? != 0) {
     die "smartimagediff_psnr failed: $difference_str";
 }
 
-if ($difference_str =~ m/PSNR:\s+inf\s+dB/) {
-    print "OK     ";
-    Cleanup();
-    exit(0);
-}
-
 $difference_str =~ m/PSNR:\s+((?:\d+\.\d+|inf))\s+dB/ or
     die "Failed to get PSNR value from smartimagediff_psnr output: $difference_str";
-
 my $dbz = $1;
-if ($dbz >= 50)
-{
-    print "OK       PSNR = $dbz dB";
+
+# PSNR verdict (authoritative during the transition).
+my ($psnr_label, $psnr_pass);
+if ($dbz eq 'inf' || $dbz >= 50) { $psnr_label = 'OK';      $psnr_pass = 1; }
+elsif ($dbz >= 20)               { $psnr_label = 'WARNING'; $psnr_pass = 1; }
+else                             { $psnr_label = 'FAIL';    $psnr_pass = 0; }
+
+# Structural comparator in shadow mode. Skipped cleanly when the binary is not
+# installed, so this script keeps working against an older library package.
+my $OVERLAY_PNG = "failures/${NAME}_overlay.png";
+my ($sid_label, $sid_out, $sid_pass) = ('SKIP', '', $psnr_pass);
+if (system("command -v smartimagediff >/dev/null 2>&1") == 0) {
+    $sid_out = `smartimagediff $RESULT_PNG $EXPECTED_PNG $OVERLAY_PNG 2>&1`;
+    my $sid_rc = $? >> 8;          # 0 = OK, 1 = regression, 2 = error
+    chomp $sid_out;
+    $sid_label = $sid_rc == 0 ? 'OK' : ($sid_rc == 1 ? 'FAIL' : 'ERROR');
+    $sid_pass  = ($sid_rc == 0);
+}
+# A disagreement worth a human's eye: pass/fail verdicts differ. The important
+# direction is structural-FAIL vs PSNR-pass (a clustered change PSNR averaged
+# away); the reverse means structural tolerated noise PSNR happened to flag.
+my $disagree = ($sid_label ne 'SKIP' && $sid_label ne 'ERROR' && $sid_pass != $psnr_pass);
+
+# Clean pass: PSNR is happy and structural agrees. Drop the artifacts.
+if ($psnr_label eq 'OK' && $sid_pass && !$disagree) {
+    unlink $OVERLAY_PNG if -e $OVERLAY_PNG;
+    print "OK     " . ($dbz eq 'inf' ? '' : "PSNR = $dbz dB ") . "[sid:$sid_label]";
     Cleanup();
     exit(0);
 }
-else
-{
-    if ($dbz >= 20)
-    {
-        print "WARNING  PSNR = $dbz dB (< 50 dB)";
-        CreateWebp("failures/${NAME}_error.webp", $EXPECTED_PNG, $RESULT_PNG);
-        exit (0);
-    }
-else
-    {
-        print "FAIL     PSNR = $dbz dB (< 20 dB)";
-        CreateWebp("failures/${NAME}_warning.webp", $EXPECTED_PNG, $RESULT_PNG);
-        exit (1);
-    }
+
+# Otherwise keep inspection artifacts: the structural overlay (already written,
+# unless skipped) plus the expected<->result flicker webp.
+CreateWebp("failures/${NAME}_error.webp", $EXPECTED_PNG, $RESULT_PNG);
+
+print "SHADOW-DISAGREE " if $disagree;
+my $tail = "PSNR = $dbz dB [sid:$sid_label" . ($sid_out ne '' ? " $sid_out" : "") . "]";
+if ($psnr_pass) {
+    print "$psnr_label  $tail";
+    exit(0);
+}
+else {
+    print "FAIL     $tail";
+    exit(1);
 }
