@@ -24,7 +24,9 @@ constexpr uint32_t CMD_CLOSEPATH = 7;
 
 uint32_t makeCmd(uint32_t id, uint32_t count)
 {
-  return (id << 3) | count;
+  // MVT CommandInteger: command count in the high bits, command id in the low 3.
+  // (See https://github.com/mapbox/vector-tile-spec/tree/master/2.1#43-geometry-encoding)
+  return (count << 3) | (id & 0x7);
 }
 
 // ZigZag encode a signed delta for protobuf varint encoding

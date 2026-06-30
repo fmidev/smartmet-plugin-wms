@@ -1,5 +1,5 @@
 PROGS = test_label_placement test_subdivide_gate test_isoline_filter_validation \
-        test_smoother_options
+        test_smoother_options test_mvt_geometry
 
 CXX      = g++
 CXXFLAGS = -std=c++17 -O0 -g -Wall -Wextra \
@@ -66,11 +66,23 @@ test_isoline_filter_validation: test_isoline_filter_validation.cpp $(ISOFILTER_O
 	  -lsmartmet-gis -lsmartmet-spine -lsmartmet-macgyver -lsmartmet-newbase \
 	  $(GDAL_LIBS) -Wl,-rpath,$(GDAL_PREFIX)/lib -ljsoncpp -lfmt $(LIBS)
 
+# The MVT geometry test exercises the real encoder, so it links the plugin
+# objects (built by the top-level Makefile) and pulls in OGR + protobuf.
+MVT_OBJS = ../../obj/MapboxVectorTile.o ../../obj/vector_tile.pb.o
+
+$(MVT_OBJS):
+	$(MAKE) -C ../.. obj/$(notdir $@)
+
+test_mvt_geometry: test_mvt_geometry.cpp $(MVT_OBJS)
+	$(CXX) $(CXXFLAGS) $(GDAL_CFLAGS) -o $@ $< $(MVT_OBJS) \
+	  -lsmartmet-macgyver $(GDAL_LIBS) -Wl,-rpath,$(GDAL_PREFIX)/lib -lprotobuf $(LIBS)
+
 test: $(PROGS)
 	./test_label_placement --log_level=message
 	./test_subdivide_gate --log_level=message
 	./test_isoline_filter_validation --log_level=message
 	./test_smoother_options --log_level=message
+	./test_mvt_geometry --log_level=message
 
 clean:
 	rm -f $(PROGS)
