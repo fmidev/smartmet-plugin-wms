@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.6.29
+Version: 26.6.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,26 +28,26 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
-BuildRequires: smartmet-library-giza-devel >= 26.6.23
-BuildRequires: smartmet-library-grid-content-devel >= 26.6.24
-BuildRequires: smartmet-library-grid-files-devel >= 26.6.24
-BuildRequires: smartmet-library-macgyver-devel >= 26.6.15
-BuildRequires: smartmet-library-spine-devel >= 26.6.24
+BuildRequires: smartmet-library-giza-devel >= 26.6.27
+BuildRequires: smartmet-library-grid-content-devel >= 26.6.26
+BuildRequires: smartmet-library-grid-files-devel >= 26.6.30
+BuildRequires: smartmet-library-macgyver-devel >= 26.6.26
+BuildRequires: smartmet-library-spine-devel >= 26.6.30
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 26.6.24
+BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.6.24
+BuildRequires: smartmet-engine-observation-devel >= 26.6.26
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.6.24
 BuildRequires: smartmet-engine-gis-devel >= 26.6.25
-BuildRequires: smartmet-engine-grid-devel >= 26.6.24
-BuildRequires: smartmet-engine-geonames-devel >= 26.6.24
-BuildRequires: smartmet-engine-querydata-devel >= 26.6.24
+BuildRequires: smartmet-engine-grid-devel >= 26.6.26
+BuildRequires: smartmet-engine-geonames-devel >= 26.6.26
+BuildRequires: smartmet-engine-querydata-devel >= 26.6.26
 BuildRequires: smartmet-engine-contour-devel >= 26.6.24
 BuildRequires: smartmet-library-gis-devel >= 26.6.25
-BuildRequires: smartmet-library-trax-devel >= 26.6.23
+BuildRequires: smartmet-library-trax-devel >= 26.6.26
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -78,25 +78,25 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
-Requires: smartmet-library-grid-content >= 26.6.24
-Requires: smartmet-library-grid-files >= 26.6.24
+Requires: smartmet-library-grid-content >= 26.6.26
+Requires: smartmet-library-grid-files >= 26.6.30
 Requires: smartmet-library-gis >= 26.6.25
-Requires: smartmet-library-trax >= 26.6.23
-Requires: smartmet-library-macgyver >= 26.6.15
-Requires: smartmet-library-spine >= 26.6.24
+Requires: smartmet-library-trax >= 26.6.26
+Requires: smartmet-library-macgyver >= 26.6.26
+Requires: smartmet-library-spine >= 26.6.30
 Requires: smartmet-library-timeseries >= 26.5.5
-Requires: smartmet-library-giza >= 26.6.23
+Requires: smartmet-library-giza >= 26.6.27
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 26.6.24
+Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 Requires: smartmet-engine-avi >= 26.6.24
-Requires: smartmet-engine-querydata >= 26.6.24
+Requires: smartmet-engine-querydata >= 26.6.26
 Requires: smartmet-engine-contour >= 26.6.24
 Requires: smartmet-engine-gis >= 26.6.25
-Requires: smartmet-engine-grid >= 26.6.24
-Requires: smartmet-engine-geonames >= 26.6.24
-Requires: smartmet-server >= 26.6.24
-Requires: smartmet-library-spine >= 26.6.24
+Requires: smartmet-engine-grid >= 26.6.26
+Requires: smartmet-engine-geonames >= 26.6.26
+Requires: smartmet-server >= 26.6.30
+Requires: smartmet-library-spine >= 26.6.30
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -119,23 +119,23 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: bc
 #TestRequires: smartmet-engine-avi-devel >= 26.6.24
 #TestRequires: smartmet-engine-contour-devel >= 26.6.24
-#TestRequires: smartmet-engine-geonames-devel >= 26.6.24
+#TestRequires: smartmet-engine-geonames-devel >= 26.6.26
 #TestRequires: smartmet-engine-gis-devel >= 26.6.25
-#TestRequires: smartmet-engine-querydata-devel >= 26.6.24
-#TestRequires: smartmet-engine-authentication-devel >= 26.6.24
-#TestRequires: smartmet-library-giza-devel >= 26.6.23
-#TestRequires: smartmet-library-trax-devel >= 26.6.23
-#TestRequires: smartmet-library-newbase-devel >= 26.6.24
-#TestRequires: smartmet-library-macgyver-devel >= 26.6.15
-#TestRequires: smartmet-library-spine-devel >= 26.6.24
+#TestRequires: smartmet-engine-querydata-devel >= 26.6.26
+#TestRequires: smartmet-engine-authentication-devel >= 26.6.26
+#TestRequires: smartmet-library-giza-devel >= 26.6.27
+#TestRequires: smartmet-library-trax-devel >= 26.6.26
+#TestRequires: smartmet-library-newbase-devel >= 26.6.26
+#TestRequires: smartmet-library-macgyver-devel >= 26.6.26
+#TestRequires: smartmet-library-spine-devel >= 26.6.30
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
-#TestRequires: smartmet-engine-grid-devel >= 26.6.24
+#TestRequires: smartmet-engine-grid-devel >= 26.6.26
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.6.24
 #TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
-#TestRequires: smartmet-library-regression >= 26.5.22
+#TestRequires: smartmet-library-regression >= 26.6.29
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: protobuf-compiler
@@ -144,7 +144,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.6.24
+#TestRequires: smartmet-engine-observation-devel >= 26.6.26
 %endif
 
 %description
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Jun 30 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.30-1.fmi
+- MVT bug fixes
+
 * Mon Jun 29 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.6.29-1.fmi
 - LocationLayer: optional country_constraint keeps city labels inside their own country
 
