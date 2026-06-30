@@ -390,15 +390,16 @@ if ($MIME eq 'application/vnd.mapbox-vector-tile' || $MIME eq 'application/octet
             exit(0);
         }
 
-        # Show diff on failure
-        my $tmpfile = "/tmp/mvt_result_$$.txt";
-        open my $tmpfh, '>', $tmpfile or die "Cannot write '$tmpfile': $!";
-        print $tmpfh $decoded_result;
-        close $tmpfh;
+        # Persist the DECODED text back into failures/ (replacing the raw binary
+        # the harness wrote there), so the failing result is human-readable and
+        # can be promoted to output/ as-is. The expected fixtures are stored in
+        # this same protoc-decoded form.
+        open my $rfh, '>', $RESULT or die "Cannot write '$RESULT': $!";
+        print $rfh $decoded_result;
+        close $rfh;
 
         print "FAIL: MVT output differs: $RESULT <> $EXPECTED\n";
-        print TrimDiff(GitHistogramDiff($EXPECTED, $tmpfile), 100, 128);
-        unlink $tmpfile;
+        print TrimDiff(GitHistogramDiff($EXPECTED, $RESULT), 100, 128);
         exit(1);
     }
 }
