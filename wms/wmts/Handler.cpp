@@ -428,8 +428,18 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
         ? fmt::format("{},{},{},{}", bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
         : fmt::format("{},{},{},{}", bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y);
     thisRequest.addParameter("projection.bbox",  bbox_str);
-    thisRequest.addParameter("projection.xsize", Fmi::to_string(tm->tile_width));
-    thisRequest.addParameter("projection.ysize", Fmi::to_string(tm->tile_height));
+    // Honor a client-requested output size (WIDTH/HEIGHT); the projection size
+    // must equal the output size, or the data is rendered against the wrong grid
+    // and ends up displaced (worst at low zoom). Fall back to the TileMatrix's
+    // native tile dimensions when the client does not specify a size.
+    auto req_width = theRequest.getParameter("WIDTH");
+    auto req_height = theRequest.getParameter("HEIGHT");
+    thisRequest.addParameter(
+        "projection.xsize",
+        (req_width && !req_width->empty()) ? *req_width : Fmi::to_string(tm->tile_width));
+    thisRequest.addParameter(
+        "projection.ysize",
+        (req_height && !req_height->empty()) ? *req_height : Fmi::to_string(tm->tile_height));
     thisRequest.addParameter("projection.crs",   wmsConfig.getCRSDefinition(tms->crs));
     thisRequest.addParameter("type",             demimetype(format));
     thisRequest.addParameter("customer",         wmsConfig.layerCustomer(layer));
