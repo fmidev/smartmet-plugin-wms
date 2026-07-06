@@ -338,6 +338,15 @@ if (!-e $RESULT) {
 }
 
 my $NAME = basename($RESULT, ('.get', '.post'));
+
+# Grid test names contain '::' (e.g. wms::grid::raster_1_t1::pal). The derived
+# inspection artifacts below are handed to Magick++-based tools (smartimagediff,
+# smartimagediff_psnr, Image::Magick->Write), which read a leading "coder:" from
+# the path. A path like "failures/wms::grid::..._overlay.png" is parsed as
+# coder "failures/wms" + filename ":grid::..._overlay.png", so the file lands in
+# the current directory (test/) instead of failures/ -- outside what "make clean"
+# wipes. Strip the colons from the artifact base so the path stays literal.
+$NAME =~ s/:/_/g;
 my $MIME = `file --brief --mime-type $RESULT`;
 chomp $MIME;
 
