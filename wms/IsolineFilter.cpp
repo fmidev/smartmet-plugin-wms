@@ -13,6 +13,7 @@
 #include <cmath>
 #include <iostream>
 #include <ogr_geometry.h>
+#include <fmt/format.h>
 #include <string>
 #include <vector>
 
