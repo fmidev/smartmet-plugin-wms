@@ -336,8 +336,11 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     {
       auto etag = fmt::sprintf("\"%x\"", product_hash);
       theResponse.setHeader("ETag", etag);
-      if (handleConditionalRequest(theRequest, theResponse, etag))
+      if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+      {
+        theResponse.setStatus(*status);
         return;
+      }
     }
 
     auto obj = itsImageCache->find(product_hash);
@@ -446,41 +449,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Query failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Apply RFC 7232 conditional-request shortcuts for the given ETag
- */
-// ----------------------------------------------------------------------
-
-bool handleConditionalRequest(const Spine::HTTP::Request &theRequest,
-                              Spine::HTTP::Response &theResponse,
-                              const std::string &theETag)
-{
-  try
-  {
-    // While the frontend is probing for the ETag (X-Request-ETag), it performs
-    // the conditional evaluation itself, so the backend must not short-circuit
-    // to 304/412 here.
-    if (theRequest.getHeader("X-Request-ETag"))
-      return false;
-
-    Spine::HTTP::ETagFilter etag_filter(theRequest);
-    auto [full_response_required, suggested_status] = etag_filter.evaluate(theETag);
-
-    if (full_response_required)
-      return false;
-
-    // 304 Not Modified or 412 Precondition Failed: no body. The ETag and cache
-    // headers already set on theResponse are retained (RFC 7232).
-    theResponse.setStatus(suggested_status);
-    return true;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

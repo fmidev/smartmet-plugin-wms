@@ -228,27 +228,6 @@ class Plugin : public SmartMetPlugin
 
 };  // class Plugin
 
-// ----------------------------------------------------------------------
-/*!
- * \brief Apply RFC 7232 conditional-request shortcuts for the given ETag
- *
- * The caller must have already set the "ETag" response header (and any cache
- * headers such as Expires) before calling this. Returns true if a bodyless
- * conditional response was set and the caller must return immediately without
- * generating a body:
- *   - 304 Not Modified          when If-None-Match matches the current ETag
- *   - 412 Precondition Failed   when If-Match fails
- *
- * Returns false (full response required) when no precondition matched. The
- * frontend probe header X-Request-ETag is deliberately left untouched: while
- * probing, the frontend performs the conditional evaluation itself, so this
- * helper does nothing (returns false) when that header is present.
- */
-// ----------------------------------------------------------------------
-bool handleConditionalRequest(const Spine::HTTP::Request& theRequest,
-                              Spine::HTTP::Response& theResponse,
-                              const std::string& theETag);
-
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

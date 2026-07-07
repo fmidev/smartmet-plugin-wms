@@ -898,8 +898,11 @@ QueryStatus Handler::generateTile(Dali::State& theState,
 
       // Standalone conditional handling (RFC 7232): If-None-Match -> 304,
       // If-Match failure -> 412, with no body, before generating the tile.
-      if (Dali::handleConditionalRequest(theRequest, theResponse, etag))
+      if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+      {
+        theResponse.setStatus(*status);
         return QueryStatus::OK;
+      }
     }
 
     auto cached = theState.getPlugin().findInImageCache(product_hash);

@@ -1053,8 +1053,11 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
     // the client already has this version (If-None-Match), or 412 Precondition
     // Failed when an If-Match precondition fails, with no body. The Expires /
     // Last-Modified headers attached by the state above remain in the response.
-    if (Dali::handleConditionalRequest(theRequest, theResponse, etag))
+    if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+    {
+      theResponse.setStatus(*status);
       return QueryStatus::OK;
+    }
 
     // 200 with body. Pass product_hash into formatResponse so it sets the
     // ETag from our hash instead of falling back to its placeholder (which
@@ -1132,8 +1135,11 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
 
     // Standalone conditional handling (RFC 7232): If-None-Match -> 304,
     // If-Match failure -> 412, with no body, before generating the product.
-    if (Dali::handleConditionalRequest(theRequest, theResponse, etag))
+    if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+    {
+      theResponse.setStatus(*status);
       return QueryStatus::OK;
+    }
   }
 
   auto obj = theState.getPlugin().findInImageCache(product_hash);
