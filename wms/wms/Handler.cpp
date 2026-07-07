@@ -1037,27 +1037,24 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
     theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
     theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
 
-    // If the client already has this exact version, return 304 Not Modified
-    // (no body, no Content-Type). The Expires / Last-Modified headers
-    // attached by the state above remain in the response per RFC 7232.
-    if (auto if_none_match = theRequest.getHeader("If-None-Match"))
-    {
-      if (*if_none_match == etag)
-      {
-        theResponse.setStatus(Spine::HTTP::Status::not_modified);
-        return QueryStatus::OK;
-      }
-    }
-
     // X-Request-ETag is the internal "just give me the hash, no body"
     // shortcut used by the SmartMet frontend's ResponseCache to probe the
-    // backend before deciding whether to fetch the body.
+    // backend before deciding whether to fetch the body. It is checked before
+    // the conditional evaluation, because while probing the frontend performs
+    // the If-Match / If-None-Match decision itself.
     if (theRequest.getHeader("X-Request-ETag"))
     {
       theResponse.setHeader("Content-Type", mimeType(getCapabilityFormat(format)));
       theResponse.setStatus(Spine::HTTP::Status::no_content);
       return QueryStatus::OK;
     }
+
+    // Standalone conditional handling (RFC 7232): return 304 Not Modified when
+    // the client already has this version (If-None-Match), or 412 Precondition
+    // Failed when an If-Match precondition fails, with no body. The Expires /
+    // Last-Modified headers attached by the state above remain in the response.
+    if (Dali::handleConditionalRequest(theRequest, theResponse, etag))
+      return QueryStatus::OK;
 
     // 200 with body. Pass product_hash into formatResponse so it sets the
     // ETag from our hash instead of falling back to its placeholder (which
@@ -1121,7 +1118,8 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
 
   if (product_hash != Fmi::bad_hash)
   {
-    theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+    auto etag = fmt::sprintf("\"%x\"", product_hash);
+    theResponse.setHeader("ETag", etag);
 
     // If request was an ETag request, we're done already
 
@@ -1131,6 +1129,11 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
       theResponse.setStatus(Spine::HTTP::Status::no_content);
       return QueryStatus::OK;
     }
+
+    // Standalone conditional handling (RFC 7232): If-None-Match -> 304,
+    // If-Match failure -> 412, with no body, before generating the product.
+    if (Dali::handleConditionalRequest(theRequest, theResponse, etag))
+      return QueryStatus::OK;
   }
 
   auto obj = theState.getPlugin().findInImageCache(product_hash);

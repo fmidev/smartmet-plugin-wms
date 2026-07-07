@@ -892,7 +892,15 @@ QueryStatus Handler::generateTile(Dali::State& theState,
     }
 
     if (product_hash != Fmi::bad_hash)
-      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+    {
+      auto etag = fmt::sprintf("\"%x\"", product_hash);
+      theResponse.setHeader("ETag", etag);
+
+      // Standalone conditional handling (RFC 7232): If-None-Match -> 304,
+      // If-Match failure -> 412, with no body, before generating the tile.
+      if (Dali::handleConditionalRequest(theRequest, theResponse, etag))
+        return QueryStatus::OK;
+    }
 
     auto cached = theState.getPlugin().findInImageCache(product_hash);
     if (cached)

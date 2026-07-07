@@ -328,6 +328,18 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       }
     }
 
+    // With a valid hash we can serve conditional requests: advertise the ETag
+    // for every response path below and, when running standalone (no frontend
+    // probe), honour If-None-Match / If-Match with 304 / 412 before generating
+    // or returning any body.
+    if (product_hash != Fmi::bad_hash)
+    {
+      auto etag = fmt::sprintf("\"%x\"", product_hash);
+      theResponse.setHeader("ETag", etag);
+      if (handleConditionalRequest(theRequest, theResponse, etag))
+        return;
+    }
+
     auto obj = itsImageCache->find(product_hash);
 
     if (obj)
@@ -345,8 +357,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("geotiff"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -358,8 +368,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("mvt"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -371,8 +379,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("datatile"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -440,6 +446,41 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Query failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Apply RFC 7232 conditional-request shortcuts for the given ETag
+ */
+// ----------------------------------------------------------------------
+
+bool handleConditionalRequest(const Spine::HTTP::Request &theRequest,
+                              Spine::HTTP::Response &theResponse,
+                              const std::string &theETag)
+{
+  try
+  {
+    // While the frontend is probing for the ETag (X-Request-ETag), it performs
+    // the conditional evaluation itself, so the backend must not short-circuit
+    // to 304/412 here.
+    if (theRequest.getHeader("X-Request-ETag"))
+      return false;
+
+    Spine::HTTP::ETagFilter etag_filter(theRequest);
+    auto [full_response_required, suggested_status] = etag_filter.evaluate(theETag);
+
+    if (full_response_required)
+      return false;
+
+    // 304 Not Modified or 412 Precondition Failed: no body. The ETag and cache
+    // headers already set on theResponse are retained (RFC 7232).
+    theResponse.setStatus(suggested_status);
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
