@@ -328,6 +328,21 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       }
     }
 
+    // With a valid hash we can serve conditional requests: advertise the ETag
+    // for every response path below and, when running standalone (no frontend
+    // probe), honour If-None-Match / If-Match with 304 / 412 before generating
+    // or returning any body.
+    if (product_hash != Fmi::bad_hash)
+    {
+      auto etag = fmt::sprintf("\"%x\"", product_hash);
+      theResponse.setHeader("ETag", etag);
+      if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+      {
+        theResponse.setStatus(*status);
+        return;
+      }
+    }
+
     auto obj = itsImageCache->find(product_hash);
 
     if (obj)
@@ -345,8 +360,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("geotiff"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -358,8 +371,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("mvt"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -371,8 +382,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("datatile"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
