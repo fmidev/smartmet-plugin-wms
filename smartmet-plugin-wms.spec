@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.7.14
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.6.27
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 26.7.14
 BuildRequires: smartmet-library-macgyver-devel >= 26.7.9
-BuildRequires: smartmet-library-spine-devel >= 26.7.10
+BuildRequires: smartmet-library-spine-devel >= 26.7.14
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
@@ -83,7 +83,7 @@ Requires: smartmet-library-grid-files >= 26.7.14
 Requires: smartmet-library-gis >= 26.7.14
 Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.7.9
-Requires: smartmet-library-spine >= 26.7.10
+Requires: smartmet-library-spine >= 26.7.14
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.6.27
 %if %{with authentication}
@@ -96,7 +96,7 @@ Requires: smartmet-engine-gis >= 26.6.25
 Requires: smartmet-engine-grid >= 26.7.10
 Requires: smartmet-engine-geonames >= 26.6.26
 Requires: smartmet-server >= 26.7.9
-Requires: smartmet-library-spine >= 26.7.10
+Requires: smartmet-library-spine >= 26.7.14
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -127,7 +127,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
 #TestRequires: smartmet-library-newbase-devel >= 26.7.14
 #TestRequires: smartmet-library-macgyver-devel >= 26.7.9
-#TestRequires: smartmet-library-spine-devel >= 26.7.10
+#TestRequires: smartmet-library-spine-devel >= 26.7.14
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.7.10
 #TestRequires: smartmet-engine-grid-test
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Jul 14 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.14-2.fmi
+- Repackaged since FileCache ABI changed
+
 * Mon Jul 14 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.14-1.fmi
 - OGC API - Styles: serve Mapbox GL styles for MVT tiles in the real wms-conf colours
 
