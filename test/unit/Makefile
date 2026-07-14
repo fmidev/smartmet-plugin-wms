@@ -1,5 +1,5 @@
 PROGS = test_label_placement test_subdivide_gate test_isoline_filter_validation \
-        test_smoother_options test_mvt_geometry
+        test_smoother_options test_mvt_geometry test_mapboxstyle
 
 CXX      = g++
 CXXFLAGS = -std=c++17 -O0 -g -Wall -Wextra \
@@ -77,12 +77,24 @@ test_mvt_geometry: test_mvt_geometry.cpp $(MVT_OBJS)
 	$(CXX) $(CXXFLAGS) $(GDAL_CFLAGS) -o $@ $< $(MVT_OBJS) \
 	  -lsmartmet-macgyver $(GDAL_LIBS) -Wl,-rpath,$(GDAL_PREFIX)/lib -lprotobuf $(LIBS)
 
+# The Mapbox style generator only needs MapboxStyle.o + StyleSheet.o (the CSS
+# parser it resolves class→colour through). Both are built by the top-level
+# Makefile. jsoncpp for the style document, boost_regex for the CSS parser.
+MAPBOXSTYLE_OBJS = ../../obj/MapboxStyle.o ../../obj/StyleSheet.o
+
+$(MAPBOXSTYLE_OBJS):
+	$(MAKE) -C ../.. obj/$(notdir $@)
+
+test_mapboxstyle: test_mapboxstyle.cpp $(MAPBOXSTYLE_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $< $(MAPBOXSTYLE_OBJS) -ljsoncpp -lboost_regex $(LIBS)
+
 test: $(PROGS)
 	./test_label_placement --log_level=message
 	./test_subdivide_gate --log_level=message
 	./test_isoline_filter_validation --log_level=message
 	./test_smoother_options --log_level=message
 	./test_mvt_geometry --log_level=message
+	./test_mapboxstyle --log_level=message
 
 clean:
 	rm -f $(PROGS)

@@ -1,0 +1,1 @@
+GET /tiles/collections/test:t2m_p/styles/default?f=mapbox HTTP/1.0

@@ -1,0 +1,1 @@
+{"links":[{"href":"http://localhost/tiles/collections/test:t2m/styles","rel":"self","title":"Styles","type":"application/json"}],"styles":[{"id":"default","links":[{"href":"http://localhost/tiles/collections/test:t2m/styles/default?f=mapbox","rel":"stylesheet","title":"Mapbox GL style","type":"application/vnd.mapbox.style+json"}]}]}

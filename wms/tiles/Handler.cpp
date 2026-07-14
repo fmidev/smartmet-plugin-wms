@@ -6,6 +6,7 @@
 
 #include "Handler.h"
 #include "../Hash.h"
+#include "../MapboxStyle.h"
 #include "../Mime.h"
 #include "../Plugin.h"
 #include "../Product.h"
@@ -46,8 +47,7 @@ namespace
 // Returns segments as a vector; empty vector means the landing page.
 // Example: "/tiles/collections/rain/tiles/EPSG:3857/10/512/256"
 //   → ["collections", "rain", "tiles", "EPSG:3857", "10", "512", "256"]
-std::vector<std::string> splitTilesPath(const std::string& resource,
-                                         const std::string& base_url)
+std::vector<std::string> splitTilesPath(const std::string& resource, const std::string& base_url)
 {
   // Strip base_url prefix (e.g. "/tiles")
   if (resource.size() < base_url.size())
@@ -141,9 +141,9 @@ void Handler::shutdown()
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
-                            Dali::State& theState,
-                            const Spine::HTTP::Request& theRequest,
-                            Spine::HTTP::Response& theResponse)
+                           Dali::State& theState,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& theResponse)
 {
   try
   {
@@ -169,6 +169,10 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
         return handleTileMatrixSet(base, parts[1], theResponse);
     }
 
+    // --- /styles (OGC API - Styles style set list) ---
+    if (parts[0] == "styles" && parts.size() == 1)
+      return handleStyles(base, theState, theRequest, theResponse);
+
     // --- /collections ---
     if (parts[0] == "collections")
     {
@@ -186,6 +190,13 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
       if (parts.size() == 4 && parts[2] == "tiles")
         return handleTilesetMetadata(base, collId, parts[3], theResponse);
 
+      // --- /collections/{id}/styles (OGC API - Styles) ---
+      if (parts.size() == 3 && parts[2] == "styles")
+        return handleCollectionStyles(base, collId, theResponse);
+
+      if (parts.size() == 4 && parts[2] == "styles")
+        return handleStyle(base, collId, parts[3], theState, theRequest, theResponse);
+
       // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}
       if (parts.size() == 7 && parts[2] == "tiles")
       {
@@ -201,7 +212,9 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
         }
         catch (...)
         {
-          sendError(400, "Bad Request", "Invalid tile row or column: " + parts[5] + "/" + parts[6],
+          sendError(400,
+                    "Bad Request",
+                    "Invalid tile row or column: " + parts[5] + "/" + parts[6],
                     theResponse);
           return QueryStatus::OK;
         }
@@ -218,8 +231,8 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
       }
     }
 
-    sendError(404, "Not Found", "No matching OGC API - Tiles endpoint for: " + resource,
-              theResponse);
+    sendError(
+        404, "Not Found", "No matching OGC API - Tiles endpoint for: " + resource, theResponse);
     return QueryStatus::OK;
   }
   catch (...)
@@ -252,6 +265,10 @@ QueryStatus Handler::handleLandingPage(const std::string& base, Spine::HTTP::Res
                           "http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes",
                           "application/json",
                           "Tile Matrix Sets"));
+    links.append(makeLink(base + "/styles",
+                          "http://www.opengis.net/def/rel/ogc/1.0/styles",
+                          "application/json",
+                          "Styles"));
     doc["links"] = links;
 
     setJsonResponse(resp, toJson(doc));
@@ -283,6 +300,9 @@ QueryStatus Handler::handleConformance(const std::string& /* base */, Spine::HTT
     uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/png");
     uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/jpeg");
     uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/webp");
+    // OGC API - Styles (Part 1: Core) with the Mapbox style encoding
+    uris.append("http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/core");
+    uris.append("http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/mapbox-styles");
     doc["conformsTo"] = uris;
 
     setJsonResponse(resp, toJson(doc));
@@ -320,10 +340,8 @@ QueryStatus Handler::handleTileMatrixSets(const std::string& base, Spine::HTTP::
         entry["wellKnownScaleSet"] = Config::wellKnownScaleSetUri(tms.well_known_scale_set);
 
       Json::Value links(Json::arrayValue);
-      links.append(makeLink(base + "/tileMatrixSets/" + tms.identifier,
-                            "self",
-                            "application/json",
-                            tms.identifier));
+      links.append(makeLink(
+          base + "/tileMatrixSets/" + tms.identifier, "self", "application/json", tms.identifier));
       entry["links"] = links;
       list.append(entry);
     }
@@ -344,8 +362,8 @@ QueryStatus Handler::handleTileMatrixSets(const std::string& base, Spine::HTTP::
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleTileMatrixSet(const std::string& base,
-                                          const std::string& tmsId,
-                                          Spine::HTTP::Response& resp)
+                                         const std::string& tmsId,
+                                         Spine::HTTP::Response& resp)
 {
   try
   {
@@ -426,9 +444,9 @@ QueryStatus Handler::handleTileMatrixSet(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollections(const std::string& base,
-                                        Dali::State& theState,
-                                        const Spine::HTTP::Request& theRequest,
-                                        Spine::HTTP::Response& resp)
+                                       Dali::State& theState,
+                                       const Spine::HTTP::Request& theRequest,
+                                       Spine::HTTP::Response& resp)
 {
   try
   {
@@ -443,15 +461,8 @@ QueryStatus Handler::handleCollections(const std::string& base,
     const bool check_token = true;
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
 
-    CTPP::CDT layer_list = wmsConfig.getCapabilities(apikey,
-                                                      language,
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      OGC::LayerHierarchy::HierarchyType::flat,
-                                                      false,
-                                                      false);
+    CTPP::CDT layer_list = wmsConfig.getCapabilities(
+        apikey, language, {}, {}, {}, {}, OGC::LayerHierarchy::HierarchyType::flat, false, false);
 
     Json::Value doc;
     Json::Value collections(Json::arrayValue);
@@ -505,10 +516,10 @@ QueryStatus Handler::handleCollections(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollection(const std::string& base,
-                                       const std::string& collId,
-                                       Dali::State& theState,
-                                       const Spine::HTTP::Request& theRequest,
-                                       Spine::HTTP::Response& resp)
+                                      const std::string& collId,
+                                      Dali::State& theState,
+                                      const Spine::HTTP::Request& theRequest,
+                                      Spine::HTTP::Response& resp)
 {
   try
   {
@@ -530,15 +541,8 @@ QueryStatus Handler::handleCollection(const std::string& base,
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
 
     // Find layer entry in capabilities CDT
-    CTPP::CDT layer_list = wmsConfig.getCapabilities(apikey,
-                                                      language,
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      OGC::LayerHierarchy::HierarchyType::flat,
-                                                      false,
-                                                      false);
+    CTPP::CDT layer_list = wmsConfig.getCapabilities(
+        apikey, language, {}, {}, {}, {}, OGC::LayerHierarchy::HierarchyType::flat, false, false);
 
     const std::string coll_base = base + "/collections/" + collId;
     Json::Value doc;
@@ -562,18 +566,14 @@ QueryStatus Handler::handleCollection(const std::string& base,
         Json::Value spatial;
         Json::Value bboxArr(Json::arrayValue);
         Json::Value corners(Json::arrayValue);
-        corners.append(bb.Exists("west_bound_longitude")
-                           ? bb.At("west_bound_longitude").GetString()
-                           : "-180");
-        corners.append(bb.Exists("south_bound_latitude")
-                           ? bb.At("south_bound_latitude").GetString()
-                           : "-90");
-        corners.append(bb.Exists("east_bound_longitude")
-                           ? bb.At("east_bound_longitude").GetString()
-                           : "180");
-        corners.append(bb.Exists("north_bound_latitude")
-                           ? bb.At("north_bound_latitude").GetString()
-                           : "90");
+        corners.append(bb.Exists("west_bound_longitude") ? bb.At("west_bound_longitude").GetString()
+                                                         : "-180");
+        corners.append(bb.Exists("south_bound_latitude") ? bb.At("south_bound_latitude").GetString()
+                                                         : "-90");
+        corners.append(bb.Exists("east_bound_longitude") ? bb.At("east_bound_longitude").GetString()
+                                                         : "180");
+        corners.append(bb.Exists("north_bound_latitude") ? bb.At("north_bound_latitude").GetString()
+                                                         : "90");
         bboxArr.append(corners);
         spatial["bbox"] = bboxArr;
         spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
@@ -605,8 +605,8 @@ QueryStatus Handler::handleCollection(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollectionTilesets(const std::string& base,
-                                               const std::string& collId,
-                                               Spine::HTTP::Response& resp)
+                                              const std::string& collId,
+                                              Spine::HTTP::Response& resp)
 {
   try
   {
@@ -662,9 +662,9 @@ QueryStatus Handler::handleCollectionTilesets(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleTilesetMetadata(const std::string& base,
-                                            const std::string& collId,
-                                            const std::string& tmsId,
-                                            Spine::HTTP::Response& resp)
+                                           const std::string& collId,
+                                           const std::string& tmsId,
+                                           Spine::HTTP::Response& resp)
 {
   try
   {
@@ -728,19 +728,273 @@ QueryStatus Handler::handleTilesetMetadata(const std::string& base,
 }
 
 // -----------------------------------------------------------------------
+// OGC API - Styles (Mapbox style encoding)
+//
+// The MVT output tags every isoband/isoline feature with a "class" attribute;
+// the wms-conf CSS maps that class to fill / stroke / stroke-width. mapboxStyle()
+// assembles the two into a Mapbox GL style whose fill-color / line-color are
+// ["match", ["get","class"], …] expressions — the same colours the raster
+// renderer bakes, with the CSS remaining the single source of truth.
+// -----------------------------------------------------------------------
+
+namespace
+{
+// Collect every styleable (isoband/isoline) Dali layer in the resolved product,
+// depth-first in document order, into MapboxStyleLayer specs. The MVT source-
+// layer is the Dali layer qid (falling back to the parameter, then "l").
+void collectStyleLayers(const Json::Value& node,
+                        Dali::State& theState,
+                        std::vector<Dali::MapboxStyleLayer>& out)
+{
+  if (node.isObject())
+  {
+    const std::string type = node.isMember("layer_type") && node["layer_type"].isString()
+                                 ? node["layer_type"].asString()
+                                 : "";
+    const bool isoband =
+        (type == "isoband" && node.isMember("isobands") && node["isobands"].isArray());
+    const bool isoline =
+        (type == "isoline" && node.isMember("isolines") && node["isolines"].isArray());
+    if (isoband || isoline)
+    {
+      Dali::MapboxStyleLayer spec;
+      spec.geometry = isoband ? Dali::MapboxStyleLayer::Geometry::Isoband
+                              : Dali::MapboxStyleLayer::Geometry::Isoline;
+      spec.levels = isoband ? node["isobands"] : node["isolines"];
+      if (node.isMember("parameter") && node["parameter"].isString())
+        spec.parameter = node["parameter"].asString();
+      if (node.isMember("qid") && node["qid"].isString() && !node["qid"].asString().empty())
+        spec.sourceLayer = node["qid"].asString();
+      else if (!spec.parameter.empty())
+        spec.sourceLayer = spec.parameter;
+      else
+        spec.sourceLayer = "l";
+      if (node.isMember("css") && node["css"].isString())
+        spec.css = theState.getStyle(node["css"].asString());
+      out.push_back(std::move(spec));
+      // An isoband/isoline layer has no styleable children — don't recurse into it.
+      return;
+    }
+    for (const auto& key : node.getMemberNames())
+      collectStyleLayers(node[key], theState, out);
+  }
+  else if (node.isArray())
+  {
+    for (const auto& elem : node)
+      collectStyleLayers(elem, theState, out);
+  }
+}
+}  // namespace
+
+std::vector<Dali::MapboxStyleLayer> Handler::resolveStyleLayers(
+    const std::string& collId,
+    const std::string& styleId,
+    Dali::State& theState,
+    const Spine::HTTP::Request& theRequest)
+{
+  const auto& wmsConfig = itsTilesConfig->wmsConfig();
+  const std::string customer = wmsConfig.layerCustomer(collId);
+
+  // Resolve the product JSON exactly as the tile renderer does, so the "json:"
+  // level includes are inlined into arrays and any style variant is applied.
+  Json::Value json = wmsConfig.json(collId);
+  const std::string root = itsDaliConfig.rootDirectory(true);
+  const std::string layers_root = root + "/customers/" + customer + "/layers/";
+  Spine::JSON::preprocess(json, root, layers_root, wmsConfig.getJsonCache());
+  Spine::JSON::dereference(json);
+  auto params = Dali::Plugin::extractValidParameters(theRequest.getParameterMap());
+  Spine::JSON::expand(json, params, "", false);
+  useStyle(json, styleId);
+
+  // CSS is loaded via the same customer lookup the raster tile path uses.
+  theState.setName(collId);
+  theState.setCustomer(customer);
+
+  // Style only the active render tree ("views"); the product's top-level "styles"
+  // array holds selectable variants (inactive alternatives) that useStyle() folds
+  // into "views" for a named style, and "defs" holds reusable definitions — neither
+  // is rendered, so neither should be collected.
+  std::vector<Dali::MapboxStyleLayer> layers;
+  const Json::Value& renderRoot = json.isMember("views") ? json["views"] : json;
+  collectStyleLayers(renderRoot, theState, layers);
+  return layers;
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /tiles/collections/{id}/styles/{styleId}  — Mapbox GL style
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleStyle(const std::string& base,
+                                 const std::string& collId,
+                                 const std::string& styleId,
+                                 Dali::State& theState,
+                                 const Spine::HTTP::Request& theRequest,
+                                 Spine::HTTP::Response& resp)
+{
+  try
+  {
+    if (!itsTilesConfig->isValidCollection(collId))
+    {
+      sendError(404, "Not Found", "Collection not found: " + collId, resp);
+      return QueryStatus::OK;
+    }
+
+    auto layers = resolveStyleLayers(collId, styleId, theState, theRequest);
+    if (layers.empty())
+    {
+      sendError(404,
+                "Not Found",
+                "No vector (isoband/isoline) style available for collection: " + collId,
+                resp);
+      return QueryStatus::OK;
+    }
+
+    // MVT tile template the style's vector source points at. Clients that manage
+    // their own (time-parameterised) source may instead lift just the paint.
+    const std::string tms = "EPSG:3857";
+    const std::string tileUrlTemplate = base + "/collections/" + collId + "/tiles/" + tms +
+                                        "/{tileMatrix}/{tileRow}/{tileCol}"
+                                        "?f=application/vnd.mapbox-vector-tile";
+
+    const std::string style = Dali::mapboxStyle(collId, tileUrlTemplate, layers);
+
+    resp.setHeader("Content-Type", "application/vnd.mapbox.style+json; charset=UTF-8");
+    resp.setStatus(Spine::HTTP::Status::ok);
+    resp.setContent(style);
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    Fmi::Exception ex(BCP, "OGC Tiles style failed!", nullptr);
+    sendError(500, "Internal Server Error", ex.what(), resp);
+    return QueryStatus::OK;
+  }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /tiles/collections/{id}/styles  — Styles for a collection
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleCollectionStyles(const std::string& base,
+                                            const std::string& collId,
+                                            Spine::HTTP::Response& resp)
+{
+  try
+  {
+    if (!itsTilesConfig->isValidCollection(collId))
+    {
+      sendError(404, "Not Found", "Collection not found: " + collId, resp);
+      return QueryStatus::OK;
+    }
+
+    const std::string coll_base = base + "/collections/" + collId;
+
+    Json::Value entry;
+    entry["id"] = "default";
+    Json::Value styleLinks(Json::arrayValue);
+    styleLinks.append(makeLink(coll_base + "/styles/default?f=mapbox",
+                               "stylesheet",
+                               "application/vnd.mapbox.style+json",
+                               "Mapbox GL style"));
+    entry["links"] = styleLinks;
+
+    Json::Value styles(Json::arrayValue);
+    styles.append(entry);
+
+    Json::Value doc;
+    doc["styles"] = styles;
+    Json::Value links(Json::arrayValue);
+    links.append(makeLink(coll_base + "/styles", "self", "application/json", "Styles"));
+    doc["links"] = links;
+
+    setJsonResponse(resp, toJson(doc));
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "OGC Tiles collection styles failed!");
+  }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /tiles/styles  — Style set list (a default style per collection)
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleStyles(const std::string& base,
+                                  Dali::State& /* theState */,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& resp)
+{
+  try
+  {
+    const auto& wmsConfig = itsTilesConfig->wmsConfig();
+    const auto& dali = itsTilesConfig->getDaliConfig();
+
+    auto language = dali.defaultLanguage();
+    auto query_lang = theRequest.getParameter("LANGUAGE");
+    if (query_lang)
+      language = *query_lang;
+
+    const bool check_token = true;
+    auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
+
+    CTPP::CDT layer_list = wmsConfig.getCapabilities(
+        apikey, language, {}, {}, {}, {}, OGC::LayerHierarchy::HierarchyType::flat, false, false);
+
+    Json::Value styles(Json::arrayValue);
+    for (std::size_t i = 0; i < layer_list.Size(); ++i)
+    {
+      CTPP::CDT& wl = layer_list[i];
+      if (!wl.Exists("name"))
+        continue;
+      const std::string id = wl.At("name").GetString();
+      const std::string coll_base = base + "/collections/" + id;
+
+      Json::Value entry;
+      entry["id"] = id;
+      if (wl.Exists("title"))
+        entry["title"] = wl.At("title").GetString();
+      Json::Value links(Json::arrayValue);
+      links.append(makeLink(coll_base + "/styles/default?f=mapbox",
+                            "stylesheet",
+                            "application/vnd.mapbox.style+json",
+                            "Mapbox GL style"));
+      entry["links"] = links;
+      styles.append(entry);
+    }
+
+    Json::Value doc;
+    doc["styles"] = styles;
+    Json::Value links(Json::arrayValue);
+    links.append(makeLink(base + "/styles", "self", "application/json", "Styles"));
+    doc["links"] = links;
+
+    setJsonResponse(resp, toJson(doc));
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "OGC Tiles styles list failed!");
+  }
+}
+
+// -----------------------------------------------------------------------
 /*!
  * \brief GET /tiles/collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}  — Tile image
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleGetTile(Dali::State& theState,
-                                    const Spine::HTTP::Request& theRequest,
-                                    Spine::HTTP::Response& theResponse,
-                                    const std::string& collId,
-                                    const std::string& tmsId,
-                                    const std::string& tmId,
-                                    unsigned row,
-                                    unsigned col,
-                                    const std::string& format)
+                                   const Spine::HTTP::Request& theRequest,
+                                   Spine::HTTP::Response& theResponse,
+                                   const std::string& collId,
+                                   const std::string& tmsId,
+                                   const std::string& tmId,
+                                   unsigned row,
+                                   unsigned col,
+                                   const std::string& format)
 {
   try
   {
@@ -766,11 +1020,12 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
 
     if (row >= tm->matrix_height || col >= tm->matrix_width)
     {
-      sendError(400,
-                "Bad Request",
-                fmt::format("Tile ({},{}) out of range ({}x{})", col, row, tm->matrix_width,
-                            tm->matrix_height),
-                theResponse);
+      sendError(
+          400,
+          "Bad Request",
+          fmt::format(
+              "Tile ({},{}) out of range ({}x{})", col, row, tm->matrix_width, tm->matrix_height),
+          theResponse);
       return QueryStatus::OK;
     }
 
@@ -786,9 +1041,10 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     // For geographic CRS (EPSG:4326), Projection::init() expects bbox in lat,lon order
     // (EPSGTreatsAsLatLong() returns true, so it reads parts as y1,x1,y2,x2).
     // computeTileBBox() always returns min_x=longitude, min_y=latitude, so we must swap.
-    std::string bbox_str = tms->is_geographic
-        ? fmt::format("{},{},{},{}", bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
-        : fmt::format("{},{},{},{}", bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y);
+    std::string bbox_str =
+        tms->is_geographic
+            ? fmt::format("{},{},{},{}", bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
+            : fmt::format("{},{},{},{}", bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y);
     thisRequest.addParameter("projection.bbox", bbox_str);
     // Honor a client-requested output size (WIDTH/HEIGHT); the projection size
     // must equal the output size, or the data is rendered against the wrong grid
@@ -820,8 +1076,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     }
 
     // Use default style (OGC API Tiles does not require a style in the URL)
-    const std::string style =
-        Spine::optional_string(theRequest.getParameter("style"), "default");
+    const std::string style = Spine::optional_string(theRequest.getParameter("style"), "default");
 
     Json::Value json = wmsConfig.json(collId);
     {
@@ -876,9 +1131,9 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::generateTile(Dali::State& theState,
-                                   const Spine::HTTP::Request& theRequest,
-                                   Spine::HTTP::Response& theResponse,
-                                   Dali::Product& theProduct)
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse,
+                                  Dali::Product& theProduct)
 {
   try
   {
@@ -958,9 +1213,13 @@ QueryStatus Handler::generateTile(Dali::State& theState,
     std::string log;
     tmpl->process(hash, output, log);
 
-    theState.getPlugin().formatResponse(
-        output, theProduct.type, theRequest, theResponse, theState.useTimer(), theProduct,
-        product_hash);
+    theState.getPlugin().formatResponse(output,
+                                        theProduct.type,
+                                        theRequest,
+                                        theResponse,
+                                        theState.useTimer(),
+                                        theProduct,
+                                        product_hash);
 
     return QueryStatus::OK;
   }
@@ -976,9 +1235,9 @@ QueryStatus Handler::generateTile(Dali::State& theState,
  */
 // -----------------------------------------------------------------------
 void Handler::sendError(int status,
-                         const std::string& title,
-                         const std::string& detail,
-                         Spine::HTTP::Response& resp)
+                        const std::string& title,
+                        const std::string& detail,
+                        Spine::HTTP::Response& resp)
 {
   try
   {
