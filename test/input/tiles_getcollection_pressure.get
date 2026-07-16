@@ -1,0 +1,2 @@
+GET /tiles/collections/test:t2m_pressure HTTP/1.0
+

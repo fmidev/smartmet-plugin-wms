@@ -1,0 +1,2 @@
+GET /wmts/1.0.0/test:t2m_pressure/default/20080909T1200/20080909T0000/850/EPSG:3067/3/2/4.png HTTP/1.0
+

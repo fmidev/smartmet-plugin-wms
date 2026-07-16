@@ -15,6 +15,7 @@
 #include "../ogc/StyleSelection.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <optional>
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <json/json.h>
@@ -579,6 +580,71 @@ QueryStatus Handler::handleCollection(const std::string& base,
         spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
         doc["extent"]["spatial"] = spatial;
       }
+
+      // Temporal and vertical (elevation) extents from the layer's dimensions.
+      auto splitCsv = [](const std::string& s) {
+        std::vector<std::string> out;
+        boost::algorithm::split(out, s, boost::is_any_of(","));
+        return out;
+      };
+
+      // Temporal extent (OGC API - Common Part 2): interval [[start, end]].
+      if (wl.Exists("time_dimension"))
+      {
+        CTPP::CDT& td = wl.At("time_dimension");
+        if (td.GetType() == CTPP::CDT::ARRAY_VAL)
+        {
+          for (std::size_t i = 0; i < td.Size(); ++i)
+          {
+            CTPP::CDT& e = td[i];
+            if (e.Exists("name") && e.At("name").GetString() == "time" && e.Exists("value"))
+            {
+              auto times = splitCsv(e.At("value").GetString());
+              if (!times.empty())
+              {
+                Json::Value pair(Json::arrayValue);
+                pair.append(times.front());
+                pair.append(times.back());
+                Json::Value interval(Json::arrayValue);
+                interval.append(pair);
+                doc["extent"]["temporal"]["interval"] = interval;
+                doc["extent"]["temporal"]["trs"] =
+                    "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
+              }
+            }
+          }
+        }
+      }
+
+      // Vertical (elevation) extent — discrete levels the layer offers.
+      if (wl.Exists("elevation_dimension"))
+      {
+        CTPP::CDT& ed = wl.At("elevation_dimension");
+        auto emitElevation = [&](CTPP::CDT& e) {
+          if (!e.Exists("value"))
+            return;
+          auto vals = splitCsv(e.At("value").GetString());
+          if (vals.empty())
+            return;
+          Json::Value values(Json::arrayValue);
+          for (const auto& v : vals)
+            values.append(v);
+          Json::Value pair(Json::arrayValue);
+          pair.append(vals.front());
+          pair.append(vals.back());
+          Json::Value interval(Json::arrayValue);
+          interval.append(pair);
+          doc["extent"]["vertical"]["interval"] = interval;
+          doc["extent"]["vertical"]["values"] = values;
+          if (e.Exists("units"))
+            doc["extent"]["vertical"]["vrs"] = e.At("units").GetString();
+        };
+        if (ed.GetType() == CTPP::CDT::ARRAY_VAL)
+          for (std::size_t i = 0; i < ed.Size(); ++i)
+            emitElevation(ed[i]);
+        else if (ed.GetType() == CTPP::CDT::HASH_VAL)
+          emitElevation(ed);
+      }
       break;
     }
 
@@ -1062,18 +1128,31 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     thisRequest.addParameter("type", demimetype(format));
     thisRequest.addParameter("customer", wmsConfig.layerCustomer(collId));
 
-    // Accept TIME query parameter or use most current time for temporal layers
+    // Dimension query parameters (OGC API - Common Part 2):
+    //   datetime  — time instant (OGC-standard spelling; TIME accepted for parity)
+    //   elevation — vertical level (already present in thisRequest as a copied
+    //               query parameter; Dali reads it directly by that name)
+    //   reference_time — model analysis/origin time
+    auto datetime_param = theRequest.getParameter("datetime");
     auto time_param = theRequest.getParameter("TIME");
-    if (time_param && !time_param->empty())
-    {
+    auto elevation_param = theRequest.getParameter("elevation");
+    auto reftime_param = theRequest.getParameter("reference_time");
+    const bool has_dimension = (datetime_param && !datetime_param->empty()) ||
+                               (elevation_param && !elevation_param->empty()) ||
+                               (reftime_param && !reftime_param->empty());
+
+    if (datetime_param && !datetime_param->empty())
+      thisRequest.addParameter("time", *datetime_param);
+    else if (time_param && !time_param->empty())
       thisRequest.addParameter("time", *time_param);
-    }
     else if (wmsConfig.isTemporal(collId))
     {
       Fmi::DateTime current_time = wmsConfig.mostCurrentTime(collId, {});
       if (!current_time.is_not_a_date_time())
         thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
     }
+    if (reftime_param && !reftime_param->empty())
+      thisRequest.addParameter("origintime", *reftime_param);
 
     // Use default style (OGC API Tiles does not require a style in the URL)
     const std::string style = Spine::optional_string(theRequest.getParameter("style"), "default");
@@ -1095,26 +1174,39 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     if (!json.isMember("ymargin"))
       json["ymargin"] = wmsConfig.getMargin();
 
-    theState.setName(collId);
-    theState.setCustomer(wmsConfig.layerCustomer(collId));
+    // Dali reads dimension parameters (time, elevation, reference/origin time)
+    // from the State's request, which is fixed at construction. When the request
+    // carried dimension parameters, bind a State to the augmented request so the
+    // normalized dimensions reach the renderer. Non-dimension tiles keep the
+    // original State unchanged.
+    std::optional<Dali::State> dimState;
+    if (has_dimension)
+    {
+      dimState.emplace(theState.getPlugin(), thisRequest);
+      dimState->setType(demimetype(format));
+    }
+    Dali::State& renderState = dimState ? *dimState : theState;
+
+    renderState.setName(collId);
+    renderState.setCustomer(wmsConfig.layerCustomer(collId));
 
     // Store tile z/x/y in State so PMTiles-backed OSMLayers can do direct passthrough.
     // tmId is the zoom level identifier ("0"-"21"); col=x, row=y in tile coordinates.
     try
     {
       const auto zoom = static_cast<uint8_t>(Fmi::stoul(tmId));
-      theState.setTileCoords(zoom, static_cast<uint32_t>(col), static_cast<uint32_t>(row));
+      renderState.setTileCoords(zoom, static_cast<uint32_t>(col), static_cast<uint32_t>(row));
     }
     catch (...)
     { /* non-numeric tmId — no tile coords set, passthrough disabled */
     }
 
     Dali::Product product;
-    product.init(json, theState, itsDaliConfig);
+    product.init(json, renderState, itsDaliConfig);
     if (product.type.empty())
-      product.type = theState.getType();
+      product.type = renderState.getType();
 
-    return generateTile(theState, thisRequest, theResponse, product);
+    return generateTile(renderState, thisRequest, theResponse, product);
   }
   catch (...)
   {

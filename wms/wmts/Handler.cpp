@@ -15,6 +15,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <cctype>
+#include <optional>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <fmt/printf.h>
@@ -128,30 +130,43 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
     if (parts.size() == 2 && parts[1] == "WMTSCapabilities.xml")
       return handleGetCapabilities(theState, theRequest, theResponse);
 
-    // GetTile: version/layer/style/TileMatrixSet/TileMatrix/TileRow/TileCol.ext
-    if (parts.size() == 7)
+    // GetTile (RESTful):
+    //   version/layer/style[/dim…]/TileMatrixSet/TileMatrix/TileRow/TileCol.ext
+    // Temporal/elevation layers carry extra dimension segments between the style
+    // and the TileMatrixSet (Time, Reference_time, Elevation — see the
+    // GetCapabilities ResourceURL). The fixed head is layer+style, the fixed tail
+    // is the last four segments; anything in between is a dimension value, in the
+    // same order the capabilities advertised. With no dimension segments (n == 7)
+    // this reduces to the original fixed layout.
+    if (parts.size() >= 7)
     {
-      const std::string& layer  = parts[1];
-      const std::string& style  = parts[2];
-      const std::string& tms_id = parts[3];
-      const std::string& tm_id  = parts[4];
+      const std::size_t n = parts.size();
+      const std::string& layer   = parts[1];
+      const std::string& style   = parts[2];
+      const std::string& tms_id  = parts[n - 4];
+      const std::string& tm_id   = parts[n - 3];
+      const std::string& row_str = parts[n - 2];
+      const std::string& col_str = parts[n - 1];
+
+      // Dimension values sit between the style (index 2) and the 4-segment tail.
+      std::vector<std::string> dimensionValues(parts.begin() + 3, parts.begin() + (n - 4));
 
       unsigned tile_row = 0;
       unsigned tile_col = 0;
       std::string ext;
 
-      try { tile_row = Fmi::stoul(parts[5]); }
+      try { tile_row = Fmi::stoul(row_str); }
       catch (...)
       {
-        sendException("InvalidParameterValue", "Invalid TileRow: " + parts[5],
+        sendException("InvalidParameterValue", "Invalid TileRow: " + row_str,
                       theState, theRequest, theResponse);
         return QueryStatus::OK;
       }
 
-      if (!parseColAndFormat(parts[6], tile_col, ext))
+      if (!parseColAndFormat(col_str, tile_col, ext))
       {
         sendException("InvalidParameterValue",
-                      "Invalid TileCol or format: " + parts[6],
+                      "Invalid TileCol or format: " + col_str,
                       theState, theRequest, theResponse);
         return QueryStatus::OK;
       }
@@ -167,7 +182,7 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
 
       return handleGetTile(theState, theRequest, theResponse,
                            layer, style, tms_id, tm_id,
-                           tile_row, tile_col, mime_type);
+                           tile_row, tile_col, mime_type, dimensionValues);
     }
 
     sendException("OperationNotSupported",
@@ -284,6 +299,67 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
       for (const auto& tms : itsWMTSConfig->tileMatrixSets())
         layer["tile_matrix_set_links"][tmsi++] = tms.identifier;
 
+      // Time / elevation / reference-time dimensions.
+      //
+      // The WMS layer CDT already carries the temporal and elevation dimensions
+      // (time_dimension[]/elevation_dimension[]); the WMTS capabilities used to
+      // drop them, leaving clients unable to request anything but the latest
+      // time. Reshape them into WMTS <Dimension> elements and build the matching
+      // RESTful ResourceURL placeholders. Identifiers are capitalized
+      // (time -> Time, elevation -> Elevation, reference_time -> Reference_time)
+      // to match what the GeoWeb OpenLayers client substitutes into the tile
+      // URL template (WMTSDimensionsFromDimensions upper-cases the first letter).
+      CTPP::CDT dims(CTPP::CDT::ARRAY_VAL);
+      std::string dim_path;
+      // Reshape one WMS dimension entry (a HASH with name/default/value) into a
+      // WMTS <Dimension> and its RESTful ResourceURL placeholder.
+      auto add_dimension = [&](CTPP::CDT& e) {
+        if (!e.Exists("name"))
+          return;
+        std::string name = e.At("name").GetString();
+        if (name.empty())
+          return;
+        std::string identifier = name;
+        identifier[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(identifier[0])));
+        for (std::size_t k = 1; k < identifier.size(); ++k)
+          identifier[k] = static_cast<char>(std::tolower(static_cast<unsigned char>(identifier[k])));
+
+        CTPP::CDT dim(CTPP::CDT::HASH_VAL);
+        dim["identifier"] = identifier;
+        if (e.Exists("units") && !e.At("units").GetString().empty())
+          dim["uom"] = e.At("units").GetString();
+        if (e.Exists("unit_symbol") && !e.At("unit_symbol").GetString().empty())
+          dim["unit_symbol"] = e.At("unit_symbol").GetString();
+        if (e.Exists("default"))
+          dim["default"] = e.At("default");
+        if (e.Exists("value"))
+          dim["value"] = e.At("value");
+        dims.PushBack(dim);
+        dim_path += "/{" + identifier + "}";
+      };
+      // time_dimension is a list ([time, reference_time]); elevation_dimension may
+      // be either a list or a single dimension hash — handle both shapes.
+      for (const char* src : {"time_dimension", "elevation_dimension"})
+      {
+        if (!wl.Exists(src))
+          continue;
+        CTPP::CDT& node = wl.At(src);
+        if (node.GetType() == CTPP::CDT::ARRAY_VAL)
+        {
+          for (std::size_t d = 0; d < node.Size(); ++d)
+            add_dimension(node[d]);
+        }
+        else if (node.GetType() == CTPP::CDT::HASH_VAL)
+        {
+          add_dimension(node);
+        }
+      }
+      if (dims.Size() > 0)
+        layer["dimensions"] = dims;
+      // Always defined so the ResourceURL template can interpolate it
+      // unconditionally (empty for non-temporal layers).
+      layer["dim_path"] = dim_path;
+
       layers_cdt.PushBack(layer);
     }
     hash["layers"] = layers_cdt;
@@ -351,6 +427,70 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
  * \brief Validate parameters and serve a single map tile
  */
 // -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
+/*!
+ * \brief Ordered RESTful dimension identifiers for a layer, cached.
+ *
+ * Returns the dimension names in the same order GetCapabilities advertises
+ * them in the ResourceURL template (time, reference_time, elevation). The set
+ * of dimensions a layer exposes is fixed by configuration and does not change
+ * between model runs — only their values do — so the list is cached to avoid a
+ * per-tile Querydata lookup during animation.
+ */
+// -----------------------------------------------------------------------
+const std::vector<std::string>& Handler::orderedDimensionNames(const std::string& layer) const
+{
+  {
+    std::lock_guard<std::mutex> lock(itsDimNamesMutex);
+    auto it = itsDimNamesCache.find(layer);
+    if (it != itsDimNamesCache.end())
+      return it->second;
+  }
+
+  std::vector<std::string> names;
+  try
+  {
+    const auto& wmsConfig = itsWMTSConfig->wmsConfig();
+    auto layer_obj = wmsConfig.getLayer(layer);
+    if (layer_obj)
+    {
+      auto ti = layer_obj->getTimeDimensionInfo(false, {}, {}, {});
+      if (ti && ti->Exists("time_dimension"))
+      {
+        CTPP::CDT& a = (*ti)["time_dimension"];
+        if (a.GetType() == CTPP::CDT::ARRAY_VAL)
+          for (std::size_t d = 0; d < a.Size(); ++d)
+            if (a[d].Exists("name"))
+              names.push_back(a[d].At("name").GetString());
+      }
+      auto ei = layer_obj->getElevationDimensionInfo();
+      if (ei && ei->Exists("elevation_dimension"))
+      {
+        CTPP::CDT& e = (*ei)["elevation_dimension"];
+        if (e.GetType() == CTPP::CDT::ARRAY_VAL)
+        {
+          for (std::size_t d = 0; d < e.Size(); ++d)
+            if (e[d].Exists("name"))
+              names.push_back(e[d].At("name").GetString());
+        }
+        else if (e.GetType() == CTPP::CDT::HASH_VAL && e.Exists("name"))
+        {
+          names.push_back(e.At("name").GetString());
+        }
+      }
+    }
+  }
+  catch (...)
+  {
+    // Leave empty; caller falls back to query-parameter / default handling.
+  }
+
+  std::lock_guard<std::mutex> lock(itsDimNamesMutex);
+  // try_emplace does not move `names` if another thread already cached this
+  // layer, so the two-phase locking stays correct.
+  return itsDimNamesCache.try_emplace(layer, std::move(names)).first->second;
+}
+
 QueryStatus Handler::handleGetTile(Dali::State& theState,
                                    const Spine::HTTP::Request& theRequest,
                                    Spine::HTTP::Response& theResponse,
@@ -360,7 +500,8 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
                                    const std::string& tm_id,
                                    unsigned tile_row,
                                    unsigned tile_col,
-                                   const std::string& format)
+                                   const std::string& format,
+                                   const std::vector<std::string>& dimensionValues)
 {
   try
   {
@@ -444,9 +585,39 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     thisRequest.addParameter("type",             demimetype(format));
     thisRequest.addParameter("customer",         wmsConfig.layerCustomer(layer));
 
-    // Time: accept TIME query parameter, otherwise use most current available time
+    // Dimensions from the RESTful path (Time, Reference_time, Elevation) take
+    // precedence over query parameters. They arrive as bare values in
+    // capabilities order, so resolve the layer's ordered dimension identifiers
+    // from the very same source GetCapabilities used and map them positionally.
+    std::string path_time;
+    std::string path_origintime;
+    std::string path_elevation;
+    if (!dimensionValues.empty())
+    {
+      const auto& dim_names = orderedDimensionNames(layer);
+
+      for (std::size_t i = 0; i < dimensionValues.size() && i < dim_names.size(); ++i)
+      {
+        const std::string& nm = dim_names[i];
+        const std::string& v = dimensionValues[i];
+        if (v.empty())
+          continue;
+        if (nm == "time")
+          path_time = v;
+        else if (nm == "reference_time")
+          path_origintime = v;
+        else if (nm == "elevation")
+          path_elevation = v;
+      }
+    }
+
+    // Time: RESTful path dimension > TIME query parameter > most current time.
     auto time_param = theRequest.getParameter("TIME");
-    if (time_param && !time_param->empty())
+    if (!path_time.empty())
+    {
+      thisRequest.addParameter("time", path_time);
+    }
+    else if (time_param && !time_param->empty())
     {
       thisRequest.addParameter("time", *time_param);
     }
@@ -456,6 +627,12 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
       if (!current_time.is_not_a_date_time())
         thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
     }
+
+    // Reference (analysis/model-run) time and elevation supplied via the path.
+    if (!path_origintime.empty())
+      thisRequest.addParameter("origintime", path_origintime);
+    if (!path_elevation.empty())
+      thisRequest.addParameter("elevation", path_elevation);
 
     // Load product JSON, preprocess json: references and query params, then apply style
     Json::Value json = wmsConfig.json(layer);
@@ -476,15 +653,28 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     if (!json.isMember("ymargin"))
       json["ymargin"] = wmsConfig.getMargin();
 
-    theState.setName(layer);
-    theState.setCustomer(wmsConfig.layerCustomer(layer));
+    // Dali reads dimension parameters (time, elevation, reference/origin time)
+    // from the State's request, which is fixed at construction and shared across
+    // handlers. When the RESTful path carried dimension segments, bind a State to
+    // the augmented request so those dimensions actually reach the renderer.
+    // Non-dimension tiles keep the original State unchanged.
+    std::optional<Dali::State> dimState;
+    if (!dimensionValues.empty())
+    {
+      dimState.emplace(theState.getPlugin(), thisRequest);
+      dimState->setType(demimetype(format));
+    }
+    Dali::State& renderState = dimState ? *dimState : theState;
+
+    renderState.setName(layer);
+    renderState.setCustomer(wmsConfig.layerCustomer(layer));
 
     // Store tile z/x/y in State so PMTiles-backed OSMLayers can do direct passthrough.
     // tm_id is the zoom level identifier ("0"-"21"); tile_col=x, tile_row=y.
     try
     {
       const auto zoom = static_cast<uint8_t>(Fmi::stoul(tm_id));
-      theState.setTileCoords(
+      renderState.setTileCoords(
           zoom, static_cast<uint32_t>(tile_col), static_cast<uint32_t>(tile_row));
     }
     catch (...)
@@ -492,11 +682,11 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     }
 
     Dali::Product product;
-    product.init(json, theState, itsDaliConfig);
+    product.init(json, renderState, itsDaliConfig);
     if (product.type.empty())
-      product.type = theState.getType();
+      product.type = renderState.getType();
 
-    return generateTile(theState, thisRequest, theResponse, product);
+    return generateTile(renderState, thisRequest, theResponse, product);
   }
   catch (...)
   {

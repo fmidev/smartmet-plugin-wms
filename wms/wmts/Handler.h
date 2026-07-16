@@ -14,8 +14,11 @@
 #include "../ogc/QueryStatus.h"
 #include <spine/HTTP.h>
 #include <macgyver/Exception.h>
+#include <map>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <vector>
 
 namespace SmartMet
 {
@@ -67,7 +70,8 @@ class Handler
                             const std::string& tm_id,
                             unsigned tile_row,
                             unsigned tile_col,
-                            const std::string& format);
+                            const std::string& format,
+                            const std::vector<std::string>& dimensionValues = {});
 
   QueryStatus generateTile(Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
@@ -80,8 +84,18 @@ class Handler
                      const Spine::HTTP::Request& theRequest,
                      Spine::HTTP::Response& theResponse);
 
+  // Ordered RESTful dimension identifiers for a layer (e.g. ["time",
+  // "reference_time", "elevation"]), matching the order GetCapabilities
+  // advertises. Cached: the set of dimensions a layer exposes is fixed by its
+  // configuration and does not change between model runs (only the values do),
+  // so this avoids a per-tile querydata lookup during animation.
+  const std::vector<std::string>& orderedDimensionNames(const std::string& layer) const;
+
   const Dali::Config& itsDaliConfig;
   std::unique_ptr<Config> itsWMTSConfig;
+
+  mutable std::mutex itsDimNamesMutex;
+  mutable std::map<std::string, std::vector<std::string>> itsDimNamesCache;
 };
 
 }  // namespace WMTS

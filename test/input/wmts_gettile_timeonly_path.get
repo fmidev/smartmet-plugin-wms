@@ -1,0 +1,2 @@
+GET /wmts/1.0.0/test:t2m_p/default/20080805T0600/EPSG:4326/5/4/36.png HTTP/1.0
+

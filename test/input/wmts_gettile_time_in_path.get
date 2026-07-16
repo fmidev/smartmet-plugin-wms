@@ -1,0 +1,2 @@
+GET /wmts/1.0.0/test:opendata_temperature_numbers/default/20130805T1500/EPSG:4326/5/4/36.svg HTTP/1.0
+

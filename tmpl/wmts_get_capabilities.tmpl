@@ -85,12 +85,32 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       </TileMatrixSetLink>
       <-/TMPL_foreach>
 
+      <-TMPL_if defined(layer.dimensions)>
+      <-TMPL_foreach layer.dimensions as dimension>
+      <Dimension>
+        <ows:Identifier><TMPL_var XMLESCAPE(dimension.identifier)></ows:Identifier>
+        <-TMPL_if defined(dimension.uom)>
+        <ows:UOM><TMPL_var XMLESCAPE(dimension.uom)></ows:UOM>
+        <-/TMPL_if>
+        <-TMPL_if defined(dimension.unit_symbol)>
+        <UnitSymbol><TMPL_var XMLESCAPE(dimension.unit_symbol)></UnitSymbol>
+        <-/TMPL_if>
+        <-TMPL_if defined(dimension.default)>
+        <Default><TMPL_var XMLESCAPE(dimension.default)></Default>
+        <-/TMPL_if>
+        <-TMPL_if defined(dimension.value)>
+        <Value><TMPL_var XMLESCAPE(dimension.value)></Value>
+        <-/TMPL_if>
+      </Dimension>
+      <-/TMPL_foreach>
+      <-/TMPL_if>
+
       <ResourceURL format="image/png"
                    resourceType="tile"
-                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
       <ResourceURL format="image/webp"
                    resourceType="tile"
-                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
     </Layer>
     <-/TMPL_foreach>
 
