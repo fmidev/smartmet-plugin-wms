@@ -3513,6 +3513,35 @@
           "url_template" : "/dali?customer=test&product=radar&time={time}"
         },
         {
+          "abstract" : "Exercises RasterLayer::generate_qEngine: a raster layer sourced from querydata (radar rain rate) rather than the grid engine.",
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 500
+          },
+          "name" : "radar_raster",
+          "path" : 
+          [
+            "test",
+            "radar_raster"
+          ],
+          "producer" : "tutka_suomi_rr",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20130910T103500",
+            "origintime" : "20130910T103500",
+            "values" : "20130910T103500"
+          },
+          "title" : "Radar raster test (querydata path)",
+          "url_template" : "/dali?customer=test&product=radar_raster&time={time}"
+        },
+        {
           "image" : 
           {
             "height" : 760,
