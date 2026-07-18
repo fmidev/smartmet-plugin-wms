@@ -1,12 +1,6 @@
 //======================================================================
 
 #include "RasterLayer.h"
-#include "DataTile.h"
-#include "GridDataGeoTiff.h"
-#include <cpl_vsi.h>
-#include <gdal_priv.h>
-#include <ogr_spatialref.h>
-#include <atomic>
 #include "ColorPainter_ARGB.h"
 #include "ColorPainter_border.h"
 #include "ColorPainter_rain.h"
@@ -14,7 +8,9 @@
 #include "ColorPainter_shading.h"
 #include "ColorPainter_stream.h"
 #include "Config.h"
+#include "DataTile.h"
 #include "Geometry.h"
+#include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
@@ -30,12 +26,16 @@
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
 #include <engines/querydata/Model.h>
+#include <engines/querydata/Q.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
+#include <gis/CoordinateMatrix.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImagePaint.h>
+#include <grid-files/grid/Typedefs.h>
 #include <grid-files/map/Topography.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
@@ -48,7 +48,11 @@
 #include <timeseries/ParameterFactory.h>
 #include <timeseries/ParameterTools.h>
 #include <trax/InterpolationType.h>
+#include <atomic>
+#include <cpl_vsi.h>
+#include <gdal_priv.h>
 #include <limits>
+#include <ogr_spatialref.h>
 #include <unistd.h>
 
 namespace SmartMet
@@ -832,21 +836,102 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
   }
 }
 
-void RasterLayer::generate_qEngine(CTPP::CDT & /* theGlobals */,
-                                   CTPP::CDT & /* theLayersCdt */,
-                                   State & /*theState */)
+void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
   {
-    // ToDo:
+    // 1. Establish the querydata and the parameter(s) to render.
 
-    // 1. Initialize project information.
-    // 2. Fetch data according to "parameter" (=>valueVector1) or
-    //    according to "direction"  (=>valueVector1) and "speed"  (=>valueVector2).
-    // 3. Fetch coordinates of the current grid.
-    // 4. Call the following function.
+    auto q = getModel(theState);
+    if (!q)
+      throw Fmi::Exception(BCP, "Raster-layer requires querydata to be available");
+    if (!q->isGrid())
+      throw Fmi::Exception(BCP, "Raster-layer can't use point data!");
+
+    const bool have_param = !paraminfo.parameter.empty();
+    const bool have_wind = (direction && speed);
+    if (!have_param && !have_wind)
+      throw Fmi::Exception(BCP,
+                           "Neither 'parameter' nor 'direction'+'speed' set for raster-layer!");
+
+    if (!q->firstLevel())
+      throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
+
+    if (paraminfo.level)
+    {
+      if (!q->selectLevel(*paraminfo.level))
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
+    }
+
+    // 2. Establish the output projection grid.
+
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+    const int width = *projection.xsize;
+    const int height = *projection.ysize;
+    const std::size_t sz = static_cast<std::size_t>(width) * static_cast<std::size_t>(height);
+
+    NFmiMetTime met_time = getValidTime();
+
+    // 3. Coordinates of the current grid.
     //
-    //    generate_output(theGlobals,theLayersCdt,theState,coordinates,valueVector1,valueVector2);
+    // The pixels are sampled as WGS84 longitude/latitude (what the topography
+    // land/sea lookup expects) and stored bottom-up (row j=0 at box.ymin) to
+    // match the painters, which flip vertically so image row 0 is the top.
+
+    Fmi::CoordinateMatrix llmatrix(width, height, box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    static const Fmi::SpatialReference wgs84("WGS84");
+    Fmi::CoordinateTransformation to_wgs84(crs, wgs84);
+    llmatrix.transform(to_wgs84);
+
+    T::Coordinate_vec coordinates;
+    coordinates.reserve(sz);
+    for (int j = 0; j < height; j++)
+      for (int i = 0; i < width; i++)
+        coordinates.emplace_back(llmatrix.x(i, j), llmatrix.y(i, j));
+
+    // Sample one parameter onto the output grid. Values are stored bottom-up to
+    // match the coordinates above, and the newbase missing sentinel is mapped to
+    // the grid-files sentinel the painters test against.
+    auto sample = [&](const std::string& name) -> std::vector<float>
+    {
+      auto param = TS::ParameterFactory::instance().parse(name);
+      if (!q->param(param.number()))
+        throw Fmi::Exception(
+            BCP, "Parameter '" + name + "' is not available in the raster-layer querydata!");
+
+      auto matrix = q->values(llmatrix, met_time);
+      if (matrix.NX() != static_cast<unsigned int>(width) ||
+          matrix.NY() != static_cast<unsigned int>(height))
+        return {};
+
+      std::vector<float> values(sz);
+      for (int j = 0; j < height; j++)
+        for (int i = 0; i < width; i++)
+        {
+          const float v = matrix[i][j];
+          values[static_cast<std::size_t>(j) * width + i] =
+              (v == kFloatMissing ? static_cast<float>(ParamValueMissing) : v);
+        }
+      return values;
+    };
+
+    // 4. Fetch the values (parameter => values1; or direction => values1,
+    //    speed => values2) and paint.
+
+    std::vector<float> values1;
+    std::vector<float> values2;
+    if (have_param)
+      values1 = sample(paraminfo.parameter);
+    else
+    {
+      values1 = sample(*direction);
+      values2 = sample(*speed);
+    }
+
+    generate_output(theGlobals, theLayersCdt, theState, &coordinates, values1, values2);
   }
   catch (...)
   {

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.7.16
+Version: 26.7.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -173,6 +173,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Jul 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.18-1.fmi
+- Raster-layer now supports querydata (source other than "grid"): RasterLayer::generate_qEngine samples the querydata onto the output projection grid and paints it via the same data-source-independent pipeline as the grid path. This lets radar served through the querydata engine (GeoTIFF/ODIM via the qengine radar reader) drive raster layers. Values are sampled as WGS84 lon/lat at each output pixel, stored bottom-up to match the painters, and the newbase missing sentinel is mapped to the grid-files sentinel. Supports a single "parameter" or a "direction"+"speed" pair.
 * Thu Jul 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.16-1.fmi
 - WMTS and OGC API - Tiles now expose time, reference time and elevation dimensions in GetCapabilities/collection metadata and honour them in tile requests
 * Tue Jul 14 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.14-2.fmi
