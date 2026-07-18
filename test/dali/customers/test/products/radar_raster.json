@@ -1,0 +1,45 @@
+{
+    "title": "Radar raster test (querydata path)",
+    "abstract": "Exercises RasterLayer::generate_qEngine: a raster layer sourced from querydata (radar rain rate) rather than the grid engine.",
+    "producer": "tutka_suomi_rr",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 800
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+		{
+		    "qid": "background",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "rgb(0,75,140)"
+		    }
+		},
+		{
+		    "qid": "l1",
+		    "layer_type": "raster",
+		    "parameter": "PrecipitationRate",
+		    "interpolation": "linear",
+		    "data_painter": "range",
+		    "ranges":
+		    [
+			{ "value_min": 0.1, "value_max": 1,  "color_min": "FF0AC8FF", "color_max": "FF0AC8FF" },
+			{ "value_min": 1,   "value_max": 5,  "color_min": "FF00A000", "color_max": "FF00A000" },
+			{ "value_min": 5,   "value_max": 10, "color_min": "FFFFFF00", "color_max": "FFFFFF00" },
+			{ "value_min": 10,  "value_max": 20, "color_min": "FFFF8000", "color_max": "FFFF8000" },
+			{ "value_min": 20,  "value_max": 50, "color_min": "FFFF0000", "color_max": "FFFF0000" }
+		    ],
+		    "attributes":
+		    {
+			"id": "radar_raster"
+		    }
+		}
+            ]
+        }
+    ]
+}
