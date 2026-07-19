@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.7.18
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -44,7 +44,7 @@ BuildRequires: smartmet-engine-avi-devel >= 26.7.9
 BuildRequires: smartmet-engine-gis-devel >= 26.6.25
 BuildRequires: smartmet-engine-grid-devel >= 26.7.10
 BuildRequires: smartmet-engine-geonames-devel >= 26.6.26
-BuildRequires: smartmet-engine-querydata-devel >= 26.6.26
+BuildRequires: smartmet-engine-querydata-devel >= 26.7.18
 BuildRequires: smartmet-engine-contour-devel >= 26.6.24
 BuildRequires: smartmet-library-gis-devel >= 26.7.14
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
@@ -90,7 +90,7 @@ Requires: smartmet-library-giza >= 26.6.27
 Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 Requires: smartmet-engine-avi >= 26.7.9
-Requires: smartmet-engine-querydata >= 26.6.26
+Requires: smartmet-engine-querydata >= 26.7.18
 Requires: smartmet-engine-contour >= 26.6.24
 Requires: smartmet-engine-gis >= 26.6.25
 Requires: smartmet-engine-grid >= 26.7.10
@@ -173,6 +173,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Jul 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.18-2.fmi
+- QueryDataLayer GetCapabilities for lazy radar producers no longer forces a decode: when a producer is configured lazy, updateLayerMetaData builds the time dimension and bounding box from the querydata engine's decode-free catalogue metadata (Engine::getRadarLayerMetaData) instead of calling get() and reading a decoded Q. This keeps GetCapabilities complete and cheap for cold (unloaded) radar producers. Falls back to the normal Q path when the catalogue is empty (e.g. before the first directory scan). Requires smartmet-engine-querydata >= 26.7.18-11.
 * Sat Jul 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.18-1.fmi
 - Raster-layer now supports querydata (source other than "grid"): RasterLayer::generate_qEngine samples the querydata onto the output projection grid and paints it via the same data-source-independent pipeline as the grid path. This lets radar served through the querydata engine (GeoTIFF/ODIM via the qengine radar reader) drive raster layers. Values are sampled as WGS84 lon/lat at each output pixel, stored bottom-up to match the painters, and the newbase missing sentinel is mapped to the grid-files sentinel. Supports a single "parameter" or a "direction"+"speed" pair.
 * Thu Jul 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.16-1.fmi

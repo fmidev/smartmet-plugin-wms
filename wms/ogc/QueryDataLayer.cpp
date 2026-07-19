@@ -9,26 +9,61 @@ namespace OGC
 {
 namespace
 {
-  void apply_timestep(Engine::Querydata::ValidTimeList& timelist, std::optional<int> timestep)
-  {
-    if(!timestep || timestep <= 0)
-      return;
+void apply_timestep(Engine::Querydata::ValidTimeList& timelist, std::optional<int> timestep)
+{
+  if (!timestep || timestep <= 0)
+    return;
 
-    timelist.remove_if([&](const Fmi::DateTime& t) {
+  timelist.remove_if(
+      [&](const Fmi::DateTime& t)
+      {
         // Anchor to UTC midnight of that day
-	// auto midnight = floor<Fmi::Days>(t);
-	auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
+        // auto midnight = floor<Fmi::Days>(t);
+        auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
 
         auto since_midnight = (t - midnight).minutes();
         return (since_midnight % *timestep) != 0;
-    });
-  }
+      });
 }
-  
+}  // namespace
+
 bool QueryDataLayer::updateLayerMetaData()
 {
   try
   {
+    auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
+
+    // Lazy radar producer: build the time dimension from the engine's catalogue
+    // (header-only) without decoding any frame, so GetCapabilities stays complete
+    // and cheap even for a cold (unloaded) producer.
+    if (queryDataConf.islazy)
+    {
+      auto md = itsQEngine->getRadarLayerMetaData(itsProducer);
+      if (md.valid && md.validtimes && !md.validtimes->empty())
+      {
+        itsModificationTime = md.modificationTime;
+        geographicBoundingBox.xMin = md.west;
+        geographicBoundingBox.xMax = md.east;
+        geographicBoundingBox.yMin = md.south;
+        geographicBoundingBox.yMax = md.north;
+
+        std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
+        apply_timestep(*md.validtimes, timestep);
+        time_intervals intervals = get_intervals(*md.validtimes);
+        std::shared_ptr<TimeDimension> timeDimension;
+        if (!intervals.empty())
+          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
+        else
+          timeDimension = std::make_shared<StepTimeDimension>(*md.validtimes);
+        newTimeDimensions.insert(std::make_pair(Fmi::DateTime::NOT_A_DATE_TIME, timeDimension));
+        timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
+        metadataTimestamp = Fmi::SecondClock::universal_time();
+        return true;
+      }
+      // Catalogue empty (e.g. before the first directory scan): fall through to
+      // the normal path, which decodes on access.
+    }
+
     auto q = itsQEngine->get(itsProducer);
     itsModificationTime = q->modificationTime();
 
@@ -41,8 +76,7 @@ bool QueryDataLayer::updateLayerMetaData()
     while (q->nextLevel())
       elevations.insert(q->levelValue());
     if (!elevations.empty())
-      elevationDimension =
-          std::make_shared<ElevationDimension>(level_name, level_type, elevations);
+      elevationDimension = std::make_shared<ElevationDimension>(level_name, level_type, elevations);
 
     // bounding box from metadata
     Engine::Querydata::MetaData metaData(q->metaData());
@@ -52,8 +86,6 @@ bool QueryDataLayer::updateLayerMetaData()
     geographicBoundingBox.yMax = metaData.wgs84Envelope.getRangeLat().getMax();
 
     // time dimension is sniffed from querydata
-    auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
-
     std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
 
     // We do not want a reference time for multifiles
@@ -63,7 +95,7 @@ bool QueryDataLayer::updateLayerMetaData()
 
       if (!validtimes->empty())
       {
-	apply_timestep(*validtimes, timestep);
+        apply_timestep(*validtimes, timestep);
         std::shared_ptr<TimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*validtimes);
         if (!intervals.empty())
@@ -81,8 +113,8 @@ bool QueryDataLayer::updateLayerMetaData()
       {
         q = itsQEngine->get(itsProducer, t);
         std::shared_ptr<Engine::Querydata::ValidTimeList> vt = q->validTimes();
-	if(vt)
-	  apply_timestep(*vt, timestep);
+        if (vt)
+          apply_timestep(*vt, timestep);
 
         std::shared_ptr<TimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*vt);
