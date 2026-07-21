@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.7.16
-Release: 2%{?dist}.fmi
+Version: 26.7.21
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Jul 21 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.7.21-1.fmi
+- Repackage due to ABI changes
+
 * Thu Jul 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.16-2.fmi
 - Updated RPM dependencies, Spine must be the latest one
 * Thu Jul 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.16-1.fmi
