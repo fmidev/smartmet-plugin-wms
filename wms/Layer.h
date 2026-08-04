@@ -104,6 +104,16 @@ class Layer : public Properties
   // Get the model data
   Engine::Querydata::Q getModel(const State& theState) const;
 
+  // Hash value of the model getModel() would return, without constructing a Q.
+  // Empty if the producer is not served by the querydata engine, in which case
+  // getModel() returns an empty Q.
+  std::optional<std::size_t> getModelHashValue(const State& theState) const;
+
+  // As above, but returns the hash value of an empty Q instead of an empty
+  // optional, so that the result matches hash_value(getModel(theState)) for
+  // every producer.
+  std::size_t getModelHashValueOrEmpty(const State& theState) const;
+
   // For grid-backed layers with an explicit origintime, verify the requested
   // origintime is one of the producer's advertised analysis times. Throws a
   // WMS_INVALID_DIMENSION_VALUE exception if not. No-op when origintime is

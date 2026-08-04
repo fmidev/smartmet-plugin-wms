@@ -56,6 +56,29 @@ Json::CharReaderBuilder charreaderbuilder;
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Hash value of a file: its path, modification time and size
+ *
+ * The contents are not hashed, since reading and hashing every byte of every
+ * style sheet and symbol would be needed for each ETag calculation. The path
+ * must be included: two different files may well share a modification time.
+ */
+// ----------------------------------------------------------------------
+
+std::size_t file_hash(const Spine::FileCache &theFileCache, const std::string &thePath)
+{
+  if (thePath.empty())
+    return 0;
+
+  const auto stamp = theFileCache.stamp(thePath);
+
+  auto hash = Fmi::hash_value(thePath);
+  Fmi::hash_combine(hash, Fmi::hash_value(stamp.modification_time));
+  Fmi::hash_combine(hash, Fmi::hash_value(stamp.size));
+  return hash;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Validate name for inclusion
  *
  * A valid name does not lead upwards in a path if inserted into a path. If the name looks valid, we
@@ -1181,11 +1204,68 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Resolve a resource path, caching the result
+ *
+ * Probing the candidate locations takes up to four filesystem::exists calls,
+ * and the ETag hash value of a product resolves the path of every style sheet
+ * and symbol it refers to. The result is therefore cached and revalidated at
+ * the same interval as the contents of the files.
+ *
+ * Note that the list of tested paths is filled only when the path is actually
+ * resolved. It is used for error messages only, and the callers report the
+ * missing file even without it.
+ */
+// ----------------------------------------------------------------------
+
 std::string Plugin::resolveFilePath(const std::string &theCustomer,
                                     const std::string &theSubDir,
                                     const std::string &theFileName,
                                     bool theWmsFlag,
                                     std::list<std::string> &theTestedPaths) const
+{
+  if (theCustomer.empty() || theFileName.empty())
+    return "";
+
+  try
+  {
+    const auto key = fmt::format("{}|{}|{}|{}", theWmsFlag, theCustomer, theSubDir, theFileName);
+    const auto now = std::chrono::steady_clock::now();
+
+    {
+      Spine::ReadLock lock(itsPathCacheMutex);
+      auto pos = itsPathCache.find(key);
+      if (pos != itsPathCache.end() && now - pos->second.checked < itsPathCacheMaxAge)
+        return pos->second.path;
+    }
+
+    auto file_path = searchFilePath(theCustomer, theSubDir, theFileName, theWmsFlag, theTestedPaths);
+
+    {
+      Spine::WriteLock lock(itsPathCacheMutex);
+      itsPathCache[key] = CachedPath{file_path, now};
+    }
+
+    return file_path;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Resolving file name failed: " + theFileName);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Search the candidate locations for the given resource
+ */
+// ----------------------------------------------------------------------
+
+std::string Plugin::searchFilePath(const std::string &theCustomer,
+                                   const std::string &theSubDir,
+                                   const std::string &theFileName,
+                                   bool theWmsFlag,
+                                   std::list<std::string> &theTestedPaths) const
 {
   if (theCustomer.empty() || theFileName.empty())
     return "";
@@ -1316,6 +1396,40 @@ std::string Plugin::getStyle(const std::string &theCustomer,
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get the hash value of a style sheet
+ *
+ * The identity of a style sheet is described by its path, modification time and
+ * size. Hashing the contents would require reading the whole file and hashing
+ * every byte of it on every request. The other resource types (symbols, markers,
+ * patterns, gradients, colormaps and filters) are hashed the same way.
+ */
+// ----------------------------------------------------------------------
+
+std::size_t Plugin::getStyleHash(const std::string &theCustomer,
+                                 const std::string &theCSS,
+                                 bool theWmsFlag) const
+{
+  try
+  {
+    if (theCustomer.empty() || theCSS.empty())
+      return 0;
+
+    std::list<std::string> tested_files;
+    std::string css_path =
+        resolveFilePath(theCustomer, "/layers/", theCSS, theWmsFlag, tested_files);
+
+    return file_hash(itsFileCache, css_path);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to find the hash value of a style")
+        .addParameter("Customer", theCustomer)
+        .addParameter("CSS", theCSS);
+  }
+}
+
 std::map<std::string, std::string> Plugin::getStyle(const std::string &theCustomer,
                                                     const std::string &theCSS,
                                                     bool theWmsFlag,
@@ -1413,7 +1527,7 @@ std::size_t Plugin::getFilterHash(const std::string &theCustomer,
 
     std::string filter_path = resolveSvgPath(theCustomer, "/filters/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(filter_path);
+    return file_hash(itsFileCache, filter_path);
   }
   catch (...)
   {
@@ -1465,7 +1579,7 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
 
     std::string marker_path = resolveSvgPath(theCustomer, "/markers/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(marker_path);
+    return file_hash(itsFileCache, marker_path);
   }
   catch (...)
   {
@@ -1519,7 +1633,7 @@ std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
 
     std::string symbol_path = resolveSvgPath(theCustomer, "/symbols/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(symbol_path);
+    return file_hash(itsFileCache, symbol_path);
   }
   catch (...)
   {
@@ -1571,7 +1685,7 @@ std::size_t Plugin::getPatternHash(const std::string &theCustomer,
 
     std::string pattern_path = resolveSvgPath(theCustomer, "/patterns/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(pattern_path);
+    return file_hash(itsFileCache, pattern_path);
   }
   catch (...)
   {
@@ -1623,7 +1737,7 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
 
     std::string gradient_path = resolveSvgPath(theCustomer, "/gradients/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(gradient_path);
+    return file_hash(itsFileCache, gradient_path);
   }
   catch (...)
   {
@@ -1680,7 +1794,7 @@ std::size_t Plugin::getColorMapHash(const std::string &theCustomer,
 
     std::string colormap_path = resolveSvgPath(theCustomer, "/colormaps/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(colormap_path);
+    return file_hash(itsFileCache, colormap_path);
   }
   catch (...)
   {

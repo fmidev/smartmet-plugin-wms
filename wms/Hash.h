@@ -115,10 +115,13 @@ inline std::size_t hash_symbol(const std::optional<std::string>& name, const Sta
   return hash;
 }
 
-// Style sheets
+// Style sheets. As with symbols, the name and the modification time of the file
+// describe the style sheet adequately: the contents are not read at all.
 inline std::size_t hash_css(const std::string& name, const State& theState)
 {
-  return Fmi::hash_value(theState.getStyle(name));
+  std::size_t hash = Fmi::hash_value(name);
+  Fmi::hash_combine(hash, theState.getStyleHash(name));
+  return hash;
 }
 
 inline std::size_t hash_css(const std::optional<std::string>& name, const State& theState)

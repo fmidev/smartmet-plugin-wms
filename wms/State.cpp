@@ -274,6 +274,89 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Get the hash value of the model without constructing a Q
+ *
+ * These mirror the getModel methods above: the same producer and time selection,
+ * and the estimated expiration time of the product is updated in the same way.
+ * The engine does not need to construct a Q, which matters when a request only
+ * calculates the ETag hash value of a product and no data is needed at all.
+ */
+// ----------------------------------------------------------------------
+
+std::size_t State::getModelHashValue(const Engine::Querydata::Producer& theProducer) const
+{
+  try
+  {
+    auto key = theProducer;
+
+    auto res = itsModelHashCache.find(key);
+    if (res != itsModelHashCache.end())
+      return res->second;
+
+    auto value = itsPlugin.getQEngine().getModelHashValue(theProducer);
+
+    updateExpirationTime(value.expirationTime);
+
+    itsModelHashCache.insert(std::make_pair(key, value.hash));
+    return value.hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+std::size_t State::getModelHashValue(const Engine::Querydata::Producer& theProducer,
+                                     const Fmi::DateTime& theOriginTime) const
+{
+  try
+  {
+    auto key = theProducer + " @ " + Fmi::to_iso_string(theOriginTime);
+
+    auto res = itsModelHashCache.find(key);
+    if (res != itsModelHashCache.end())
+      return res->second;
+
+    auto value = itsPlugin.getQEngine().getModelHashValue(theProducer, theOriginTime);
+
+    updateExpirationTime(value.expirationTime);
+
+    itsModelHashCache.insert(std::make_pair(key, value.hash));
+    return value.hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+std::size_t State::getModelHashValue(const Engine::Querydata::Producer& theProducer,
+                                     const Fmi::TimePeriod& theTimePeriod) const
+{
+  try
+  {
+    auto key = theProducer + " from " + Fmi::to_iso_string(theTimePeriod.begin()) + " to " +
+               Fmi::to_iso_string(theTimePeriod.end());
+
+    auto res = itsModelHashCache.find(key);
+    if (res != itsModelHashCache.end())
+      return res->second;
+
+    auto value = itsPlugin.getQEngine().getModelHashValue(theProducer, theTimePeriod);
+
+    updateExpirationTime(value.expirationTime);
+
+    itsModelHashCache.insert(std::make_pair(key, value.hash));
+    return value.hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Get Q for a valid time period
  */
 // ----------------------------------------------------------------------
@@ -559,6 +642,23 @@ std::string State::getStyle(const std::string& theCSS) const
   try
   {
     return itsPlugin.getStyle(itsCustomer, theCSS, itUsesWms);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fetch the hash value of a CSS file
+ */
+// ----------------------------------------------------------------------
+std::size_t State::getStyleHash(const std::string& theCSS) const
+{
+  try
+  {
+    return itsPlugin.getStyleHash(itsCustomer, theCSS, itUsesWms);
   }
   catch (...)
   {
@@ -1057,8 +1157,7 @@ bool State::isObservation(const std::string& theProducer) const
   if (getConfig().obsEngineDisabled())
     return false;
 
-  auto observers = getObsEngine().getValidStationTypes();
-  return (observers.find(theProducer) != observers.end());
+  return getObsEngine().isValidStationType(theProducer);
 #endif
 }
 

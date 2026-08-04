@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.8.23
+Version: 26.8.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -32,19 +32,19 @@ BuildRequires: smartmet-library-giza-devel >= 26.6.27
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 26.7.14
 BuildRequires: smartmet-library-macgyver-devel >= 26.8.19
-BuildRequires: smartmet-library-spine-devel >= 26.8.19
+BuildRequires: smartmet-library-spine-devel >= 26.8.24
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.8.19
+BuildRequires: smartmet-engine-observation-devel >= 26.8.24
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.7.9
 BuildRequires: smartmet-engine-gis-devel >= 26.8.10
 BuildRequires: smartmet-engine-grid-devel >= 26.7.10
 BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
-BuildRequires: smartmet-engine-querydata-devel >= 26.7.17
+BuildRequires: smartmet-engine-querydata-devel >= 26.8.24
 BuildRequires: smartmet-engine-contour-devel >= 26.8.3
 BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
@@ -83,20 +83,20 @@ Requires: smartmet-library-grid-files >= 26.7.14
 Requires: smartmet-library-gis >= 26.8.10
 Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.8.19
-Requires: smartmet-library-spine >= 26.8.19
+Requires: smartmet-library-spine >= 26.8.24
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.6.27
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 Requires: smartmet-engine-avi >= 26.7.9
-Requires: smartmet-engine-querydata >= 26.7.17
+Requires: smartmet-engine-querydata >= 26.8.24
 Requires: smartmet-engine-contour >= 26.8.3
 Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
 Requires: smartmet-engine-geonames >= 26.7.31
 Requires: smartmet-server >= 26.8.17
-Requires: smartmet-library-spine >= 26.8.19
+Requires: smartmet-library-spine >= 26.8.24
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -121,13 +121,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 26.8.3
 #TestRequires: smartmet-engine-geonames-devel >= 26.7.31
 #TestRequires: smartmet-engine-gis-devel >= 26.8.10
-#TestRequires: smartmet-engine-querydata-devel >= 26.7.17
+#TestRequires: smartmet-engine-querydata-devel >= 26.8.24
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
 #TestRequires: smartmet-library-newbase-devel >= 26.7.14
 #TestRequires: smartmet-library-macgyver-devel >= 26.8.19
-#TestRequires: smartmet-library-spine-devel >= 26.8.19
+#TestRequires: smartmet-library-spine-devel >= 26.8.24
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.7.10
 #TestRequires: smartmet-engine-grid-test
@@ -144,7 +144,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.8.19
+#TestRequires: smartmet-engine-observation-devel >= 26.8.24
 %endif
 
 %description
@@ -173,6 +173,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Aug 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.24-1.fmi
+- Style sheets are now hashed by name, modification time and size instead of reading and hashing their contents, so ETag values of products using CSS change once
+- Resolved resource paths are cached, which removes up to four filesystem::exists calls per style sheet and up to ten per symbol from every hash value calculation
+- Model hash values are obtained without constructing a Q, and observation producers are recognized without rebuilding the set of station types
 * Sun Aug 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.23-1.fmi
 - GetMap no longer serves and caches a blank image when product generation fails; the
   failure is reported as a WMS exception instead

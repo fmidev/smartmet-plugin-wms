@@ -1063,9 +1063,9 @@ std::size_t NumberLayer::hash_value(const State& theState) const
 
     if (paraminfo.source != std::string("grid"))
     {
-      auto q = getModel(theState);
-      if (q)
-        Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
+      auto model_hash = getModelHashValue(theState);
+      if (model_hash)
+        Fmi::hash_combine(hash, *model_hash);
     }
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
