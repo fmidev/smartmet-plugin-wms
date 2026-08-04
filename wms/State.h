@@ -144,6 +144,7 @@ class State
 
   // Fetch CSS contents
   std::string getStyle(const std::string& theCSS) const;
+  std::size_t getStyleHash(const std::string& theCSS) const;
   std::map<std::string, std::string> getStyle(const std::string& theCSS,
                                               const std::string& theSelector) const;
 
@@ -226,6 +227,14 @@ class State
   bool isObservation(const std::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
 
+  // Hash value of the model getModel() would return, without constructing a Q.
+  // Used while calculating the ETag hash value of a product.
+  std::size_t getModelHashValue(const Engine::Querydata::Producer& theProducer) const;
+  std::size_t getModelHashValue(const Engine::Querydata::Producer& theProducer,
+                                const Fmi::DateTime& theOriginTime) const;
+  std::size_t getModelHashValue(const Engine::Querydata::Producer& theProducer,
+                                const Fmi::TimePeriod& theTimePeriod) const;
+
   // Set tile z/x/y when serving an OGC Tiles or WMTS request (for PMTiles passthrough)
   void setTileCoords(uint8_t z, uint32_t x, uint32_t y)
   {
@@ -263,6 +272,9 @@ class State
  private:
   Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;
+
+  // Model hash values of this request, keyed exactly as itsQCache
+  mutable std::map<Engine::Querydata::Producer, std::size_t> itsModelHashCache;
   mutable BezierCache itsBezierCache;
 
   // Names which have already been used for styling

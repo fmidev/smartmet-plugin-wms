@@ -34,6 +34,9 @@
 #include <spine/Reactor.h>
 #include <spine/SmartMetCache.h>
 #include <spine/SmartMetPlugin.h>
+#include <spine/Thread.h>
+#include <chrono>
+#include <map>
 #include <memory>
 #include <set>
 
@@ -99,6 +102,14 @@ class Plugin : public SmartMetPlugin
                                               const std::string& theCSS,
                                               bool theWmsFlag,
                                               const std::string& theSelector);
+  std::size_t getStyleHash(const std::string& theCustomer,
+                           const std::string& theCSS,
+                           bool theWmsFlag) const;
+  std::string searchFilePath(const std::string& theCustomer,
+                             const std::string& theSubDir,
+                             const std::string& theFileName,
+                             bool theWmsFlag,
+                             std::list<std::string>& theTestedPaths) const;
   std::string getFilter(const std::string& theCustomer,
                         const std::string& theName,
                         bool theWmsFlag) const;
@@ -205,6 +216,24 @@ class Plugin : public SmartMetPlugin
   // Cache files
   mutable Spine::FileCache itsFileCache;
   mutable Spine::JsonCache itsJsonCache;
+
+  // Cache of resolved resource paths. Resolving a path probes up to four
+  // candidate locations with filesystem::exists, and the ETag hash value of a
+  // product resolves the path of every style sheet and symbol it uses. The
+  // paths are revalidated at the same rate as the contents of the files
+  // themselves, hence a resource appearing in a higher priority location is
+  // used only after the revalidation interval has passed.
+  struct CachedPath
+  {
+    std::string path;
+    std::chrono::steady_clock::time_point checked;
+  };
+  mutable Spine::MutexType itsPathCacheMutex;
+  mutable std::map<std::string, CachedPath> itsPathCache;
+
+  // Matches the default revalidation interval of Spine::FileCache, so a path and
+  // the contents of the file behind it go stale at the same rate
+  const std::chrono::steady_clock::duration itsPathCacheMaxAge = std::chrono::seconds(10);
 
   // Style sheet cache
   Fmi::Cache::Cache<std::size_t, StyleSheet> itsStyleSheetCache;

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.7.16
+Version: 26.8.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -173,6 +173,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Aug  4 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.4-1.fmi
+- Style sheets are now hashed by name, modification time and size instead of reading and hashing their contents, so ETag values of products using CSS change once
+- Resolved resource paths are cached, which removes up to four filesystem::exists calls per style sheet and up to ten per symbol from every hash value calculation
+- Model hash values are obtained without constructing a Q, and observation producers are recognized without rebuilding the set of station types
 * Thu Jul 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.16-1.fmi
 - WMTS and OGC API - Tiles now expose time, reference time and elevation dimensions in GetCapabilities/collection metadata and honour them in tile requests
 * Tue Jul 14 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.14-2.fmi

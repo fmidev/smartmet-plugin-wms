@@ -898,7 +898,7 @@ std::size_t RasterLayer::hash_value(const State &theState) const
     auto hash = Layer::hash_value(theState);
 
     if (!theState.isObservation(paraminfo.producer) && (paraminfo.source != std::string("grid")))
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));

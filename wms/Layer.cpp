@@ -239,6 +239,60 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hash value of the required model data
+ *
+ * Mirrors getModel() above, but no Q is constructed: for ETag calculation only
+ * the identity of the data is needed. Returns zero for producers which are not
+ * served by the querydata engine, just as getModel() returns an empty Q.
+ */
+// ----------------------------------------------------------------------
+
+std::optional<std::size_t> Layer::getModelHashValue(const State& theState) const
+{
+  try
+  {
+    std::string model =
+        (paraminfo.producer ? *paraminfo.producer : theState.getConfig().defaultModel());
+
+    if (theState.isObservation(model))
+      return {};
+
+    if (paraminfo.source == std::string("grid"))
+      return {};
+
+    if (origintime)
+      return theState.getModelHashValue(model, *origintime);
+
+    if (!hasValidTime())
+      return theState.getModelHashValue(model);
+
+    return theState.getModelHashValue(model, getValidTimePeriod());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to get the hash value of the required model data!");
+  }
+}
+
+std::size_t Layer::getModelHashValueOrEmpty(const State& theState) const
+{
+  try
+  {
+    auto hash = getModelHashValue(theState);
+    if (hash)
+      return *hash;
+
+    // The hash value getModel() would produce for a producer of its own
+    return Engine::Querydata::hash_value(Engine::Querydata::Q());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to get the hash value of the required model data!");
+  }
+}
+
 void Layer::validateGridOrigintime(const State& theState) const
 {
   try

@@ -623,7 +623,7 @@ std::size_t MapLayer::hash_value(const State& theState) const
 
     // Add data hash
     if (styles && !theState.isObservation(paraminfo.producer))
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
 
     return hash;
   }
