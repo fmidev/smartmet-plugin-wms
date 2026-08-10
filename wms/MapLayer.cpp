@@ -5,6 +5,7 @@
 #include "JsonTools.h"
 #include "Layer.h"
 #include "MapboxVectorTile.h"
+#include "PostGISLayerBase.h"
 #include "Select.h"
 #include "State.h"
 #include "StyleSheet.h"
@@ -148,14 +149,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       geom = gis.getShape(&crs, map.options);
 
       if (!geom)
-      {
-        std::string msg =
-            "Requested map data is empty: '" + map.options.schema + '.' + map.options.table + "'";
-        if (map.options.minarea)
-          msg += " Is the minarea limit too large?";
-
-        throw Fmi::Exception(BCP, msg);
-      }
+        throw Fmi::Exception(BCP, emptyMapMessage(map.options));
     }
 
     // Clip it
@@ -368,13 +362,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
       for (const auto& feature : features)
       {
         if (!feature->geom || feature->geom->IsEmpty() != 0)
-        {
-          std::string msg =
-              "Requested map data is empty: '" + map.options.schema + '.' + map.options.table + "'";
-          if (map.options.minarea)
-            msg += " Is the minarea limit too large?";
-          throw Fmi::Exception(BCP, msg);
-        }
+          throw Fmi::Exception(BCP, emptyMapMessage(map.options));
       }
     }
 

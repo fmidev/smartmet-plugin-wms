@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.7.21
+Version: 26.8.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -173,6 +173,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Aug 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.10-1.fmi
+- Stopped blaming minarea for every empty map fetch. The four 'Requested map data is empty' sites appended 'Is the minarea limit too large?' whenever minarea was set, regardless of why the geometry was missing, which sent people to inspect a product configuration that was fine. The message now names the filters actually in effect and states the alternative -- that the query matched no rows -- and the four copies are one shared emptyMapMessage().
 * Tue Jul 21 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.7.21-1.fmi
 - Repackage due to ABI changes
 
