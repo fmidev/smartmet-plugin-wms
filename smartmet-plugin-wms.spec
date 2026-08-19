@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.8.19
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Aug 19 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.19-2.fmi
+- Flash layers now pass the tile bounding box to the observation engine, which previously fetched every stroke of the requested interval from the whole cache for every tile and discarded the ones outside the tile here
+
 * Wed Aug 19 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.19-1.fmi
 - WMTS GetCapabilities now publishes real style identifiers instead of empty ones
 - OGC API - Tiles collection metadata reports a usable temporal extent for interval dimensions, plus resolution and discrete values
