@@ -1,0 +1,1 @@
+GET /wmts/1.0.0/ely:elymap/default/20080805T0600/20080805T0631/0/EPSG:4326/5/4/36.png HTTP/1.0

@@ -276,12 +276,29 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
         if (bb.Exists("north_bound_latitude"))  layer["bbox_max_y"] = bb.At("north_bound_latitude");
       }
 
-      // Styles — carry over from WMS layer, ensuring at least 'default' exists
+      // Styles — carry over from WMS layer, ensuring at least 'default' exists.
+      // The WMS capabilities hash names a style with "name" (<Name> in WMS
+      // 1.3.0) but the WMTS template reads "identifier" (<ows:Identifier>), so
+      // the key has to be translated. Copying the hash verbatim published an
+      // empty <ows:Identifier> for every style, leaving clients no style name
+      // to put in the ResourceURL {Style} segment.
       if (wl.Exists("style"))
       {
-        layer["styles"] = wl.At("style");
+        CTPP::CDT& wms_styles = wl.At("style");
+        std::size_t si = 0;
+        for (std::size_t i = 0; i < wms_styles.Size(); ++i)
+        {
+          CTPP::CDT& src = wms_styles[i];
+          CTPP::CDT style(CTPP::CDT::HASH_VAL);
+          if (src.Exists("name")) style["identifier"] = src.At("name");
+          if (src.Exists("title")) style["title"] = src.At("title");
+          if (src.Exists("abstract")) style["abstract"] = src.At("abstract");
+          if (src.Exists("legend_url")) style["legend_url"] = src.At("legend_url");
+          layer["styles"][si++] = style;
+        }
       }
-      else
+
+      if (!layer.Exists("styles"))
       {
         CTPP::CDT default_style(CTPP::CDT::HASH_VAL);
         default_style["identifier"] = "default";
@@ -663,6 +680,12 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     {
       dimState.emplace(theState.getPlugin(), thisRequest);
       dimState->setType(demimetype(format));
+      // A freshly constructed State defaults to useWms(false), which resolves
+      // CSS, markers, patterns, filters and gradients under the Dali root
+      // instead of the WMS root. Carry the flag over from the State the plugin
+      // configured for this request, or every product referencing a CSS file
+      // fails with "Failed to find CSS file" the moment a dimension is given.
+      dimState->useWms(theState.useWms());
     }
     Dali::State& renderState = dimState ? *dimState : theState;
 

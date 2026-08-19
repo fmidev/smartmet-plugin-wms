@@ -589,31 +589,79 @@ QueryStatus Handler::handleCollection(const std::string& base,
       };
 
       // Temporal extent (OGC API - Common Part 2): interval [[start, end]].
+      //
+      // A WMS time dimension is a comma separated list whose items are either
+      // instants or ISO 8601 "start/end/period" ranges. Taking the first and
+      // last item verbatim only works for a list of instants: for a single
+      // range it published interval [[range, range]], which no client can
+      // parse. Split the endpoints out of the range, and additionally report
+      // the discrete instants (as "vertical" already does) and the period --
+      // the interval alone gives a client no cadence to step a time slider by.
       if (wl.Exists("time_dimension"))
       {
         CTPP::CDT& td = wl.At("time_dimension");
-        if (td.GetType() == CTPP::CDT::ARRAY_VAL)
-        {
-          for (std::size_t i = 0; i < td.Size(); ++i)
+
+        auto emitTime = [&](CTPP::CDT& e) {
+          if (!e.Exists("name") || e.At("name").GetString() != "time" || !e.Exists("value"))
+            return;
+
+          auto items = splitCsv(e.At("value").GetString());
+          if (items.empty())
+            return;
+
+          auto slashParts = [](const std::string& item) {
+            std::vector<std::string> parts;
+            boost::algorithm::split(parts, item, boost::is_any_of("/"));
+            return parts;
+          };
+
+          std::vector<std::string> instants;
+          std::string resolution;
+          bool has_range = false;
+
+          for (const auto& item : items)
           {
-            CTPP::CDT& e = td[i];
-            if (e.Exists("name") && e.At("name").GetString() == "time" && e.Exists("value"))
+            auto parts = slashParts(item);
+            if (parts.size() >= 2)
             {
-              auto times = splitCsv(e.At("value").GetString());
-              if (!times.empty())
-              {
-                Json::Value pair(Json::arrayValue);
-                pair.append(times.front());
-                pair.append(times.back());
-                Json::Value interval(Json::arrayValue);
-                interval.append(pair);
-                doc["extent"]["temporal"]["interval"] = interval;
-                doc["extent"]["temporal"]["trs"] =
-                    "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
-              }
+              has_range = true;
+              if (parts.size() >= 3 && resolution.empty())
+                resolution = parts[2];
             }
+            else
+              instants.push_back(item);
           }
-        }
+
+          const auto first_parts = slashParts(items.front());
+          const auto last_parts = slashParts(items.back());
+
+          Json::Value pair(Json::arrayValue);
+          pair.append(first_parts.front());
+          pair.append(last_parts.size() >= 2 ? last_parts[1] : last_parts.front());
+          Json::Value interval(Json::arrayValue);
+          interval.append(pair);
+          doc["extent"]["temporal"]["interval"] = interval;
+          doc["extent"]["temporal"]["trs"] =
+              "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
+
+          // Only a pure list of instants can be enumerated exactly; a range is
+          // described by its period instead.
+          if (!has_range && !instants.empty())
+          {
+            Json::Value values(Json::arrayValue);
+            for (const auto& v : instants)
+              values.append(v);
+            doc["extent"]["temporal"]["values"] = values;
+          }
+          if (!resolution.empty())
+            doc["extent"]["temporal"]["resolution"] = resolution;
+        };
+
+        if (td.GetType() == CTPP::CDT::ARRAY_VAL)
+          for (std::size_t i = 0; i < td.Size(); ++i)
+            emitTime(td[i]);
+        else if (td.GetType() == CTPP::CDT::HASH_VAL)
+          emitTime(td);
       }
 
       // Vertical (elevation) extent — discrete levels the layer offers.
@@ -1184,6 +1232,13 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     {
       dimState.emplace(theState.getPlugin(), thisRequest);
       dimState->setType(demimetype(format));
+      // A freshly constructed State defaults to useWms(false), which resolves
+      // CSS, markers, patterns, filters and gradients under the Dali root
+      // instead of the WMS root. Carry the flag over from the State the plugin
+      // configured for this request, or a tile that renders fine without
+      // dimensions fails with "Failed to find CSS file" once datetime,
+      // elevation or reference_time is added.
+      dimState->useWms(theState.useWms());
     }
     Dali::State& renderState = dimState ? *dimState : theState;
 
