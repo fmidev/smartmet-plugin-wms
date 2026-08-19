@@ -93,16 +93,14 @@ PointValues read_flash_observations(const State& state,
     for (const auto& extraparam : iparams)
       settings.parameters.push_back(TS::makeParameter(extraparam));
 
-    // Generate the coordinates for the symbols
+    // Restrict the search to the drawn area. Flash observations are not tied to stations, so
+    // the bounding box must be given in settings.boundingBox for the observation engine to
+    // filter the strokes; translateToFMISID would merely resolve station identifiers which
+    // the flash queries ignore.
 
-    Engine::Querydata::Q q;
-    const bool forecast_mode = false;
-    auto points = positions.getPoints(q, crs, box, forecast_mode, state);
+    settings.boundingBox = layer.getClipBoundingBox(box, crs);
 
     auto& obsengine = state.getObsEngine();
-    Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
-    settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
 
     auto result = obsengine.values(settings);
 
