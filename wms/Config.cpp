@@ -26,21 +26,6 @@ namespace Dali
 {
 namespace
 {
-std::size_t parse_size(const libconfig::Setting& setting, const char* name)
-{
-  switch (setting.getType())
-  {
-    case libconfig::Setting::TypeInt:
-      return static_cast<unsigned int>(setting);
-    case libconfig::Setting::TypeInt64:
-      return static_cast<unsigned long>(setting);
-    case libconfig::Setting::TypeString:
-      return Fmi::stosz(static_cast<const char*>(setting));
-    default:
-      throw Fmi::Exception(BCP, "Invalid type for size setting").addParameter("Setting", name);
-  }
-}
-
 // Parse a thread count given as an absolute number or as "NN%" of the number of cores.
 // The result is always clamped to the number of cores (never more threads than cores).
 unsigned int parse_threads(const std::string& str)
@@ -133,13 +118,10 @@ Config::Config(const string& configfile)
 
     itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
 
-    const char* memory_bytes = "cache.memory_bytes";
-    if (itsConfig.exists(memory_bytes))
-      itsMaxMemoryCacheSize = parse_size(itsConfig.lookup(memory_bytes), memory_bytes);
-
-    const char* filesystem_bytes = "cache.filesystem_bytes";
-    if (itsConfig.exists(filesystem_bytes))
-      itsMaxFilesystemCacheSize = parse_size(itsConfig.lookup(filesystem_bytes), filesystem_bytes);
+    itsMaxMemoryCacheSize =
+        Spine::lookupSizeSetting(itsConfig, "cache.memory_bytes", itsMaxMemoryCacheSize);
+    itsMaxFilesystemCacheSize =
+        Spine::lookupSizeSetting(itsConfig, "cache.filesystem_bytes", itsMaxFilesystemCacheSize);
 
     itsConfig.lookupValue("max_image_size", itsMaxImageSize);
     itsConfig.lookupValue("wms.max_layers", itsMaxWMSLayers);

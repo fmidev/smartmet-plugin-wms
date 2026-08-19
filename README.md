@@ -176,13 +176,18 @@ The WMS plugin uses extensive caching which is defined in `cache` block:
 ```
 cache =
 {
-  memory_bytes            = 4294967296L; # 4 GB
-  filesystem_bytes        = 2147483648L; # 2 GB
+  memory_bytes            = "4G";
+  filesystem_bytes        = "2G";
   directory               = "/var/smartmet/imagecache";
 };
 ```
 
 The example cache uses 4 GB of system memory and 2 GB of file cache at `/var/smartmet/imagecache`.
+
+The sizes may also be given as plain integers (`4294967296L`), but the string form is
+easier to read. The unit is optional and case insensitive, `B`, `K`, `M`, `G`, `T` and `P`
+are accepted both alone and followed by `B` or `iB`, and all units are binary multiples,
+so `"4G"`, `"4GB"` and `"4 GiB"` all mean the same thing.
 
 ### Layer configuration and directory structure
 
