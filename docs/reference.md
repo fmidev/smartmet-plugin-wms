@@ -5368,8 +5368,12 @@ Controls the image cache used for binary formats (PNG, WebP, PDF).
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `cache.directory` | – | Filesystem cache directory path. |
-| `cache.memory_bytes` | – | Maximum memory cache size in bytes (also accepts strings like `"100M"`). |
+| `cache.memory_bytes` | – | Maximum memory cache size in bytes. |
 | `cache.filesystem_bytes` | – | Maximum filesystem cache size in bytes. |
+
+Both sizes may be given either as an integer (`104857600L`) or as a string with an optional
+unit (`"100M"`, `"100MB"`, `"100 MiB"`).  The unit is case insensitive and all units are
+binary multiples, so `"1KB"` and `"1KiB"` both mean 1024 bytes.
 
 ### `templates` group
 

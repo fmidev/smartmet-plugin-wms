@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.8.19
-Release: 2%{?dist}.fmi
+Version: 26.8.21
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.6.27
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 26.7.14
 BuildRequires: smartmet-library-macgyver-devel >= 26.7.9
-BuildRequires: smartmet-library-spine-devel >= 26.7.16
+BuildRequires: smartmet-library-spine-devel >= 26.8.19
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
@@ -83,7 +83,7 @@ Requires: smartmet-library-grid-files >= 26.7.14
 Requires: smartmet-library-gis >= 26.7.16
 Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.7.9
-Requires: smartmet-library-spine >= 26.7.16
+Requires: smartmet-library-spine >= 26.8.19
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.6.27
 %if %{with authentication}
@@ -96,7 +96,7 @@ Requires: smartmet-engine-gis >= 26.6.25
 Requires: smartmet-engine-grid >= 26.7.10
 Requires: smartmet-engine-geonames >= 26.6.26
 Requires: smartmet-server >= 26.7.14
-Requires: smartmet-library-spine >= 26.7.16
+Requires: smartmet-library-spine >= 26.8.19
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -127,7 +127,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
 #TestRequires: smartmet-library-newbase-devel >= 26.7.14
 #TestRequires: smartmet-library-macgyver-devel >= 26.7.9
-#TestRequires: smartmet-library-spine-devel >= 26.7.16
+#TestRequires: smartmet-library-spine-devel >= 26.8.19
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.7.10
 #TestRequires: smartmet-engine-grid-test
@@ -173,19 +173,20 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Aug 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.21-1.fmi
+- The cache sizes are now read with Spine::lookupSizeSetting(), so cache.memory_bytes
+  and cache.filesystem_bytes accept readable values such as "32G" or "512MB" in
+  addition to plain integers
 * Wed Aug 19 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.19-2.fmi
 - Flash layers now pass the tile bounding box to the observation engine, which previously fetched every stroke of the requested interval from the whole cache for every tile and discarded the ones outside the tile here
-
 * Wed Aug 19 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.19-1.fmi
 - WMTS GetCapabilities now publishes real style identifiers instead of empty ones
 - OGC API - Tiles collection metadata reports a usable temporal extent for interval dimensions, plus resolution and discrete values
 - Fixed WMTS/OGC-Tiles dimension requests resolving CSS and other resources from the Dali root instead of the WMS root
-
 * Mon Aug 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.10-1.fmi
 - Stopped blaming minarea for every empty map fetch. The four 'Requested map data is empty' sites appended 'Is the minarea limit too large?' whenever minarea was set, regardless of why the geometry was missing, which sent people to inspect a product configuration that was fine. The message now names the filters actually in effect and states the alternative -- that the query matched no rows -- and the four copies are one shared emptyMapMessage().
 * Tue Jul 21 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.7.21-1.fmi
 - Repackage due to ABI changes
-
 * Thu Jul 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.16-2.fmi
 - Updated RPM dependencies, Spine must be the latest one
 * Thu Jul 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.16-1.fmi
