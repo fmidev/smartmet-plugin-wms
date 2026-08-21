@@ -31,22 +31,22 @@ BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.6.27
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 26.7.14
-BuildRequires: smartmet-library-macgyver-devel >= 26.7.9
+BuildRequires: smartmet-library-macgyver-devel >= 26.8.19
 BuildRequires: smartmet-library-spine-devel >= 26.8.19
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.7.13
+BuildRequires: smartmet-engine-observation-devel >= 26.8.19
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.7.9
-BuildRequires: smartmet-engine-gis-devel >= 26.6.25
+BuildRequires: smartmet-engine-gis-devel >= 26.8.10
 BuildRequires: smartmet-engine-grid-devel >= 26.7.10
-BuildRequires: smartmet-engine-geonames-devel >= 26.6.26
-BuildRequires: smartmet-engine-querydata-devel >= 26.6.26
-BuildRequires: smartmet-engine-contour-devel >= 26.6.24
-BuildRequires: smartmet-library-gis-devel >= 26.7.16
+BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
+BuildRequires: smartmet-engine-querydata-devel >= 26.7.17
+BuildRequires: smartmet-engine-contour-devel >= 26.8.3
+BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -80,9 +80,9 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
 Requires: smartmet-library-grid-content >= 26.7.12
 Requires: smartmet-library-grid-files >= 26.7.14
-Requires: smartmet-library-gis >= 26.7.16
+Requires: smartmet-library-gis >= 26.8.10
 Requires: smartmet-library-trax >= 26.6.26
-Requires: smartmet-library-macgyver >= 26.7.9
+Requires: smartmet-library-macgyver >= 26.8.19
 Requires: smartmet-library-spine >= 26.8.19
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.6.27
@@ -90,12 +90,12 @@ Requires: smartmet-library-giza >= 26.6.27
 Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 Requires: smartmet-engine-avi >= 26.7.9
-Requires: smartmet-engine-querydata >= 26.6.26
-Requires: smartmet-engine-contour >= 26.6.24
-Requires: smartmet-engine-gis >= 26.6.25
+Requires: smartmet-engine-querydata >= 26.7.17
+Requires: smartmet-engine-contour >= 26.8.3
+Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
-Requires: smartmet-engine-geonames >= 26.6.26
-Requires: smartmet-server >= 26.7.14
+Requires: smartmet-engine-geonames >= 26.7.31
+Requires: smartmet-server >= 26.8.17
 Requires: smartmet-library-spine >= 26.8.19
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
@@ -118,15 +118,15 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
 #TestRequires: smartmet-engine-avi-devel >= 26.7.9
-#TestRequires: smartmet-engine-contour-devel >= 26.6.24
-#TestRequires: smartmet-engine-geonames-devel >= 26.6.26
-#TestRequires: smartmet-engine-gis-devel >= 26.6.25
-#TestRequires: smartmet-engine-querydata-devel >= 26.6.26
+#TestRequires: smartmet-engine-contour-devel >= 26.8.3
+#TestRequires: smartmet-engine-geonames-devel >= 26.7.31
+#TestRequires: smartmet-engine-gis-devel >= 26.8.10
+#TestRequires: smartmet-engine-querydata-devel >= 26.7.17
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
 #TestRequires: smartmet-library-newbase-devel >= 26.7.14
-#TestRequires: smartmet-library-macgyver-devel >= 26.7.9
+#TestRequires: smartmet-library-macgyver-devel >= 26.8.19
 #TestRequires: smartmet-library-spine-devel >= 26.8.19
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.7.10
@@ -144,7 +144,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.7.13
+#TestRequires: smartmet-engine-observation-devel >= 26.8.19
 %endif
 
 %description
