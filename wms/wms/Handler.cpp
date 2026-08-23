@@ -1193,14 +1193,13 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
     }
     catch (...)
     {
-      Fmi::Exception e(BCP, "Failed to generate product", nullptr);
-      e.addParameter("URI", theRequest.getURI());
-      e.addParameter("ClientIP", theRequest.getClientIP());
-      e.addParameter("HostName", Spine::HostInfo::getHostName(theRequest.getClientIP()));
-      const bool check_token = true;
-      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
-      e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
-      e.printError();
+      // Do not continue with a half-built CDT: Views::generate() only appends a view after
+      // its layers have been generated, so a failure here leaves 'views' empty and we would
+      // silently serve - and cache - a blank image with status 200.
+      Fmi::Exception ex(BCP, "Failed to generate product", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, theRequest, theResponse);
     }
 
     // Build the template
@@ -1269,6 +1268,12 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
         }
         catch (...)
         {
+          // Same reasoning as the non-animated branch: a partially built CDT would render
+          // an empty frame, and the frame count is then wrong for the whole animation.
+          Fmi::Exception ex(BCP, "Failed to generate product", nullptr);
+          if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+            ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+          return handleWmsException(ex, theState, theRequest, theResponse);
         }
 
         std::string output;

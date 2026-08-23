@@ -10,7 +10,7 @@ The WMS/Dali plugin for SmartMet Server. It implements OGC Web Map Service (WMS 
 
 ```bash
 make                    # Build wms.so plugin
-make test               # Run all ~488 integration tests (needs Redis + test databases)
+make test               # Run all ~520 integration tests (needs Redis + test databases)
 make test-dali          # Run only Dali tests (non-WMS/WMTS/tiles)
 make test-wms           # Run only WMS tests
 make test-wmts          # Run only WMTS tests
@@ -20,15 +20,20 @@ make format             # clang-format all source files
 
 ### Running specific tests
 
-Override the test variable for the relevant group:
+Override the test variable for the relevant group, and use that group's target. The plain
+`test` target runs `TestRunner.sh` with no arguments, so it ignores these variables and
+silently runs the whole suite -- only `test-dali`, `test-wms`, `test-wmts` and `test-tiles`
+consume them.
 
 ```bash
 cd test
-make test DALI_TESTS="input/autoclass.get"
-make test WMS_TESTS="input/wms_getcapabilities.get"
-make test WMTS_TESTS="input/wmts_getcapabilities.get"
-make test TILES_TESTS="input/tiles_landing.get"
+make test-dali  DALI_TESTS="input/autoclass.get"
+make test-wms   WMS_TESTS="input/wms_getcapabilities.get"
+make test-wmts  WMTS_TESTS="input/wmts_getcapabilities.get"
+make test-tiles TILES_TESTS="input/tiles_landing.get"
 ```
+
+All targets also work from the plugin root, which delegates to `test/`.
 
 ### Accepting changed test output
 

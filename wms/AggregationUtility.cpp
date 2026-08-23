@@ -145,33 +145,35 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
 {
   try
   {
-    TS::TimeSeriesVectorPtr ret(new TS::TimeSeriesVector());
-    unsigned int obs_result_field_index = 0;
-    TS::Value missing_value = TS::None();
+    // The observation engine returns one result column per requested parameter, and the
+    // caller of aggregate_data() reads the final result back by that same parameter
+    // position (fmisid_index, and the stationlon/stationlat indices it recorded when
+    // building the parameter list). Every column therefore has to stay at its own index,
+    // an empty one included. Compacting the vector - skipping empty columns while a
+    // separate counter did not advance - shifted every later column and handed the caller
+    // a different parameter's data, and the source column was not range checked at all.
+    const auto& result = *observation_result;
 
-    // Iterate parameters and store values for all parameters
-    // into ret data structure
-    for (const auto& parameter : parameters)
+    auto ret = std::make_shared<TS::TimeSeriesVector>(parameters.size(), TS::TimeSeries());
+
+    for (std::size_t i = 0; i < parameters.size(); i++)
     {
-      const auto& paramname = parameter.name();
-      bool is_location_p = is_location_parameter(paramname);
+      const auto& parameter = parameters[i];
 
-      // add data fields fetched from observation
-      const auto& result = *observation_result;
-      if (result[obs_result_field_index].empty())
+      // The index is the parameter position whether or not there is data for it
+      parameterResultIndexes.insert(std::make_pair(TS::get_parameter_id(parameter), i));
+
+      if (i >= result.size() || result[i].empty())
         continue;
 
-      auto result_at_index = result[obs_result_field_index];
+      auto result_at_index = result[i];
 
       // If time location parameter contains missing values in some timesteps,
       // replace them with existing values to keep aggregation working
-      if (is_location_p)
+      if (is_location_parameter(parameter.name()))
         fill_missing_location_params(result_at_index);
 
-      ret->push_back(result_at_index);
-      std::string pname_plus_snumber = TS::get_parameter_id(parameter);
-      parameterResultIndexes.insert(std::make_pair(pname_plus_snumber, ret->size() - 1));
-      obs_result_field_index++;
+      (*ret)[i] = result_at_index;
     }
 
     return ret;
@@ -189,7 +191,14 @@ TS::TimeSeriesVectorPtr do_aggregation(
 {
   try
   {
-    TS::TimeSeriesVectorPtr aggregated_observation_result(new TS::TimeSeriesVector());
+    // An aggregated column replaces the raw one at the same index. Appending instead
+    // reordered the columns whenever a parameter was missing from the index map or its
+    // aggregation produced nothing, and with more parameter functions than result columns
+    // it produced a longer vector than the caller had allocated. Columns nobody aggregates
+    // pass through unchanged, so the result always has one column per input column.
+    auto aggregated_observation_result = std::make_shared<TS::TimeSeriesVector>(
+        *observation_result);
+
     // iterate parameters and do aggregation
     for (const auto& item : paramFuncs)
     {
@@ -201,22 +210,22 @@ TS::TimeSeriesVectorPtr do_aggregation(
         continue;
 
       unsigned int resultIndex = parameterResultIndexes.at(paramname);
-      TS::TimeSeries ts = (*observation_result)[resultIndex];
+      if (resultIndex >= observation_result->size())
+        continue;
+
       TS::DataFunctions pfunc = item.functions;
-      TS::TimeSeriesPtr tsptr;
-      // If inner function exists aggregation happens
-      if (pfunc.innerFunction.exists())
-      {
-        tsptr = TS::Aggregator::aggregate(ts, pfunc, ts.getTimes());
-        if (tsptr->empty())
-          continue;
-      }
-      else
-      {
-        tsptr = std::make_shared<TS::TimeSeries>();
-        *tsptr = ts;
-      }
-      aggregated_observation_result->push_back(*tsptr);
+
+      // Without an inner function the column is already in place as read
+      if (!pfunc.innerFunction.exists())
+        continue;
+
+      TS::TimeSeries ts = (*observation_result)[resultIndex];
+      auto tsptr = TS::Aggregator::aggregate(ts, pfunc, ts.getTimes());
+
+      // An aggregation that produced nothing must not leave the raw values in place, or
+      // they would be reported as if they had been aggregated
+      (*aggregated_observation_result)[resultIndex] =
+          (tsptr->empty() ? TS::TimeSeries() : *tsptr);
     }
     return aggregated_observation_result;
   }
@@ -281,8 +290,10 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
       // Remove redundant timesteps, only one timstep is valid for a map
       auto final_data = TS::erase_redundant_timesteps(aggregated_data, *tlist);
 
-      // Add aggregated data into ret data structure
-      for (unsigned int i = 0; i < final_data->size(); i++)
+      // Add aggregated data into ret data structure. Both vectors are one column per
+      // requested parameter, so the indices match; the guard is for safety only, since
+      // ret->at() would otherwise throw out_of_range and fail the whole layer.
+      for (unsigned int i = 0; i < final_data->size() && i < ret->size(); i++)
       {
         auto& destination_ts = ret->at(i);
         const auto& source_ts = final_data->at(i);

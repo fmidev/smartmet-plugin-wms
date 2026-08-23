@@ -274,6 +274,11 @@ const Fmi::SpatialReference& Projection::getCRS() const
   try
   {
     prepareCRS();
+    if (!ogr_crs)
+      throw Fmi::Exception(BCP,
+                           "Projection CRS has not been established yet: the image size is "
+                           "still to be taken from the data (projection.size is set, but "
+                           "xsize/ysize are not, and update() has not been called)");
     return *ogr_crs;
   }
   catch (...)
@@ -293,6 +298,11 @@ const Fmi::Box& Projection::getBox() const
   try
   {
     prepareCRS();
+    if (!box)
+      throw Fmi::Exception(BCP,
+                           "Projection bounding box has not been established yet: the image "
+                           "size is still to be taken from the data (projection.size is set, "
+                           "but xsize/ysize are not, and update() has not been called)");
     return *box;
   }
   catch (...)
@@ -311,7 +321,10 @@ void Projection::prepareCRS() const
 {
   try
   {
-    // Done already?
+    // Done already? Note that ogr_crs and box are published together at the end of this
+    // function, so a non-null ogr_crs implies a non-null box. Publishing them as they are
+    // built would let a throw in between leave ogr_crs set and box null, and this guard
+    // would then hide that state from every later call - getBox() would dereference null.
     if (ogr_crs)
       return;
 
@@ -356,8 +369,9 @@ void Projection::prepareCRS() const
       throw Fmi::Exception(BCP,
                            "CRS xsize and ysize are required when a centered bounding box is used");
 
-    // Create the CRS
-    ogr_crs = std::make_shared<Fmi::SpatialReference>(*crs);
+    // Create the CRS and the box into locals; they are published only once both exist
+    auto new_ogr_crs = std::make_shared<Fmi::SpatialReference>(*crs);
+    std::shared_ptr<Fmi::Box> new_box;
 
     if (xsize && *xsize <= 0)
       throw Fmi::Exception(BCP, "Projection xsize must be positive");
@@ -386,7 +400,7 @@ void Projection::prepareCRS() const
       if (bboxcrs)
       {
         // Reproject corners coordinates from bboxcrs to crs
-        Fmi::CoordinateTransformation transformation(*bboxcrs, *ogr_crs);
+        Fmi::CoordinateTransformation transformation(*bboxcrs, *new_ogr_crs);
         transformation.transform(XMIN, YMIN);
         transformation.transform(XMAX, YMAX);
 
@@ -423,20 +437,20 @@ void Projection::prepareCRS() const
       {
         // Preserve aspect by calculating xsize
         int w = boost::numeric_cast<int>((*ysize) * (XMAX - XMIN) / (YMAX - YMIN));
-        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
+        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
       }
       else if (!ysize)
       {
         // Preserve aspect by calculating ysize
         int h = boost::numeric_cast<int>((*xsize) * (YMAX - YMIN) / (XMAX - XMIN));
-        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
+        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
       }
       else
       {
-        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
 
-      if (ogr_crs->isGeographic() != 0)
+      if (new_ogr_crs->isGeographic() != 0)
       {
         // Substract equations 5 and 4, subsititute equation 3 and solve resolution
         double pi = boost::math::constants::pi<double>();
@@ -464,11 +478,11 @@ void Projection::prepareCRS() const
       {
         // Reproject center coordinates from latlon/bboxcrs to crs
         Fmi::CoordinateTransformation transformation(latlon_center ? "WGS84" : bboxcrs->c_str(),
-                                                     *ogr_crs);
+                                                     *new_ogr_crs);
         transformation.transform(CX, CY);
       }
 
-      if (ogr_crs->isGeographic() != 0)
+      if (new_ogr_crs->isGeographic() != 0)
       {
         double pi = boost::math::constants::pi<double>();
         double circumference = 2 * pi * 6371.220;
@@ -483,7 +497,7 @@ void Projection::prepareCRS() const
         XMIN = CX - dx;
         XMAX = CX + dx;
 
-        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
       else
       {
@@ -491,7 +505,7 @@ void Projection::prepareCRS() const
         XMAX = CX + (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 2.
         YMIN = CY - (*ysize) / 2.0 * (*resolution) * 1000;
         YMAX = CY + (*ysize) / 2.0 * (*resolution) * 1000;
-        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
     }
 
@@ -523,7 +537,7 @@ void Projection::prepareCRS() const
 
     // WGS84 latlon corners calculated from world xy coordinates
 
-    Fmi::CoordinateTransformation transformation(*ogr_crs, "WGS84");
+    Fmi::CoordinateTransformation transformation(*new_ogr_crs, "WGS84");
 
     // Calculate bottom left and top right coordinates
 
@@ -532,6 +546,16 @@ void Projection::prepareCRS() const
 
     transformation.transform(XMAX, YMAX);
     itsTopRight = NFmiPoint(XMAX, YMAX);
+
+    // Every branch above assigns new_box; check it anyway so that the invariant relied upon
+    // by the guard at the top of this function cannot be broken by a later edit.
+    if (!new_box)
+      throw Fmi::Exception(BCP, "Failed to establish the projection bounding box");
+
+    // Everything succeeded: publish the fully built state. Callers observe either the
+    // unprepared state or a complete one, never a half-initialized projection.
+    ogr_crs = new_ogr_crs;
+    box = new_box;
 
 #if 0
     std::cerr << fmt::format(

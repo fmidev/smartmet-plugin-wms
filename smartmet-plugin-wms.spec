@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.8.21
+Version: 26.8.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -173,6 +173,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Aug 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.23-1.fmi
+- GetMap no longer serves and caches a blank image when product generation fails; the
+  failure is reported as a WMS exception instead
+- Projection now publishes its spatial reference and bounding box together, so a failure
+  while building them can no longer leave a half-initialized projection behind that later
+  dereferences a null bounding box
+- Aggregated observation results keep one column per requested parameter. An empty column
+  used to be dropped, which shifted every later column and returned a different parameter's
+  values to the caller, and a surplus parameter function could produce more columns than
+  were allocated
+- Observation layers keep the parameter function list aligned with the requested
+  parameters, removing a latent column mismatch on the aggregation path
 * Fri Aug 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.21-1.fmi
 - The cache sizes are now read with Spine::lookupSizeSetting(), so cache.memory_bytes
   and cache.filesystem_bytes accept readable values such as "32G" or "512MB" in
