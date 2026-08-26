@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.8.24
+Version: 26.8.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -95,7 +95,7 @@ Requires: smartmet-engine-contour >= 26.8.3
 Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
 Requires: smartmet-engine-geonames >= 26.7.31
-Requires: smartmet-server >= 26.8.17
+Requires: smartmet-server >= 26.8.21
 Requires: smartmet-library-spine >= 26.8.24
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
-#TestRequires: smartmet-library-newbase-devel >= 26.7.14
+#TestRequires: smartmet-library-newbase-devel >= 26.7.18
 #TestRequires: smartmet-library-macgyver-devel >= 26.8.19
 #TestRequires: smartmet-library-spine-devel >= 26.8.24
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
@@ -173,6 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-1.fmi
+- QEngine ABI changed
+
 * Mon Aug 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.24-1.fmi
 - Style sheets are now hashed by name, modification time and size instead of reading and hashing their contents, so ETag values of products using CSS change once
 - Resolved resource paths are cached, which removes up to four filesystem::exists calls per style sheet and up to ten per symbol from every hash value calculation
