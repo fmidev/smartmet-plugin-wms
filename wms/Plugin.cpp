@@ -958,6 +958,9 @@ void Plugin::init()
     auto wmtsConfig = std::make_unique<WMTS::Config>(itsConfig, *itsWMSConfig);
     itsWMTSHandler = std::make_unique<WMTS::Handler>(itsConfig);
     itsWMTSHandler->init(std::move(wmtsConfig));
+    // WMTS GetFeatureInfo is translated into WMS vocabulary and delegated to
+    // the WMS handler, so both services share one feature-info implementation.
+    itsWMTSHandler->setWMSHandler(itsWMSHandler.get());
 
     // Initialize OGC API - Tiles handler — shares layer registry with WMS via itsWMSConfig
     auto tilesConfig = std::make_unique<Tiles::Config>(itsConfig, *itsWMSConfig);

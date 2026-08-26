@@ -30,6 +30,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -64,6 +66,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/ely:elymap/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/ely:elymap/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/ely:elymap/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>ELY map</ows:Title>
@@ -81,6 +89,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -115,6 +125,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/ely:wmsmap/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/ely:wmsmap/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/ely:wmsmap/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Animation demo</ows:Title>
@@ -132,6 +148,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -151,6 +169,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind animation demo 1</ows:Title>
@@ -168,6 +192,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -187,6 +213,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind and rain animation demo 1</ows:Title>
@@ -204,6 +236,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -223,6 +257,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind and rain animation demo 1</ows:Title>
@@ -240,6 +280,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -259,6 +301,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Rain animation demo 4</ows:Title>
@@ -276,6 +324,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -295,6 +345,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:animation_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature datatile</ows:Title>
@@ -313,6 +369,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -332,6 +390,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:datatile_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:datatile_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:datatile_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -349,6 +413,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -368,6 +434,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:precipitation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:precipitation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:precipitation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -385,6 +457,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -404,6 +478,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:precipitation_kgm2_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:precipitation_kgm2_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:precipitation_kgm2_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -422,6 +502,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -441,6 +523,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Clouds</ows:Title>
@@ -459,6 +547,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -478,6 +568,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Precipitation</ows:Title>
@@ -496,6 +592,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -515,6 +613,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -533,6 +637,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -552,6 +658,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind</ows:Title>
@@ -570,6 +682,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -589,6 +703,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Land temperature and sea wind</ows:Title>
@@ -607,6 +727,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -626,6 +748,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:raster_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -644,6 +772,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -663,6 +793,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -681,6 +817,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -700,6 +838,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -718,6 +862,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -737,6 +883,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -755,6 +907,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -774,6 +928,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -792,6 +952,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -811,6 +973,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature</ows:Title>
@@ -829,6 +997,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -848,6 +1018,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -865,6 +1041,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -884,6 +1062,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -901,6 +1085,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -920,6 +1106,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -937,6 +1129,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -956,6 +1150,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -973,6 +1173,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -992,6 +1194,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -1009,6 +1217,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1028,6 +1238,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind streamlines</ows:Title>
@@ -1046,6 +1262,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1065,6 +1283,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind streamlines</ows:Title>
@@ -1083,6 +1307,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1102,6 +1328,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind streamlines</ows:Title>
@@ -1120,6 +1352,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1139,6 +1373,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind streamlines</ows:Title>
@@ -1157,6 +1397,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1176,6 +1418,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Background map</ows:Title>
@@ -1193,6 +1441,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1212,6 +1462,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:backgroundmap/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:backgroundmap/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:backgroundmap/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>City location map</ows:Title>
@@ -1229,6 +1485,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1263,6 +1521,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:cities/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:cities/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:cities/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Coordinate grid</ows:Title>
@@ -1280,6 +1544,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1299,6 +1565,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:coordinate_grid/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:coordinate_grid/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:coordinate_grid/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Lightning for 15 minute period</ows:Title>
@@ -1316,6 +1588,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1340,6 +1614,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:flash15min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:flash15min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:flash15min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Legend</ows:Title>
@@ -1357,6 +1637,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1391,6 +1673,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:frame_layer/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:frame_layer/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:frame_layer/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Harbours</ows:Title>
@@ -1408,6 +1696,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1427,6 +1717,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:harbours/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:harbours/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:harbours/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice map</ows:Title>
@@ -1444,6 +1740,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1468,6 +1766,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:ice_pg/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:ice_pg/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:ice_pg/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice map</ows:Title>
@@ -1485,6 +1789,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1509,6 +1815,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_areas/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_areas/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_areas/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -1527,6 +1839,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1551,6 +1865,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_bob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_bob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_bob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -1569,6 +1889,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1593,6 +1915,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_bob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_bob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_bob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice map</ows:Title>
@@ -1611,6 +1939,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1635,6 +1965,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice map</ows:Title>
@@ -1653,6 +1989,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1677,6 +2015,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice map</ows:Title>
@@ -1695,6 +2039,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1719,6 +2065,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice map</ows:Title>
@@ -1737,6 +2089,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1761,6 +2115,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -1779,6 +2139,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1803,6 +2165,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_gof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_gof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_gof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -1821,6 +2189,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1845,6 +2215,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_gof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_gof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_gof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Legend</ows:Title>
@@ -1862,6 +2238,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1881,6 +2259,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_legend/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_legend/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_legend/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -1899,6 +2283,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1923,6 +2309,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_nsp2_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_nsp2_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_nsp2_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -1941,6 +2333,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -1965,6 +2359,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_nsp2_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_nsp2_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_nsp2_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -1983,6 +2383,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2007,6 +2409,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_sob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_sob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_sob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -2025,6 +2433,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2049,6 +2459,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_sob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_sob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_sob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -2067,6 +2483,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2091,6 +2509,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_wgof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_wgof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_wgof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Ice Chart</ows:Title>
@@ -2109,6 +2533,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2133,6 +2559,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_wgof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_wgof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:icechart_wgof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -2160,6 +2592,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2194,6 +2628,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:isolabel/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:isolabel/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:isolabel/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Landmask</ows:Title>
@@ -2211,6 +2651,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2230,6 +2672,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:land_mask/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:land_mask/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:land_mask/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Lighthouses</ows:Title>
@@ -2247,6 +2695,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2266,6 +2716,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:lighthouses/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:lighthouses/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:lighthouses/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Mean temperature</ows:Title>
@@ -2283,6 +2739,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2302,6 +2760,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:mean_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:mean_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:mean_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>NetAtmo obervations for 5 minute period</ows:Title>
@@ -2319,6 +2783,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2343,6 +2809,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:netatmo5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:netatmo5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:netatmo5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>PAL Skandinavia GroundTemperature</ows:Title>
@@ -2361,6 +2833,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2395,6 +2869,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_ground/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:nonvariant_ground/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:nonvariant_ground/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>PAL Skandinavia Temperature</ows:Title>
@@ -2413,6 +2893,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2447,6 +2929,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_pal/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:nonvariant_pal/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:nonvariant_pal/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2464,6 +2952,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2488,6 +2978,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2505,6 +3001,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2529,6 +3027,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2546,6 +3050,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2570,6 +3076,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2587,6 +3099,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2611,6 +3125,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2628,6 +3148,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2652,6 +3174,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2669,6 +3197,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2693,6 +3223,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2710,6 +3246,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2734,6 +3272,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2751,6 +3295,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2775,6 +3321,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind observations</ows:Title>
@@ -2792,6 +3344,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2816,6 +3370,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations</ows:Title>
@@ -2833,6 +3393,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2857,6 +3419,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations - time aggregation max_t</ows:Title>
@@ -2874,6 +3442,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2898,6 +3468,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations - time aggregation max_t</ows:Title>
@@ -2915,6 +3491,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2939,6 +3517,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations</ows:Title>
@@ -2956,6 +3540,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -2980,6 +3566,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations</ows:Title>
@@ -2997,6 +3589,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3021,6 +3615,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations</ows:Title>
@@ -3038,6 +3638,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3062,6 +3664,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations</ows:Title>
@@ -3079,6 +3687,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3103,6 +3713,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations</ows:Title>
@@ -3120,6 +3736,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3144,6 +3762,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations</ows:Title>
@@ -3161,6 +3785,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3185,6 +3811,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations as coloured circles</ows:Title>
@@ -3202,6 +3834,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3226,6 +3860,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations as coloured circles</ows:Title>
@@ -3243,6 +3883,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3267,6 +3909,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations as coloured circles</ows:Title>
@@ -3284,6 +3932,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3308,6 +3958,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations as coloured circles</ows:Title>
@@ -3325,6 +3981,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3349,6 +4007,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations as coloured circles</ows:Title>
@@ -3366,6 +4030,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3390,6 +4056,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations as coloured circles</ows:Title>
@@ -3407,6 +4079,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3431,6 +4105,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature observations as coloured circles</ows:Title>
@@ -3448,6 +4128,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3472,6 +4154,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -3504,6 +4192,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3538,6 +4228,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Precipitation map</ows:Title>
@@ -3565,6 +4261,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3599,6 +4297,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation_areas/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_areas/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_areas/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Precipitation isobands with legend labels</ows:Title>
@@ -3616,6 +4320,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3650,6 +4356,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation_isoband_labels/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_isoband_labels/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_isoband_labels/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -3667,6 +4379,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3701,6 +4415,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation_modified/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_modified/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_modified/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Precipitation form symbols with legend labels</ows:Title>
@@ -3718,6 +4438,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3752,6 +4474,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitationform_symbols/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitationform_symbols/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:precipitationform_symbols/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -3769,6 +4497,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3803,6 +4533,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -3820,6 +4556,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3854,6 +4592,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -3871,6 +4615,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3905,6 +4651,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>RoadCloud obervations for 5 minute period</ows:Title>
@@ -3922,6 +4674,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3946,6 +4700,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:roadcloud5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:roadcloud5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:roadcloud5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Road condition isobands with legend labels</ows:Title>
@@ -3963,6 +4723,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -3997,6 +4759,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:roadcondition_isoband/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:roadcondition_isoband/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:roadcondition_isoband/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>HARMONIE Snow Drift Index</ows:Title>
@@ -4015,6 +4783,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4049,6 +4819,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:snow_drift_index/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:snow_drift_index/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:snow_drift_index/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -4081,6 +4857,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4115,6 +4893,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature with circles</ows:Title>
@@ -4132,6 +4916,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4151,6 +4937,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_circles/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_circles/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_circles/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>How to change labels from isoband settings</ows:Title>
@@ -4168,6 +4960,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4202,6 +4996,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_isoband_labels/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_isoband_labels/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_isoband_labels/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature numbers</ows:Title>
@@ -4219,6 +5019,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4253,6 +5055,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_numbers/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_numbers/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_numbers/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Demo product</ows:Title>
@@ -4270,6 +5078,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4304,6 +5114,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_p/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_p/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_p/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature on pressure levels</ows:Title>
@@ -4322,6 +5138,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4357,6 +5175,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_pressure/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_pressure/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:t2m_pressure/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Temperature isotherm</ows:Title>
@@ -4374,6 +5198,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4398,6 +5224,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:temperature_isotherm/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:temperature_isotherm/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:temperature_isotherm/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -4431,6 +5263,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4465,6 +5299,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:wind/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:wind/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:wind/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo - alternative legend style</ows:Title>
@@ -4483,6 +5323,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4517,6 +5359,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:wind_alternative_legend_style/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:wind_alternative_legend_style/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:wind_alternative_legend_style/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -4540,6 +5388,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4574,6 +5424,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windarrows/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windarrows/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windarrows/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -4597,6 +5453,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4631,6 +5489,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -4654,6 +5518,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4688,6 +5554,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -4710,6 +5582,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4744,6 +5618,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windnumbers/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -4766,6 +5646,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4800,6 +5682,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_max/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Wind demo</ows:Title>
@@ -4822,6 +5710,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4856,6 +5746,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_min/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Regression test layer 1 (under intermediate aaa)</ows:Title>
@@ -4873,6 +5769,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4907,6 +5805,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf1/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf1/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf1/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Regression test layer 2 (under intermediate aaa)</ows:Title>
@@ -4924,6 +5828,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -4958,6 +5864,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf2/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf2/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf2/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>Regression test sibling leaf (zzz, sorts after intermediate aaa)</ows:Title>
@@ -4975,6 +5887,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -5009,6 +5923,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:zzz/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:zzz/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:zzz/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>EC Title</ows:Title>
@@ -5027,6 +5947,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -5061,6 +5983,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/variant:ecmwf:temperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/variant:ecmwf:temperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/variant:ecmwf:temperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>PAL Skandinavia GroundTemperature</ows:Title>
@@ -5079,6 +6007,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -5113,6 +6043,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/variant:ground:groundtemperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/variant:ground:groundtemperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/variant:ground:groundtemperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
       <ows:Title>PAL Title</ows:Title>
@@ -5131,6 +6067,8 @@
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
       <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
       </TileMatrixSetLink>
@@ -5165,6 +6103,12 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/variant:pal:temperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/variant:pal:temperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/variant:pal:temperature/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <TileMatrixSet>
       <ows:Identifier>EPSG:3035</ows:Identifier>

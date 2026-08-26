@@ -78,6 +78,8 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       <-TMPL_foreach layer.formats as fmt>
       <Format><TMPL_var fmt></Format>
       <-/TMPL_foreach>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
 
       <-TMPL_foreach layer.tile_matrix_set_links as tms_id>
       <TileMatrixSetLink>
@@ -111,6 +113,12 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <-/TMPL_foreach>
 

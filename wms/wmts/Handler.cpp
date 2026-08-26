@@ -12,6 +12,7 @@
 #include "../State.h"
 #include "../ogc/LayerHierarchy.h"
 #include "../ogc/StyleSelection.h"
+#include "../wms/Handler.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -108,7 +109,7 @@ void Handler::shutdown()
  * \brief Main WMTS query entry point — parses REST path and routes request
  */
 // -----------------------------------------------------------------------
-QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
+QueryStatus Handler::query(Spine::Reactor& theReactor,
                            Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse)
@@ -129,6 +130,77 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
     // GetCapabilities: version/WMTSCapabilities.xml
     if (parts.size() == 2 && parts[1] == "WMTSCapabilities.xml")
       return handleGetCapabilities(theState, theRequest, theResponse);
+
+    // GetFeatureInfo (RESTful, OGC 07-057r7 FeatureInfo resource):
+    //   version/layer/style[/dim…]/TileMatrixSet/TileMatrix/TileRow/TileCol/{J}/{I}.ext
+    // Same shape as GetTile below plus the two pixel segments. A GetTile URL
+    // with two dimension segments has the same length as a dimensionless
+    // FeatureInfo URL, so the tail is disambiguated by which segment is a
+    // known TileMatrixSet id (never numeric-only, so no collision with J/I or
+    // TileRow).
+    if (parts.size() >= 9)
+    {
+      const std::size_t n = parts.size();
+      if (itsWMTSConfig->findTileMatrixSet(parts[n - 6]) != nullptr)
+      {
+        const std::string& layer   = parts[1];
+        const std::string& style   = parts[2];
+        const std::string& tms_id  = parts[n - 6];
+        const std::string& tm_id   = parts[n - 5];
+        const std::string& row_str = parts[n - 4];
+        const std::string& col_str = parts[n - 3];
+        const std::string& j_str   = parts[n - 2];
+        const std::string& i_str   = parts[n - 1];  // "{I}.{ext}"
+
+        std::vector<std::string> dimensionValues(parts.begin() + 3, parts.begin() + (n - 6));
+
+        unsigned tile_row = 0;
+        unsigned tile_col = 0;
+        unsigned pixel_j = 0;
+        unsigned pixel_i = 0;
+        std::string ext;
+
+        try
+        {
+          tile_row = Fmi::stoul(row_str);
+          tile_col = Fmi::stoul(col_str);
+          pixel_j = Fmi::stoul(j_str);
+        }
+        catch (...)
+        {
+          sendException("InvalidParameterValue",
+                        "Invalid TileRow/TileCol/J in FeatureInfo URL",
+                        theState, theRequest, theResponse);
+          return QueryStatus::OK;
+        }
+
+        if (!parseColAndFormat(i_str, pixel_i, ext))
+        {
+          sendException("InvalidParameterValue",
+                        "Invalid I or info format: " + i_str,
+                        theState, theRequest, theResponse);
+          return QueryStatus::OK;
+        }
+
+        std::string info_format;
+        if (ext == "json")
+          info_format = "application/json";
+        else if (ext == "html")
+          info_format = "text/html";
+        else
+        {
+          sendException("InvalidParameterValue",
+                        "Unsupported info format: " + ext,
+                        theState, theRequest, theResponse);
+          return QueryStatus::OK;
+        }
+
+        return handleGetFeatureInfo(theReactor, theState, theRequest, theResponse,
+                                    layer, style, tms_id, tm_id,
+                                    tile_row, tile_col, pixel_j, pixel_i,
+                                    info_format, dimensionValues);
+      }
+    }
 
     // GetTile (RESTful):
     //   version/layer/style[/dim…]/TileMatrixSet/TileMatrix/TileRow/TileCol.ext
@@ -714,6 +786,142 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
   catch (...)
   {
     Fmi::Exception ex(BCP, "WMTS GetTile failed!", nullptr);
+    sendException("NoApplicableCode", ex.what(), theState, theRequest, theResponse);
+    return QueryStatus::OK;
+  }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief Serve a WMTS GetFeatureInfo request (RESTful FeatureInfo resource)
+ *
+ * Deliberately a thin translation: the tile address is converted into the
+ * WMS GetFeatureInfo vocabulary (BBOX/WIDTH/HEIGHT of the addressed tile,
+ * I/J passed through) and the request is delegated to the WMS handler, so
+ * both services share one feature-info implementation and output templates.
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleGetFeatureInfo(Spine::Reactor& theReactor,
+                                          Dali::State& theState,
+                                          const Spine::HTTP::Request& theRequest,
+                                          Spine::HTTP::Response& theResponse,
+                                          const std::string& layer,
+                                          const std::string& style,
+                                          const std::string& tms_id,
+                                          const std::string& tm_id,
+                                          unsigned tile_row,
+                                          unsigned tile_col,
+                                          unsigned pixel_j,
+                                          unsigned pixel_i,
+                                          const std::string& info_format,
+                                          const std::vector<std::string>& dimensionValues)
+{
+  try
+  {
+    if (itsWMSHandler == nullptr)
+      throw Fmi::Exception(BCP, "WMS handler not wired to the WMTS handler");
+
+    if (!itsWMTSConfig->isValidLayer(layer))
+    {
+      sendException("InvalidParameterValue", "Layer not found: " + layer,
+                    theState, theRequest, theResponse);
+      return QueryStatus::OK;
+    }
+
+    if (!itsWMTSConfig->isValidStyle(layer, style))
+    {
+      sendException("InvalidParameterValue",
+                    "Style '" + style + "' not supported for layer: " + layer,
+                    theState, theRequest, theResponse);
+      return QueryStatus::OK;
+    }
+
+    const TileMatrixSet* tms = itsWMTSConfig->findTileMatrixSet(tms_id);
+    if (tms == nullptr)
+    {
+      sendException("InvalidParameterValue", "TileMatrixSet not found: " + tms_id,
+                    theState, theRequest, theResponse);
+      return QueryStatus::OK;
+    }
+
+    const TileMatrix* tm = itsWMTSConfig->findTileMatrix(*tms, tm_id);
+    if (tm == nullptr)
+    {
+      sendException("InvalidParameterValue",
+                    "TileMatrix '" + tm_id + "' not found in: " + tms_id,
+                    theState, theRequest, theResponse);
+      return QueryStatus::OK;
+    }
+
+    if (tile_row >= tm->matrix_height || tile_col >= tm->matrix_width)
+    {
+      sendException("TileOutOfRange",
+                    fmt::format("Tile ({},{}) out of range ({}x{})",
+                                tile_col, tile_row, tm->matrix_width, tm->matrix_height),
+                    theState, theRequest, theResponse);
+      return QueryStatus::OK;
+    }
+
+    if (pixel_i >= tm->tile_width || pixel_j >= tm->tile_height)
+    {
+      sendException("PointIJOutOfRange",
+                    fmt::format("Pixel ({},{}) out of range ({}x{})",
+                                pixel_i, pixel_j, tm->tile_width, tm->tile_height),
+                    theState, theRequest, theResponse);
+      return QueryStatus::OK;
+    }
+
+    TileBBox bbox = computeTileBBox(*tms, *tm, tile_row, tile_col);
+
+    // Build the WMS GetFeatureInfo request. WMS 1.3.0 BBOX uses the CRS axis
+    // order: lat,lon for geographic CRSs, x,y otherwise (same convention the
+    // GetTile path uses for the Dali projection bbox).
+    auto thisRequest = theRequest;
+    thisRequest.addParameter("service", "WMS");
+    thisRequest.addParameter("request", "GetFeatureInfo");
+    thisRequest.addParameter("version", "1.3.0");
+    thisRequest.addParameter("layers", layer);
+    thisRequest.addParameter("query_layers", layer);
+    thisRequest.addParameter("styles", style == "default" ? "" : style);
+    thisRequest.addParameter("crs", tms->crs);
+    thisRequest.addParameter("bbox",
+                             tms->is_geographic
+                                 ? fmt::format("{},{},{},{}",
+                                               bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
+                                 : fmt::format("{},{},{},{}",
+                                               bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y));
+    thisRequest.addParameter("width", Fmi::to_string(tm->tile_width));
+    thisRequest.addParameter("height", Fmi::to_string(tm->tile_height));
+    thisRequest.addParameter("format", "image/png");
+    thisRequest.addParameter("info_format", info_format);
+    thisRequest.addParameter("i", Fmi::to_string(pixel_i));
+    thisRequest.addParameter("j", Fmi::to_string(pixel_j));
+
+    // Dimensions from the RESTful path (Time, Reference_time, Elevation) —
+    // same positional mapping as GetTile.
+    if (!dimensionValues.empty())
+    {
+      const auto& dim_names = orderedDimensionNames(layer);
+      for (std::size_t i = 0; i < dimensionValues.size() && i < dim_names.size(); ++i)
+      {
+        const std::string& nm = dim_names[i];
+        const std::string& v = dimensionValues[i];
+        if (v.empty())
+          continue;
+        if (nm == "time")
+          thisRequest.addParameter("time", v);
+        else if (nm == "reference_time")
+          thisRequest.addParameter("origintime", v);
+        else if (nm == "elevation")
+          thisRequest.addParameter("elevation", v);
+      }
+    }
+
+    return itsWMSHandler->query(theReactor, theState, thisRequest, theResponse);
+  }
+  catch (...)
+  {
+    Fmi::Exception ex(BCP, "WMTS GetFeatureInfo failed!", nullptr);
     sendException("NoApplicableCode", ex.what(), theState, theRequest, theResponse);
     return QueryStatus::OK;
   }

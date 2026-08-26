@@ -5,6 +5,8 @@
  * Handles:
  *   GET /wmts/1.0.0/WMTSCapabilities.xml          → GetCapabilities
  *   GET /wmts/1.0.0/{layer}/{style}/{tms}/{tm}/{row}/{col}.{ext}  → GetTile
+ *   GET /wmts/1.0.0/{layer}/{style}/{tms}/{tm}/{row}/{col}/{j}/{i}.{ext}
+ *                                                 → GetFeatureInfo
  */
 // ======================================================================
 
@@ -34,6 +36,10 @@ class Config;
 class Product;
 class State;
 }
+namespace WMS
+{
+class Handler;
+}
 namespace WMTS
 {
 using OGC::QueryStatus;
@@ -50,6 +56,11 @@ class Handler
 
   void init(std::unique_ptr<Config> wmtsConfig);
   void shutdown();
+
+  // GetFeatureInfo is delegated to the WMS handler (the request is translated
+  // into WMS GetFeatureInfo vocabulary); the pointer is wired by the Plugin
+  // after both handlers exist. Not owned.
+  void setWMSHandler(WMS::Handler* wmsHandler) { itsWMSHandler = wmsHandler; }
 
   QueryStatus query(Spine::Reactor& theReactor,
                     Dali::State& theState,
@@ -73,6 +84,21 @@ class Handler
                             const std::string& format,
                             const std::vector<std::string>& dimensionValues = {});
 
+  QueryStatus handleGetFeatureInfo(Spine::Reactor& theReactor,
+                                   Dali::State& theState,
+                                   const Spine::HTTP::Request& theRequest,
+                                   Spine::HTTP::Response& theResponse,
+                                   const std::string& layer,
+                                   const std::string& style,
+                                   const std::string& tms_id,
+                                   const std::string& tm_id,
+                                   unsigned tile_row,
+                                   unsigned tile_col,
+                                   unsigned pixel_j,
+                                   unsigned pixel_i,
+                                   const std::string& info_format,
+                                   const std::vector<std::string>& dimensionValues = {});
+
   QueryStatus generateTile(Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse,
@@ -93,6 +119,7 @@ class Handler
 
   const Dali::Config& itsDaliConfig;
   std::unique_ptr<Config> itsWMTSConfig;
+  WMS::Handler* itsWMSHandler = nullptr;  // not owned; see setWMSHandler()
 
   mutable std::mutex itsDimNamesMutex;
   mutable std::map<std::string, std::vector<std::string>> itsDimNamesCache;
