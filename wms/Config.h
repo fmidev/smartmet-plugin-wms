@@ -66,6 +66,11 @@ class Config
   unsigned int wmtsTileWidth() const;
   unsigned int wmtsTileHeight() const;
 
+  // GetFeatureInfo names the clicked point via the geonames engine; nearest
+  // place search radius in kilometers (featureinfo.location_search_radius,
+  // 0 disables the lookup).
+  double featureInfoSearchRadius() const;
+
   const std::string& filesystemCacheDirectory() const;
 
   unsigned maxHeatmapPoints() const;
@@ -116,6 +121,7 @@ class Config
   unsigned itsMaxHeatmapPoints = 2000 * 2000;
   unsigned int itsWmtsTileWidth = 1024;
   unsigned int itsWmtsTileHeight = 1024;
+  double itsFeatureInfoSearchRadius = 50;  // km; 0 disables place-name lookup
 
   unsigned int itsContourWorkerThreads = 0;  // Trax worker pool size (0 = disabled)
 

@@ -6,6 +6,8 @@
  <body>
   <table class="featureInfo">
   <TMPL_if defined(time)><tr><td>Time</td><td><TMPL_var time></td></tr></TMPL_if>
+  <TMPL_if defined(location)><tr><td>Location</td><td><TMPL_var HTMLESCAPE(location)></td></tr></TMPL_if>
+  <TMPL_if defined(region)><tr><td>Region</td><td><TMPL_var HTMLESCAPE(region)></td></tr></TMPL_if>
   <TMPL_if defined(longitude)><tr><td>Longitude</td><td><TMPL_var longitude></td></tr></TMPL_if>
   <TMPL_if defined(latitude)><tr><td>Latitude</td><td><TMPL_var latitude></td></tr></TMPL_if>
   <-TMPL_if defined(features)>

@@ -1404,6 +1404,34 @@ QueryStatus Handler::wmsGenerateFeatureInfo(Dali::State &theState,
     theProduct.getFeatureInfo(info, theState);
     // std::cout << fmt::format("Generated CDT:\n{}\n", info.RecursiveDump());
 
+    // Name the clicked point: nearest place from the geonames engine within
+    // the configured search radius (featureinfo.location_search_radius, km).
+    // Best effort — a failed or empty lookup never fails the query. The
+    // engine returns a coordinate-named placeholder with geoid 0 when no
+    // place is found within the radius.
+    const double search_radius = itsDaliConfig.featureInfoSearchRadius();
+    if (search_radius > 0 && info.Exists("longitude") && info.Exists("latitude"))
+    {
+      try
+      {
+        const double lon = info.At("longitude").GetFloat();
+        const double lat = info.At("latitude").GetFloat();
+        auto language = Spine::optional_string(theRequest.getParameter("LANGUAGE"),
+                                               itsDaliConfig.defaultLanguage());
+        auto loc = theState.getGeoEngine().lonlatSearch(lon, lat, language, search_radius);
+        if (loc && loc->geoid != 0 && !loc->name.empty())
+        {
+          info["location"] = loc->name;
+          if (!loc->area.empty() && loc->area != loc->name)
+            info["region"] = loc->area;
+        }
+      }
+      catch (...)
+      {
+        // best effort only
+      }
+    }
+
     auto tmpl_name = "wms_get_feature_info_" + theState.getType();
     auto tmpl = theState.getPlugin().getTemplate(tmpl_name);
 

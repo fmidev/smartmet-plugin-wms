@@ -6,6 +6,8 @@
  <body>
   <table class="featureInfo">
   <tr><td>Time</td><td>20080805T060000</td></tr>
+  <tr><td>Location</td><td>Heinijärvi</td></tr>
+  <tr><td>Region</td><td>Liminka</td></tr>
   <tr><td>Longitude</td><td>25.3125</td></tr>
   <tr><td>Latitude</td><td>64.6875</td></tr>
   <tr><td>Temperature</td><td>10.5762910843</td></tr>

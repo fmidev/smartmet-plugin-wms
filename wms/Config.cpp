@@ -127,6 +127,7 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("wms.max_layers", itsMaxWMSLayers);
     itsConfig.lookupValue("wmts.tile_width", itsWmtsTileWidth);
     itsConfig.lookupValue("wmts.tile_height", itsWmtsTileHeight);
+    itsConfig.lookupValue("featureinfo.location_search_radius", itsFeatureInfoSearchRadius);
 
     itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
 
@@ -410,6 +411,11 @@ unsigned int Config::wmtsTileWidth() const
 unsigned int Config::wmtsTileHeight() const
 {
   return itsWmtsTileHeight;
+}
+
+double Config::featureInfoSearchRadius() const
+{
+  return itsFeatureInfoSearchRadius;
 }
 
 unsigned Config::maxHeatmapPoints() const

@@ -1,7 +1,9 @@
 {
-"time": 20080805T120000,
+"time": "20080805T120000",
 "longitude": 25.5,
 "latitude": 65,
+"location": "Karjasilta",
+"region": "Oulu",
 "features":
 {
 "Precipitation1h": 0,
