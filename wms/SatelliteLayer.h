@@ -84,6 +84,13 @@ class SatelliteLayer : public Layer
 
   std::shared_ptr<ColorMap> colormap;
 
+  // Hash of the colour map contents. Note that State::getColorMapHash
+  // cannot be used: it resolves the name to <name>.svg or <name>, never
+  // to the <name>.csv the colour maps actually are, so it hashes a path
+  // which does not exist and never changes. The contents are at hand
+  // anyway, and this is what the raster layer's ARGB painter does too.
+  std::size_t colormap_hash{0};
+
   // The rendered image, reused over the animation loop steps of one
   // frame. Time animation changes the valid time between the frames,
   // hence the identity of the image the cached pixels came from must be

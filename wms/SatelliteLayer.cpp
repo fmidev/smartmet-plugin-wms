@@ -82,6 +82,7 @@ void SatelliteLayer::init(Json::Value& theJson,
       if (cmap.empty())
         throw Fmi::Exception(BCP, "Cannot find the colormap")
             .addParameter("colormap", colormap_name);
+      colormap_hash = Fmi::hash(cmap);
       colormap = std::make_shared<ColorMap>(cmap);
     }
 
@@ -346,8 +347,7 @@ std::size_t SatelliteLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(compression));
     Fmi::hash_combine(hash, Fmi::hash_value(colormap_name));
     Fmi::hash_combine(hash, Fmi::hash_value(smooth_colors));
-    if (!colormap_name.empty())
-      Fmi::hash_combine(hash, theState.getColorMapHash(colormap_name));
+    Fmi::hash_combine(hash, colormap_hash);
 
     auto image = findImage(theState);
 
