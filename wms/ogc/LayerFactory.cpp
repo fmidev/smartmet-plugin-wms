@@ -5,6 +5,7 @@
 #include "NonTemporalLayer.h"
 #include "PostGISLayer.h"
 #include "QueryDataLayer.h"
+#include "SatelliteLayer.h"
 #ifndef WITHOUT_OBSERVATION
 #include "ObservationLayer.h"
 #endif
@@ -35,6 +36,7 @@ enum class LayerType
 #endif
   GridDataLayer,
   MapLayer,
+  SatelliteLayer,
   NotLayer
 };
 
@@ -68,6 +70,9 @@ LayerType get_wms_layer_type(const Json::Value& layer)
 
     if (type_name == "map" || type_name == "graticule" || type_name == "circle")
       return LayerType::MapLayer;
+
+    if (type_name == "satellite")
+      return LayerType::SatelliteLayer;
 
     if (postgis_layers.find(type_name) != postgis_layers.end())
       return LayerType::PostGISLayer;
@@ -518,6 +523,11 @@ SharedLayer create_wms_layer(const LayerConfig& theConfig, Json::Value& root)
         int forecastType = determine_int(root, "forecastType");
         layer = std::make_shared<GridDataLayer>(
             theConfig, producer, parameter, forecastType, geometryId, levelId, elevation_unit);
+        break;
+      }
+      case LayerType::SatelliteLayer:
+      {
+        layer = std::make_shared<OGC::SatelliteLayer>(theConfig, producer);
         break;
       }
       case LayerType::ObservationLayer:

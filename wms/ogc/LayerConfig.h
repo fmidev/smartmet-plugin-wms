@@ -14,6 +14,7 @@
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <engines/satellite/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
@@ -68,6 +69,11 @@ class LayerConfig
     itsGridEngine = e;
     return *this;
   }
+  LayerConfig& setSatelliteEngine(const Engine::Satellite::Engine* e)
+  {
+    itsSatelliteEngine = e;
+    return *this;
+  }
   LayerConfig& setObservationProducers(std::set<std::string> p)
   {
     itsObservationProducers = std::move(p);
@@ -95,6 +101,7 @@ class LayerConfig
   Engine::Querydata::Engine* qEngine() const { return itsQEngine; }
   Engine::Gis::Engine* gisEngine() const { return itsGisEngine; }
   Engine::Grid::Engine* gridEngine() const { return itsGridEngine; }
+  const Engine::Satellite::Engine* satelliteEngine() const { return itsSatelliteEngine; }
   const std::set<std::string>& getObservationProducers() const { return itsObservationProducers; }
   const std::map<std::string, SupportedReference>& getSupportedReferences() const
   {
@@ -111,6 +118,7 @@ class LayerConfig
   Engine::Querydata::Engine* itsQEngine = nullptr;
   Engine::Gis::Engine* itsGisEngine = nullptr;
   Engine::Grid::Engine* itsGridEngine = nullptr;
+  const Engine::Satellite::Engine* itsSatelliteEngine = nullptr;
   std::set<std::string> itsObservationProducers;
   std::map<std::string, SupportedReference> itsSupportedReferences;
 #ifndef WITHOUT_OBSERVATION

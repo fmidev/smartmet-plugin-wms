@@ -21,6 +21,7 @@
 #include <engines/osm/Engine.h>
 #endif
 #include <engines/querydata/Engine.h>
+#include <engines/satellite/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
@@ -80,6 +81,8 @@ class Plugin : public SmartMetPlugin
   Engine::OSM::Engine* getOSMEngine() const { return itsOSMEngine.get(); }
 #endif
   const Engine::Geonames::Engine& getGeoEngine() const { return *itsGeoEngine; }
+  // nullptr if the engine is not loaded
+  const Engine::Satellite::Engine* getSatelliteEngine() const { return itsSatelliteEngine.get(); }
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
 #endif
@@ -201,6 +204,7 @@ class Plugin : public SmartMetPlugin
 #ifndef WITHOUT_OSM
   std::shared_ptr<Engine::OSM::Engine> itsOSMEngine;
 #endif
+  std::shared_ptr<Engine::Satellite::Engine> itsSatelliteEngine;
   std::shared_ptr<Engine::Geonames::Engine> itsGeoEngine;
   std::shared_ptr<Engine::Authentication::Engine> authEngine;
 #ifndef WITHOUT_OBSERVATION

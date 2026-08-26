@@ -1778,6 +1778,7 @@ OGC::LayerConfig Config::layerConfig() const
     .setQEngine(itsQEngine)
     .setGisEngine(itsGisEngine)
     .setGridEngine(itsGridEngine)
+    .setSatelliteEngine(itsSatelliteEngine)
     .setSupportedReferences(itsSupportedReferences);
 #ifndef WITHOUT_OBSERVATION
   lc.setObsEngine(itsObsEngine);

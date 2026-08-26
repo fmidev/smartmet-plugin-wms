@@ -125,6 +125,13 @@ Engine::OSM::Engine* State::getOSMEngine() const
 #endif
 
 // ----------------------------------------------------------------------
+
+const Engine::Satellite::Engine* State::getSatelliteEngine() const
+{
+  return itsPlugin.getSatelliteEngine();
+}
+
+// ----------------------------------------------------------------------
 /*!
  * \brief Get the GEO engine
  */

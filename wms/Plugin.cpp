@@ -849,6 +849,18 @@ void Plugin::init()
       return;
 #endif
 
+    // Satellite (optional — only loaded when the engine is configured)
+    try
+    {
+      itsSatelliteEngine = itsReactor->getEngine<Engine::Satellite::Engine>("Satellite", nullptr);
+    }
+    catch (...)
+    {
+      itsSatelliteEngine = nullptr;
+    }
+    if (Spine::Reactor::isShuttingDown())
+      return;
+
     // QUERYDATA
 
     itsQEngine = itsReactor->getEngine<Engine::Querydata::Engine>("Querydata", nullptr);
@@ -942,6 +954,8 @@ void Plugin::init()
 
     if (Spine::Reactor::isShuttingDown())
       wmsConfig->shutdown();
+
+    wmsConfig->setSatelliteEngine(itsSatelliteEngine.get());
 
     wmsConfig->init();  // heavy initializations
 

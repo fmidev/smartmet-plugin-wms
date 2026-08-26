@@ -19,6 +19,7 @@
 #include <engines/grid/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <engines/satellite/Engine.h>
 #include <macgyver/AsyncTask.h>
 #include <macgyver/AtomicSharedPtr.h>
 #include <spine/JsonCache.h>
@@ -77,6 +78,13 @@ class Config
             Engine::Grid::Engine* gridEngine);
 
   virtual ~Config();
+
+  // The satellite engine is optional and is set separately to avoid
+  // multiplying the constructor variants
+  void setSatelliteEngine(const Engine::Satellite::Engine* theEngine)
+  {
+    itsSatelliteEngine = theEngine;
+  }
 
   Config() = delete;
   Config(const Config& other) = delete;
@@ -196,6 +204,7 @@ class Config
   Engine::Querydata::Engine* itsQEngine = nullptr;
   Engine::Gis::Engine* itsGisEngine = nullptr;
   Engine::Grid::Engine* itsGridEngine = nullptr;
+  const Engine::Satellite::Engine* itsSatelliteEngine = nullptr;
 
 #ifndef WITHOUT_AUTHENTICATION
   // For GetCapabilities and GetMap Authentication

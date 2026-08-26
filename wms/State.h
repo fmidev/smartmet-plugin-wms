@@ -73,6 +73,10 @@ namespace OSM
 class Engine;
 }
 #endif
+namespace Satellite
+{
+class Engine;
+}
 }  // namespace Engine
 
 namespace Plugin
@@ -100,6 +104,8 @@ class State
 #ifndef WITHOUT_OSM
   Engine::OSM::Engine* getOSMEngine() const;  // nullptr if engine not loaded
 #endif
+  // nullptr if engine not loaded
+  const Engine::Satellite::Engine* getSatelliteEngine() const;
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
 #endif
