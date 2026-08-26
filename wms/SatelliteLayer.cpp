@@ -11,6 +11,7 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImageFunctions.h>
 #include <macgyver/Exception.h>
+#include <cmath>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
@@ -51,6 +52,9 @@ void SatelliteLayer::init(Json::Value& theJson,
 
     JsonTools::remove_int(compression, theJson, "compression");
 
+    JsonTools::remove_string(colormap_name, theJson, "colormap");
+    JsonTools::remove_bool(smooth_colors, theJson, "smooth_colors");
+
     // The producer is the satellite and the parameter is the composite
     if (!paraminfo.producer)
       throw Fmi::Exception(BCP, "Satellite layer requires a producer");
@@ -71,6 +75,38 @@ void SatelliteLayer::init(Json::Value& theJson,
           .addParameter("Parameter", paraminfo.parameter)
           .addParameter("Available parameters",
                         boost::algorithm::join(engine.parameters(*paraminfo.producer), ","));
+
+    if (!colormap_name.empty())
+    {
+      std::string cmap = theState.getColorMap(colormap_name);
+      if (cmap.empty())
+        throw Fmi::Exception(BCP, "Cannot find the colormap")
+            .addParameter("colormap", colormap_name);
+      colormap = std::make_shared<ColorMap>(cmap);
+    }
+
+    // Whether a colour map is needed depends on the data, not on the
+    // configuration, so check it against the newest image. Reading the
+    // metadata of the images is what the engine does at scan time, hence
+    // this costs nothing.
+    auto newest = engine.find(*paraminfo.producer, paraminfo.parameter, {}, time_tolerance);
+
+    if (newest)
+    {
+      const bool uncoloured = (newest->model == Engine::Satellite::BandModel::Float);
+
+      if (uncoloured && !colormap)
+        throw Fmi::Exception(BCP, "The satellite product holds values and needs a colormap")
+            .addParameter("Producer", *paraminfo.producer)
+            .addParameter("Parameter", paraminfo.parameter);
+
+      if (!uncoloured && colormap)
+        throw Fmi::Exception(
+            BCP, "The satellite product is precoloured and a colormap would have no effect")
+            .addParameter("Producer", *paraminfo.producer)
+            .addParameter("Parameter", paraminfo.parameter)
+            .addParameter("colormap", colormap_name);
+    }
   }
   catch (...)
   {
@@ -120,6 +156,58 @@ Engine::Satellite::ImageInfoPtr SatelliteLayer::findImage(const State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Produce the pixels of the requested area
+ *
+ * A precoloured image is warped as it is. An uncoloured one is warped as
+ * values and coloured here with the colour map, which is the same
+ * machinery the raster layer uses for model data.
+ */
+// ----------------------------------------------------------------------
+
+Engine::Satellite::Image SatelliteLayer::renderPixels(
+    const State& theState,
+    const Engine::Satellite::ImageInfo& theImage,
+    const Engine::Satellite::WarpOptions& theOptions) const
+{
+  try
+  {
+    const auto& engine = getEngine(theState);
+
+    if (theImage.model != Engine::Satellite::BandModel::Float)
+      return engine.warp(theImage, theOptions);
+
+    if (!colormap)
+      throw Fmi::Exception(BCP, "The satellite product holds values and needs a colormap");
+
+    auto values = engine.warpValues(theImage, theOptions);
+
+    Engine::Satellite::Image image;
+    image.width = values.width;
+    image.height = values.height;
+    image.pixels.resize(values.values.size(), 0);
+
+    for (std::size_t i = 0; i < values.values.size(); i++)
+    {
+      const auto value = values.values[i];
+
+      // Missing values stay transparent. Note that zero is a perfectly
+      // good temperature, so the check cannot be against zero.
+      if (std::isnan(value))
+        continue;
+
+      image.pixels[i] = colormap->getColor(value, smooth_colors);
+    }
+
+    return image;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("Path", theImage.path);
   }
 }
 
@@ -177,7 +265,7 @@ void SatelliteLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
       options.width = static_cast<int>(box.width());
       options.height = static_cast<int>(box.height());
 
-      auto warped = getEngine(theState).warp(*image, options);
+      auto warped = renderPixels(theState, *image, options);
 
       int comp = compression;
       if (theState.animation_enabled)
@@ -256,6 +344,10 @@ std::size_t SatelliteLayer::hash_value(const State& theState) const
 
     Fmi::hash_combine(hash, Fmi::hash_value(time_tolerance));
     Fmi::hash_combine(hash, Fmi::hash_value(compression));
+    Fmi::hash_combine(hash, Fmi::hash_value(colormap_name));
+    Fmi::hash_combine(hash, Fmi::hash_value(smooth_colors));
+    if (!colormap_name.empty())
+      Fmi::hash_combine(hash, theState.getColorMapHash(colormap_name));
 
     auto image = findImage(theState);
 
