@@ -13,6 +13,7 @@
 #include "../State.h"
 #include "../ogc/LayerHierarchy.h"
 #include "../ogc/StyleSelection.h"
+#include "../wms/Handler.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <algorithm>
@@ -142,7 +143,7 @@ void Handler::shutdown()
  * \brief Main OGC API - Tiles entry point
  */
 // -----------------------------------------------------------------------
-QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
+QueryStatus Handler::query(Spine::Reactor& theReactor,
                            Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse)
@@ -230,6 +231,37 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
 
         return handleGetTile(
             theState, theRequest, theResponse, collId, tmsId, tmId, row, col, format);
+      }
+
+      // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}/{j}/{i} — feature info
+      // (non-standard extension mirroring the WMTS FeatureInfo resource)
+      if (parts.size() == 9 && parts[2] == "tiles")
+      {
+        const std::string& tmsId = parts[3];
+        const std::string& tmId = parts[4];
+
+        unsigned row = 0;
+        unsigned col = 0;
+        unsigned pixel_j = 0;
+        unsigned pixel_i = 0;
+        try
+        {
+          row = Fmi::stoul(parts[5]);
+          col = Fmi::stoul(parts[6]);
+          pixel_j = Fmi::stoul(parts[7]);
+          pixel_i = Fmi::stoul(parts[8]);
+        }
+        catch (...)
+        {
+          sendError(400,
+                    "Bad Request",
+                    "Invalid tile row/column or pixel J/I in feature info request",
+                    theResponse);
+          return QueryStatus::OK;
+        }
+
+        return handleGetFeatureInfo(theReactor, theState, theRequest, theResponse,
+                                    collId, tmsId, tmId, row, col, pixel_j, pixel_i);
       }
     }
 
@@ -1336,6 +1368,152 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
   catch (...)
   {
     Fmi::Exception ex(BCP, "OGC Tiles GetTile failed!", nullptr);
+    sendError(500, "Internal Server Error", ex.what(), theResponse);
+    return QueryStatus::OK;
+  }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief Serve a feature-info request for a tile pixel
+ *
+ * Non-standard extension (OGC API - Tiles defines no GetFeatureInfo
+ * equivalent) mirroring the WMTS RESTful FeatureInfo resource: the tile
+ * address is converted into WMS GetFeatureInfo vocabulary and delegated to
+ * the WMS handler, so all three services share one feature-info
+ * implementation, output templates and the geonames place naming.
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleGetFeatureInfo(Spine::Reactor& theReactor,
+                                          Dali::State& theState,
+                                          const Spine::HTTP::Request& theRequest,
+                                          Spine::HTTP::Response& theResponse,
+                                          const std::string& collId,
+                                          const std::string& tmsId,
+                                          const std::string& tmId,
+                                          unsigned row,
+                                          unsigned col,
+                                          unsigned pixel_j,
+                                          unsigned pixel_i)
+{
+  try
+  {
+    if (itsWMSHandler == nullptr)
+      throw Fmi::Exception(BCP, "WMS handler not wired to the Tiles handler");
+
+    if (!itsTilesConfig->isValidCollection(collId))
+    {
+      sendError(404, "Not Found", "Collection not found: " + collId, theResponse);
+      return QueryStatus::OK;
+    }
+
+    const std::string style =
+        Spine::optional_string(theRequest.getParameter("style"), "default");
+    if (style != "default" && !itsTilesConfig->isValidStyle(collId, style))
+    {
+      sendError(404,
+                "Not Found",
+                "Style '" + style + "' not found for collection: " + collId,
+                theResponse);
+      return QueryStatus::OK;
+    }
+
+    const auto& wmsConfig = itsTilesConfig->wmsConfig();
+    const WMTS::TileMatrixSet* tms = itsTilesConfig->findTileMatrixSet(tmsId);
+    if (tms == nullptr)
+    {
+      sendError(404, "Not Found", "TileMatrixSet not found: " + tmsId, theResponse);
+      return QueryStatus::OK;
+    }
+
+    const WMTS::TileMatrix* tm = itsTilesConfig->findTileMatrix(*tms, tmId);
+    if (tm == nullptr)
+    {
+      sendError(404, "Not Found", "TileMatrix '" + tmId + "' not found in: " + tmsId, theResponse);
+      return QueryStatus::OK;
+    }
+
+    if (row >= tm->matrix_height || col >= tm->matrix_width)
+    {
+      sendError(400,
+                "Bad Request",
+                fmt::format("Tile ({},{}) out of range ({}x{})",
+                            col, row, tm->matrix_width, tm->matrix_height),
+                theResponse);
+      return QueryStatus::OK;
+    }
+
+    if (pixel_i >= tm->tile_width || pixel_j >= tm->tile_height)
+    {
+      sendError(400,
+                "Bad Request",
+                fmt::format("Pixel ({},{}) out of range ({}x{})",
+                            pixel_i, pixel_j, tm->tile_width, tm->tile_height),
+                theResponse);
+      return QueryStatus::OK;
+    }
+
+    // Info format from the 'f' parameter (the tile route's negotiation covers
+    // image formats only): json is the OGC-natural default, html for browsers.
+    const std::string f = Spine::optional_string(theRequest.getParameter("f"), "json");
+    std::string info_format;
+    if (f == "json" || f == "application/json")
+      info_format = "application/json";
+    else if (f == "html" || f == "text/html")
+      info_format = "text/html";
+    else
+    {
+      sendError(400, "Bad Request", "Unsupported info format: " + f, theResponse);
+      return QueryStatus::OK;
+    }
+
+    WMTS::TileBBox bbox = WMTS::computeTileBBox(*tms, *tm, row, col);
+
+    // Build the WMS GetFeatureInfo request. WMS 1.3.0 BBOX uses the CRS axis
+    // order: lat,lon for geographic CRSs, x,y otherwise (same convention the
+    // tile route uses for the Dali projection bbox).
+    auto thisRequest = theRequest;
+    thisRequest.addParameter("service", "WMS");
+    thisRequest.addParameter("request", "GetFeatureInfo");
+    thisRequest.addParameter("version", "1.3.0");
+    thisRequest.addParameter("layers", collId);
+    thisRequest.addParameter("query_layers", collId);
+    thisRequest.addParameter("styles", style == "default" ? "" : style);
+    thisRequest.addParameter("crs", tms->crs);
+    thisRequest.addParameter("bbox",
+                             tms->is_geographic
+                                 ? fmt::format("{},{},{},{}",
+                                               bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
+                                 : fmt::format("{},{},{},{}",
+                                               bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y));
+    thisRequest.addParameter("width", Fmi::to_string(tm->tile_width));
+    thisRequest.addParameter("height", Fmi::to_string(tm->tile_height));
+    thisRequest.addParameter("format", "image/png");
+    thisRequest.addParameter("info_format", info_format);
+    thisRequest.addParameter("i", Fmi::to_string(pixel_i));
+    thisRequest.addParameter("j", Fmi::to_string(pixel_j));
+
+    // Dimension query parameters (OGC API - Common Part 2), same vocabulary
+    // as the tile route: datetime -> time, reference_time -> origintime;
+    // elevation is already present verbatim.
+    auto datetime_param = theRequest.getParameter("datetime");
+    if (datetime_param && !datetime_param->empty())
+      thisRequest.addParameter("time", *datetime_param);
+    else if (wmsConfig.isTemporal(collId))
+    {
+      Fmi::DateTime current_time = wmsConfig.mostCurrentTime(collId, {});
+      if (!current_time.is_not_a_date_time())
+        thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
+    }
+    auto reftime_param = theRequest.getParameter("reference_time");
+    if (reftime_param && !reftime_param->empty())
+      thisRequest.addParameter("origintime", *reftime_param);
+
+    return itsWMSHandler->query(theReactor, theState, thisRequest, theResponse);
+  }
+  catch (...)
+  {
+    Fmi::Exception ex(BCP, "OGC Tiles feature info failed!", nullptr);
     sendError(500, "Internal Server Error", ex.what(), theResponse);
     return QueryStatus::OK;
   }

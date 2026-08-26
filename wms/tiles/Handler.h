@@ -13,6 +13,14 @@
  *   GET /tiles/collections/{collId}/tiles                       → Available tile sets
  *   GET /tiles/collections/{collId}/tiles/{tmsId}               → Tileset metadata
  *   GET /tiles/collections/{collId}/tiles/{tmsId}/{tm}/{row}/{col} → Tile image
+ *   GET /tiles/collections/{collId}/tiles/{tmsId}/{tm}/{row}/{col}/{j}/{i}
+ *                                                                 → Feature info
+ *
+ * The feature-info resource is a non-standard extension (OGC API - Tiles has
+ * no GetFeatureInfo equivalent): it mirrors the WMTS RESTful FeatureInfo
+ * resource shape and is delegated to the shared WMS pipeline. Info format
+ * negotiated via 'f' (json default, html); dimension query parameters
+ * (datetime, elevation, reference_time, style) apply like the tile route.
  *
  * OGC API - Styles (Mapbox style encoding), for styling the MVT output with the
  * real wms-conf colours:
@@ -52,6 +60,10 @@ class Config;
 class Product;
 class State;
 }  // namespace Dali
+namespace WMS
+{
+class Handler;
+}
 namespace Tiles
 {
 
@@ -69,6 +81,11 @@ class Handler
 
   void init(std::unique_ptr<Config> tilesConfig);
   void shutdown();
+
+  // Feature info is delegated to the WMS handler (the request is translated
+  // into WMS GetFeatureInfo vocabulary); the pointer is wired by the Plugin
+  // after both handlers exist. Not owned.
+  void setWMSHandler(WMS::Handler* wmsHandler) { itsWMSHandler = wmsHandler; }
 
   QueryStatus query(Spine::Reactor& theReactor,
                     Dali::State& theState,
@@ -141,6 +158,18 @@ class Handler
                             unsigned col,
                             const std::string& format);
 
+  QueryStatus handleGetFeatureInfo(Spine::Reactor& theReactor,
+                                   Dali::State& theState,
+                                   const Spine::HTTP::Request& theRequest,
+                                   Spine::HTTP::Response& theResponse,
+                                   const std::string& collId,
+                                   const std::string& tmsId,
+                                   const std::string& tmId,
+                                   unsigned row,
+                                   unsigned col,
+                                   unsigned pixel_j,
+                                   unsigned pixel_i);
+
   QueryStatus generateTile(Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse,
@@ -156,6 +185,7 @@ class Handler
 
   const Dali::Config& itsDaliConfig;
   std::unique_ptr<Config> itsTilesConfig;
+  WMS::Handler* itsWMSHandler = nullptr;  // not owned; see setWMSHandler()
 };
 
 }  // namespace Tiles

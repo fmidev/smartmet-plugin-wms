@@ -966,6 +966,9 @@ void Plugin::init()
     auto tilesConfig = std::make_unique<Tiles::Config>(itsConfig, *itsWMSConfig);
     itsTilesHandler = std::make_unique<Tiles::Handler>(itsConfig);
     itsTilesHandler->init(std::move(tilesConfig));
+    // Feature info is translated into WMS vocabulary and delegated to the WMS
+    // handler, like the WMTS FeatureInfo resource.
+    itsTilesHandler->setWMSHandler(itsWMSHandler.get());
 
     // Register dali content handler
 
