@@ -7,10 +7,11 @@
  * pixels are RGBA and no styling is applied, hence the projection
  * transformation uses nearest neighbour interpolation.
  *
- * The producer name identifies the data completely, there is no
- * parameter to choose:
+ * The producer is the satellite and the parameter is the composite of
+ * it, which lets a client list the satellites and then the composites of
+ * the one the user picked:
  *
- *   { "layer_type": "satellite", "producer": "meteosat_natural" }
+ *   { "layer_type": "satellite", "producer": "meteosat", "parameter": "natural" }
  *
  * The image closest to the requested time is used. The tolerance is
  * configurable, since a geostationary satellite produces an image every

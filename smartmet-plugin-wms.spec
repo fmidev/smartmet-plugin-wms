@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.8.26
-Release: 5%{?dist}.fmi
+Release: 6%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -45,7 +45,7 @@ BuildRequires: smartmet-engine-gis-devel >= 26.8.10
 BuildRequires: smartmet-engine-grid-devel >= 26.7.10
 BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
 BuildRequires: smartmet-engine-querydata-devel >= 26.8.24
-BuildRequires: smartmet-engine-satellite-devel >= 26.8.26
+BuildRequires: smartmet-engine-satellite-devel >= 26.8.26-2
 BuildRequires: smartmet-engine-contour-devel >= 26.8.3
 BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
@@ -92,7 +92,7 @@ Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 Requires: smartmet-engine-avi >= 26.7.9
 Requires: smartmet-engine-querydata >= 26.8.24
-Requires: smartmet-engine-satellite >= 26.8.26
+Requires: smartmet-engine-satellite >= 26.8.26-2
 Requires: smartmet-engine-contour >= 26.8.3
 Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
@@ -175,6 +175,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-6.fmi
+- Satellite layers now select the image with a producer and a parameter
 * Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-5.fmi
 - Added a satellite layer for serving precoloured satellite imagery via the new satellite engine
 * Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-4.fmi

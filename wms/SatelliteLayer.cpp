@@ -5,6 +5,7 @@
 #include "Hash.h"
 #include "JsonTools.h"
 #include "State.h"
+#include <boost/algorithm/string/join.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <grid-files/common/GeneralFunctions.h>
@@ -50,22 +51,26 @@ void SatelliteLayer::init(Json::Value& theJson,
 
     JsonTools::remove_int(compression, theJson, "compression");
 
+    // The producer is the satellite and the parameter is the composite
     if (!paraminfo.producer)
       throw Fmi::Exception(BCP, "Satellite layer requires a producer");
 
-    // The producer identifies the data completely. Accepting a parameter
-    // silently would only hide configuration mistakes.
-    if (!paraminfo.parameter.empty())
-      throw Fmi::Exception(BCP,
-                           "Satellite layers have no parameters, the producer selects the image")
-          .addParameter("Producer", *paraminfo.producer)
-          .addParameter("Parameter", paraminfo.parameter);
+    if (paraminfo.parameter.empty())
+      throw Fmi::Exception(BCP, "Satellite layer requires a parameter")
+          .addParameter("Producer", *paraminfo.producer);
 
     const auto& engine = getEngine(theState);
 
     if (!engine.hasProducer(*paraminfo.producer))
       throw Fmi::Exception(BCP, "Unknown satellite producer")
           .addParameter("Producer", *paraminfo.producer);
+
+    if (!engine.hasProduct(*paraminfo.producer, paraminfo.parameter))
+      throw Fmi::Exception(BCP, "Unknown parameter for this satellite producer")
+          .addParameter("Producer", *paraminfo.producer)
+          .addParameter("Parameter", paraminfo.parameter)
+          .addParameter("Available parameters",
+                        boost::algorithm::join(engine.parameters(*paraminfo.producer), ","));
   }
   catch (...)
   {
@@ -110,7 +115,7 @@ Engine::Satellite::ImageInfoPtr SatelliteLayer::findImage(const State& theState)
     if (hasValidTime())
       time = getValidTime();
 
-    return engine.find(*paraminfo.producer, time, time_tolerance);
+    return engine.find(*paraminfo.producer, paraminfo.parameter, time, time_tolerance);
   }
   catch (...)
   {
@@ -219,7 +224,8 @@ void SatelliteLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!")
         .addParameter("qid", qid)
-        .addParameter("Producer", paraminfo.producer ? *paraminfo.producer : std::string("-"));
+        .addParameter("Producer", paraminfo.producer ? *paraminfo.producer : std::string("-"))
+        .addParameter("Parameter", paraminfo.parameter);
   }
 }
 

@@ -45,10 +45,10 @@ bool SatelliteLayer::updateLayerMetaData()
     if (itsSatelliteEngine == nullptr)
       return false;  // The engine is not loaded, hence the layer is not available
 
-    if (!itsSatelliteEngine->hasProducer(itsProducer))
+    if (!itsSatelliteEngine->hasProduct(itsProducer, itsParameter))
       return false;
 
-    auto info = itsSatelliteEngine->producerInfo(itsProducer);
+    auto info = itsSatelliteEngine->productInfo(itsProducer, itsParameter);
 
     // Without a bounding box the layer cannot be advertised. The engine
     // estimates it from the newest image, hence this can only happen
@@ -61,7 +61,7 @@ bool SatelliteLayer::updateLayerMetaData()
     geographicBoundingBox.xMax = (*info.bbox)[2];
     geographicBoundingBox.yMax = (*info.bbox)[3];
 
-    auto times = itsSatelliteEngine->times(itsProducer);
+    auto times = itsSatelliteEngine->times(itsProducer, itsParameter);
 
     std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
 
@@ -92,7 +92,8 @@ bool SatelliteLayer::updateLayerMetaData()
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to update satellite layer metadata!")
-        .addParameter("Producer", itsProducer);
+        .addParameter("Producer", itsProducer)
+        .addParameter("Parameter", itsParameter);
   }
 }
 

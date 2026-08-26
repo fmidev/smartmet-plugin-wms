@@ -527,7 +527,8 @@ SharedLayer create_wms_layer(const LayerConfig& theConfig, Json::Value& root)
       }
       case LayerType::SatelliteLayer:
       {
-        layer = std::make_shared<OGC::SatelliteLayer>(theConfig, producer);
+        layer = std::make_shared<OGC::SatelliteLayer>(
+            theConfig, producer, determine_parameter(root));
         break;
       }
       case LayerType::ObservationLayer:
