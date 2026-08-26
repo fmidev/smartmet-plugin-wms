@@ -1,0 +1,92 @@
+{
+  "layers" : 
+  [
+    {
+      "id" : "test:t2m:isobands",
+      "paint" : 
+      {
+        "fill-color" : 
+        [
+          "match",
+          [
+            "get",
+            "class"
+          ],
+          "Temperature_-39",
+          "rgba(148,178,242,1.00)",
+          "Temperature_-39_-36",
+          "rgba(0,80,171,1.00)",
+          "Temperature_-36_-33",
+          "rgba(6,98,196,1.00)",
+          "Temperature_-33_-30",
+          "rgba(24,122,219,1.00)",
+          "Temperature_-30_-27",
+          "rgba(17,141,250,1.00)",
+          "Temperature_-27_-24",
+          "rgba(64,169,255,1.00)",
+          "Temperature_-24_-21",
+          "rgba(101,189,247,1.00)",
+          "Temperature_-21_-18",
+          "rgba(0,103,140,1.00)",
+          "Temperature_-18_-15",
+          "rgba(2,123,163,1.00)",
+          "Temperature_-15_-12",
+          "rgba(0,155,186,1.00)",
+          "Temperature_-12_-9",
+          "rgba(34,188,212,1.00)",
+          "Temperature_-9_-6",
+          "rgba(103,219,230,1.00)",
+          "Temperature_-6_-3",
+          "rgba(163,243,247,1.00)",
+          "Temperature_-3_0",
+          "rgba(212,255,255,1.00)",
+          "Temperature_0_3",
+          "rgba(5,179,138,1.00)",
+          "Temperature_3_6",
+          "rgba(2,212,149,1.00)",
+          "Temperature_6_9",
+          "rgba(138,237,187,1.00)",
+          "Temperature_9_12",
+          "rgba(204,255,208,1.00)",
+          "Temperature_12_15",
+          "rgba(235,252,207,1.00)",
+          "Temperature_15_18",
+          "rgba(235,255,122,1.00)",
+          "Temperature_18_21",
+          "rgba(255,234,128,1.00)",
+          "Temperature_21_24",
+          "rgba(247,212,35,1.00)",
+          "Temperature_24_27",
+          "rgba(245,180,0,1.00)",
+          "Temperature_27_30",
+          "rgba(242,149,0,1.00)",
+          "Temperature_30_33",
+          "rgba(240,116,0,1.00)",
+          "Temperature_33_36",
+          "rgba(255,83,36,1.00)",
+          "Temperature_39",
+          "rgba(247,23,7,1.00)",
+          "rgba(0,0,0,0)"
+        ],
+        "fill-opacity" : 0.84999999999999998
+      },
+      "source" : "test:t2m",
+      "source-layer" : "l1",
+      "type" : "fill"
+    }
+  ],
+  "name" : "test:t2m",
+  "sources" : 
+  {
+    "test:t2m" : 
+    {
+      "maxzoom" : 14,
+      "tiles" : 
+      [
+        "http://localhost/tiles/collections/test:t2m/tiles/EPSG:3857/{tileMatrix}/{tileRow}/{tileCol}?f=application/vnd.mapbox-vector-tile"
+      ],
+      "type" : "vector"
+    }
+  },
+  "version" : 8
+}

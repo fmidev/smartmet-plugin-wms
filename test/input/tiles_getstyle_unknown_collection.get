@@ -1,0 +1,1 @@
+GET /tiles/collections/test:no_such_collection/styles/default?f=mapbox HTTP/1.0

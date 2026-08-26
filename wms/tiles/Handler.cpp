@@ -15,6 +15,7 @@
 #include "../ogc/StyleSelection.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <algorithm>
 #include <optional>
 #include <fmt/format.h>
 #include <fmt/printf.h>
@@ -193,7 +194,7 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
 
       // --- /collections/{id}/styles (OGC API - Styles) ---
       if (parts.size() == 3 && parts[2] == "styles")
-        return handleCollectionStyles(base, collId, theResponse);
+        return handleCollectionStyles(base, collId, theRequest, theResponse);
 
       if (parts.size() == 4 && parts[2] == "styles")
         return handleStyle(base, collId, parts[3], theState, theRequest, theResponse);
@@ -954,6 +955,17 @@ QueryStatus Handler::handleStyle(const std::string& base,
       return QueryStatus::OK;
     }
 
+    // "default" is always valid — it is the product as configured, and a layer
+    // with no explicit style list still renders it. Named variants must exist.
+    if (styleId != "default" && !itsTilesConfig->isValidStyle(collId, styleId))
+    {
+      sendError(404,
+                "Not Found",
+                "Style '" + styleId + "' not found for collection: " + collId,
+                resp);
+      return QueryStatus::OK;
+    }
+
     auto layers = resolveStyleLayers(collId, styleId, theState, theRequest);
     if (layers.empty())
     {
@@ -993,6 +1005,7 @@ QueryStatus Handler::handleStyle(const std::string& base,
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollectionStyles(const std::string& base,
                                             const std::string& collId,
+                                            const Spine::HTTP::Request& theRequest,
                                             Spine::HTTP::Response& resp)
 {
   try
@@ -1005,17 +1018,74 @@ QueryStatus Handler::handleCollectionStyles(const std::string& base,
 
     const std::string coll_base = base + "/collections/" + collId;
 
-    Json::Value entry;
-    entry["id"] = "default";
-    Json::Value styleLinks(Json::arrayValue);
-    styleLinks.append(makeLink(coll_base + "/styles/default?f=mapbox",
-                               "stylesheet",
-                               "application/vnd.mapbox.style+json",
-                               "Mapbox GL style"));
-    entry["links"] = styleLinks;
+    const auto& dali = itsTilesConfig->getDaliConfig();
+    auto language = dali.defaultLanguage();
+    auto query_lang = theRequest.getParameter("LANGUAGE");
+    if (query_lang)
+      language = *query_lang;
+
+    // Enumerate the layer's real styles — the same list WMS/WMTS capabilities
+    // publish — instead of just the implicit default. Every style name here is
+    // accepted by /styles/{styleId} (resolveStyleLayers folds the named variant
+    // into the render tree with useStyle()).
+    struct StyleEntry
+    {
+      std::string id;
+      std::string title;
+    };
+    std::vector<StyleEntry> entries;
+
+    const auto& wmsConfig = itsTilesConfig->wmsConfig();
+    auto layer_obj = wmsConfig.getLayer(collId);
+    if (layer_obj)
+    {
+      auto style_info = layer_obj->getStyleInfo(language, dali.defaultLanguage());
+      if (style_info && style_info->Exists("style"))
+      {
+        CTPP::CDT& style_list = (*style_info)["style"];
+        if (style_list.GetType() == CTPP::CDT::ARRAY_VAL)
+        {
+          for (std::size_t i = 0; i < style_list.Size(); ++i)
+          {
+            if (!style_list[i].Exists("name"))
+              continue;
+            StyleEntry e;
+            e.id = style_list[i].At("name").GetString();
+            if (style_list[i].Exists("title"))
+              e.title = style_list[i].At("title").GetString();
+            entries.push_back(std::move(e));
+          }
+        }
+      }
+    }
+
+    // The default style is always available even when the capabilities list is
+    // empty or lists only named variants; keep it first, variants in
+    // capabilities order after it.
+    const bool has_default = std::any_of(entries.begin(),
+                                         entries.end(),
+                                         [](const StyleEntry& e) { return e.id == "default"; });
+    if (!has_default)
+      entries.insert(entries.begin(), StyleEntry{"default", ""});
+    std::stable_partition(entries.begin(),
+                          entries.end(),
+                          [](const StyleEntry& e) { return e.id == "default"; });
 
     Json::Value styles(Json::arrayValue);
-    styles.append(entry);
+    for (const auto& e : entries)
+    {
+      Json::Value entry;
+      entry["id"] = e.id;
+      if (!e.title.empty())
+        entry["title"] = e.title;
+      Json::Value styleLinks(Json::arrayValue);
+      styleLinks.append(makeLink(coll_base + "/styles/" + e.id + "?f=mapbox",
+                                 "stylesheet",
+                                 "application/vnd.mapbox.style+json",
+                                 "Mapbox GL style"));
+      entry["links"] = styleLinks;
+      styles.append(entry);
+    }
 
     Json::Value doc;
     doc["styles"] = styles;

@@ -113,6 +113,7 @@ class Handler
                            Spine::HTTP::Response& resp);
   QueryStatus handleCollectionStyles(const std::string& base,
                                      const std::string& collId,
+                                     const Spine::HTTP::Request& theRequest,
                                      Spine::HTTP::Response& resp);
   QueryStatus handleStyle(const std::string& base,
                           const std::string& collId,
