@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.8.26
-Release: 3%{?dist}.fmi
+Release: 4%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -173,6 +173,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-4.fmi
+- Added FeatureInfo support for OGC Tiles even though it is not standard. However, you can get a 0...2 isoband, or by clicking say a city a temperature of 0.3 degrees. Information in the vector data is too crude for click information.
 * Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-3.fmi
 - Added WMTS GetFeatureInfo support
 - Added location names to GetFeatureInfo responses
