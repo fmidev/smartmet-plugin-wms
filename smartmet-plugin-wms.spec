@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.8.26
-Release: 9%{?dist}.fmi
+Version: 26.8.27
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -30,7 +30,7 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.6.27
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
-BuildRequires: smartmet-library-grid-files-devel >= 26.7.14
+BuildRequires: smartmet-library-grid-files-devel >= 26.8.27
 BuildRequires: smartmet-library-macgyver-devel >= 26.8.19
 BuildRequires: smartmet-library-spine-devel >= 26.8.24
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
@@ -38,14 +38,14 @@ BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.8.24
+BuildRequires: smartmet-engine-observation-devel >= 26.8.26
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.7.9
 BuildRequires: smartmet-engine-gis-devel >= 26.8.10
 BuildRequires: smartmet-engine-grid-devel >= 26.7.10
 BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
 BuildRequires: smartmet-engine-querydata-devel >= 26.8.24
-BuildRequires: smartmet-engine-satellite-devel >= 26.8.26-3
+BuildRequires: smartmet-engine-satellite-devel >= 26.8.26 smartmet-engine-satellite-devel is not installed
 BuildRequires: smartmet-engine-contour-devel >= 26.8.3
 BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
@@ -80,7 +80,7 @@ Requires: protobuf
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
 Requires: smartmet-library-grid-content >= 26.7.12
-Requires: smartmet-library-grid-files >= 26.7.14
+Requires: smartmet-library-grid-files >= 26.8.27
 Requires: smartmet-library-gis >= 26.8.10
 Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.8.19
@@ -92,7 +92,7 @@ Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 Requires: smartmet-engine-avi >= 26.7.9
 Requires: smartmet-engine-querydata >= 26.8.24
-Requires: smartmet-engine-satellite >= 26.8.26-3
+Requires: smartmet-engine-satellite >= 26.8.26 smartmet-engine-satellite is not installed
 Requires: smartmet-engine-contour >= 26.8.3
 Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
@@ -123,7 +123,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 26.8.3
 #TestRequires: smartmet-engine-geonames-devel >= 26.7.31
 #TestRequires: smartmet-engine-gis-devel >= 26.8.10
-#TestRequires: smartmet-engine-satellite >= 26.8.26-5
+#TestRequires: smartmet-engine-satellite >= 26.8.26 smartmet-engine-satellite is not installed
 #TestRequires: smartmet-engine-querydata-devel >= 26.8.24
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
@@ -147,7 +147,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.8.24
+#TestRequires: smartmet-engine-observation-devel >= 26.8.26
 %endif
 
 %description
@@ -176,16 +176,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
-* Thu Aug 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-9.fmi
-- Added the satellite layer tests
-* Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-8.fmi
-- Satellite layer ETags now follow the contents of the colormap
-* Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-7.fmi
-- Satellite layers can colour products which hold values instead of colours
-* Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-6.fmi
-- Satellite layers now select the image with a producer and a parameter
-* Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-5.fmi
+* Thu Aug 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.27-1.fmi
 - Added a satellite layer for serving precoloured satellite imagery via the new satellite engine
+- Satellite layers can colour products which hold values instead of colours
+- Satellite layers now select the image with a producer and a parameter
+- Satellite layer ETags now follow the contents of the colormap
 * Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-4.fmi
 - Added FeatureInfo support for OGC Tiles even though it is not standard. However, you can get a 0...2 isoband, or by clicking say a city a temperature of 0.3 degrees. Information in the vector data is too crude for click information.
 * Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-3.fmi
