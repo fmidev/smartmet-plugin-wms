@@ -1,0 +1,1 @@
+GET /wms?service=WMS&version=1.3.0&request=GetMap&layers=test:satellite_eckert&styles=&crs=EPSG:3857&bbox=-20037508,-20037508,20037508,20037508&width=256&height=256&format=image/png&transparent=true HTTP/1.0

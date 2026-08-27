@@ -179,6 +179,47 @@
 
 	      </Layer>
 	    <Layer queryable="1">
+      <Name>test:satellite_eckert</Name>
+      <Title>Meteosat water vapour 7.3 um in Eckert IV</Title>
+      <Abstract>SEVIRI water vapour imagery in the Eckert IV projection</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-137.440290252</westBoundLongitude>
+        <eastBoundLongitude>137.456627037</eastBoundLongitude>
+        <southBoundLatitude>-81.499357368</southBoundLatitude>
+        <northBoundLatitude>81.5</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-137.44029" miny="-81.499357" maxx="137.456627" maxy="81.5"/>
+      <BoundingBox CRS="CRS:83" minx="-137.44029" miny="-81.499357" maxx="137.456627" maxy="81.5"/>
+      <BoundingBox CRS="CRS:84" minx="-137.44029" miny="-81.499357" maxx="137.456627" maxy="81.5"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-4460461.91185" miny="-6612906.73204" maxx="3387669.86061" maxy="-476105.949907"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2093861.75205" miny="-3626674.93858" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="EPSG:3035" minx="-146473.113242" miny="1527541.11022" maxx="4882431.87493" maxy="6614901.9063"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-15299783.1253" miny="-16579301.8546" maxx="15301601.7279" maxy="16579785.821"/>
+      <BoundingBox CRS="EPSG:4326" minx="-137.44029" miny="-81.499357" maxx="137.456627" maxy="81.5"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2026-08-26T14:15:00Z</Dimension>
+      
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_eckert&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
       <Name>test:backgroundmap</Name>
       <Title>Background map</Title>
       <CRS>CRS:27</CRS>
@@ -211,6 +252,162 @@
         <LegendURL width="30" height="10">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Abackgroundmap&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>test:satellite_fog</Name>
+      <Title>Meteosat fog RGB</Title>
+      <Abstract>Fog RGB composite based on infrared channels</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-35.6127700767</westBoundLongitude>
+        <eastBoundLongitude>56.9508878748</eastBoundLongitude>
+        <southBoundLatitude>34.306988383</southBoundLatitude>
+        <northBoundLatitude>72.1763236276</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-35.61277" miny="34.306988" maxx="56.950888" maxy="72.176324"/>
+      <BoundingBox CRS="CRS:83" minx="-35.61277" miny="34.306988" maxx="56.950888" maxy="72.176324"/>
+      <BoundingBox CRS="CRS:84" minx="-35.61277" miny="34.306988" maxx="56.950888" maxy="72.176324"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-3517598.64661" miny="-5215054.45635" maxx="2499932.76732" maxy="-2335234.48907"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2093861.75205" miny="-3626674.93858" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="EPSG:3035" minx="351061.235938" miny="2481198.0696" maxx="5467539.60993" maxy="5748961.77135"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-3964395.43067" miny="4070097.92983" maxx="6339743.83845" maxy="11817005.8042"/>
+      <BoundingBox CRS="EPSG:4326" minx="-35.61277" miny="34.306988" maxx="56.950888" maxy="72.176324"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2023-09-29T15:30:00Z/2023-09-29T16:30:00Z/PT15M</Dimension>
+      
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>test:satellite_ctth</Name>
+      <Title>Meteosat cloud top temperature</Title>
+      <Abstract>NWC SAF cloud top temperature, coloured with a colour map</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-44.8341977761</westBoundLongitude>
+        <eastBoundLongitude>63.2346333934</eastBoundLongitude>
+        <southBoundLatitude>27.6432215864</southBoundLatitude>
+        <northBoundLatitude>75.5867086753</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <BoundingBox CRS="CRS:83" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <BoundingBox CRS="CRS:84" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-4026475.75074" miny="-5969495.78871" maxx="2740510.13325" maxy="-2047581.05324"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2093861.75205" miny="-3626674.93858" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="EPSG:3035" minx="1876.712718" miny="1828180.77256" maxx="5257446.52168" maxy="6069857.08099"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-4990920.06656" miny="3204066.20637" maxx="7039247.18985" maxy="13189542.706"/>
+      <BoundingBox CRS="EPSG:4326" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2026-08-26T14:00:00Z,2026-08-26T14:15:00Z</Dimension>
+      
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_ctth&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>test:satellite_meteosat</Name>
+      <Title>Meteosat natural colours</Title>
+      <Abstract>SEVIRI natural colour composite with colorized IR clouds</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-44.8341977761</westBoundLongitude>
+        <eastBoundLongitude>63.2346333934</eastBoundLongitude>
+        <southBoundLatitude>27.6432215864</southBoundLatitude>
+        <northBoundLatitude>75.5867086753</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <BoundingBox CRS="CRS:83" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <BoundingBox CRS="CRS:84" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-4026475.75074" miny="-5969495.78871" maxx="2740510.13325" maxy="-2047581.05324"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2093861.75205" miny="-3626674.93858" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="EPSG:3035" minx="1876.712718" miny="1828180.77256" maxx="5257446.52168" maxy="6069857.08099"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-4990920.06656" miny="3204066.20637" maxx="7039247.18985" maxy="13189542.706"/>
+      <BoundingBox CRS="EPSG:4326" minx="-44.834198" miny="27.643222" maxx="63.234633" maxy="75.586709"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2026-08-26T14:15:00Z</Dimension>
+      
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_meteosat&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>test:satellite_geos</Name>
+      <Title>Meteosat infrared 10.8 um</Title>
+      <Abstract>SEVIRI infrared imagery in the satellite projection</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-77.3654860215</westBoundLongitude>
+        <eastBoundLongitude>76.9328334224</eastBoundLongitude>
+        <southBoundLatitude>-77.0855377363</southBoundLatitude>
+        <northBoundLatitude>77.5731828406</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-77.365486" miny="-77.085538" maxx="76.932833" maxy="77.573183"/>
+      <BoundingBox CRS="CRS:83" minx="-77.365486" miny="-77.085538" maxx="76.932833" maxy="77.573183"/>
+      <BoundingBox CRS="CRS:84" minx="-77.365486" miny="-77.085538" maxx="76.932833" maxy="77.573183"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-4460461.91185" miny="-6612906.73204" maxx="3147443.40223" maxy="-1340367.11008"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2093861.75205" miny="-3626674.93858" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="EPSG:3035" minx="-146473.113242" miny="1527541.11022" maxx="5132955.78952" maxy="6254628.29192"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-8612286.50889" miny="-13896557.3653" maxx="8564123.84186" maxy="14144070.3544"/>
+      <BoundingBox CRS="EPSG:4326" minx="-77.365486" miny="-77.085538" maxx="76.932833" maxy="77.573183"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2026-08-26T14:15:00Z</Dimension>
+      
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_geos&amp;width=30&amp;height=10"/>
         </LegendURL>
       </Style>
       </Layer>

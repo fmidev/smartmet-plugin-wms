@@ -1,0 +1,14 @@
+# Cloud top temperature of the NWC SAF CTTH product, in Kelvin.
+# The satellite layer colours the values of an uncoloured product with
+# this, interpolating between the entries when smooth_colors is on.
+#
+# value; ARGB-color
+# -----------------
+190.0;ffffffff
+210.0;ffe0b0ff
+230.0;ff9060e0
+250.0;ff3060c0
+270.0;ff20a0a0
+290.0;ffa0c040
+310.0;ffe0a020
+330.0;ffc02010

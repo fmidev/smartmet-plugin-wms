@@ -29,6 +29,10 @@ LIBS += $(PREFIX_LDFLAGS) \
 	-lboost_serialization \
 	-lbz2 -lz -lpthread -ldl
 
+# The satellite images come from the smartmet-test-data package
+SATELLITE_TEST_DATA ?= /usr/share/smartmet/test/data/satellite
+export SATELLITE_TEST_DATA
+
 # Test input groups (resolved at parse time so filter-out works correctly)
 ALL_TESTS   := $(wildcard input/*.get)
 WMS_TESTS   := $(wildcard input/wms_*.get)

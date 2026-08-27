@@ -3568,6 +3568,31 @@
         {
           "image" : 
           {
+            "height" : 500,
+            "width" : 400
+          },
+          "name" : "satellite",
+          "path" : 
+          [
+            "test",
+            "satellite"
+          ],
+          "producer" : "meteosat",
+          "projection" : 
+          {
+            "crs" : "EPSG:3067",
+            "x1" : -118331,
+            "x2" : 875567,
+            "xsize" : 400,
+            "y1" : 6335621,
+            "y2" : 7907751,
+            "ysize" : 500
+          },
+          "url_template" : "/dali?customer=test&product=satellite&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 600,
             "width" : 600
           },

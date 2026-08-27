@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.8.26
-Release: 8%{?dist}.fmi
+Release: 9%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -123,6 +123,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 26.8.3
 #TestRequires: smartmet-engine-geonames-devel >= 26.7.31
 #TestRequires: smartmet-engine-gis-devel >= 26.8.10
+#TestRequires: smartmet-engine-satellite >= 26.8.26-5
 #TestRequires: smartmet-engine-querydata-devel >= 26.8.24
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
@@ -175,6 +176,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Aug 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-9.fmi
+- Added the satellite layer tests
 * Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-8.fmi
 - Satellite layer ETags now follow the contents of the colormap
 * Wed Aug 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.26-7.fmi

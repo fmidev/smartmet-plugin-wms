@@ -1,0 +1,36 @@
+{
+  "producer": "meteosat",
+  "parameter": "natural",
+  "projection": {
+    "crs": "EPSG:3067",
+    "xsize": 400,
+    "ysize": 500,
+    "x1": -118331,
+    "y1": 6335621,
+    "x2": 875567,
+    "y2": 7907751
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "sat",
+          "layer_type": "satellite"
+        },
+        {
+          "qid": "borders",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.5"
+          }
+        }
+      ]
+    }
+  ]
+}

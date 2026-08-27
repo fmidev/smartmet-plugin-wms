@@ -1,0 +1,1 @@
+GET /wms?service=WMS&version=1.3.0&request=GetMap&layers=test:satellite_fog&styles=&crs=EPSG:3067&bbox=-118331,6335621,875567,7907751&width=300&height=400&format=image/png&transparent=true&time=20230929T1600 HTTP/1.0
