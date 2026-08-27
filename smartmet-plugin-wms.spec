@@ -45,7 +45,7 @@ BuildRequires: smartmet-engine-gis-devel >= 26.8.10
 BuildRequires: smartmet-engine-grid-devel >= 26.7.10
 BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
 BuildRequires: smartmet-engine-querydata-devel >= 26.8.24
-BuildRequires: smartmet-engine-satellite-devel >= 26.8.26 smartmet-engine-satellite-devel is not installed
+BuildRequires: smartmet-engine-satellite-devel >= 26.8.26
 BuildRequires: smartmet-engine-contour-devel >= 26.8.3
 BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
@@ -92,7 +92,7 @@ Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 Requires: smartmet-engine-avi >= 26.7.9
 Requires: smartmet-engine-querydata >= 26.8.24
-Requires: smartmet-engine-satellite >= 26.8.26 smartmet-engine-satellite is not installed
+Requires: smartmet-engine-satellite >= 26.8.26
 Requires: smartmet-engine-contour >= 26.8.3
 Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
@@ -123,7 +123,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 26.8.3
 #TestRequires: smartmet-engine-geonames-devel >= 26.7.31
 #TestRequires: smartmet-engine-gis-devel >= 26.8.10
-#TestRequires: smartmet-engine-satellite >= 26.8.26 smartmet-engine-satellite is not installed
+#TestRequires: smartmet-engine-satellite >= 26.8.26
 #TestRequires: smartmet-engine-querydata-devel >= 26.8.24
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
