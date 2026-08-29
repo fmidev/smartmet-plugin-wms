@@ -47,6 +47,7 @@ BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
 BuildRequires: smartmet-engine-querydata-devel >= 26.8.24
 BuildRequires: smartmet-engine-satellite-devel >= 26.8.26
 BuildRequires: smartmet-engine-contour-devel >= 26.8.3
+BuildRequires: smartmet-engine-satellite-devel >= 26.8.26
 BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
 BuildRequires: %{smartmet_fmt_devel}
@@ -97,6 +98,7 @@ Requires: smartmet-engine-contour >= 26.8.3
 Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
 Requires: smartmet-engine-geonames >= 26.7.31
+Requires: smartmet-engine-satellite >= 26.8.26
 Requires: smartmet-server >= 26.8.21
 Requires: smartmet-library-spine >= 26.8.24
 Requires: smartmet-fonts
