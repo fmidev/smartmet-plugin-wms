@@ -128,6 +128,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-satellite >= 26.8.26
 #TestRequires: smartmet-engine-querydata-devel >= 26.8.24
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
+#TestRequires: smartmet-engine-satellite-devel >= 26.8.26
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
 #TestRequires: smartmet-library-newbase-devel >= 26.7.18
