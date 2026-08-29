@@ -733,6 +733,12 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       {
         // Delivering the exception information as HTTP content
         std::string fullMessage = exception.getHtmlStackTrace();
+        // The stack trace includes the request URI and the Apikey parameter, either of
+        // which can carry the caller's fmi-apikey. Redact the apikey value from the
+        // client-facing debug content (the full value stays in the server log via
+        // printError above) so debug=1 cannot be used to read back an apikey.
+        if (apikey && !apikey->empty())
+          boost::algorithm::replace_all(fullMessage, *apikey, "<redacted>");
         theResponse.setContent(fullMessage);
         theResponse.setStatus(Spine::HTTP::Status::ok);
       }
@@ -1161,10 +1167,13 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
   {
     // Establish the path to the JSON file.
 
-    std::string customer_root =
-        (itsConfig.rootDirectory(theState.useWms()) + "/customers/" + theState.getCustomer());
+    // Reject relative paths leading upwards ("../") and absolute paths in the
+    // customer and product names to prevent cross-tenant path traversal.
 
-    std::string product_path = customer_root + "/products/" + theName + ".json";
+    std::string customer_root = (itsConfig.rootDirectory(theState.useWms()) + "/customers/" +
+                                 check_attack(theState.getCustomer()));
+
+    std::string product_path = customer_root + "/products/" + check_attack(theName) + ".json";
 
     if (!std::filesystem::exists(product_path))
     {
@@ -1189,6 +1198,22 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
     // Replace references (json: and ref:) from query string options
 
     auto params = extractValidParameters(theRequest.getParameterMap());
+
+    // Prevent local file inclusion: query string "json:" and "ref:" includes must
+    // not escape the configuration root via relative upward paths.
+
+    for (const auto &name_value : params)
+    {
+      const auto &value = name_value.second;
+      if (boost::algorithm::starts_with(value, "json:") ||
+          boost::algorithm::starts_with(value, "ref:"))
+      {
+        if (value.find("..") != std::string::npos)
+          throw Fmi::Exception(BCP, "Relative upward paths are not allowed in includes")
+              .addParameter("Parameter", name_value.first)
+              .addParameter("Value", value);
+      }
+    }
 
     Spine::JSON::replaceReferences(json, params);
 

@@ -246,7 +246,7 @@ void emitText(CTPP::CDT& theLayersCdt,
     CTPP::CDT halo(CTPP::CDT::HASH_VAL);
     halo["start"] = "<text";
     halo["end"] = "</text>";
-    halo["cdata"] = pl.text;
+    halo["cdata"] = Fmi::safexmlescape(pl.text);
     halo["attributes"]["x"] = Fmi::to_string(lround(x));
     halo["attributes"]["y"] = Fmi::to_string(lround(y));
     halo["attributes"]["font-family"] = cfg.font_family;
@@ -266,7 +266,7 @@ void emitText(CTPP::CDT& theLayersCdt,
   CTPP::CDT text(CTPP::CDT::HASH_VAL);
   text["start"] = "<text";
   text["end"] = "</text>";
-  text["cdata"] = pl.text;
+  text["cdata"] = Fmi::safexmlescape(pl.text);
   text["attributes"]["x"] = Fmi::to_string(lround(x));
   text["attributes"]["y"] = Fmi::to_string(lround(y));
   text["attributes"]["font-family"] = cfg.font_family;

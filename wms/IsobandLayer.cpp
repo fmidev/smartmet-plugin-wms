@@ -250,14 +250,21 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
       dataheight /= 1000;
     }
 
-    unsigned int width = lround(datawidth / *heatmap.resolution);
-    unsigned int height = lround(dataheight / *heatmap.resolution);
+    // Compute the grid size in floating point first so that a very small resolution
+    // cannot overflow the unsigned int width/height (which would both truncate the
+    // dimensions and wrap the width*height product, bypassing the max_points cap).
+    const double dwidth = lround(datawidth / *heatmap.resolution);
+    const double dheight = lround(dataheight / *heatmap.resolution);
 
-    if (width * height > heatmap.max_points)
+    if (dwidth < 1 || dheight < 1 ||
+        dwidth * dheight > static_cast<double>(heatmap.max_points))
       throw Fmi::Exception(
           BCP,
-          (std::string("Heatmap too big (") + Fmi::to_string(width * height) + " points, max " +
+          (std::string("Heatmap too big (") + Fmi::to_string(dwidth * dheight) + " points, max " +
            Fmi::to_string(heatmap.max_points) + "), increase resolution"));
+
+    unsigned int width = static_cast<unsigned int>(dwidth);
+    unsigned int height = static_cast<unsigned int>(dheight);
 
     // Must use at least two grid points, value 1 would cause a segmentation fault in here
 

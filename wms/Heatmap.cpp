@@ -66,6 +66,11 @@ void Heatmap::init(Json::Value& theJson, const Config& theConfig)
 
     if (!resolution)
       throw Fmi::Exception(BCP, "Heatmap resolution is not set");
+    // A non-positive resolution is used as a divisor when computing the grid size
+    // (width = datawidth / resolution), so resolution=0 would divide by zero and a
+    // negative value would produce a bogus/huge size. Reject both.
+    if (*resolution <= 0)
+      throw Fmi::Exception(BCP, "Heatmap resolution must be positive");
     if (!radius)
       throw Fmi::Exception(BCP, "Heatmap radius is not set");
 

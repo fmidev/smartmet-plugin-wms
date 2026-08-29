@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.8.27
+Version: 26.8.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -179,6 +179,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Aug 30 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.30-1.fmi
+- Security: escape the WMS XML exception template (reflected XSS), escape product
+  title/attribute/cdata SVG sinks (SVG injection), run customer/product through
+  check_attack and forbid ".." in json:/ref: includes (path traversal / LFI),
+  cap projection.xsize/ysize (image-size DoS), reject heatmap resolution<=0 and
+  compute the heatmap point count overflow-safely (DoS), and redact the apikey
+  from the debug=1 error content.
 * Thu Aug 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.27-1.fmi
 - Added a satellite layer for serving precoloured satellite imagery via the new satellite engine
 - Satellite layers can colour products which hold values instead of colours

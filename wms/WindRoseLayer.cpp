@@ -625,8 +625,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         CTPP::CDT title_cdt(CTPP::CDT::HASH_VAL);
         title_cdt["start"] = "<text";
         title_cdt["end"] = "</text>";
-        title_cdt["cdata"] =
-            station.title->translate(language, theState.getConfig().defaultLanguage());
+        title_cdt["cdata"] = Fmi::safexmlescape(
+            station.title->translate(language, theState.getConfig().defaultLanguage()));
 
         theState.addAttributes(theGlobals, title_cdt, station.title->attributes);
         title_cdt["attributes"]["x"] = Fmi::to_string(xrose + station.title->dx);
@@ -655,7 +655,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
           CTPP::CDT obs_cdt(CTPP::CDT::HASH_VAL);
           obs_cdt["start"] = "<text";
           obs_cdt["end"] = "</text>";
-          obs_cdt["cdata"] = observation.label.print(value);
+          obs_cdt["cdata"] = Fmi::safexmlescape(observation.label.print(value));
 
           theState.addAttributes(theGlobals, obs_cdt, observation.attributes);
           obs_cdt["attributes"]["x"] = Fmi::to_string(xrose + observation.label.dx);
