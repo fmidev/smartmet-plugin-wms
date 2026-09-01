@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.8.27
+Version: 26.9.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -47,7 +47,7 @@ BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
 BuildRequires: smartmet-engine-querydata-devel >= 26.8.24
 BuildRequires: smartmet-engine-satellite-devel >= 26.8.26
 BuildRequires: smartmet-engine-contour-devel >= 26.8.3
-BuildRequires: smartmet-engine-satellite-devel >= 26.8.26
+BuildRequires: smartmet-engine-satellite-devel >= 26.9.1
 BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
 BuildRequires: %{smartmet_fmt_devel}
@@ -98,7 +98,7 @@ Requires: smartmet-engine-contour >= 26.8.3
 Requires: smartmet-engine-gis >= 26.8.10
 Requires: smartmet-engine-grid >= 26.7.10
 Requires: smartmet-engine-geonames >= 26.7.31
-Requires: smartmet-engine-satellite >= 26.8.26
+Requires: smartmet-engine-satellite >= 26.9.1
 Requires: smartmet-server >= 26.8.21
 Requires: smartmet-library-spine >= 26.8.24
 Requires: smartmet-fonts
@@ -179,6 +179,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Sep  1 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.9.1-1.fmi
+- Repackage due to smartmet-engine-satellite ABI changes
+
 * Thu Aug 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.27-1.fmi
 - Added a satellite layer for serving precoloured satellite imagery via the new satellite engine
 - Satellite layers can colour products which hold values instead of colours
