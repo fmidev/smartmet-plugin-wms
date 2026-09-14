@@ -728,7 +728,7 @@ requested type.
 - **Text formats** (`svg`, `xml`, `geojson`, `topojson`, `kml`, `json`, `html`, `cnf`)
   are returned as-is, with an `ETag` header derived from the product hash.
 - **Raster and page formats** are converted with the Giza library
-  (`~/hub/giza/giza/Svg.cpp`):
+  (`smartmet-library-giza`, `giza/Svg.cpp`):
 
 | Type | Call | How |
 |------|------|-----|
@@ -1084,8 +1084,10 @@ reason for the migration:
 - **The same caching properties as WMTS**, since the TileMatrixSet model is unchanged.
 
 The two are so close that the plugin implements Tiles as a thin router over the WMTS
-tile math and the shared rendering path. New clients such as `~/hub/leaflet-fmi/js/ogctiles.js`
-target `/tiles` and fall back to `/wmts` only for old servers.
+tile math and the shared rendering path. For a web client the difference is equally
+small: Leaflet, OpenLayers and MapLibre all consume a tile URL template, so a client can
+read the `/tiles` collection metadata to build that template and fall back to the WMTS
+`ResourceURL` only when talking to a server that has no `/tiles` endpoint.
 
 ### 13.4 Why there is a separate DataTiles format
 
@@ -1103,9 +1105,13 @@ decode is hardware-accelerated, it compresses well because neighbouring values a
 similar, it moves through every cache and CDN as an image, and the quantised 16-bit
 values are more than enough for display purposes. The client reads the `tEXt` chunks
 for `min`/`max`, draws the image to a canvas, and reads back RGBA to get a
-`Float32Array`. `~/hub/leaflet-fmi/js/datatile.js` is about a hundred lines. The
-`test/canvas/` demos and `WeatherTimeline.js` show what the values enable: particle
-systems whose fields cross-fade between timesteps while the particles never reset.
+`Float32Array`. A complete decoder is about a hundred lines of JavaScript with no
+dependencies, so it drops into any map framework: a Leaflet `GridLayer` or an
+OpenLayers or MapLibre custom layer fetches datatiles instead of picture tiles and
+draws whatever it likes on a canvas over the base map. The `test/canvas/` demos and
+`WeatherTimeline.js` show what the values enable: hover readouts of the exact value,
+client-chosen colour scales, and particle systems whose fields cross-fade between
+forecast timesteps while the particles themselves never reset.
 
 DataTiles are served through Dali, WMS (`FORMAT=application/x-datatile+png`), WMTS and
 Tiles (`f=datatile`) alike, because they are just another `type` handled before the SVG
@@ -1126,9 +1132,10 @@ Tiles-style REST surface and `bbox`/`width`/`height` parameters; it maps onto
 
 The *data* side of the OGC API family is deliberately not this plugin's job. OGC API
 EDR (point, area, corridor and trajectory queries, CoverageJSON output) is implemented
-by `~/hub/brainstorm/plugins/edr`, and OGC API Coverages (collections, subsetting,
-field selection, scaling, CRS) is implemented by the `/coverages` interface of
-`~/hub/brainstorm/plugins/download`. The WMS plugin's GeoTIFF and DataTile outputs sit
+by the EDR plugin (`smartmet-plugin-edr`), and OGC API Coverages (collections,
+subsetting, field selection, scaling, CRS) is implemented by the `/coverages`
+interface of the Download plugin (`smartmet-plugin-download`). The WMS plugin's
+GeoTIFF and DataTile outputs sit
 at the boundary: they return numbers, but tiled and quantised for display clients. The
 likely evolution is linkage rather than duplication: a Tiles collection advertising the
 EDR or Coverages collection that holds the same field in its `links`, so a client can
