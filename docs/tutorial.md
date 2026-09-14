@@ -40,28 +40,19 @@ used throughout is the test product `t2m_p`, whose files are:
 
 ## 1. The pipeline in one picture
 
-```
-GET /dali?customer=test&product=t2m_p&time=200808050300&type=png
-   │
-   ▼
-Plugin::requestHandler()                         wms/Plugin.cpp
-   routes by URL path: /wms, /wmts, /tiles, else Dali
-   │
-   ▼
-Plugin::daliQuery()
-   │  getProductJson()      read products/t2m_p.json, apply json:/ref: includes,
-   │                        apply query-string overrides            (section 2, 3)
-   │  Product::init()       JSON  ->  Product / Views / Layers C++ objects (section 4)
-   │  Product::hash_value() cache key + ETag; return cached bytes if present
-   │
-   ├── type = geotiff | mvt | datatile
-   │       Product::generateGeoTiff/MVT/DataTile()  -> bytes       (section 11)
-   │
-   └── everything else
-          Product::generate(CDT)   layers compute geometry, fill a CTPP2 CDT (section 5)
-          template->process(CDT)   svg.tmpl / geojson.tmpl / kml.tmpl   (section 6, 10)
-          formatResponse()         text as-is, or SVG -> PNG/WebP/PDF/PS via Giza (section 9)
-```
+![Rendering pipeline with its three extension seams](images/tutorial/pipeline.png)
+
+Reading top to bottom on the left: `Plugin::requestHandler` routes by URL path
+(`/wms`, `/wmts`, `/tiles`, otherwise Dali) and `Plugin::daliQuery` does the rest. The
+product JSON is read and expanded (sections 2 and 3), turned into `Product`, `View` and
+`Layer` objects (section 4), and hashed; a hash hit returns cached bytes or a 304 with no
+rendering at all. Otherwise the layers fill a CTPP2 data tree (section 5), a template
+turns it into text (sections 6 and 10), and Giza converts SVG text into PNG, WebP, PDF
+or PostScript when asked (section 9). GeoTIFF, MVT and DataTile requests leave the path
+before any data tree exists and query the grid engine directly (section 11).
+
+The three dashed boxes are the places where the plugin has been extended before and
+will be extended again; section 14 returns to them.
 
 The WMS, WMTS and OGC API Tiles handlers all end up in the same place: they translate
 their own request vocabulary into Dali query-string parameters, load the same kind of
@@ -130,6 +121,13 @@ of **layers**. The demo product, abbreviated:
     ]
 }
 ```
+
+Rendered with `type=png`, that JSON produces this 500 by 500 pixel image. Every
+element in the picture can be traced to a line in the JSON: the isobands and their
+legend, the two isoline sets, the country borders, and the time stamp in the top right
+corner.
+
+![t2m_p rendered](images/dali/t2m_p.png)
 
 Key ideas visible here:
 
@@ -236,6 +234,14 @@ GET /dali?...&projection.xsize=800
         -> projection.xsize = 800                        (no qid, path from root)
 ```
 
+The test `t2m_p_display_none` is the simplest visual proof. The request adds
+`l3.attributes.display=none`, which sets `display: none` on the pressure isoline layer
+whose `qid` is `l3`, so the black pressure contours vanish while everything else stays:
+
+| `product=t2m_p` | `product=t2m_p&l3.attributes.display=none` |
+|---|---|
+| <img src="images/dali/t2m_p.png" width="360"> | <img src="images/dali/t2m_p_display_none.png" width="360"> |
+
 `parse_substitutions` tries to parse each value as JSON when it looks like a number,
 object, array or quoted string, so `l1.isobands=[{"lolimit":0}]` produces a real array
 and `projection.xsize=800` produces an integer. Anything else stays a string. A
@@ -253,7 +259,11 @@ GET /dali?customer=test&product=t2m_twice&time=200808050300
 ```
 
 One product file yields a two-panel image, a T+24h second panel, a rotated and scaled
-second panel, and drop shadows, with no server-side edits.
+second panel, and drop shadows, with no server-side edits:
+
+| `t2m_twice` with only `v2.time_offset=1440` | the same product with the transform and filter overrides |
+|---|---|
+| <img src="images/dali/t2m_twice.png" width="440"> | <img src="images/dali/t2m_twice_altered.png" width="440"> |
 
 ### 3.4 How WMS, WMTS and Tiles use the same mechanism
 
@@ -276,7 +286,11 @@ request into Dali parameters and let the same expansion run:
   matching `qid`s of the product.
 - When several WMS layers are requested at once, `merge_layers` in `wms/wms/Handler.cpp`
   appends the views of each product into one, suffixing `qid`s and `id`s with `_1`,
-  `_2`, ... to keep them unique.
+  `_2`, ... to keep them unique. The request
+  `LAYERS=test:backgroundmap,test:precipitation_areas,test:cities` therefore renders as
+  one product with three views stacked in request order:
+
+  <img src="images/wms/wms_getmap_multiple_layers.png" width="240">
 
 ---
 
@@ -539,7 +553,8 @@ type never requires touching the SVG template.
 ## 7. Template structure and the SVG it produces, side by side
 
 Run the demo request and compare with `test/output/t2m_p.get`. The correspondence is
-line by line.
+line by line. Keep the rendered picture from section 2 in view while reading; the
+legend in its top left corner is the part we will zoom into at the end.
 
 **Header.** `width`/`height` come from `projection.xsize/ysize` because the product
 sets no explicit size; `title` is the translated product title.
@@ -634,10 +649,15 @@ Things to notice:
   `Europe/Helsinki`, so 03:00 UTC became 06:00.
 - The isolines are visually cut out around the legend by the mask, which is built from
   the legend's own geometry via `<use xlink:href="#temperaturelegend">` plus a dilation
-  filter. No pixel operation was needed on the server.
+  filter. No pixel operation was needed on the server. The crop below shows the legend
+  region rendered from the same SVG with the `mask` attribute removed (left) and as
+  produced (right): on the right the isolines stop short of the numbers, because the
+  dilated legend shapes were subtracted from the isoline group's paint.
 
-Compile this into a PNG with `type=png` and the file `docs/images/dali/t2m_p.png` in
-[examples/dali.md](examples/dali.md#output-formats) is what you get.
+![Legend region without and with the SVG mask](images/tutorial/t2m_p_legend_mask_compare.png)
+
+Compile this into a PNG with `type=png` and the picture shown in section 2 is what you
+get. The test suite keeps it as `docs/images/dali/t2m_p.png`.
 
 ---
 
@@ -668,6 +688,15 @@ otherwise need per-pixel code: the legend cut-out above, drop shadows, dilation 
 around labels, patterned fills. `<symbol>` and `<marker>` give parametric icons. The
 plugin exposes these primitives directly to product authors through tag layers and
 attributes rather than reimplementing them.
+
+Two test products show these primitives doing real work. `clip` wraps the map in a
+circular `<clipPath>` and adds a shadow filter; `t2m_p_shadow` applies a filter to the
+isoline group so the contours appear embossed over the isobands. Both are a handful of
+attributes in JSON.
+
+| `clip` | `t2m_p_shadow` |
+|---|---|
+| <img src="images/dali/clip.png" width="360"> | <img src="images/dali/t2m_p_shadow.png" width="360"> |
 
 **Order is explicit and late-bound.** In immediate mode, draw order is the code path.
 Here, the order of layers in the JSON is the paint order, and a URL parameter can wrap
@@ -713,6 +742,20 @@ The resulting buffer is stored in the plugin's in-memory image cache under the p
 hash (`itsImageCache->insert`) and returned with `ETag`. A later request with the same
 hash is served from the cache in `daliQuery` before any rendering, and a client sending
 `If-None-Match` receives 304 with no body.
+
+The quantisation step matters for tile serving. The two PNGs below are the demo product
+with default options and with `png.truecolor=1`. They look the same, but the palette
+version is a fraction of the size, and both are a fraction of the SVG they came from.
+
+| default `type=png` (palette, 138 colours) | `type=png&png.truecolor=1` (RGBA) |
+|---|---|
+| <img src="images/dali/png.png" width="360"> | <img src="images/dali/png_truecolor.png" width="360"> |
+
+| Output | Bytes |
+|---|---|
+| SVG (`test/output/t2m_p.get`) | 616080 |
+| PNG, palette | 54038 |
+| PNG, truecolor | 191136 |
 
 The `png` and `webp` blocks of the product JSON, and the `png=` and `webp=` query
 parameters, control this stage only. They are part of the product hash so different
@@ -783,7 +826,15 @@ limits and their CSS class name:
 
 The `fill` comes from `State::addPresentationAttributes`, which resolves the CSS class
 against the stylesheet so that a GeoJSON client can colour the feature the way the SVG
-would have. Coordinate precision is per format in the configuration (`precision.geojson
+would have. The image below was drawn from `test/output/t2m_p_geojson.get` by a short
+Python script using only the `fill` and `stroke` properties and an equirectangular
+plot of the WGS84 coordinates. It is the same field as the PNG in section 2, now curved
+because the data's own projection was unprojected to longitude and latitude, and
+without legend, mask or time stamp because those never entered `paths`.
+
+| SVG pipeline, `type=png` | GeoJSON output drawn by an independent client |
+|---|---|
+| <img src="images/dali/t2m_p.png" width="360"> | <img src="images/tutorial/t2m_p_geojson_pil.png" width="360"> | Coordinate precision is per format in the configuration (`precision.geojson
 = 5.0` digits versus `precision.default = 0.3` for pixel paths).
 
 To add a new text-based format you would add a `templates.<type>` entry, write a
@@ -838,12 +889,33 @@ why this exists alongside GeoTIFF. The demo product `test/wms/customers/grid/pro
 is a plain isoband layer with `"type": "datatile"`; the same product served with
 `type=png` gives a coloured picture and with `type=datatile` gives the numbers behind it.
 
+The pictures below make the encoding concrete. The left column is the 64 by 64 pixel
+datatile PNG exactly as served, scaled up eight times: to a human it is noise, because
+the high byte of the value lands in red and the low byte in green. The right column is
+what a client computes from it with the decode formula and the `min`/`max` text chunks:
+a temperature field with a colour scale of the client's choosing, and a wind field where
+the dual-band tile carried direction in `R,G` and speed in `B,A`, here drawn as speed
+colours plus arrows. The transparent corners are grid points outside the model domain,
+encoded as all-zero bytes.
+
+| served PNG (`datatile_temperature`) | decoded by the client |
+|---|---|
+| ![](images/tutorial/datatile_temperature_raw.png) | ![](images/tutorial/datatile_temperature_decoded.png) |
+
+| served PNG (`datatile_wind`, two bands) | decoded direction and speed |
+|---|---|
+| ![](images/tutorial/datatile_wind_raw.png) | ![](images/tutorial/datatile_wind_decoded.png) |
+
 **Hybrid: rasters inside the SVG.** `RasterLayer` and `SatelliteLayer` do build a
 bitmap in C++ (colour-mapped grid data or satellite imagery), but they then base64-encode
 it into an `<image href="data:image/png;base64,...">` element in the CDT. The SVG
 pipeline composes it with vector layers, masks and transforms like any other element.
 This is the pragmatic middle ground when a field is too dense to contour but the
-product still needs vector overlays.
+product still needs vector overlays. The WMS test layer `grid:raster_1` below is such a
+product: the colour-mapped temperature is one embedded `<image>`, the coastlines drawn
+over it are ordinary vector paths.
+
+<img src="images/wms/grid/wms__grid__raster_1_t1__pal.png" width="360">
 
 All four binary paths are cached under the same product hash and carry the same
 `ETag`, so the HTTP caching story in section 13 applies to them unchanged.
@@ -860,20 +932,30 @@ two 500 px views with `transform: translate(10,10)` and `translate(520,10)` on a
 `_altered` variant adds `v2.attributes.transform=translate(500,1) rotate(30) scale(0.75)`
 and `filter=url(#shadow)` on both views. Because views are `<g>` elements, rotation,
 scaling and a drop shadow are one attribute each. An immediate-mode renderer would need
-the rotation to be known before drawing a single pixel.
+the rotation to be known before drawing a single pixel. Adding `v1.clip=1&v2.clip=1`
+and margins instead (`t2m_twice_margins_clipped`) wraps each view in a `<clipPath>` so
+nothing bleeds outside its panel.
+
+| `t2m_twice_altered` | `t2m_twice_margins_clipped` |
+|---|---|
+| <img src="images/dali/t2m_twice_altered.png" width="440"> | <img src="images/dali/t2m_twice_margins_clipped.png" width="440"> |
 
 **A legend that punches a hole in the isolines** (`t2m_p`). The `<mask>` tag layer
 reuses the legend geometry with `<use xlink:href="#temperaturelegend">` and thickens it
 with the `alphadilation` filter, then a `<g mask=...>` wraps the isolines and the map.
-The legend stays legible over dense contours with zero pixel logic in the plugin.
+The legend stays legible over dense contours with zero pixel logic in the plugin. See
+the before-and-after crop in section 7.
 
 **Parametric markers and symbols.** `wind_stream_1.json` sets
 `"marker-end": "url(#spearhead?fill=#606060)"` on a stream layer. `State::addAttributes`
 loads `spearhead` from the customer's markers directory, substitutes `fill`, and adds
 it to `includes` once, however many streamlines reference it. Symbol layers do the same
-with weather symbols, and the memory note in the project CLAUDE.md that symbols must be
-centred on the origin with `overflow="visible"` exists so that `<use x= y=>` placement
-and tile margins work.
+with weather symbols. Symbols must be centred on the origin with `overflow="visible"`
+so that `<use x= y=>` placement and tile margins work.
+
+| `grid:wind_stream_1`: streamlines with a parametric `spearhead` marker | `weather`: symbol layer, with a CSS rule injected from the URL (`weather-cssdef`) |
+|---|---|
+| <img src="images/wms/grid/wms__grid__wind_stream_1__pal.png" width="300"> | <img src="images/dali/weather-cssdef.png" width="300"> |
 
 **Arbitrary SVG through tag layers.** The `l11` layer in `wind_stream_1.json` is a
 rounded `<rect>` with negative `x`, meaning "168 px from the right edge", used as a
@@ -886,14 +968,24 @@ geographic location.
 PostGIS shape (`inside`, `outside`, and `intersections`) and clip geometry with GEOS
 before it ever reaches the CDT. Combined with `<clipPath>` for the view rectangle
 (`clip: true`, `Layer::addClipRect`), a product can show a parameter only over land, or
-only inside Finland, and let the map layer draw the borders on top.
+only inside Finland, and let the map layer draw the borders on top. Pattern fills come
+from the same attribute mechanism: `t2m_pattern` uses an isoband set whose `fill` values
+are `url(#warm)` and `url(#cold)`, so `State::addAttributes` pulls those two `<pattern>`
+definitions into `<defs>` and the bands are hatched instead of flat.
+
+| `t2m_inside_finland` | `t2m_pattern` |
+|---|---|
+| <img src="images/dali/t2m_inside_finland.png" width="360"> | <img src="images/dali/t2m_pattern.png" width="360"> |
 
 **Animation without a video encoder.** The flash symbol products
 (`flash_symbols_webp_animation.get`) tag each stroke's `<use>` with a frame class. The
 server renders the SVG once, then `injectFrameStyle` inserts a tiny `<style>` block right
 after the opening `<svg>` tag per frame (`.flashanim{display:none}` plus
 `.flashanim-fN{display:inline}`), and Giza rasterises each variant into an animated
-WebP. The geometry work is done once; only rasterisation is repeated.
+WebP. The geometry work is done once; only rasterisation is repeated. The still
+version of the same product, `flash_symbols`, shows all strokes at once:
+
+<img src="images/dali/flash_symbols.png" width="360">
 
 **Layer variants and styles for WMS.** Because the WMS handler only needs a Dali product
 plus substitutions, one JSON file can advertise several WMS layers (variants differing
@@ -916,6 +1008,18 @@ are used. The complexity is in the product, where the domain expert can reach it
 | Time and level | `TIME`, `ELEVATION`, `DIM_*` parameters | Extra path segments in capabilities order (`.../Time/Reference_time/Elevation/...`) | Query parameters `datetime`, `elevation`, `reference_time` |
 | Formats | MIME type in `FORMAT` | file extension | `f=` parameter or `Accept` header negotiation |
 | Handler | `wms/wms/Handler.cpp`, `GetMap.cpp` | `wms/wmts/Handler.cpp`, `TileMatrix.cpp` | `wms/tiles/Handler.cpp` |
+
+The two tile requests below ask for the same 1024 by 1024 pixel tile of the isoband
+layer `test:t2m` in the `EPSG:4326` tile matrix set at zoom 5, row 4, column 36, once
+through WMTS and once through OGC API Tiles. The pictures are identical, because after
+URL parsing the requests are identical.
+
+```
+GET /wmts/1.0.0/test:t2m/temperature_one_degrees/EPSG:4326/5/4/36.png?TIME=20080805T030000
+GET /tiles/collections/test:t2m/tiles/EPSG:4326/5/4/36?f=png&TIME=20080805T030000
+```
+
+<img src="images/wmts/wmts_gettile_isoband.png" width="360">
 
 In this plugin all three converge on the same `projection.bbox/xsize/ysize/crs`
 parameters, the same product tree under `wms.root`, and the same `Product` code. WMTS
@@ -953,6 +1057,8 @@ sessions and across users. Consequences:
   can warm it. The `wms.margin` setting exists because symbols near tile edges must be
   rendered in both neighbouring tiles; that is only a well-defined problem when tiles
   are on a fixed grid.
+
+![Free-form WMS bounding boxes versus a fixed tile grid](images/tutorial/wms_vs_tiles.png)
 
 The price is loss of flexibility: an arbitrary projection or rotation needs a full
 GetMap, and non-standard products with legends and multiple views make no sense as
