@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.15
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -179,6 +179,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Sep 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.15-3.fmi
+- Satellite responses expire after 24 hours, or when the next image is due if the newest image was served, instead of the default hour
+
 * Tue Sep 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.15-2.fmi
 - Products with a satellite layer are true colour by default, png.truecolor = false enables the colour reduction
 - Satellite and raster layers embed their PNG through Giza::topng_argb (libdeflate) and a table based base64 encoder instead of libpng and Boost archive iterators

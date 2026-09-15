@@ -75,6 +75,8 @@ class SatelliteLayer : public Layer
   const Engine::Satellite::Engine& getEngine(const State& theState) const;
 
   Engine::Satellite::ImageInfoPtr findImage(const State& theState) const;
+  Fmi::DateTime expirationTime(const State& theState,
+                               const Engine::Satellite::ImageInfo& theImage) const;
 
   // Precoloured images are used as they are, uncoloured ones are given
   // their colours here

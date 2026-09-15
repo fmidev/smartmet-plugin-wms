@@ -7,6 +7,7 @@
 #include "JsonTools.h"
 #include "State.h"
 #include <boost/algorithm/string/join.hpp>
+#include <algorithm>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <gis/Box.h>
@@ -109,6 +110,52 @@ void SatelliteLayer::init(Json::Value& theJson,
             .addParameter("Parameter", paraminfo.parameter)
             .addParameter("colormap", colormap_name);
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief How long the response for this image may be cached
+ *
+ * An image is never rewritten, so a request which pins the time gets
+ * the same pixels for as long as the file exists, and the response can
+ * be cached for a long time; the ETag makes revalidation cheap in any
+ * case. The exception is the newest image: a request without a time
+ * resolves to it, and the answer to that request changes when the next
+ * image arrives. Such responses expire when the next image is due,
+ * estimated from the interval of the two newest ones, so that a client
+ * animating the latest imagery notices new frames without polling the
+ * server for every tile in between.
+ */
+// ----------------------------------------------------------------------
+
+Fmi::DateTime SatelliteLayer::expirationTime(const State& theState,
+                                             const Engine::Satellite::ImageInfo& theImage) const
+{
+  try
+  {
+    const auto now = Fmi::SecondClock::universal_time();
+    const auto& engine = getEngine(theState);
+
+    const auto times = engine.times(*paraminfo.producer, paraminfo.parameter);
+    if (times.empty() || theImage.time < times.back())
+      return now + Fmi::Hours(24);
+
+    // The newest image. Expect the next one after the usual interval,
+    // bounded so that a gap in the data or a single stray image does not
+    // produce an unreasonable estimate.
+    auto interval = Fmi::Minutes(15);
+    if (times.size() >= 2)
+      interval = times.back() - times[times.size() - 2];
+    interval =
+        std::clamp(interval, Fmi::TimeDuration(Fmi::Minutes(1)), Fmi::TimeDuration(Fmi::Hours(3)));
+
+    const auto due = times.back() + interval;
+    return std::max(due, now + Fmi::Minutes(1));
   }
   catch (...)
   {
@@ -237,6 +284,7 @@ void SatelliteLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
       return;  // No image for this time: draw nothing
 
     theState.updateModificationTime(image->time);
+    theState.updateExpirationTime(expirationTime(theState, *image));
 
     const auto& box = projection.getBox();
 
