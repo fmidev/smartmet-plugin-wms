@@ -230,7 +230,7 @@ PNG output formatting can be tuned using the following settings inside a top lev
 | quality     | (double) | 10            | The PNG compression level. 10=good, 20=poor                                                                          |
 | errorfactor | (double) | 2.0           | Tuning parameter for color reduction. Must be greater than 1.0                                                       |
 | maxcolors   | (int)    | 0             | Desired maximum number of colors in the palette. Zero implies no maximum, and palette fitting will be fully adaptive |
-| truecolor   | (bool)   | false         | Set to avoid color reduction completely                                                                              |
+| truecolor   | (bool)   | false         | Set to avoid color reduction completely. A product with a satellite layer defaults to true, since its imagery is already coloured; set false to reduce anyway |
 
 WebP output uses the same color reduction settings from the "png" tag, and adds its
 own compression speed and animation controls in a top level "webp" tag:

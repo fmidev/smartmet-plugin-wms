@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.15
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -28,7 +28,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
-BuildRequires: smartmet-library-giza-devel >= 26.6.27
+BuildRequires: smartmet-library-giza-devel >= 26.9.15
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 26.8.27
 BuildRequires: smartmet-library-macgyver-devel >= 26.8.19
@@ -87,7 +87,7 @@ Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.8.19
 Requires: smartmet-library-spine >= 26.8.24
 Requires: smartmet-library-timeseries >= 26.5.5
-Requires: smartmet-library-giza >= 26.6.27
+Requires: smartmet-library-giza >= 26.9.15
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.6.26
 %endif
@@ -179,6 +179,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Sep 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.15-2.fmi
+- Products with a satellite layer are true colour by default, png.truecolor = false enables the colour reduction
+- Satellite and raster layers embed their PNG through Giza::topng_argb (libdeflate) and a table based base64 encoder instead of libpng and Boost archive iterators
+
 * Tue Sep 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.15-1.fmi
 - WMTS and OGC API Tiles apply the product variants like WMS GetMap does, so a variant layer no longer renders with the defaults of its file
 - The capabilities update reports its duration and, when slow, the ten slowest product files

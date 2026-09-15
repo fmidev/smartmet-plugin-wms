@@ -1,21 +1,22 @@
 //======================================================================
 
 #include "SatelliteLayer.h"
+#include "Base64.h"
 #include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "State.h"
 #include <boost/algorithm/string/join.hpp>
 #include <ctpp2/CDT.hpp>
+#include <fmt/format.h>
 #include <gis/Box.h>
-#include <grid-files/common/GeneralFunctions.h>
-#include <grid-files/common/ImageFunctions.h>
+#include <giza/Giza.h>
 #include <macgyver/Exception.h>
-#include <cmath>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Json.h>
+#include <cmath>
 
 namespace SmartMet
 {
@@ -272,24 +273,16 @@ void SatelliteLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
       if (theState.animation_enabled)
         comp = 1;
 
-      // The image is precoloured, hence the pixels can be encoded as they are
-      const int size = warped.width * warped.height;
-      const int buffersize = size * 4 + 10000;
-      std::vector<char> buffer(buffersize);
+      // The image is precoloured, hence the pixels are encoded as they are
+      const auto png = Giza::topng_argb(warped.pixels.data(), warped.width, warped.height, comp);
 
-      const int bytes = png_saveMem(
-          buffer.data(), buffersize, warped.pixels.data(), warped.width, warped.height, comp);
-
-      if (bytes <= 0)
-        throw Fmi::Exception(BCP, "Failed to encode the satellite image as PNG");
-
-      std::ostringstream svgImage;
-      svgImage << "<image id=\"" << qid << "\" href=\"data:image/png;base64,";
-      svgImage << base64_encode(reinterpret_cast<unsigned char*>(buffer.data()), bytes);
-      svgImage << "\" x=\"0\" y=\"0\" width=\"" << warped.width << "\" height=\"" << warped.height
-               << "\" />\n\n";
-
-      svg_image = svgImage.str();
+      svg_image = fmt::format(
+          "<image id=\"{}\" href=\"data:image/png;base64,{}\" x=\"0\" y=\"0\" width=\"{}\" "
+          "height=\"{}\" />\n\n",
+          qid,
+          Dali::base64_encode(png),
+          warped.width,
+          warped.height);
       svg_image_hash = image->hash;
     }
 

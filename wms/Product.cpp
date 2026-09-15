@@ -19,6 +19,31 @@ namespace Dali
 {
 Product::~Product() = default;
 
+namespace
+{
+// Whether the JSON tree holds a layer of the given type, at any depth
+bool contains_layer_type(const Json::Value& theJson, const std::string& theType)
+{
+  if (theJson.isObject())
+  {
+    const auto& type = theJson["layer_type"];
+    if (type.isString() && type.asString() == theType)
+      return true;
+    for (const auto& name : theJson.getMemberNames())
+      if (contains_layer_type(theJson[name], theType))
+        return true;
+    return false;
+  }
+  if (theJson.isArray())
+  {
+    for (const auto& item : theJson)
+      if (contains_layer_type(item, theType))
+        return true;
+  }
+  return false;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize the product from JSON
@@ -57,12 +82,21 @@ void Product::init(Json::Value& theJson, const State& theState, const Config& th
       attributes.init(json, theConfig);
 
     json = JsonTools::remove(theJson, "views");
+    const bool has_satellite = contains_layer_type(json, "satellite");
     if (!json.isNull())
       views.init(json, theState, theConfig, *this);
 
     json = JsonTools::remove(theJson, "png");
+    const bool truecolor_given = (json.isObject() && json.isMember("truecolor"));
     if (!json.isNull())
       png.init(json, theConfig);
+
+    // Satellite imagery arrives coloured, and quantizing it to a palette
+    // costs more than the rest of the rendering while losing colours the
+    // producer chose. Such products are therefore true colour unless the
+    // product says otherwise with png.truecolor = false.
+    if (has_satellite && !truecolor_given)
+      png.options.truecolor = true;
 
     json = JsonTools::remove(theJson, "webp");
     if (!json.isNull())
