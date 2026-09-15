@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.1
+Version: 26.9.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -47,7 +47,7 @@ BuildRequires: smartmet-engine-geonames-devel >= 26.7.31
 BuildRequires: smartmet-engine-querydata-devel >= 26.8.24
 BuildRequires: smartmet-engine-satellite-devel >= 26.8.26
 BuildRequires: smartmet-engine-contour-devel >= 26.8.3
-BuildRequires: smartmet-engine-satellite-devel >= 26.9.1
+BuildRequires: smartmet-engine-satellite-devel >= 26.9.15-5
 BuildRequires: smartmet-library-gis-devel >= 26.8.10
 BuildRequires: smartmet-library-trax-devel >= 26.6.26
 BuildRequires: %{smartmet_fmt_devel}
@@ -179,6 +179,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Sep 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.15-1.fmi
+- The capabilities update reports its duration and, when slow, the ten slowest product files
+- Satellite layers are recreated only when the engine has a newer image or a different number of them
+- The WGS84 reference of the projected bounding boxes is built once per layer, not once per CRS
+
 * Tue Sep  1 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.9.1-1.fmi
 - Repackage due to smartmet-engine-satellite ABI changes
 

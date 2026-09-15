@@ -33,6 +33,8 @@
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
 #include <algorithm>
+#include <chrono>
+#include <iostream>
 #include <map>
 #include <ogr_spatialref.h>
 #include <stdexcept>
@@ -1009,11 +1011,18 @@ void Config::updateLayerMetaDataForCustomerLayer(
     {
       const auto& oldProxy = mylayers->at(fullLayername);
       newProxies.insert({fullLayername, oldProxy});
+      ++itsUpdateStats.reused;
     }
     else
     {
+      const auto started = std::chrono::steady_clock::now();
       auto newlayers = OGC::LayerFactory::createLayers(
           pathname, fullLayername, layerNamespace, customer, layerConfig());
+      const auto seconds =
+          std::chrono::duration<double>(std::chrono::steady_clock::now() - started).count();
+      ++itsUpdateStats.files_created;
+      itsUpdateStats.layers_created += newlayers.size();
+      itsUpdateStats.durations.emplace_back(seconds, pathname);
 
       if (newlayers.empty())
         warn_layer(pathname, itsWarnedFiles);
@@ -1084,6 +1093,9 @@ void Config::updateLayerMetaData()
 {
   try
   {
+    itsUpdateStats = UpdateStats{};
+    itsUpdateStats.start = std::chrono::steady_clock::now();
+
     auto mylayers = itsLayers.load();
 
     // New shared pointer which will be atomically set into production
@@ -1133,11 +1145,63 @@ void Config::updateLayerMetaData()
     }
 
     itsLayers.store(newProxies);
+
+    reportUpdateStats();
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Layer metadata update failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Report what the pass over the product files cost
+ *
+ * The first pass is reported always, since it is what the server start
+ * waits for. Later passes are reported only when they take long, which
+ * is how a product file which has become slow to create shows up: every
+ * layer whose metadata has expired is created again from its file, so
+ * a slow file costs its time on every pass.
+ */
+// ----------------------------------------------------------------------
+
+void Config::reportUpdateStats()
+{
+  if (itsDaliConfig.quiet())
+    return;
+
+  auto& stats = itsUpdateStats;
+  const auto elapsed =
+      std::chrono::duration<double>(std::chrono::steady_clock::now() - stats.start).count();
+
+  const bool slow = (elapsed >= 5.0);
+  if (itsFirstUpdateReported && !slow)
+    return;
+  itsFirstUpdateReported = true;
+
+  std::cout << Spine::log_time_str()
+            << fmt::format(
+                   " WMS layer metadata: {} layers created from {} product files, {} "
+                   "layers reused, in {:.1f} seconds\n",
+                   stats.layers_created,
+                   stats.files_created,
+                   stats.reused,
+                   elapsed);
+
+  if (!slow || stats.durations.empty())
+    return;
+
+  const std::size_t count = std::min<std::size_t>(10, stats.durations.size());
+  std::partial_sort(stats.durations.begin(),
+                    stats.durations.begin() + count,
+                    stats.durations.end(),
+                    [](const auto& a, const auto& b) { return a.first > b.first; });
+
+  std::cout << Spine::log_time_str() << " WMS layer metadata: the slowest product files were\n";
+  for (std::size_t i = 0; i < count; i++)
+    std::cout << fmt::format(
+        "    {:8.2f} s  {}\n", stats.durations[i].first, stats.durations[i].second);
 }
 
 void Config::updateModificationTime()

@@ -1638,6 +1638,8 @@ std::ostream& operator<<(std::ostream& ost, const Layer& layer)
 
 void Layer::initProjectedBBoxes()
 {
+  const Fmi::SpatialReference wgs84("WGS84");
+
   for (const auto& id_ref : refs)
   {
     const auto& id = id_ref.first;
@@ -1669,7 +1671,6 @@ void Layer::initProjectedBBoxes()
 
     if (x1 < x2 && y1 < y2)
     {
-      Fmi::SpatialReference wgs84("WGS84");
       Fmi::SpatialReference target(ref.proj);
       Fmi::CoordinateTransformation transformation(wgs84, target);
 
