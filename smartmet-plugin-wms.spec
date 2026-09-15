@@ -180,6 +180,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Sep 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.15-1.fmi
+- WMTS and OGC API Tiles apply the product variants like WMS GetMap does, so a variant layer no longer renders with the defaults of its file
 - The capabilities update reports its duration and, when slow, the ten slowest product files
 - Satellite layers are recreated only when the engine has a newer image or a different number of them
 - The WGS84 reference of the projected bounding boxes is built once per layer, not once per CRS

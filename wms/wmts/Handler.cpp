@@ -6,6 +6,7 @@
 
 #include "Handler.h"
 #include "../Hash.h"
+#include "../JsonTools.h"
 #include "../Mime.h"
 #include "../Plugin.h"
 #include "../Product.h"
@@ -731,6 +732,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
       const std::string layers_root = root + "/customers/" + customer + "/layers/";
       Spine::JSON::preprocess(json, root, layers_root, wmsConfig.getJsonCache());
       Spine::JSON::dereference(json);
+      Dali::JsonTools::apply_variant(json, layer);
       auto params = Dali::Plugin::extractValidParameters(thisRequest.getParameterMap());
       Spine::JSON::expand(json, params, "", false);
     }

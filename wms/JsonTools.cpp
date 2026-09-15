@@ -5,6 +5,8 @@
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
+#include <spine/Json.h>
+#include <map>
 #include <set>
 #include <string>
 
@@ -529,6 +531,53 @@ void extract_vector(const std::string& theName,
           BCP,
           "The '" + theName +
               "' setting must be an unsigned integer or an array of unsigned integers");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Apply the named variant of a product
+ *
+ * One product file may advertise several WMS layers which differ only
+ * in a few settings, see "WMS layer variants" in the documentation. The
+ * layer name selects the variant, and its members are substitutions of
+ * the form the query string would make: "producer" replaces the top
+ * level setting, "l1.parameter" the parameter of the layer with qid l1.
+ * Every request path which renders a product by its layer name must do
+ * this, WMTS and OGC API Tiles as well as WMS, or the variant renders
+ * with the defaults of the file.
+ */
+// ----------------------------------------------------------------------
+
+void apply_variant(Json::Value& theJson, const std::string& theLayerName)
+{
+  try
+  {
+    auto variants = remove(theJson, "variants");
+    if (variants.isNull() || theLayerName.empty())
+      return;
+
+    for (auto& variant : variants)
+    {
+      std::string name;
+      remove_string(name, variant, "name");
+      if (name != theLayerName)
+        continue;
+
+      std::map<std::string, Json::Value> substitutes;
+      for (const auto& member : variant.getMemberNames())
+        substitutes.insert({member, variant[member]});
+
+      Spine::JSON::expand(theJson, substitutes);
+      return;
+    }
+
+    throw Fmi::Exception(BCP, "Desired WMS layer variant not found")
+        .addParameter("name", theLayerName);
   }
   catch (...)
   {

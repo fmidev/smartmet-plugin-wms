@@ -1564,30 +1564,7 @@ void Handler::wmsPreprocessJSON(Dali::State &theState,
     Spine::JSON::dereference(theJson);
 
   // Handle variants before query string parameters
-
-  auto variants = Dali::JsonTools::remove(theJson, "variants");
-  if (!theName.empty() && !variants.isNull())
-  {
-    bool found = false;
-    for (auto &variant : variants)
-    {
-      std::string name;
-      Dali::JsonTools::remove_string(name, variant, "name");
-      if (name == theName)
-      {
-        std::map<std::string, Json::Value> substitutes;
-        const auto members = variant.getMemberNames();
-        for (const auto &member : members)
-          substitutes.insert({member, variant[member]});
-        SmartMet::Spine::JSON::expand(theJson, substitutes);
-        found = true;
-        break;
-      }
-    }
-    if (!found)
-      throw Fmi::Exception(BCP, "Desired WMS layer variant not found")
-          .addParameter("name", theName);
-  }
+  Dali::JsonTools::apply_variant(theJson, theName);
 
   if (!isCnfRequest || (theStage == 0 || theStage > 3))
   {

@@ -18,6 +18,13 @@ namespace JsonTools
 {
 Json::Value remove(Json::Value& theJson, const std::string& theName);
 
+// Apply the variant of the product named theLayerName: the "variants"
+// array is removed, and the members of the matching entry are expanded
+// into the product as if they had been given in the query string. A
+// product without variants is left as is. Throws if the product has
+// variants but none is named theLayerName.
+void apply_variant(Json::Value& theJson, const std::string& theLayerName);
+
 void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName);
 void remove_string(std::string& theValue,
                    Json::Value& theJson,
