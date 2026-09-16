@@ -18,11 +18,20 @@ namespace JsonTools
 {
 Json::Value remove(Json::Value& theJson, const std::string& theName);
 
-// Apply the variant of the product named theLayerName: the "variants"
-// array is removed, and the members of the matching entry are expanded
-// into the product as if they had been given in the query string. A
-// product without variants is left as is. Throws if the product has
-// variants but none is named theLayerName.
+// Variants are applied in two phases, like query string options:
+//
+// apply_variant_references: before include expansion, substitute the
+// "json:..." and "ref:..." valued members of the variant named
+// theLayerName so that e.g. a different isobands file can be selected
+// per variant. The "variants" array is kept.
+//
+// apply_variant: after include expansion, remove the "variants" array
+// and expand the remaining members of the matching entry into the
+// product as if they had been given in the query string.
+//
+// A product without variants is left as is. Both throw if the product
+// has variants but none is named theLayerName.
+void apply_variant_references(Json::Value& theJson, const std::string& theLayerName);
 void apply_variant(Json::Value& theJson, const std::string& theLayerName);
 
 void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName);

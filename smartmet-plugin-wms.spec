@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.16
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.9.15
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 26.8.27
 BuildRequires: smartmet-library-macgyver-devel >= 26.9.16
-BuildRequires: smartmet-library-spine-devel >= 26.8.24
+BuildRequires: smartmet-library-spine-devel >= 26.9.16-2
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
@@ -85,7 +85,7 @@ Requires: smartmet-library-grid-files >= 26.8.27
 Requires: smartmet-library-gis >= 26.8.10
 Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.9.16
-Requires: smartmet-library-spine >= 26.8.24
+Requires: smartmet-library-spine >= 26.9.16-2
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.9.15
 %if %{with authentication}
@@ -100,7 +100,7 @@ Requires: smartmet-engine-grid >= 26.7.10
 Requires: smartmet-engine-geonames >= 26.7.31
 Requires: smartmet-engine-satellite >= 26.9.1
 Requires: smartmet-server >= 26.8.21
-Requires: smartmet-library-spine >= 26.8.24
+Requires: smartmet-library-spine >= 26.9.16-2
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -133,7 +133,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
 #TestRequires: smartmet-library-newbase-devel >= 26.7.18
 #TestRequires: smartmet-library-macgyver-devel >= 26.9.16
-#TestRequires: smartmet-library-spine-devel >= 26.8.24
+#TestRequires: smartmet-library-spine-devel >= 26.9.16-2
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.7.10
 #TestRequires: smartmet-engine-grid-test
@@ -179,6 +179,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Sep 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.16-3.fmi
+- WMS layer variants are applied in two phases like query string options: json:/ref: valued variant settings are substituted before include expansion, so a variant can select e.g. a different isobands file (l1.isobands), the rest after it. Applies to WMS, WMTS, OGC API Tiles and GetCapabilities. Requires spine >= 26.9.16-2
+
 * Wed Sep 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.16-2.fmi
 - Repackaged due to QEngine ABI changes (smartmet-engine-querydata >= 26.9.16-2)
 

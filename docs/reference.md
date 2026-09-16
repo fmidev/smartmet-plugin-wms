@@ -5288,6 +5288,8 @@ In such cases one use the same JSON file for the product settings, and define ho
 # Configuration 
 In order to use the Dali plugin you need to edit two configuration files. These files are the main configuration file of the SmartMet Server environment and the Dali plugin specific configuration file.
 
+Variant settings are applied in two phases, exactly like query string options. Settings whose value is an include or a reference (<code>"json:..."</code> or <code>"ref:..."</code>) are substituted before the includes are expanded, so a variant may select for example a different isobands file with <code>"l1.isobands": "json:isobands/hires.json"</code>. All other settings are applied after the includes have been expanded, when the <code>qid</code>s inside the included files are visible. The same two phases are used for WMS GetMap, WMTS and OGC API Tiles requests and when building GetCapabilities.
+
 ## Main configuration file
 
 The main configuration file is named as "smartmet.conf". The main purpose of this configuration file is to define which plugins and engines need to be loaded when the server is started. In addition, it defines which configuration files these plugins and engines are using.

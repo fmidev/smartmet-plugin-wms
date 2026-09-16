@@ -730,6 +730,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
       const std::string customer = wmsConfig.layerCustomer(layer);
       const std::string root = itsDaliConfig.rootDirectory(true);
       const std::string layers_root = root + "/customers/" + customer + "/layers/";
+      Dali::JsonTools::apply_variant_references(json, layer);
       Spine::JSON::preprocess(json, root, layers_root, wmsConfig.getJsonCache());
       Spine::JSON::dereference(json);
       Dali::JsonTools::apply_variant(json, layer);

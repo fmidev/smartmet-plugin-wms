@@ -674,15 +674,15 @@ std::list<SharedLayer> LayerFactory::createLayers(const std::string& theFileName
     const auto root_dir = theConfig.getDaliConfig().rootDirectory(use_wms);
     const auto customer_layers_dir = root_dir + "/customers/" + theCustomer + "/layers";
 
-    Spine::JSON::preprocess(root, root_dir, customer_layers_dir, theConfig.getJsonCache());
-    Spine::JSON::dereference(root);
-
     // If there are no variants, process the layer as is
 
     auto variants_j = remove(root, "variants");
 
     if (variants_j.isNull())
     {
+      Spine::JSON::preprocess(root, root_dir, customer_layers_dir, theConfig.getJsonCache());
+      Spine::JSON::dereference(root);
+
       auto layer = createLayer(
           root, theFileName, theFullLayerName, theNamespace, theCustomer, theConfig);
       if (layer)
@@ -704,7 +704,7 @@ std::list<SharedLayer> LayerFactory::createLayers(const std::string& theFileName
                              "WMS layer " + theFullLayerName +
                                  " variants setting must be a JSON array containing JSON objects");
 
-      Json::Value variant_j = root;  // deep copy for applying the changes
+      Json::Value variant_j = root;  // deep copy of the unexpanded product for this variant
 
       // Process obligatory settings name and title:
       std::string name;
@@ -725,7 +725,13 @@ std::list<SharedLayer> LayerFactory::createLayers(const std::string& theFileName
       for (const auto& name : members)
         substitutions.insert({name, settings_j[name]});
 
-      SmartMet::Spine::JSON::expand(variant_j, substitutions);
+      // Two phases as in the request handlers: json:/ref: valued settings (e.g. a
+      // different isobands file) before include expansion, the rest after it
+
+      Spine::JSON::replaceReferences(variant_j, substitutions);
+      Spine::JSON::preprocess(variant_j, root_dir, customer_layers_dir, theConfig.getJsonCache());
+      Spine::JSON::dereference(variant_j);
+      Spine::JSON::expand(variant_j, substitutions);
 
       // Note: using variant name instead of theFullLayerName
       try

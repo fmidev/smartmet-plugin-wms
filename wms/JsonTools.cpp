@@ -553,31 +553,61 @@ void extract_vector(const std::string& theName,
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
+// Collect the substitutions of the variant named theLayerName. Returns false
+// if the product has no variants (or no layer name is given), throws if the
+// product has variants but none matches.
+bool variant_substitutions(const Json::Value& theJson,
+                           const std::string& theLayerName,
+                           std::map<std::string, Json::Value>& theSubstitutes)
+{
+  const auto& variants = theJson["variants"];
+  if (variants.isNull() || theLayerName.empty())
+    return false;
+
+  for (const auto& variant : variants)
+  {
+    if (variant.get("name", "").asString() != theLayerName)
+      continue;
+
+    for (const auto& member : variant.getMemberNames())
+      if (member != "name")
+        theSubstitutes.insert({member, variant[member]});
+
+    return true;
+  }
+
+  throw Fmi::Exception(BCP, "Desired WMS layer variant not found")
+      .addParameter("name", theLayerName);
+}
+}  // namespace
+
+void apply_variant_references(Json::Value& theJson, const std::string& theLayerName)
+{
+  try
+  {
+    std::map<std::string, Json::Value> substitutes;
+    if (variant_substitutions(theJson, theLayerName, substitutes))
+      Spine::JSON::replaceReferences(theJson, substitutes);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 void apply_variant(Json::Value& theJson, const std::string& theLayerName)
 {
   try
   {
-    auto variants = remove(theJson, "variants");
-    if (variants.isNull() || theLayerName.empty())
-      return;
+    std::map<std::string, Json::Value> substitutes;
+    const bool found = variant_substitutions(theJson, theLayerName, substitutes);
 
-    for (auto& variant : variants)
-    {
-      std::string name;
-      remove_string(name, variant, "name");
-      if (name != theLayerName)
-        continue;
+    theJson.removeMember("variants");
 
-      std::map<std::string, Json::Value> substitutes;
-      for (const auto& member : variant.getMemberNames())
-        substitutes.insert({member, variant[member]});
-
+    if (found)
       Spine::JSON::expand(theJson, substitutes);
-      return;
-    }
-
-    throw Fmi::Exception(BCP, "Desired WMS layer variant not found")
-        .addParameter("name", theLayerName);
   }
   catch (...)
   {

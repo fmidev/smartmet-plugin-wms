@@ -1556,6 +1556,10 @@ void Handler::wmsPreprocessJSON(Dali::State &theState,
 
   std::string layers_root = customer_root + "/layers/";
 
+  // Variant settings with json:/ref: values (e.g. a different isobands file) must be
+  // substituted before the includes are expanded, the rest after (see apply_variant)
+  Dali::JsonTools::apply_variant_references(theJson, theName);
+
   if (!isCnfRequest || (theStage == 0 || theStage > 1))
     Spine::JSON::preprocess(
         theJson, itsDaliConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);

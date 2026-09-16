@@ -30,6 +30,13 @@
 		"fi": "PAL Otsikko"
 	    },
 	    "abstract": "PAL abstract"
+	},
+	{
+	    "name": "variant:pal:hirestemperature",
+	    "title": "PAL Skandinavia HiRes Temperature",
+	    "abstract": "PAL HiRes abstract",
+	    "l1.isobands": "json:isobands/hirestemperature.json",
+	    "l1.css": "isobands/hirestemperature.css"
 	}
     ],
 
