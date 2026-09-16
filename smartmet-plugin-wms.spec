@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.16
-Release: 3%{?dist}.fmi
+Release: 4%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -179,6 +179,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Sep 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.16-4.fmi
+- GetCapabilities metadata of lazy radar producers (querydata engine lazy = true) is built from the engine's header-only catalogue (getRadarLayerMetaData) instead of Engine::get(), which decoded the servable window of every radar producer into the scratch cache at plugin init and on every metadata pass
+
 * Wed Sep 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.16-3.fmi
 - WMS layer variants are applied in two phases like query string options: json:/ref: valued variant settings are substituted before include expansion, so a variant can select e.g. a different isobands file (l1.isobands), the rest after it. Applies to WMS, WMTS, OGC API Tiles and GetCapabilities. Requires spine >= 26.9.16-2
 

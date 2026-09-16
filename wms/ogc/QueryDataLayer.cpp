@@ -29,6 +29,40 @@ bool QueryDataLayer::updateLayerMetaData()
 {
   try
   {
+    auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
+
+    // Lazy radar producer: build the time dimension from the engine's catalogue
+    // (header-only) without decoding any frame, so GetCapabilities stays complete
+    // and cheap for a cold (unloaded) producer. Engine::get() would decode the
+    // whole servable window of every lazy producer on each metadata pass.
+    if (queryDataConf.islazy)
+    {
+      auto md = itsQEngine->getRadarLayerMetaData(itsProducer);
+      if (md.valid && md.validtimes && !md.validtimes->empty())
+      {
+        itsModificationTime = md.modificationTime;
+        geographicBoundingBox.xMin = md.west;
+        geographicBoundingBox.xMax = md.east;
+        geographicBoundingBox.yMin = md.south;
+        geographicBoundingBox.yMax = md.north;
+
+        std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
+        apply_timestep(*md.validtimes, timestep);
+        time_intervals intervals = get_intervals(*md.validtimes);
+        std::shared_ptr<TimeDimension> timeDimension;
+        if (!intervals.empty())
+          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
+        else
+          timeDimension = std::make_shared<StepTimeDimension>(*md.validtimes);
+        newTimeDimensions.insert(std::make_pair(Fmi::DateTime::NOT_A_DATE_TIME, timeDimension));
+        timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
+        metadataTimestamp = Fmi::SecondClock::universal_time();
+        return true;
+      }
+      // Catalogue empty (e.g. before the first directory scan): fall through to
+      // the normal path, which decodes on access.
+    }
+
     auto q = itsQEngine->get(itsProducer);
     itsModificationTime = q->modificationTime();
 
@@ -52,7 +86,6 @@ bool QueryDataLayer::updateLayerMetaData()
     geographicBoundingBox.yMax = metaData.wgs84Envelope.getRangeLat().getMax();
 
     // time dimension is sniffed from querydata
-    auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
 
     std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
 
