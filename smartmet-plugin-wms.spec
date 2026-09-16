@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.15
-Release: 3%{?dist}.fmi
+Version: 26.9.16
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -31,7 +31,7 @@ BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.9.15
 BuildRequires: smartmet-library-grid-content-devel >= 26.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 26.8.27
-BuildRequires: smartmet-library-macgyver-devel >= 26.8.19
+BuildRequires: smartmet-library-macgyver-devel >= 26.9.16
 BuildRequires: smartmet-library-spine-devel >= 26.8.24
 BuildRequires: smartmet-library-timeseries-devel >= 26.5.5
 %if %{with authentication}
@@ -84,7 +84,7 @@ Requires: smartmet-library-grid-content >= 26.7.12
 Requires: smartmet-library-grid-files >= 26.8.27
 Requires: smartmet-library-gis >= 26.8.10
 Requires: smartmet-library-trax >= 26.6.26
-Requires: smartmet-library-macgyver >= 26.8.19
+Requires: smartmet-library-macgyver >= 26.9.16
 Requires: smartmet-library-spine >= 26.8.24
 Requires: smartmet-library-timeseries >= 26.5.5
 Requires: smartmet-library-giza >= 26.9.15
@@ -132,7 +132,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 26.6.27
 #TestRequires: smartmet-library-trax-devel >= 26.6.26
 #TestRequires: smartmet-library-newbase-devel >= 26.7.18
-#TestRequires: smartmet-library-macgyver-devel >= 26.8.19
+#TestRequires: smartmet-library-macgyver-devel >= 26.9.16
 #TestRequires: smartmet-library-spine-devel >= 26.8.24
 #TestRequires: smartmet-library-timeseries-devel >= 26.5.5
 #TestRequires: smartmet-engine-grid-devel >= 26.7.10
@@ -179,6 +179,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Sep 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.16-1.fmi
+- Repackaged due to Fmi::Cache::Cache locking changes
+
 * Tue Sep 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.15-3.fmi
 - Satellite responses expire after 24 hours, or when the next image is due if the newest image was served, instead of the default hour
 
