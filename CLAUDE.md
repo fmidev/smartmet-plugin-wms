@@ -51,6 +51,9 @@ Tests are integration tests: `PluginTest.cpp` starts a SmartMet Reactor with the
 
 Tests to skip are listed in `test/input/.testignore`.
 
+WMS and WMTS GetCapabilities are validated offline against the OGC XML schemas vendored in
+`test/schemas/xsd/` (an XML catalog maps the schemaLocation URLs to the local copies), by the
+`validate-xml-schemas` Makefile target that runs after `test`, `test-wms` and `test-wmts`.
 OGC API Tiles JSON responses are additionally validated against the OGC API Common Part 2 schemas vendored in
 `test/schemas/ogcapi/` by `test/ValidateJsonSchema.py` (needs python3-jsonschema and
 python3-pyyaml). The `validate-tiles-schemas` Makefile target runs after `test` and `test-tiles`

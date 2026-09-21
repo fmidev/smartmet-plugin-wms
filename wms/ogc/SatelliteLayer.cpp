@@ -85,6 +85,8 @@ bool SatelliteLayer::updateLayerMetaData()
 
     timeDimensions =
         newTimeDimensions.empty() ? nullptr : std::make_shared<TimeDimensions>(newTimeDimensions);
+    if (timeDimensions)
+      timeDimensions->useLatestTimeAsDefault(true);  // images are observations
 
     metadataTimestamp = Fmi::SecondClock::universal_time();
 

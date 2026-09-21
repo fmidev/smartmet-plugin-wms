@@ -31,6 +31,7 @@ bool ObservationLayer::updateLayerMetaData()
     newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
     timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
     timeDimensions->useWallClockTimeAsEndTime(true);
+    timeDimensions->useLatestTimeAsDefault(true);
 
     return true;
   }

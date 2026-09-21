@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.21
-Release: 4%{?dist}.fmi
+Release: 5%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-5.fmi
+- WMTS GetCapabilities now validates against the WMTS 1.0 schema: WGS84BoundingBox before Identifier, Style Title before Identifier, Dimension before TileMatrixSetLink
+- WMTS Time dimensions carry a Default: the latest time for observations (observation, satellite and PostGIS layers, querydata producers with forecast = false), the time nearest the wall clock for forecasts, and the first time for a forecast entirely in the past; WMS GetMap, WMTS and OGC Tiles use the same rule when a request names no time
+- Surface-level layers no longer advertise a single-level elevation dimension in WMS, WMTS or OGC Tiles, nor an {Elevation} segment in WMTS ResourceURL templates
+- Fixed IntervalTimeDimension::mostCurrentTime, which never found the interval containing the wall clock
+- The test suite validates WMS and WMTS GetCapabilities offline against vendored OGC XML schemas (test/schemas/xsd) and fails on violations
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-4.fmi
 - The OGC API Tiles collection tests validate against the OGC API Common Part 2 (OGC 20-024) draft schemas from the OGC GitHub repository instead of the copies shipped with OGC API Tiles 1.0; the local patch to extent-uad.yaml is no longer needed
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-3.fmi

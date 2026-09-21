@@ -2195,12 +2195,11 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
       layer["interval_dimension"] = interval_dimension_list;
     }
 
-    if (elevationDimension)
+    // isOK() is false for a single surface level "0", which is no dimension a
+    // client could select anything from; getElevationDimensionInfo() applies
+    // the same rule.
+    if (elevationDimension && elevationDimension->isOK())
     {
-      auto dim_string = elevationDimension->getCapabilities();
-      if (dim_string.empty())
-        return {};
-
       CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
 
       layer_dimension["name"] = "elevation";
@@ -2209,7 +2208,7 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
       layer_dimension["multiple_values"] = "0";
       layer_dimension["nearest_value"] = "0";
       // layer_dimension["current"] = "0";
-      layer_dimension["value"] = dim_string;
+      layer_dimension["value"] = elevationDimension->getCapabilities();
 
       layer["elevation_dimension"] = layer_dimension;
     }

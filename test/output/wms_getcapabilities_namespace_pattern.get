@@ -1828,7 +1828,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="80" height="150">
@@ -1901,7 +1901,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>alternative_legend_style1</Name>
         <Title>Default style</Title>
         <LegendURL width="80" height="150">
@@ -1953,7 +1953,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
@@ -2012,7 +2012,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
@@ -2071,7 +2071,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
@@ -2125,7 +2125,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="137" height="10">
@@ -2179,7 +2179,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="276" height="10">
@@ -2233,7 +2233,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="274" height="10">
@@ -2288,7 +2288,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2015-03-13T12:00:00Z</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2015-03-13T00:00:00Z" multipleValues="0" nearestValue="0" current="1">2015-03-13T00:00:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="500" height="990">
@@ -2336,7 +2336,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2016-04-14T00:00:00Z</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2016-04-13T06:23:00Z" multipleValues="0" nearestValue="0" current="1">2016-04-13T06:23:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="180" height="520">
@@ -2384,7 +2384,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="500" height="1959">
@@ -2432,7 +2432,7 @@
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
       <Dimension name="reference_time" units="ISO8601" default="2008-08-05T06:31:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T06:31:00Z</Dimension>
-      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
+      <Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="500" height="990">

@@ -412,7 +412,8 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
         std::string identifier = name;
         identifier[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(identifier[0])));
         for (std::size_t k = 1; k < identifier.size(); ++k)
-          identifier[k] = static_cast<char>(std::tolower(static_cast<unsigned char>(identifier[k])));
+          identifier[k] =
+              static_cast<char>(std::tolower(static_cast<unsigned char>(identifier[k])));
 
         CTPP::CDT dim(CTPP::CDT::HASH_VAL);
         dim["identifier"] = identifier;
@@ -422,6 +423,15 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
           dim["unit_symbol"] = e.At("unit_symbol").GetString();
         if (e.Exists("default"))
           dim["default"] = e.At("default");
+        else if (name == "time" && wl.Exists("name"))
+        {
+          // The same time a KVP GetTile without TIME renders (see handleGetTile):
+          // latest for observations, nearest to the wall clock for forecasts,
+          // the first time for forecasts entirely in the past.
+          auto t = wmsConfig.mostCurrentTime(wl.At("name").GetString(), {});
+          if (!t.is_not_a_date_time())
+            dim["default"] = Fmi::to_iso_extended_string(t) + "Z";
+        }
         if (e.Exists("value"))
           dim["value"] = e.At("value");
         dims.PushBack(dim);

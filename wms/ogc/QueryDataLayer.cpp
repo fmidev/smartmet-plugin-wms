@@ -56,6 +56,7 @@ bool QueryDataLayer::updateLayerMetaData()
           timeDimension = std::make_shared<StepTimeDimension>(*md.validtimes);
         newTimeDimensions.insert(std::make_pair(Fmi::DateTime::NOT_A_DATE_TIME, timeDimension));
         timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
+        timeDimensions->useLatestTimeAsDefault(!queryDataConf.isforecast);
         metadataTimestamp = Fmi::SecondClock::universal_time();
         return true;
       }
@@ -128,7 +129,12 @@ bool QueryDataLayer::updateLayerMetaData()
       }
     }
     if (!newTimeDimensions.empty())
+    {
       timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
+      // Producers configured with forecast = false (radar, analyses) are
+      // observations: their default time is the latest one available.
+      timeDimensions->useLatestTimeAsDefault(!queryDataConf.isforecast);
+    }
     else
       timeDimensions = nullptr;
 

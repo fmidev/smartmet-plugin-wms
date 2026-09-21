@@ -83,16 +83,8 @@ test: $(PROG) $(TEST_PREPARE_TARGETS)
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
-	if [ -e output/wms_getcapabilities.get ]; then \
-	   echo Validating output/wms_getcapabilities.get; \
-	   cat output/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
-	fi; \
 	rm -f wms-access-log; \
-	if [ -e failures/wms_getcapabilities.get ]; then \
-	   echo Validating failures/wms_getcapabilities.get; \
-	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
-	fi; \
-	$(MAKE) validate-tiles-schemas && $$ok
+	$(MAKE) validate-xml-schemas validate-tiles-schemas && $$ok
 
 test-dali: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -113,26 +105,19 @@ test-wms: $(PROG) $(TEST_PREPARE_TARGETS)
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
-	if [ -e output/wms_getcapabilities.get ]; then \
-	   echo Validating output/wms_getcapabilities.get; \
-	   cat output/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
-	fi; \
 	rm -f wms-access-log; \
-	if [ -e failures/wms_getcapabilities.get ]; then \
-	   echo Validating failures/wms_getcapabilities.get; \
-	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
-	fi; \
-	$${ok:-true}
+	$(MAKE) validate-xml-schemas && $${ok:-true}
 
 test-wmts: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
 	@if [ -z "$(WMTS_TESTS)" ]; then \
 		echo "No WMTS tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
 	elif ./TestRunner.sh $(WMTS_TESTS); then \
-		$(MAKE) $(TEST_FINISH_TARGETS); \
+		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
-		$(MAKE) $(TEST_FINISH_TARGETS); false; \
-	fi
+		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
+	fi; \
+	$(MAKE) validate-xml-schemas && $$ok
 
 test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -144,6 +129,35 @@ test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
 	$(MAKE) validate-tiles-schemas && $$ok
+
+# WMS and WMTS GetCapabilities are validated against the OGC XML schemas
+# vendored in schemas/xsd (see the README there). The XML catalog maps the
+# schemaLocation URLs to the local copies, so no network access is needed.
+# Both the expected outputs and any actual outputs in failures/ are checked;
+# a schema violation fails the target. INSPIRE ExtendedCapabilities are
+# stripped from the WMS document since its schema is not vendored.
+XSD_DIR := schemas/xsd
+XSD_WMS := $(XSD_DIR)/wms/1.3.0/capabilities_1_3_0.xsd
+XSD_WMTS := $(XSD_DIR)/wmts/1.0/wmtsGetCapabilities_response.xsd
+# $(call validate_xsd,file,schema,filter-command)
+define validate_xsd
+if [ -e $(1) ]; then \
+   if $(3) $(1) | XML_CATALOG_FILES=$(XSD_DIR)/catalog.xml xmllint --noout --nonet --schema $(2) - > xmllint.log 2>&1; then \
+      echo "$(1): OK ($(notdir $(2)))"; \
+   else \
+      echo "$(1): FAIL: does not validate against $(2)"; \
+      grep -v 'Skipping import\|I/O warning' xmllint.log | head -20; status=1; \
+   fi; rm -f xmllint.log; \
+fi;
+endef
+STRIP_INSPIRE := sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d'
+validate-xml-schemas:
+	@status=0; \
+	$(call validate_xsd,output/wms_getcapabilities.get,$(XSD_WMS),$(STRIP_INSPIRE)) \
+	$(call validate_xsd,failures/wms_getcapabilities.get,$(XSD_WMS),$(STRIP_INSPIRE)) \
+	$(call validate_xsd,output/wmts_getcapabilities.get,$(XSD_WMTS),cat) \
+	$(call validate_xsd,failures/wmts_getcapabilities.get,$(XSD_WMTS),cat) \
+	exit $$status
 
 # OGC API - Tiles JSON responses are validated against the OGC API Common Part 2 schemas in
 # schemas/ogcapi (see the README there). Both the expected outputs and any
