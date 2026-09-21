@@ -94,9 +94,12 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
         <-TMPL_if defined(dimension.default)>
         <Default><TMPL_var XMLESCAPE(dimension.default)></Default>
         <-/TMPL_if>
-        <-TMPL_if defined(dimension.value)>
-        <Value><TMPL_var XMLESCAPE(dimension.value)></Value>
+        <-TMPL_if defined(dimension.current)>
+        <Current>true</Current>
         <-/TMPL_if>
+        <-TMPL_foreach dimension.values as value>
+        <Value><TMPL_var XMLESCAPE(value)></Value>
+        <-/TMPL_foreach>
       </Dimension>
       <-/TMPL_foreach>
       <-/TMPL_if>

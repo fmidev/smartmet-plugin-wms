@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.21
-Release: 6%{?dist}.fmi
+Release: 7%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-7.fmi
+- WMTS dimensions list one Value element per value instead of a WMS-style comma list; ISO 8601 start/end/period ranges stay one value
+- WMTS Time dimensions advertise Current, and GetTile/GetFeatureInfo resolve TIME=current (KVP or path) to the layer's default time instead of passing the keyword to the renderer
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-6.fmi
 - Added make update-schemas to refresh the vendored OGC schemas (JSON schemas pinned to a commit) and make check-schemas, run by the test targets, which warns when upstream schemas have changed
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-5.fmi

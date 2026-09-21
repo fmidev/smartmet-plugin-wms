@@ -36,6 +36,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -92,6 +93,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -1485,6 +1487,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -1585,6 +1588,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1921-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT15M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -1635,6 +1639,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -1735,6 +1740,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -1785,6 +1791,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -1836,6 +1843,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -1887,6 +1895,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -1938,6 +1947,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -1989,6 +1999,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2040,6 +2051,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2091,6 +2103,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2142,6 +2155,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2193,6 +2207,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2288,6 +2303,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2339,6 +2355,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2390,6 +2407,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2441,6 +2459,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2492,6 +2511,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2543,6 +2563,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2603,6 +2624,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -2791,6 +2813,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2019-03-25T09:05:00Z</Default>
+        <Current>true</Current>
         <Value>2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -2842,6 +2865,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2016-04-14T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>2016-04-14T00:00:00Z</Value>
       </Dimension>
       <Dimension>
@@ -2899,6 +2923,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -2956,6 +2981,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -3012,6 +3038,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3062,6 +3089,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3112,6 +3140,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3162,6 +3191,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3212,6 +3242,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3262,6 +3293,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3312,6 +3344,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3362,6 +3395,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3412,6 +3446,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3462,6 +3497,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3512,6 +3548,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3562,6 +3599,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3612,6 +3650,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3662,6 +3701,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3712,6 +3752,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3762,6 +3803,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3812,6 +3854,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3862,6 +3905,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3912,6 +3956,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -3962,6 +4007,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4012,6 +4058,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4062,6 +4109,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4112,6 +4160,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4162,6 +4211,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4212,6 +4262,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2020-01-01T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT1M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4277,6 +4328,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4343,6 +4395,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4399,6 +4452,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4455,6 +4509,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4511,6 +4566,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4567,6 +4623,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4623,6 +4680,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4679,6 +4737,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -4735,6 +4794,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2019-03-25T09:05:00Z</Default>
+        <Current>true</Current>
         <Value>2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4785,6 +4845,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2026-03-31T18:00:00Z</Default>
+        <Current>true</Current>
         <Value>2026-03-31T18:00:00Z/2026-03-31T18:45:00Z/PT15M</Value>
       </Dimension>
       <Dimension>
@@ -4842,7 +4903,9 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2026-08-26T14:15:00Z</Default>
-        <Value>2026-08-26T14:00:00Z,2026-08-26T14:15:00Z</Value>
+        <Current>true</Current>
+        <Value>2026-08-26T14:00:00Z</Value>
+        <Value>2026-08-26T14:15:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
@@ -4893,6 +4956,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2026-08-26T14:15:00Z</Default>
+        <Current>true</Current>
         <Value>2026-08-26T14:15:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4943,6 +5007,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2023-09-29T16:30:00Z</Default>
+        <Current>true</Current>
         <Value>2023-09-29T15:30:00Z/2023-09-29T16:30:00Z/PT15M</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -4994,6 +5059,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2026-08-26T14:15:00Z</Default>
+        <Current>true</Current>
         <Value>2026-08-26T14:15:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -5045,6 +5111,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2026-08-26T14:15:00Z</Default>
+        <Current>true</Current>
         <Value>2026-08-26T14:15:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -5096,6 +5163,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5167,6 +5235,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5267,6 +5336,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5323,6 +5393,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5379,6 +5450,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5436,7 +5508,68 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-09-09T00:00:00Z</Default>
-        <Value>2008-09-09T00:00:00Z,2008-09-09T03:00:00Z,2008-09-09T06:00:00Z,2008-09-09T09:00:00Z,2008-09-09T12:00:00Z,2008-09-09T15:00:00Z,2008-09-09T18:00:00Z,2008-09-09T21:00:00Z,2008-09-10T00:00:00Z,2008-09-10T03:00:00Z,2008-09-10T06:00:00Z,2008-09-10T09:00:00Z,2008-09-10T12:00:00Z,2008-09-10T15:00:00Z,2008-09-10T18:00:00Z,2008-09-10T21:00:00Z,2008-09-11T00:00:00Z,2008-09-11T03:00:00Z,2008-09-11T06:00:00Z,2008-09-11T09:00:00Z,2008-09-11T12:00:00Z,2008-09-11T15:00:00Z,2008-09-11T18:00:00Z,2008-09-11T21:00:00Z,2008-09-12T00:00:00Z,2008-09-12T03:00:00Z,2008-09-12T06:00:00Z,2008-09-12T09:00:00Z,2008-09-12T12:00:00Z,2008-09-12T15:00:00Z,2008-09-12T18:00:00Z,2008-09-12T21:00:00Z,2008-09-13T00:00:00Z,2008-09-13T03:00:00Z,2008-09-13T06:00:00Z,2008-09-13T09:00:00Z,2008-09-13T12:00:00Z,2008-09-13T15:00:00Z,2008-09-13T18:00:00Z,2008-09-13T21:00:00Z,2008-09-14T00:00:00Z,2008-09-14T06:00:00Z,2008-09-14T12:00:00Z,2008-09-14T18:00:00Z,2008-09-15T00:00:00Z,2008-09-15T06:00:00Z,2008-09-15T12:00:00Z,2008-09-15T18:00:00Z,2008-09-16T00:00:00Z,2008-09-16T06:00:00Z,2008-09-16T12:00:00Z,2008-09-16T18:00:00Z,2008-09-17T00:00:00Z,2008-09-17T06:00:00Z,2008-09-17T12:00:00Z,2008-09-17T18:00:00Z,2008-09-18T00:00:00Z,2008-09-18T06:00:00Z,2008-09-18T12:00:00Z,2008-09-18T18:00:00Z,2008-09-19T00:00:00Z</Value>
+        <Current>true</Current>
+        <Value>2008-09-09T00:00:00Z</Value>
+        <Value>2008-09-09T03:00:00Z</Value>
+        <Value>2008-09-09T06:00:00Z</Value>
+        <Value>2008-09-09T09:00:00Z</Value>
+        <Value>2008-09-09T12:00:00Z</Value>
+        <Value>2008-09-09T15:00:00Z</Value>
+        <Value>2008-09-09T18:00:00Z</Value>
+        <Value>2008-09-09T21:00:00Z</Value>
+        <Value>2008-09-10T00:00:00Z</Value>
+        <Value>2008-09-10T03:00:00Z</Value>
+        <Value>2008-09-10T06:00:00Z</Value>
+        <Value>2008-09-10T09:00:00Z</Value>
+        <Value>2008-09-10T12:00:00Z</Value>
+        <Value>2008-09-10T15:00:00Z</Value>
+        <Value>2008-09-10T18:00:00Z</Value>
+        <Value>2008-09-10T21:00:00Z</Value>
+        <Value>2008-09-11T00:00:00Z</Value>
+        <Value>2008-09-11T03:00:00Z</Value>
+        <Value>2008-09-11T06:00:00Z</Value>
+        <Value>2008-09-11T09:00:00Z</Value>
+        <Value>2008-09-11T12:00:00Z</Value>
+        <Value>2008-09-11T15:00:00Z</Value>
+        <Value>2008-09-11T18:00:00Z</Value>
+        <Value>2008-09-11T21:00:00Z</Value>
+        <Value>2008-09-12T00:00:00Z</Value>
+        <Value>2008-09-12T03:00:00Z</Value>
+        <Value>2008-09-12T06:00:00Z</Value>
+        <Value>2008-09-12T09:00:00Z</Value>
+        <Value>2008-09-12T12:00:00Z</Value>
+        <Value>2008-09-12T15:00:00Z</Value>
+        <Value>2008-09-12T18:00:00Z</Value>
+        <Value>2008-09-12T21:00:00Z</Value>
+        <Value>2008-09-13T00:00:00Z</Value>
+        <Value>2008-09-13T03:00:00Z</Value>
+        <Value>2008-09-13T06:00:00Z</Value>
+        <Value>2008-09-13T09:00:00Z</Value>
+        <Value>2008-09-13T12:00:00Z</Value>
+        <Value>2008-09-13T15:00:00Z</Value>
+        <Value>2008-09-13T18:00:00Z</Value>
+        <Value>2008-09-13T21:00:00Z</Value>
+        <Value>2008-09-14T00:00:00Z</Value>
+        <Value>2008-09-14T06:00:00Z</Value>
+        <Value>2008-09-14T12:00:00Z</Value>
+        <Value>2008-09-14T18:00:00Z</Value>
+        <Value>2008-09-15T00:00:00Z</Value>
+        <Value>2008-09-15T06:00:00Z</Value>
+        <Value>2008-09-15T12:00:00Z</Value>
+        <Value>2008-09-15T18:00:00Z</Value>
+        <Value>2008-09-16T00:00:00Z</Value>
+        <Value>2008-09-16T06:00:00Z</Value>
+        <Value>2008-09-16T12:00:00Z</Value>
+        <Value>2008-09-16T18:00:00Z</Value>
+        <Value>2008-09-17T00:00:00Z</Value>
+        <Value>2008-09-17T06:00:00Z</Value>
+        <Value>2008-09-17T12:00:00Z</Value>
+        <Value>2008-09-17T18:00:00Z</Value>
+        <Value>2008-09-18T00:00:00Z</Value>
+        <Value>2008-09-18T06:00:00Z</Value>
+        <Value>2008-09-18T12:00:00Z</Value>
+        <Value>2008-09-18T18:00:00Z</Value>
+        <Value>2008-09-19T00:00:00Z</Value>
       </Dimension>
       <Dimension>
         <ows:Identifier>Reference_time</ows:Identifier>
@@ -5447,7 +5580,12 @@
       <Dimension>
         <ows:Identifier>Elevation</ows:Identifier>
         <ows:UOM>hPa</ows:UOM>
-        <Value>1000,925,850,700,500,300</Value>
+        <Value>1000</Value>
+        <Value>925</Value>
+        <Value>850</Value>
+        <Value>700</Value>
+        <Value>500</Value>
+        <Value>300</Value>
       </Dimension>
       <TileMatrixSetLink>
         <TileMatrixSet>EPSG:3035</TileMatrixSet>
@@ -5497,6 +5635,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2012-02-27T14:22:00Z</Default>
+        <Current>true</Current>
         <Value>2012-02-27T14:22:00Z</Value>
       </Dimension>
       <TileMatrixSetLink>
@@ -5563,6 +5702,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5620,6 +5760,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5682,6 +5823,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5744,6 +5886,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5806,6 +5949,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5867,6 +6011,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5928,6 +6073,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -5989,6 +6135,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -6045,6 +6192,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -6101,6 +6249,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -6157,6 +6306,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -6214,6 +6364,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2015-03-13T12:00:00Z</Default>
+        <Current>true</Current>
         <Value>2015-03-13T12:00:00Z</Value>
       </Dimension>
       <Dimension>
@@ -6271,6 +6422,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2016-04-14T00:00:00Z</Default>
+        <Current>true</Current>
         <Value>2016-04-14T00:00:00Z</Value>
       </Dimension>
       <Dimension>
@@ -6328,6 +6480,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
@@ -6385,6 +6538,7 @@
         <ows:Identifier>Time</ows:Identifier>
         <ows:UOM>ISO8601</ows:UOM>
         <Default>2008-08-05T03:00:00Z</Default>
+        <Current>true</Current>
         <Value>2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Value>
       </Dimension>
       <Dimension>
