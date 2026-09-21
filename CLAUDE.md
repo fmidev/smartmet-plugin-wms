@@ -60,6 +60,11 @@ python3-pyyaml). The `validate-tiles-schemas` Makefile target runs after `test` 
 and checks both `test/output/` and `test/failures/`; a schema violation fails the target. See
 `test/schemas/ogcapi/README.md` for provenance and the one local wrapper schema.
 
+`make update-schemas` re-downloads both schema sets (needs network; the JSON schemas are pinned to
+a commit in `test/schemas/update-schemas.sh`). The test targets end with `make check-schemas`, which
+prints a WARNING if upstream has changed since the vendored copies were taken. It never fails and is
+silent offline; `SMARTMET_SCHEMA_CHECK=0` skips it.
+
 Unit tests exist in `test/unit/` (Boost.Test, currently label placement algorithms only).
 
 ## Source layout

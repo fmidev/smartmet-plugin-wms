@@ -85,7 +85,7 @@ OBJS += $(PROTO_OBJS)
 
 INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
-.PHONY: test test-dali test-wms test-wmts test-tiles update-outputs rpm
+.PHONY: test test-dali test-wms test-wmts test-tiles update-outputs update-schemas check-schemas rpm
 
 # The rules
 
@@ -163,7 +163,7 @@ install:
 test: configtest
 	cd test && make test
 
-test-dali test-wms test-wmts test-tiles update-outputs:
+test-dali test-wms test-wmts test-tiles update-outputs update-schemas check-schemas:
 	cd test && make $@
 
 objdir:

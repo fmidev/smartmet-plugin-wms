@@ -19,9 +19,13 @@ Downloaded 2026-09-21 from commit 3828187a8f (2026-08-14).
 | `records-core/` | contact, format, language, theme, roles, referenced by the collection description |
 
 The `$ref` values are relative file paths; `ValidateJsonSchema.py` inlines
-them before validating, so no `$ref` resolver is needed. Files not reachable
-from the collection schemas (`dynamic/`, landing page, conformance) are not
-vendored.
+them before validating, so no `$ref` resolver is needed. Only files reachable
+by `$ref` from `collections.yaml` and `collectionDesc-UAD.yaml` are vendored.
+
+`VERSION` records the repository, commit and dates. `make update-schemas`
+(`../update-schemas.sh`) re-downloads the closure at the commit pinned in the
+script and regenerates the local wrapper below; `make check-schemas`, run by
+the test targets, prints a warning when upstream has newer commits.
 
 ## Which schema validates what
 
@@ -39,7 +43,8 @@ such as `vertical`, to follow the Uniform Additional Dimensions schema
 
 `common-geodata/collections-UAD.yaml` is not an OGC file. OGC's
 `collections.yaml` validates list items with the lenient
-`collectionDesc.yaml`; the local file is identical except that it uses
+`collectionDesc.yaml`; the local file is generated from it by
+`update-schemas.sh` with the item reference changed to
 `collectionDesc-UAD.yaml`, so the list gets the same strict check as the
 single-collection response. It is marked `LOCAL FILE` in its header. No OGC
 file is modified.

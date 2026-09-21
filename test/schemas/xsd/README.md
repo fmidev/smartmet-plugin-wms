@@ -19,6 +19,9 @@ to these local files, so xmllint validates without network access:
         --schema schemas/xsd/wmts/1.0/wmtsGetCapabilities_response.xsd output/wmts_getcapabilities.get
 
 The `validate-xml-schemas` Makefile target does this for the WMS and WMTS
-GetCapabilities expectations and actual outputs. The INSPIRE
+GetCapabilities expectations and actual outputs. `VERSION` records the mirror
+date; `make update-schemas` re-mirrors the trees and `make check-schemas`,
+run by the test targets, warns when a schema's Last-Modified date upstream is
+newer than the mirror. The INSPIRE
 ExtendedCapabilities element is stripped from the WMS document before
 validation because the INSPIRE schemas are not vendored.

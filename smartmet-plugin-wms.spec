@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.21
-Release: 5%{?dist}.fmi
+Release: 6%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-6.fmi
+- Added make update-schemas to refresh the vendored OGC schemas (JSON schemas pinned to a commit) and make check-schemas, run by the test targets, which warns when upstream schemas have changed
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-5.fmi
 - WMTS GetCapabilities now validates against the WMTS 1.0 schema: WGS84BoundingBox before Identifier, Style Title before Identifier, Dimension before TileMatrixSetLink
 - WMTS Time dimensions carry a Default: the latest time for observations (observation, satellite and PostGIS layers, querydata producers with forecast = false), the time nearest the wall clock for forecasts, and the first time for a forecast entirely in the past; WMS GetMap, WMTS and OGC Tiles use the same rule when a request names no time

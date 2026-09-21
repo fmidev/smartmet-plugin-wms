@@ -84,7 +84,7 @@ test: $(PROG) $(TEST_PREPARE_TARGETS)
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
 	rm -f wms-access-log; \
-	$(MAKE) validate-xml-schemas validate-tiles-schemas && $$ok
+	$(MAKE) validate-xml-schemas validate-tiles-schemas check-schemas && $$ok
 
 test-dali: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -106,7 +106,7 @@ test-wms: $(PROG) $(TEST_PREPARE_TARGETS)
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
 	rm -f wms-access-log; \
-	$(MAKE) validate-xml-schemas && $${ok:-true}
+	$(MAKE) validate-xml-schemas check-schemas && $${ok:-true}
 
 test-wmts: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -117,7 +117,7 @@ test-wmts: $(PROG) $(TEST_PREPARE_TARGETS)
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
-	$(MAKE) validate-xml-schemas && $$ok
+	$(MAKE) validate-xml-schemas check-schemas && $$ok
 
 test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -128,7 +128,18 @@ test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
-	$(MAKE) validate-tiles-schemas && $$ok
+	$(MAKE) validate-tiles-schemas check-schemas && $$ok
+
+# The vendored schemas are refreshed with update-schemas (developer command,
+# needs network; the JSON schemas are pinned to a commit in the script).
+# check-schemas asks upstream whether the copies are stale and prints a
+# WARNING if so; it never fails, is silent offline, and SMARTMET_SCHEMA_CHECK=0
+# skips it.
+update-schemas:
+	@./schemas/update-schemas.sh
+
+check-schemas:
+	@./schemas/update-schemas.sh --check
 
 # WMS and WMTS GetCapabilities are validated against the OGC XML schemas
 # vendored in schemas/xsd (see the README there). The XML catalog maps the
