@@ -240,14 +240,29 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
   }
 
   // Vertical (elevation) extent — discrete levels the layer offers.
+  //
+  // Surface-level data carries a single level 0 with no units. That is not a
+  // vertical extent a client could select anything from, so it is not emitted.
   if (wl.Exists("elevation_dimension"))
   {
     CTPP::CDT& ed = wl.At("elevation_dimension");
+    auto isTrivial = [](const std::vector<std::string>& vals) {
+      if (vals.size() != 1)
+        return false;
+      try
+      {
+        return Fmi::stod(vals.front()) == 0.0;
+      }
+      catch (...)
+      {
+        return false;
+      }
+    };
     auto emitElevation = [&](CTPP::CDT& e) {
       if (!e.Exists("value"))
         return;
       auto vals = splitCsv(e.At("value").GetString());
-      if (vals.empty())
+      if (vals.empty() || isTrivial(vals))
         return;
       Json::Value values(Json::arrayValue);
       for (const auto& v : vals)
@@ -259,7 +274,7 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
       interval.append(pair);
       doc["extent"]["vertical"]["interval"] = interval;
       doc["extent"]["vertical"]["values"] = values;
-      if (e.Exists("units"))
+      if (e.Exists("units") && !e.At("units").GetString().empty())
         doc["extent"]["vertical"]["vrs"] = e.At("units").GetString();
     };
     if (ed.GetType() == CTPP::CDT::ARRAY_VAL)
