@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.21
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -118,6 +118,8 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: libxml2
 #TestRequires: jq
+#TestRequires: python3-jsonschema
+#TestRequires: python3-pyyaml
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
@@ -179,6 +181,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-3.fmi
+- OGC API Tiles collection responses are validated against the OGC API Common Part 2 schemas in the test suite (test/schemas/ogcapi, ValidateJsonSchema.py; needs python3-jsonschema and python3-pyyaml)
+- The spatial extent bbox of OGC API Tiles collections is now numeric as the schema requires, not strings
+- A vertical extent whose levels have no unit symbol (e.g. hybrid level indices) names the level type as vrs, which the schema requires
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-2.fmi
 - OGC API Tiles collections no longer report a vertical extent for surface-level data (a single level 0), nor an empty vrs
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-1.fmi

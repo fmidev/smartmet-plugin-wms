@@ -141,15 +141,14 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
     CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
     Json::Value spatial;
     Json::Value bboxArr(Json::arrayValue);
+    // The schema requires numbers, not the strings CTPP would render.
+    auto corner = [&](const char* key, double dflt)
+    { return bb.Exists(key) ? bb.At(key).GetFloat() : dflt; };
     Json::Value corners(Json::arrayValue);
-    corners.append(bb.Exists("west_bound_longitude") ? bb.At("west_bound_longitude").GetString()
-                                                     : "-180");
-    corners.append(bb.Exists("south_bound_latitude") ? bb.At("south_bound_latitude").GetString()
-                                                     : "-90");
-    corners.append(bb.Exists("east_bound_longitude") ? bb.At("east_bound_longitude").GetString()
-                                                     : "180");
-    corners.append(bb.Exists("north_bound_latitude") ? bb.At("north_bound_latitude").GetString()
-                                                     : "90");
+    corners.append(corner("west_bound_longitude", -180));
+    corners.append(corner("south_bound_latitude", -90));
+    corners.append(corner("east_bound_longitude", 180));
+    corners.append(corner("north_bound_latitude", 90));
     bboxArr.append(corners);
     spatial["bbox"] = bboxArr;
     spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
@@ -274,8 +273,15 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
       interval.append(pair);
       doc["extent"]["vertical"]["interval"] = interval;
       doc["extent"]["vertical"]["values"] = values;
-      if (e.Exists("units") && !e.At("units").GetString().empty())
-        doc["extent"]["vertical"]["vrs"] = e.At("units").GetString();
+      // The schema requires a vrs for every additional dimension. Levels
+      // without a unit symbol (hybrid, sounding, ...) are named by type.
+      std::string vrs;
+      if (e.Exists("units"))
+        vrs = e.At("units").GetString();
+      if (vrs.empty() && e.Exists("level_name"))
+        vrs = e.At("level_name").GetString();
+      if (!vrs.empty())
+        doc["extent"]["vertical"]["vrs"] = vrs;
     };
     if (ed.GetType() == CTPP::CDT::ARRAY_VAL)
       for (std::size_t i = 0; i < ed.Size(); ++i)

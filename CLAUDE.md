@@ -51,6 +51,12 @@ Tests are integration tests: `PluginTest.cpp` starts a SmartMet Reactor with the
 
 Tests to skip are listed in `test/input/.testignore`.
 
+OGC API Tiles JSON responses are additionally validated against the OGC schemas vendored in
+`test/schemas/ogcapi/` by `test/ValidateJsonSchema.py` (needs python3-jsonschema and
+python3-pyyaml). The `validate-tiles-schemas` Makefile target runs after `test` and `test-tiles`
+and checks both `test/output/` and `test/failures/`; a schema violation fails the target. See
+`test/schemas/ogcapi/README.md` for provenance and the one local patch.
+
 Unit tests exist in `test/unit/` (Boost.Test, currently label placement algorithms only).
 
 ## Source layout

@@ -92,7 +92,7 @@ test: $(PROG) $(TEST_PREPARE_TARGETS)
 	   echo Validating failures/wms_getcapabilities.get; \
 	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
 	fi; \
-	$$ok
+	$(MAKE) validate-tiles-schemas && $$ok
 
 test-dali: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -139,10 +139,28 @@ test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	@if [ -z "$(TILES_TESTS)" ]; then \
 		echo "No OGC Tiles tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
 	elif ./TestRunner.sh $(TILES_TESTS); then \
-		$(MAKE) $(TEST_FINISH_TARGETS); \
+		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
-		$(MAKE) $(TEST_FINISH_TARGETS); false; \
-	fi
+		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
+	fi; \
+	$(MAKE) validate-tiles-schemas && $$ok
+
+# OGC API - Tiles JSON responses are validated against the OGC schemas in
+# schemas/ogcapi (see the README there). Both the expected outputs and any
+# actual outputs left in failures/ are checked, like the WMS GetCapabilities
+# XML above. Add a line per response type as more schemas are vendored.
+OGC_SCHEMAS := schemas/ogcapi/schemas
+validate-tiles-schemas:
+	@status=0; \
+	files="$(wildcard output/tiles_getcollections.get failures/tiles_getcollections.get)"; \
+	if [ -n "$$files" ]; then \
+	   ./ValidateJsonSchema.py $(OGC_SCHEMAS)/common-geodata/collections.yaml $$files || status=1; \
+	fi; \
+	files="$(wildcard output/tiles_getcollection_*.get failures/tiles_getcollection_*.get)"; \
+	if [ -n "$$files" ]; then \
+	   ./ValidateJsonSchema.py $(OGC_SCHEMAS)/common-geodata/collectionInfo.yaml $$files || status=1; \
+	fi; \
+	exit $$status
 
 # Copy actual test outputs from failures/ to output/ to accept them as new expected outputs.
 # Workflow: run the tests, inspect failures/, then run this target to accept correct results.
