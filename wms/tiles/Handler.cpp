@@ -123,6 +123,153 @@ std::string extensionOrParamToMime(const std::string& f)
   return {};
 }
 
+// -----------------------------------------------------------------------
+/*!
+ * \brief Add the OGC API - Common Part 2 extent (spatial, temporal, vertical)
+ *        of a capabilities layer entry to a collection description.
+ *
+ * Used both for the /collections list and the /collections/{id} description,
+ * which the spec requires to carry identical extents.
+ */
+// -----------------------------------------------------------------------
+
+void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
+{
+  // Spatial extent
+  if (wl.Exists("ex_geographic_bounding_box"))
+  {
+    CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
+    Json::Value spatial;
+    Json::Value bboxArr(Json::arrayValue);
+    Json::Value corners(Json::arrayValue);
+    corners.append(bb.Exists("west_bound_longitude") ? bb.At("west_bound_longitude").GetString()
+                                                     : "-180");
+    corners.append(bb.Exists("south_bound_latitude") ? bb.At("south_bound_latitude").GetString()
+                                                     : "-90");
+    corners.append(bb.Exists("east_bound_longitude") ? bb.At("east_bound_longitude").GetString()
+                                                     : "180");
+    corners.append(bb.Exists("north_bound_latitude") ? bb.At("north_bound_latitude").GetString()
+                                                     : "90");
+    bboxArr.append(corners);
+    spatial["bbox"] = bboxArr;
+    spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
+    doc["extent"]["spatial"] = spatial;
+  }
+
+  // Temporal and vertical (elevation) extents from the layer's dimensions.
+  auto splitCsv = [](const std::string& s) {
+    std::vector<std::string> out;
+    boost::algorithm::split(out, s, boost::is_any_of(","));
+    return out;
+  };
+
+  // Temporal extent (OGC API - Common Part 2): interval [[start, end]].
+  //
+  // A WMS time dimension is a comma separated list whose items are either
+  // instants or ISO 8601 "start/end/period" ranges. Taking the first and
+  // last item verbatim only works for a list of instants: for a single
+  // range it published interval [[range, range]], which no client can
+  // parse. Split the endpoints out of the range, and additionally report
+  // the discrete instants (as "vertical" already does) and the period --
+  // the interval alone gives a client no cadence to step a time slider by.
+  if (wl.Exists("time_dimension"))
+  {
+    CTPP::CDT& td = wl.At("time_dimension");
+
+    auto emitTime = [&](CTPP::CDT& e) {
+      if (!e.Exists("name") || e.At("name").GetString() != "time" || !e.Exists("value"))
+        return;
+
+      auto items = splitCsv(e.At("value").GetString());
+      if (items.empty())
+        return;
+
+      auto slashParts = [](const std::string& item) {
+        std::vector<std::string> parts;
+        boost::algorithm::split(parts, item, boost::is_any_of("/"));
+        return parts;
+      };
+
+      std::vector<std::string> instants;
+      std::string resolution;
+      bool has_range = false;
+
+      for (const auto& item : items)
+      {
+        auto parts = slashParts(item);
+        if (parts.size() >= 2)
+        {
+          has_range = true;
+          if (parts.size() >= 3 && resolution.empty())
+            resolution = parts[2];
+        }
+        else
+          instants.push_back(item);
+      }
+
+      const auto first_parts = slashParts(items.front());
+      const auto last_parts = slashParts(items.back());
+
+      Json::Value pair(Json::arrayValue);
+      pair.append(first_parts.front());
+      pair.append(last_parts.size() >= 2 ? last_parts[1] : last_parts.front());
+      Json::Value interval(Json::arrayValue);
+      interval.append(pair);
+      doc["extent"]["temporal"]["interval"] = interval;
+      doc["extent"]["temporal"]["trs"] =
+          "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
+
+      // Only a pure list of instants can be enumerated exactly; a range is
+      // described by its period instead.
+      if (!has_range && !instants.empty())
+      {
+        Json::Value values(Json::arrayValue);
+        for (const auto& v : instants)
+          values.append(v);
+        doc["extent"]["temporal"]["values"] = values;
+      }
+      if (!resolution.empty())
+        doc["extent"]["temporal"]["resolution"] = resolution;
+    };
+
+    if (td.GetType() == CTPP::CDT::ARRAY_VAL)
+      for (std::size_t i = 0; i < td.Size(); ++i)
+        emitTime(td[i]);
+    else if (td.GetType() == CTPP::CDT::HASH_VAL)
+      emitTime(td);
+  }
+
+  // Vertical (elevation) extent — discrete levels the layer offers.
+  if (wl.Exists("elevation_dimension"))
+  {
+    CTPP::CDT& ed = wl.At("elevation_dimension");
+    auto emitElevation = [&](CTPP::CDT& e) {
+      if (!e.Exists("value"))
+        return;
+      auto vals = splitCsv(e.At("value").GetString());
+      if (vals.empty())
+        return;
+      Json::Value values(Json::arrayValue);
+      for (const auto& v : vals)
+        values.append(v);
+      Json::Value pair(Json::arrayValue);
+      pair.append(vals.front());
+      pair.append(vals.back());
+      Json::Value interval(Json::arrayValue);
+      interval.append(pair);
+      doc["extent"]["vertical"]["interval"] = interval;
+      doc["extent"]["vertical"]["values"] = values;
+      if (e.Exists("units"))
+        doc["extent"]["vertical"]["vrs"] = e.At("units").GetString();
+    };
+    if (ed.GetType() == CTPP::CDT::ARRAY_VAL)
+      for (std::size_t i = 0; i < ed.Size(); ++i)
+        emitElevation(ed[i]);
+    else if (ed.GetType() == CTPP::CDT::HASH_VAL)
+      emitElevation(ed);
+  }
+}
+
 }  // namespace
 
 // -----------------------------------------------------------------------
@@ -520,6 +667,8 @@ QueryStatus Handler::handleCollections(const std::string& base,
       if (wl.Exists("abstract"))
         entry["description"] = wl.At("abstract").GetString();
 
+      addCollectionExtent(entry, wl);
+
       Json::Value links(Json::arrayValue);
       links.append(makeLink(coll_base, "self", "application/json", id));
       links.append(makeLink(coll_base + "/tiles",
@@ -594,139 +743,8 @@ QueryStatus Handler::handleCollection(const std::string& base,
       if (wl.Exists("abstract"))
         doc["description"] = wl.At("abstract").GetString();
 
-      // Spatial extent
-      if (wl.Exists("ex_geographic_bounding_box"))
-      {
-        CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
-        Json::Value spatial;
-        Json::Value bboxArr(Json::arrayValue);
-        Json::Value corners(Json::arrayValue);
-        corners.append(bb.Exists("west_bound_longitude") ? bb.At("west_bound_longitude").GetString()
-                                                         : "-180");
-        corners.append(bb.Exists("south_bound_latitude") ? bb.At("south_bound_latitude").GetString()
-                                                         : "-90");
-        corners.append(bb.Exists("east_bound_longitude") ? bb.At("east_bound_longitude").GetString()
-                                                         : "180");
-        corners.append(bb.Exists("north_bound_latitude") ? bb.At("north_bound_latitude").GetString()
-                                                         : "90");
-        bboxArr.append(corners);
-        spatial["bbox"] = bboxArr;
-        spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
-        doc["extent"]["spatial"] = spatial;
-      }
+      addCollectionExtent(doc, wl);
 
-      // Temporal and vertical (elevation) extents from the layer's dimensions.
-      auto splitCsv = [](const std::string& s) {
-        std::vector<std::string> out;
-        boost::algorithm::split(out, s, boost::is_any_of(","));
-        return out;
-      };
-
-      // Temporal extent (OGC API - Common Part 2): interval [[start, end]].
-      //
-      // A WMS time dimension is a comma separated list whose items are either
-      // instants or ISO 8601 "start/end/period" ranges. Taking the first and
-      // last item verbatim only works for a list of instants: for a single
-      // range it published interval [[range, range]], which no client can
-      // parse. Split the endpoints out of the range, and additionally report
-      // the discrete instants (as "vertical" already does) and the period --
-      // the interval alone gives a client no cadence to step a time slider by.
-      if (wl.Exists("time_dimension"))
-      {
-        CTPP::CDT& td = wl.At("time_dimension");
-
-        auto emitTime = [&](CTPP::CDT& e) {
-          if (!e.Exists("name") || e.At("name").GetString() != "time" || !e.Exists("value"))
-            return;
-
-          auto items = splitCsv(e.At("value").GetString());
-          if (items.empty())
-            return;
-
-          auto slashParts = [](const std::string& item) {
-            std::vector<std::string> parts;
-            boost::algorithm::split(parts, item, boost::is_any_of("/"));
-            return parts;
-          };
-
-          std::vector<std::string> instants;
-          std::string resolution;
-          bool has_range = false;
-
-          for (const auto& item : items)
-          {
-            auto parts = slashParts(item);
-            if (parts.size() >= 2)
-            {
-              has_range = true;
-              if (parts.size() >= 3 && resolution.empty())
-                resolution = parts[2];
-            }
-            else
-              instants.push_back(item);
-          }
-
-          const auto first_parts = slashParts(items.front());
-          const auto last_parts = slashParts(items.back());
-
-          Json::Value pair(Json::arrayValue);
-          pair.append(first_parts.front());
-          pair.append(last_parts.size() >= 2 ? last_parts[1] : last_parts.front());
-          Json::Value interval(Json::arrayValue);
-          interval.append(pair);
-          doc["extent"]["temporal"]["interval"] = interval;
-          doc["extent"]["temporal"]["trs"] =
-              "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
-
-          // Only a pure list of instants can be enumerated exactly; a range is
-          // described by its period instead.
-          if (!has_range && !instants.empty())
-          {
-            Json::Value values(Json::arrayValue);
-            for (const auto& v : instants)
-              values.append(v);
-            doc["extent"]["temporal"]["values"] = values;
-          }
-          if (!resolution.empty())
-            doc["extent"]["temporal"]["resolution"] = resolution;
-        };
-
-        if (td.GetType() == CTPP::CDT::ARRAY_VAL)
-          for (std::size_t i = 0; i < td.Size(); ++i)
-            emitTime(td[i]);
-        else if (td.GetType() == CTPP::CDT::HASH_VAL)
-          emitTime(td);
-      }
-
-      // Vertical (elevation) extent — discrete levels the layer offers.
-      if (wl.Exists("elevation_dimension"))
-      {
-        CTPP::CDT& ed = wl.At("elevation_dimension");
-        auto emitElevation = [&](CTPP::CDT& e) {
-          if (!e.Exists("value"))
-            return;
-          auto vals = splitCsv(e.At("value").GetString());
-          if (vals.empty())
-            return;
-          Json::Value values(Json::arrayValue);
-          for (const auto& v : vals)
-            values.append(v);
-          Json::Value pair(Json::arrayValue);
-          pair.append(vals.front());
-          pair.append(vals.back());
-          Json::Value interval(Json::arrayValue);
-          interval.append(pair);
-          doc["extent"]["vertical"]["interval"] = interval;
-          doc["extent"]["vertical"]["values"] = values;
-          if (e.Exists("units"))
-            doc["extent"]["vertical"]["vrs"] = e.At("units").GetString();
-        };
-        if (ed.GetType() == CTPP::CDT::ARRAY_VAL)
-          for (std::size_t i = 0; i < ed.Size(); ++i)
-            emitElevation(ed[i]);
-        else if (ed.GetType() == CTPP::CDT::HASH_VAL)
-          emitElevation(ed);
-      }
       break;
     }
 
