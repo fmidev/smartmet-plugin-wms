@@ -145,20 +145,20 @@ test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	fi; \
 	$(MAKE) validate-tiles-schemas && $$ok
 
-# OGC API - Tiles JSON responses are validated against the OGC schemas in
+# OGC API - Tiles JSON responses are validated against the OGC API Common Part 2 schemas in
 # schemas/ogcapi (see the README there). Both the expected outputs and any
 # actual outputs left in failures/ are checked, like the WMS GetCapabilities
 # XML above. Add a line per response type as more schemas are vendored.
-OGC_SCHEMAS := schemas/ogcapi/schemas
+OGC_SCHEMAS := schemas/ogcapi
 validate-tiles-schemas:
 	@status=0; \
 	files="$(wildcard output/tiles_getcollections.get failures/tiles_getcollections.get)"; \
 	if [ -n "$$files" ]; then \
-	   ./ValidateJsonSchema.py $(OGC_SCHEMAS)/common-geodata/collections.yaml $$files || status=1; \
+	   ./ValidateJsonSchema.py $(OGC_SCHEMAS)/common-geodata/collections-UAD.yaml $$files || status=1; \
 	fi; \
 	files="$(wildcard output/tiles_getcollection_*.get failures/tiles_getcollection_*.get)"; \
 	if [ -n "$$files" ]; then \
-	   ./ValidateJsonSchema.py $(OGC_SCHEMAS)/common-geodata/collectionInfo.yaml $$files || status=1; \
+	   ./ValidateJsonSchema.py $(OGC_SCHEMAS)/common-geodata/collectionDesc-UAD.yaml $$files || status=1; \
 	fi; \
 	exit $$status
 

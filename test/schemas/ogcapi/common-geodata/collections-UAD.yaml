@@ -1,0 +1,25 @@
+# LOCAL FILE (SmartMet), not part of the OGC schemas.
+#
+# collections.yaml describes each list item with collectionDesc.yaml, whose
+# extent.yaml accepts additional dimensions that do not follow the Uniform
+# Additional Dimensions (UAD) schema. This server implements UAD, so the
+# list is validated with the strict collectionDesc-UAD.yaml per item, the
+# same schema used for /collections/{id}. Otherwise identical to
+# collections.yaml.
+type: object
+required:
+  - links
+  - collections
+properties:
+  links:
+    type: array
+    items:
+      $ref: '../common-core/link.yaml'
+  numberMatched:
+    $ref: 'numberMatched.yaml'
+  numberReturned:
+    $ref: 'numberReturned.yaml'
+  collections:
+    type: array
+    items:
+      $ref: 'collectionDesc-UAD.yaml'

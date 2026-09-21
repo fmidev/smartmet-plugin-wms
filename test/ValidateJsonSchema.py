@@ -4,7 +4,7 @@
 Usage: ValidateJsonSchema.py SCHEMA.yaml FILE.json [FILE.json ...]
 
 The OGC schemas reference each other with relative-path $ref values
-("collectionInfo.yaml", "../common-core/link.yaml"). Those are inlined
+("collectionDesc-UAD.yaml", "../common-core/link.yaml"). Those are inlined
 here before validation so that any jsonschema version works, including
 the 2.6 shipped with RHEL8. Schemas are OpenAPI 3.0 dialect, i.e. a
 JSON Schema draft 4 subset plus keywords such as "nullable" and

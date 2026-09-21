@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.21
-Release: 3%{?dist}.fmi
+Release: 4%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-4.fmi
+- The OGC API Tiles collection tests validate against the OGC API Common Part 2 (OGC 20-024) draft schemas from the OGC GitHub repository instead of the copies shipped with OGC API Tiles 1.0; the local patch to extent-uad.yaml is no longer needed
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-3.fmi
 - OGC API Tiles collection responses are validated against the OGC API Common Part 2 schemas in the test suite (test/schemas/ogcapi, ValidateJsonSchema.py; needs python3-jsonschema and python3-pyyaml)
 - The spatial extent bbox of OGC API Tiles collections is now numeric as the schema requires, not strings
