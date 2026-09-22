@@ -463,7 +463,9 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
         {
           CTPP::CDT values(CTPP::CDT::ARRAY_VAL);
           std::vector<std::string> parts;
-          boost::algorithm::split(parts, e.At("value").GetString(), boost::is_any_of(","));
+          // Boost 1.69 (RHEL8) split() takes the input by reference, no temporaries
+          const std::string value = e.At("value").GetString();
+          boost::algorithm::split(parts, value, boost::is_any_of(","));
           for (const auto& v : parts)
             if (!v.empty())
               values.PushBack(v);

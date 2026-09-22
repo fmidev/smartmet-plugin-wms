@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.21
-Release: 7%{?dist}.fmi
+Version: 26.9.22
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Sep 22 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.22-1.fmi
+- Fixed RHEL8 (Boost 1.69) build: boost::algorithm::split cannot take a temporary string
 * Mon Sep 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.9.21-7.fmi
 - WMTS dimensions list one Value element per value instead of a WMS-style comma list; ISO 8601 start/end/period ranges stay one value
 - WMTS Time dimensions advertise Current, and GetTile/GetFeatureInfo resolve TIME=current (KVP or path) to the layer's default time instead of passing the keyword to the renderer
