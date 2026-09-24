@@ -1,0 +1,2 @@
+GET /wms?service=wms&request=GetCapabilities&namespace=/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/ HTTP/1.0
+

@@ -145,6 +145,11 @@ class State
   // If given ID has not been used, mark it used now
   bool addId(const std::string& theID) const;
 
+  // Throw if the ID contains characters which could break out of an SVG/XML
+  // attribute. IDs (qids and the IRIs derived from them) can be overridden from
+  // the query string and are emitted unescaped into id="..." attributes.
+  static void validateId(const std::string& theID);
+
   // Create unique ID for the given prefix
   std::string makeQid(const std::string& thePrefix) const;
 

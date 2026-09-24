@@ -91,7 +91,9 @@ std::string check_attack(std::string theName)
 {
   try
   {
-    if (theName.find("./") == std::string::npos)
+    // Reject both "../x" and a bare ".." (e.g. customer=".." climbs one level up
+    // when inserted as a path component)
+    if (theName.find("./") == std::string::npos && theName.find("..") == std::string::npos)
       return theName;  // cannot take const reference as input due to this line
 
     throw Fmi::Exception(

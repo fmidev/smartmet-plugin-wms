@@ -327,7 +327,7 @@ void SatelliteLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
       svg_image = fmt::format(
           "<image id=\"{}\" href=\"data:image/png;base64,{}\" x=\"0\" y=\"0\" width=\"{}\" "
           "height=\"{}\" />\n\n",
-          qid,
+          Fmi::safexmlescape(qid),
           Dali::base64_encode(png),
           warped.width,
           warped.height);
@@ -339,7 +339,7 @@ void SatelliteLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
     group_cdt["end"] = "</g>";
 
     std::ostringstream useOut;
-    useOut << "<use xlink:href=\"#" << qid << "\"/>\n";
+    useOut << "<use xlink:href=\"#" << Fmi::safexmlescape(qid) << "\"/>\n";
 
     if (visible && !svg_image.empty())
       theGlobals["includes"][qid] = svg_image;

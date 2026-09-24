@@ -468,7 +468,7 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
         comp = 1;
 
       const auto png = Giza::topng_argb(cimage.pixel, cimage.width, cimage.height, comp);
-      svgImage << "<image id=\"" << qid << "\" href=\"data:image/png;base64,";
+      svgImage << "<image id=\"" << Fmi::safexmlescape(qid) << "\" href=\"data:image/png;base64,";
       svgImage << Dali::base64_encode(png);
       svgImage << "\" x=\"0\" y=\"0\" width=\"" << cimage.width << "\" height=\"" << cimage.height
                << "\" />\n\n";
@@ -494,7 +494,7 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
     group_cdt["end"] = "</g>";
 
     std::ostringstream useOut;
-    useOut << "<use xlink:href=\"#" << qid << "\"/>\n";
+    useOut << "<use xlink:href=\"#" << Fmi::safexmlescape(qid) << "\"/>\n";
 
     if (visible && !svg_image.empty())
       theGlobals["includes"][qid] = svg_image;

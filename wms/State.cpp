@@ -421,6 +421,26 @@ void State::requireId(const std::string& theID) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Validate an ID used in SVG id attributes and IRI references
+ *
+ * Product configurations use qids with spaces and non-ASCII characters
+ * ("wind speed", "WildFire_5×10−5"), so only characters which are
+ * significant in XML markup or are control characters are rejected.
+ */
+// ----------------------------------------------------------------------
+
+void State::validateId(const std::string& theID)
+{
+  for (const char ch : theID)
+  {
+    const auto c = static_cast<unsigned char>(ch);
+    if (c < 0x20 || c == 0x7f || ch == '"' || ch == '\'' || ch == '<' || ch == '>' || ch == '&')
+      throw Fmi::Exception(BCP, "Invalid character in qid or id").addParameter("id", theID);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Add ID to registry of used names
  */
 // ----------------------------------------------------------------------
@@ -429,6 +449,8 @@ bool State::addId(const std::string& theID) const
 {
   try
   {
+    validateId(theID);
+
     if (itsUsedIds.find(theID) != itsUsedIds.end())
       return false;
 
