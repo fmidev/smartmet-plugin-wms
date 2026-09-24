@@ -62,6 +62,7 @@ bool SatelliteLayer::updateLayerMetaData()
     geographicBoundingBox.yMax = (*info.bbox)[3];
 
     auto times = itsSatelliteEngine->times(itsProducer, itsParameter);
+    itsImageCount = times.size();
 
     std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
 
@@ -84,6 +85,8 @@ bool SatelliteLayer::updateLayerMetaData()
 
     timeDimensions =
         newTimeDimensions.empty() ? nullptr : std::make_shared<TimeDimensions>(newTimeDimensions);
+    if (timeDimensions)
+      timeDimensions->useLatestTimeAsDefault(true);  // images are observations
 
     metadataTimestamp = Fmi::SecondClock::universal_time();
 
@@ -94,6 +97,36 @@ bool SatelliteLayer::updateLayerMetaData()
     throw Fmi::Exception::Trace(BCP, "Failed to update satellite layer metadata!")
         .addParameter("Producer", itsProducer)
         .addParameter("Parameter", itsParameter);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Whether the layer must be created again from its product file
+ *
+ * Creating a layer means expanding its JSON and projecting its bounding
+ * box to every supported reference, and the capabilities update does
+ * it for every layer whose metadata has expired, every few seconds. A
+ * satellite layer changes only when an image arrives or is deleted, and
+ * the engine answers both questions from memory.
+ */
+// ----------------------------------------------------------------------
+
+bool SatelliteLayer::mustUpdateLayerMetaData()
+{
+  try
+  {
+    if (itsSatelliteEngine == nullptr)
+      return false;
+
+    if (itsSatelliteEngine->latestTime(itsProducer, itsParameter) != itsModificationTime)
+      return true;
+
+    return itsSatelliteEngine->imageCount(itsProducer, itsParameter) != itsImageCount;
+  }
+  catch (...)
+  {
+    return true;
   }
 }
 

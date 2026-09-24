@@ -90,6 +90,20 @@ std::set<Fmi::DateTime> TimeDimension::getTimeSteps() const
 {
   return itsTimesteps;
 }
+
+Fmi::DateTime TimeDimension::firstTime() const
+{
+  if (itsTimesteps.empty())
+    return Fmi::DateTime::NOT_A_DATE_TIME;
+  return *itsTimesteps.begin();
+}
+
+Fmi::DateTime TimeDimension::lastTime() const
+{
+  if (itsTimesteps.empty())
+    return Fmi::DateTime::NOT_A_DATE_TIME;
+  return *itsTimesteps.rbegin();
+}
 Fmi::DateTime TimeDimension::mostCurrentTime() const
 {
   try
@@ -217,11 +231,12 @@ Fmi::DateTime IntervalTimeDimension::mostCurrentTime() const
 
   for (const auto& interval : itsIntervals)
   {
-    if (ret >= interval.startTime && ret <= interval.endTime)
+    if (current_time >= interval.startTime && current_time <= interval.endTime)
     {
       ret = interval.startTime;
       while (ret + interval.resolution <= current_time)
         ret += interval.resolution;
+      break;
     }
   }
 
@@ -241,6 +256,20 @@ Fmi::DateTime IntervalTimeDimension::mostCurrentTime() const
   }
 
   return ret;
+}
+
+Fmi::DateTime IntervalTimeDimension::firstTime() const
+{
+  if (itsIntervals.empty())
+    return Fmi::DateTime::NOT_A_DATE_TIME;
+  return itsIntervals.front().startTime;
+}
+
+Fmi::DateTime IntervalTimeDimension::lastTime() const
+{
+  if (itsIntervals.empty())
+    return Fmi::DateTime::NOT_A_DATE_TIME;
+  return itsIntervals.back().endTime;
 }
 
 bool IntervalTimeDimension::isValidTime(const Fmi::DateTime& theTime,
@@ -435,10 +464,19 @@ bool TimeDimensions::isValidTime(const Fmi::DateTime& t,
 Fmi::DateTime TimeDimensions::mostCurrentTime(
     const std::optional<Fmi::DateTime>& origintime) const
 {
-  if (origintime)
-    return getTimeDimension(*origintime).mostCurrentTime();
+  const TimeDimension& td =
+      (origintime ? getTimeDimension(*origintime) : getDefaultTimeDimension());
 
-  return getDefaultTimeDimension().mostCurrentTime();
+  // Observations: the latest time is what "now" means
+  if (itsLatestTimeIsDefault)
+    return td.lastTime();
+
+  // A forecast entirely in the past is historical data, best browsed from its start
+  auto last = td.lastTime();
+  if (!last.is_not_a_date_time() && Fmi::SecondClock::universal_time() > last)
+    return td.firstTime();
+
+  return td.mostCurrentTime();
 }
 
 bool TimeDimensions::currentValue() const

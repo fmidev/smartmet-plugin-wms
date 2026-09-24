@@ -56,18 +56,19 @@ Covered by `test/unit/test_mapboxstyle.cpp` (generator unit tests) and the
 `tiles_getstyles` / `tiles_getcollectionstyles` / `tiles_getstyle_isoband` /
 `tiles_getstyle_multilayer` integration tests.
 
-## Client side (maplibre-fmi), once the endpoint exists
-`ogctiles.js` would, for the MVT path, fetch the style document and apply its
-`paint` to the vector source instead of the generic `mvtstyles.js` palettes —
-retiring the only drift-prone, hand-maintained styling. (The current default is
-the server-styled **raster** path, which already needs no styling at all.)
+## Client side
+A MapLibre (or Mapbox GL compatible) client fetches the style document and applies
+its `paint` to the vector source instead of maintaining its own palette. The
+isoband colours then always match the server-rendered raster tiles, with no
+hand-maintained styling to drift. (Clients using the server-styled **raster** path
+need no styling at all.)
 
 ## Build / deploy / test (for the maintainer)
 ```bash
 # add MapboxStyle.cpp to the wms plugin sources (Makefile picks up wms/*.cpp),
 # wire the routes in tiles/Handler.cpp, then:
-cd ~/hub/brainstorm/plugins/wms && make
-# deploy wms.so to a test server (e.g. back2), then:
+make
+# deploy wms.so to a test server, then:
 curl '.../tiles/collections/fmi:pal:rawtemperature/styles/default?f=mapbox' \
   -H 'Accept: application/vnd.mapbox.style+json'
 # → a Mapbox style; load it in MapLibre over the MVT source and confirm the

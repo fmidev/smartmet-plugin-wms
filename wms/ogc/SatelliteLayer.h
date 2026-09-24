@@ -25,10 +25,17 @@ class SatelliteLayer : public Layer
   const std::string itsProducer;
   const std::string itsParameter;
   Fmi::DateTime itsModificationTime = Fmi::date_time::from_time_t(0);
+  std::size_t itsImageCount = 0;
 
  protected:
   bool updateLayerMetaData() override;
 
+ public:
+  // The layer is created again from its product file only when the
+  // engine has a newer image or a different number of them
+  bool mustUpdateLayerMetaData() override;
+
+ protected:
  public:
   SatelliteLayer(const LayerConfig& config, std::string producer, std::string parameter)
       : Layer(config),

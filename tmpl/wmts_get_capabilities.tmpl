@@ -54,19 +54,18 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       <-TMPL_if defined(layer.abstract)>
       <ows:Abstract><TMPL_var XMLESCAPE(layer.abstract)></ows:Abstract>
       <-/TMPL_if>
-      <ows:Identifier><TMPL_var XMLESCAPE(layer.identifier)></ows:Identifier>
-
       <-TMPL_if defined(layer.bbox_min_x)>
       <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
         <ows:LowerCorner><TMPL_var layer.bbox_min_x> <TMPL_var layer.bbox_min_y></ows:LowerCorner>
         <ows:UpperCorner><TMPL_var layer.bbox_max_x> <TMPL_var layer.bbox_max_y></ows:UpperCorner>
       </ows:WGS84BoundingBox>
       <-/TMPL_if>
+      <ows:Identifier><TMPL_var XMLESCAPE(layer.identifier)></ows:Identifier>
 
       <-TMPL_foreach layer.styles as style>
       <Style>
-        <ows:Identifier><TMPL_var XMLESCAPE(style.identifier)></ows:Identifier>
         <ows:Title><TMPL_if defined(style.title)><TMPL_var XMLESCAPE(style.title)><TMPL_else><TMPL_var XMLESCAPE(style.identifier)></TMPL_if></ows:Title>
+        <ows:Identifier><TMPL_var XMLESCAPE(style.identifier)></ows:Identifier>
         <-TMPL_if defined(style.legend_url)>
         <-TMPL_foreach style.legend_url as legend_url>
         <LegendURL format="<TMPL_var legend_url.format>" xlink:href="<TMPL_var legend_url.online_resource>"/>
@@ -81,12 +80,6 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       <InfoFormat>application/json</InfoFormat>
       <InfoFormat>text/html</InfoFormat>
 
-      <-TMPL_foreach layer.tile_matrix_set_links as tms_id>
-      <TileMatrixSetLink>
-        <TileMatrixSet><TMPL_var tms_id></TileMatrixSet>
-      </TileMatrixSetLink>
-      <-/TMPL_foreach>
-
       <-TMPL_if defined(layer.dimensions)>
       <-TMPL_foreach layer.dimensions as dimension>
       <Dimension>
@@ -94,18 +87,28 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
         <-TMPL_if defined(dimension.uom)>
         <ows:UOM><TMPL_var XMLESCAPE(dimension.uom)></ows:UOM>
         <-/TMPL_if>
+
         <-TMPL_if defined(dimension.unit_symbol)>
         <UnitSymbol><TMPL_var XMLESCAPE(dimension.unit_symbol)></UnitSymbol>
         <-/TMPL_if>
         <-TMPL_if defined(dimension.default)>
         <Default><TMPL_var XMLESCAPE(dimension.default)></Default>
         <-/TMPL_if>
-        <-TMPL_if defined(dimension.value)>
-        <Value><TMPL_var XMLESCAPE(dimension.value)></Value>
+        <-TMPL_if defined(dimension.current)>
+        <Current>true</Current>
         <-/TMPL_if>
+        <-TMPL_foreach dimension.values as value>
+        <Value><TMPL_var XMLESCAPE(value)></Value>
+        <-/TMPL_foreach>
       </Dimension>
       <-/TMPL_foreach>
       <-/TMPL_if>
+
+      <-TMPL_foreach layer.tile_matrix_set_links as tms_id>
+      <TileMatrixSetLink>
+        <TileMatrixSet><TMPL_var tms_id></TileMatrixSet>
+      </TileMatrixSetLink>
+      <-/TMPL_foreach>
 
       <ResourceURL format="image/png"
                    resourceType="tile"

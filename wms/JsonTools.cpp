@@ -5,6 +5,8 @@
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
+#include <spine/Json.h>
+#include <map>
 #include <set>
 #include <string>
 
@@ -529,6 +531,83 @@ void extract_vector(const std::string& theName,
           BCP,
           "The '" + theName +
               "' setting must be an unsigned integer or an array of unsigned integers");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Apply the named variant of a product
+ *
+ * One product file may advertise several WMS layers which differ only
+ * in a few settings, see "WMS layer variants" in the documentation. The
+ * layer name selects the variant, and its members are substitutions of
+ * the form the query string would make: "producer" replaces the top
+ * level setting, "l1.parameter" the parameter of the layer with qid l1.
+ * Every request path which renders a product by its layer name must do
+ * this, WMTS and OGC API Tiles as well as WMS, or the variant renders
+ * with the defaults of the file.
+ */
+// ----------------------------------------------------------------------
+
+namespace
+{
+// Collect the substitutions of the variant named theLayerName. Returns false
+// if the product has no variants (or no layer name is given), throws if the
+// product has variants but none matches.
+bool variant_substitutions(const Json::Value& theJson,
+                           const std::string& theLayerName,
+                           std::map<std::string, Json::Value>& theSubstitutes)
+{
+  const auto& variants = theJson["variants"];
+  if (variants.isNull() || theLayerName.empty())
+    return false;
+
+  for (const auto& variant : variants)
+  {
+    if (variant.get("name", "").asString() != theLayerName)
+      continue;
+
+    for (const auto& member : variant.getMemberNames())
+      if (member != "name")
+        theSubstitutes.insert({member, variant[member]});
+
+    return true;
+  }
+
+  throw Fmi::Exception(BCP, "Desired WMS layer variant not found")
+      .addParameter("name", theLayerName);
+}
+}  // namespace
+
+void apply_variant_references(Json::Value& theJson, const std::string& theLayerName)
+{
+  try
+  {
+    std::map<std::string, Json::Value> substitutes;
+    if (variant_substitutions(theJson, theLayerName, substitutes))
+      Spine::JSON::replaceReferences(theJson, substitutes);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+void apply_variant(Json::Value& theJson, const std::string& theLayerName)
+{
+  try
+  {
+    std::map<std::string, Json::Value> substitutes;
+    const bool found = variant_substitutions(theJson, theLayerName, substitutes);
+
+    theJson.removeMember("variants");
+
+    if (found)
+      Spine::JSON::expand(theJson, substitutes);
   }
   catch (...)
   {

@@ -215,6 +215,9 @@ bool PostGISLayer::updateLayerMetaData()
       Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
       newTimeDimensions.insert(std::make_pair(origintime, timeDimension));
       timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
+      // Published maps are observations of a sort: the latest one is the default,
+      // and mustUpdateLayerMetaData() relies on mostCurrentTime() being the latest.
+      timeDimensions->useLatestTimeAsDefault(true);
     }
     else
     {

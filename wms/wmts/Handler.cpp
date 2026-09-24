@@ -6,6 +6,7 @@
 
 #include "Handler.h"
 #include "../Hash.h"
+#include "../JsonTools.h"
 #include "../Mime.h"
 #include "../Plugin.h"
 #include "../Product.h"
@@ -15,7 +16,9 @@
 #include "../wms/Handler.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <macgyver/TimeParser.h>
 #include <cctype>
 #include <optional>
 #include <ctpp2/CDT.hpp>
@@ -88,6 +91,24 @@ std::string extensionToMimeType(const std::string& ext)
   if (ext == "mvt" || ext == "pbf") return "application/vnd.mapbox-vector-tile";
   if (ext == "datatile") return "application/x-datatile+png";
   return {};
+}
+
+// WMS lets a client ask for TIME=current, and the capabilities advertise it
+// with <Current>. The tile is rendered by Dali, which would read "current" as
+// the wall clock and draw nothing for data not covering it, so resolve the
+// keyword to the layer's default time here (the same one <Default> shows).
+std::string resolveCurrentTime(const WMS::Config& wmsConfig,
+                               const std::string& layer,
+                               const std::string& value,
+                               const std::string& origintime)
+{
+  if (!boost::iequals(value, "current"))
+    return value;
+  std::optional<Fmi::DateTime> reference_time;
+  if (!origintime.empty())
+    reference_time = Fmi::TimeParser::parse(origintime);
+  auto t = wmsConfig.mostCurrentTime(layer, reference_time);
+  return t.is_not_a_date_time() ? value : Fmi::to_iso_string(t);
 }
 
 }  // namespace
@@ -411,7 +432,8 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
         std::string identifier = name;
         identifier[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(identifier[0])));
         for (std::size_t k = 1; k < identifier.size(); ++k)
-          identifier[k] = static_cast<char>(std::tolower(static_cast<unsigned char>(identifier[k])));
+          identifier[k] =
+              static_cast<char>(std::tolower(static_cast<unsigned char>(identifier[k])));
 
         CTPP::CDT dim(CTPP::CDT::HASH_VAL);
         dim["identifier"] = identifier;
@@ -421,8 +443,34 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
           dim["unit_symbol"] = e.At("unit_symbol").GetString();
         if (e.Exists("default"))
           dim["default"] = e.At("default");
+        else if (name == "time" && wl.Exists("name"))
+        {
+          // The same time a KVP GetTile without TIME renders (see handleGetTile):
+          // latest for observations, nearest to the wall clock for forecasts,
+          // the first time for forecasts entirely in the past.
+          auto t = wmsConfig.mostCurrentTime(wl.At("name").GetString(), {});
+          if (!t.is_not_a_date_time())
+            dim["default"] = Fmi::to_iso_extended_string(t) + "Z";
+        }
+        // WMS says current="1" when the keyword "current" is accepted as a value;
+        // GetTile resolves it for the time dimension (resolveCurrentTime).
+        if (name == "time" && e.Exists("current") && e.At("current").GetInt() == 1)
+          dim["current"] = 1;
+        // WMS packs the values into one comma separated attribute; WMTS has one
+        // <Value> element per value. An ISO 8601 start/end/period range stays
+        // one value, as GeoServer and ADAGUC emit it.
         if (e.Exists("value"))
-          dim["value"] = e.At("value");
+        {
+          CTPP::CDT values(CTPP::CDT::ARRAY_VAL);
+          std::vector<std::string> parts;
+          // Boost 1.69 (RHEL8) split() takes the input by reference, no temporaries
+          const std::string value = e.At("value").GetString();
+          boost::algorithm::split(parts, value, boost::is_any_of(","));
+          for (const auto& v : parts)
+            if (!v.empty())
+              values.PushBack(v);
+          dim["values"] = values;
+        }
         dims.PushBack(dim);
         dim_path += "/{" + identifier + "}";
       };
@@ -704,11 +752,13 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     auto time_param = theRequest.getParameter("TIME");
     if (!path_time.empty())
     {
-      thisRequest.addParameter("time", path_time);
+      thisRequest.addParameter("time",
+                               resolveCurrentTime(wmsConfig, layer, path_time, path_origintime));
     }
     else if (time_param && !time_param->empty())
     {
-      thisRequest.addParameter("time", *time_param);
+      thisRequest.addParameter("time",
+                               resolveCurrentTime(wmsConfig, layer, *time_param, path_origintime));
     }
     else if (wmsConfig.isTemporal(layer))
     {
@@ -729,8 +779,10 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
       const std::string customer = wmsConfig.layerCustomer(layer);
       const std::string root = itsDaliConfig.rootDirectory(true);
       const std::string layers_root = root + "/customers/" + customer + "/layers/";
+      Dali::JsonTools::apply_variant_references(json, layer);
       Spine::JSON::preprocess(json, root, layers_root, wmsConfig.getJsonCache());
       Spine::JSON::dereference(json);
+      Dali::JsonTools::apply_variant(json, layer);
       auto params = Dali::Plugin::extractValidParameters(thisRequest.getParameterMap());
       Spine::JSON::expand(json, params, "", false);
     }
@@ -909,7 +961,8 @@ QueryStatus Handler::handleGetFeatureInfo(Spine::Reactor& theReactor,
         if (v.empty())
           continue;
         if (nm == "time")
-          thisRequest.addParameter("time", v);
+          thisRequest.addParameter(
+              "time", resolveCurrentTime(itsWMTSConfig->wmsConfig(), layer, v, ""));
         else if (nm == "reference_time")
           thisRequest.addParameter("origintime", v);
         else if (nm == "elevation")

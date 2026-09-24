@@ -120,8 +120,9 @@ Selected via the request's `format` (or `FORMAT` for WMS):
 - **Mapbox Vector Tiles (MVT)** — `application/vnd.mapbox-vector-tile`,
   encoded from `wms/vector_tile.proto`.
 - **DataTile** — RGBA-encoded PNG with float scale/offset embedded in
-  PNG `tEXt` chunks; consumed by client-side particle animation
-  systems (see `test/canvas/` demos and `leaflet-fmi`).
+  PNG `tEXt` chunks; lets browser map clients (Leaflet, OpenLayers,
+  MapLibre) decode field values for particle animations, hover readouts
+  and client-side colouring (see `test/canvas/` demos).
 
 ## 8. Templates
 

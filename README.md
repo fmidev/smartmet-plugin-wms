@@ -111,6 +111,11 @@ The requested product is defined by the "product" parameter in the HTTP request.
 The [WMS and Dali reference](docs/reference.md) describes how to
 configure both products and the plugin itself.
 
+The [programmer's tutorial](docs/tutorial.md) walks through the rendering
+pipeline end to end: product JSON, URL overrides, the C++ object model, the
+CTPP2 data tree and templates, SVG to raster conversion, GeoJSON/KML/GeoTIFF/
+MVT/DataTile outputs, and how WMS, WMTS and OGC API Tiles relate.
+
 ### Illustrated examples
 
 The test suite doubles as a gallery of worked examples — each page

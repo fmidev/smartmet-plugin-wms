@@ -25,6 +25,7 @@
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
 #include <libconfig.h++>
+#include <chrono>
 #include <map>
 #include <optional>
 #include <set>
@@ -292,6 +293,20 @@ class Config
 
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
+
+  // What one pass over the product files cost, for the log. Touched by
+  // the update thread only.
+  struct UpdateStats
+  {
+    std::chrono::steady_clock::time_point start;
+    std::size_t files_created = 0;
+    std::size_t layers_created = 0;
+    std::size_t reused = 0;
+    std::vector<std::pair<double, std::string>> durations;  // seconds, product file
+  };
+  UpdateStats itsUpdateStats;
+  bool itsFirstUpdateReported = false;
+  void reportUpdateStats();
 
   Fmi::DateTime itsCapabilitiesModificationTime = Fmi::date_time::from_time_t(0);
 

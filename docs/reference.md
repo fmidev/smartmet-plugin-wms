@@ -230,7 +230,7 @@ PNG output formatting can be tuned using the following settings inside a top lev
 | quality     | (double) | 10            | The PNG compression level. 10=good, 20=poor                                                                          |
 | errorfactor | (double) | 2.0           | Tuning parameter for color reduction. Must be greater than 1.0                                                       |
 | maxcolors   | (int)    | 0             | Desired maximum number of colors in the palette. Zero implies no maximum, and palette fitting will be fully adaptive |
-| truecolor   | (bool)   | false         | Set to avoid color reduction completely                                                                              |
+| truecolor   | (bool)   | false         | Set to avoid color reduction completely. A product with a satellite layer defaults to true, since its imagery is already coloured; set false to reduce anyway |
 
 WebP output uses the same color reduction settings from the "png" tag, and adds its
 own compression speed and animation controls in a top level "webp" tag:
@@ -5287,6 +5287,8 @@ In such cases one use the same JSON file for the product settings, and define ho
 
 # Configuration 
 In order to use the Dali plugin you need to edit two configuration files. These files are the main configuration file of the SmartMet Server environment and the Dali plugin specific configuration file.
+
+Variant settings are applied in two phases, exactly like query string options. Settings whose value is an include or a reference (<code>"json:..."</code> or <code>"ref:..."</code>) are substituted before the includes are expanded, so a variant may select for example a different isobands file with <code>"l1.isobands": "json:isobands/hires.json"</code>. All other settings are applied after the includes have been expanded, when the <code>qid</code>s inside the included files are visible. The same two phases are used for WMS GetMap, WMTS and OGC API Tiles requests and when building GetCapabilities.
 
 ## Main configuration file
 
