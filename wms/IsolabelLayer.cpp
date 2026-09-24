@@ -12,6 +12,7 @@
 #include <boost/logic/tribool.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <macgyver/StringConversion.h>
 #include <engines/contour/Engine.h>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
@@ -907,7 +908,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
       text_cdt["start"] = "<text";
       text_cdt["end"] = "</text>";
-      text_cdt["cdata"] = txt;
+      text_cdt["cdata"] = Fmi::safexmlescape(txt);
 
       theState.addAttributes(theGlobals, text_cdt, textattributes);
 

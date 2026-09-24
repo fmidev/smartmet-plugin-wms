@@ -9,6 +9,7 @@
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <ogr_geometry.h>
 
 namespace SmartMet
@@ -236,7 +237,7 @@ void FrameLayer::addScaleNumber(CTPP::CDT& theLayersCdt, double x, double y, con
   CTPP::CDT textCdt(CTPP::CDT::HASH_VAL);
   textCdt["start"] = "<text";
   textCdt["end"] = "</text>";
-  textCdt["cdata"] = num;
+  textCdt["cdata"] = Fmi::safexmlescape(num);
   textCdt["attributes"]["x"] = Fmi::to_string(lround(x));
   textCdt["attributes"]["y"] = Fmi::to_string(lround(y));
   textCdt["attributes"]["font-family"] = itsScaleAttributes.value("font-family");

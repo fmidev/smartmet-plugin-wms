@@ -9,6 +9,7 @@
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <spine/HTTP.h>
 
 namespace SmartMet
@@ -163,7 +164,8 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
     if (height)
       theGlobals["height"] = *height;
     if (title)
-      theGlobals["title"] = title->translate(language, theState.getConfig().defaultLanguage());
+      theGlobals["title"] =
+          Fmi::safexmlescape(title->translate(language, theState.getConfig().defaultLanguage()));
 
     // We must process the defs section before processing the
     // product attributes or views in case they refer to some

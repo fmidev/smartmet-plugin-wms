@@ -788,7 +788,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
     CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
     text_cdt["start"] = "<text";
     text_cdt["end"] = "</text>";
-    text_cdt["cdata"] = mean_temperature;
+    text_cdt["cdata"] = Fmi::safexmlescape(mean_temperature);
 
     theState.addAttributes(theGlobals, text_cdt, theFilter.text_attributes);
 
@@ -1119,7 +1119,7 @@ void IceMapLayer::addLocationName(double theXPos,
       CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
       text_cdt["start"] = "<text";
       text_cdt["end"] = "</text>";
-      text_cdt["cdata"] = first_name;
+      text_cdt["cdata"] = Fmi::safexmlescape(first_name);
       text_cdt["attributes"]["x"] = Fmi::to_string(lround(x_coord));
       text_cdt["attributes"]["y"] = Fmi::to_string(lround(y_coord_first));
       theState.addAttributes(theGlobals, text_cdt, theFilter.attributes);
@@ -1132,7 +1132,7 @@ void IceMapLayer::addLocationName(double theXPos,
       CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
       text_cdt["start"] = "<text";
       text_cdt["end"] = "</text>";
-      text_cdt["cdata"] = second_name;
+      text_cdt["cdata"] = Fmi::safexmlescape(second_name);
       text_cdt["attributes"]["x"] = Fmi::to_string(lround(x_coord));
       text_cdt["attributes"]["y"] = Fmi::to_string(lround(y_coord_second));
       theState.addAttributes(theGlobals, text_cdt, theFilter.attributes);

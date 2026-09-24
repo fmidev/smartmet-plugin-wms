@@ -81,8 +81,13 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
         ysize = toInt32(*v);
     }
 
-    if ((xsize && *xsize < 2) || (ysize && *ysize < 2))
-      throw Fmi::Exception(BCP, "Image size must be atleast 2x2");
+    // Bound the projection image size. These are separate from the width/height
+    // request parameters (which the plugin already caps), so without an upper limit
+    // here a request such as projection.xsize=100000&projection.ysize=100000 would
+    // force a multi-gigabyte allocation. Use the same 10000-pixel hard limit per
+    // dimension that the plugin enforces for width/height.
+    if ((xsize && (*xsize < 2 || *xsize > 10000)) || (ysize && (*ysize < 2 || *ysize > 10000)))
+      throw Fmi::Exception(BCP, "Projection image size must be between 2x2 and 10000x10000");
 
     JsonTools::remove_double(x1, theJson, "x1");
     JsonTools::remove_double(y1, theJson, "y1");
