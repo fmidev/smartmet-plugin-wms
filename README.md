@@ -116,6 +116,9 @@ pipeline end to end: product JSON, URL overrides, the C++ object model, the
 CTPP2 data tree and templates, SVG to raster conversion, GeoJSON/KML/GeoTIFF/
 MVT/DataTile outputs, and how WMS, WMTS and OGC API Tiles relate.
 
+[Grid support](docs/grid-support.md) (developer notes) explains how layers get their data
+from the grid engine.
+
 ### Illustrated examples
 
 The test suite doubles as a gallery of worked examples — each page
