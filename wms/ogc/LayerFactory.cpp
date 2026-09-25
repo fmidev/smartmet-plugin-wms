@@ -151,7 +151,7 @@ LayerType determine_product_type(const LayerConfig& wmsconfig,
   try
   {
 #ifndef WITHOUT_OBSERVATION
-    const auto obsProducers = wmsconfig.getObservationProducers();
+    const auto& obsProducers = wmsconfig.getObservationProducers();
     if (obsProducers.find(producer) != obsProducers.end())
       return LayerType::ObservationLayer;
 #endif

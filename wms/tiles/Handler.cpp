@@ -1057,11 +1057,11 @@ QueryStatus Handler::handleStyle(const std::string& base,
                                         "/{tileMatrix}/{tileRow}/{tileCol}"
                                         "?f=application/vnd.mapbox-vector-tile";
 
-    const std::string style = Dali::mapboxStyle(collId, tileUrlTemplate, layers);
+    std::string style = Dali::mapboxStyle(collId, tileUrlTemplate, layers);
 
     resp.setHeader("Content-Type", "application/vnd.mapbox.style+json; charset=UTF-8");
     resp.setStatus(Spine::HTTP::Status::ok);
-    resp.setContent(style);
+    resp.setContent(std::move(style));
     return QueryStatus::OK;
   }
   catch (...)

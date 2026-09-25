@@ -159,7 +159,7 @@ class Plugin : public SmartMetPlugin
                       std::size_t theHash = 0);
 
   std::shared_ptr<std::string> findInImageCache(std::size_t hash) const;
-  void insertInImageCache(std::size_t hash, std::shared_ptr<std::string> data);
+  void insertInImageCache(std::size_t hash, const std::shared_ptr<std::string>& data);
 
   static Spine::HTTP::ParamMap extractValidParameters(const Spine::HTTP::ParamMap& theParams);
 

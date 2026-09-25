@@ -162,7 +162,7 @@ std::string mapboxStyle(const std::string& styleName,
                         const std::string& tileUrlTemplate,
                         const std::vector<MapboxStyleLayer>& inputLayers)
 {
-  const std::string srcId = styleName;
+  const std::string& srcId = styleName;
 
   Json::Value layers(Json::arrayValue);
   int isobandCount = 0;
