@@ -1,4 +1,5 @@
 #include "LayerHierarchy.h"
+#include "NamespacePattern.h"
 #include <boost/make_shared.hpp>
 #include <boost/regex.hpp>
 #include <macgyver/StringConversion.h>
@@ -94,24 +95,6 @@ void add_sublayers(LayerHierarchy& lh,
     if (hierarchy_type == LayerHierarchy::HierarchyType::recursivetimes)
       expand_layer(lh);
   }
-}
-
-// ----------------------------------------------------------------------
-// NAMESPACE FILTERING
-// ----------------------------------------------------------------------
-
-bool looks_like_pattern(const std::string& s)
-{
-  return boost::algorithm::starts_with(s, "/") && boost::algorithm::ends_with(s, "/");
-}
-bool match_namespace_pattern(const std::string& name, const std::string& pattern)
-{
-  if (name == pattern)
-    return true;
-  if (!looks_like_pattern(pattern))
-    return boost::algorithm::istarts_with(name, pattern + ":");
-  const std::string re_str = pattern.substr(1, pattern.size() - 2);
-  return boost::regex_search(name, boost::regex(re_str, boost::regex::icase));
 }
 
 // ----------------------------------------------------------------------

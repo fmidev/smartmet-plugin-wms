@@ -1,0 +1,2 @@
+GET /dali?customer=..&product=test/products/circle&time=200808050300 HTTP/1.0
+

@@ -10,6 +10,7 @@
 #include "Exception.h"
 #include "../ogc/LayerFactory.h"
 #include "../ogc/LayerHierarchy.h"
+#include "../ogc/NamespacePattern.h"
 
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -93,30 +94,6 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
   {
     throw Fmi::Exception::Trace(BCP, "Failed getting maximum modification time!");
   }
-}
-
-/*
- * namespace patterns look like "/..../"
- */
-
-bool looks_like_pattern(const std::string& pattern)
-{
-  return (boost::algorithm::starts_with(pattern, "/") && boost::algorithm::ends_with(pattern, "/"));
-}
-
-/*
- * Apply namespace filtering as in GeoServer with regex extension
- */
-
-bool match_namespace_pattern(const std::string& name, const std::string& pattern)
-{
-  if (!looks_like_pattern(pattern))
-    return (boost::algorithm::istarts_with(name, pattern + ":") || name == pattern);
-
-  // Strip surrounding slashes first
-  const std::string re_str = pattern.substr(1, pattern.size() - 2);
-  const boost::regex re(re_str, boost::regex::icase);
-  return boost::regex_search(name, re);
 }
 
 // Create layer name from customer name and the path to the configuration file
@@ -1310,7 +1287,7 @@ CTPP::CDT Config::getCapabilities(const std::optional<std::string>& apikey,
           if (cdt->Exists("name"))
           {
             std::string name = (*cdt)["name"].GetString();
-            if (match_namespace_pattern(name, *wms_namespace))
+            if (OGC::match_namespace_pattern(name, *wms_namespace))
               layersCapabilities.PushBack(*cdt);
           }
         }

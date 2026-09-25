@@ -116,6 +116,7 @@ void Layer::init(Json::Value& theJson,
     Properties::init(theJson, theState, theConfig, theProperties);
 
     JsonTools::remove_string(qid, theJson, "qid");
+    State::validateId(qid);
     JsonTools::remove_double(minresolution, theJson, "minresolution");
     JsonTools::remove_double(maxresolution, theJson, "maxresolution");
 

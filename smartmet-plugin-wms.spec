@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.24
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Sep 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.24-2.fmi
+- Security: reject qid/id values containing XML markup characters; a query string lN.qid override was emitted unescaped into SVG id attributes (reflected XSS)
+- Security: namespace=/regex/ in GetCapabilities is limited to 100 characters and compiled once per request instead of once per layer
+- Security: customer names containing '..' are rejected (Dali and WMS), INIMAGE exception text is JSON quoted
+
 * Thu Sep 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.24-1.fmi
 - Security: escape the WMS XML exception template (reflected XSS), escape product
   title/attribute/cdata SVG sinks (SVG injection), run customer/product through

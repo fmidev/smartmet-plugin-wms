@@ -1547,6 +1547,12 @@ void Handler::wmsPreprocessJSON(Dali::State &theState,
     throw Fmi::Exception(BCP, ERROR_NO_CUSTOMER)
         .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
 
+  // The customer is inserted into a path below
+  if (customer.find("..") != std::string::npos || customer.find("./") != std::string::npos)
+    throw Fmi::Exception(BCP, "Attack IRI detected, relative paths upwards are not safe")
+        .addParameter("customer", customer)
+        .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+
   theState.setCustomer(customer);
 
   // Preprocess
@@ -1737,8 +1743,10 @@ Json::Value Handler::getExceptionJson(const std::string &description,
     jsonStr += "     \"tag\": \"text\",\n";
     jsonStr += "     \"cdata\":\n";
     jsonStr += "     {\n";
-    jsonStr += ("           \"en\": \"" + errorString + "\",\n");
-    jsonStr += ("           \"fi\": \"" + errorString + "\"\n");
+    // The error message may echo request values, hence it must be JSON quoted
+    const auto quotedError = Json::valueToQuotedString(errorString.c_str());
+    jsonStr += ("           \"en\": " + quotedError + ",\n");
+    jsonStr += ("           \"fi\": " + quotedError + "\n");
     jsonStr += "     },\n";
     jsonStr += "     \"attributes\":\n";
     jsonStr += "     {\n";
