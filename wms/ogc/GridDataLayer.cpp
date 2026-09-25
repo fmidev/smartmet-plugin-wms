@@ -2,6 +2,7 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/identification/GridDef.h>
 #include <macgyver/Exception.h>
+#include <vector>
 
 namespace SmartMet
 {
@@ -75,8 +76,10 @@ bool GridDataLayer::updateLayerMetaData()
     {
       // Finding parameter information (it might be inside a function)
 
-      char buf[2000];
-      strcpy(buf, itsParameter.c_str());
+      // The parameter may be overridden in the request, hence no fixed size buffer
+      std::vector<char> bufVec(itsParameter.begin(), itsParameter.end());
+      bufVec.push_back('\0');
+      char* buf = bufVec.data();
       char* startpoint = buf;
       char* pp = buf;
       while (*pp != '\0' && *pp != '}')
