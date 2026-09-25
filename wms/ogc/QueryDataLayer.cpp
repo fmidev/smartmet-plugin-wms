@@ -19,7 +19,7 @@ namespace
 	// auto midnight = floor<Fmi::Days>(t);
 	auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
 
-        auto since_midnight = (t - midnight).minutes();
+        auto since_midnight = (t - midnight).total_minutes();
         return (since_midnight % *timestep) != 0;
     });
   }
