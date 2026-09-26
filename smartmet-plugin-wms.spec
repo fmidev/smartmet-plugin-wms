@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.24
-Release: 2%{?dist}.fmi
+Version: 26.9.26
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -30,7 +30,7 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.9.15
 BuildRequires: smartmet-library-grid-content-devel >= 26.9.23
-BuildRequires: smartmet-library-grid-files-devel >= 26.9.23
+BuildRequires: smartmet-library-grid-files-devel >= 26.9.26
 BuildRequires: smartmet-library-macgyver-devel >= 26.9.23
 BuildRequires: smartmet-library-spine-devel >= 26.9.23
 BuildRequires: smartmet-library-timeseries-devel >= 26.9.16
@@ -81,7 +81,7 @@ Requires: protobuf
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
 Requires: smartmet-library-grid-content >= 26.9.23
-Requires: smartmet-library-grid-files >= 26.9.23
+Requires: smartmet-library-grid-files >= 26.9.26
 Requires: smartmet-library-gis >= 26.9.23
 Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.9.23
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Sep 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.26-1.fmi
+- Repackaged due to grid-files ABI changes
+
 * Thu Sep 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.24-2.fmi
 - Security: reject qid/id values containing XML markup characters; a query string lN.qid override was emitted unescaped into SVG id attributes (reflected XSS)
 - Security: namespace=/regex/ in GetCapabilities is limited to 100 characters and compiled once per request instead of once per layer
