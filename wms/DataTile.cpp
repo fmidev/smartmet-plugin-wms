@@ -133,7 +133,8 @@ bool isMissing(float v)
 
 std::string writeSingleBandDataTile(int width,
                                      int height,
-                                     const std::vector<float>& values)
+                                     const std::vector<float>& values,
+                                     const std::string& parameter)
 {
   try
   {
@@ -192,6 +193,8 @@ std::string writeSingleBandDataTile(int width,
                                    {"datatile:min", fmt::format("{:.8g}", vmin)},
                                    {"datatile:max", fmt::format("{:.8g}", vmax)},
                                    {"datatile:encoding", "uint16"}};
+    if (!parameter.empty())
+      text.push_back({"datatile:parameter", parameter});
 
     return writePng(width, height, pixels, text);
   }
@@ -517,7 +520,7 @@ std::string gridDataTile(Layer& layer,
       ordered = values;
     }
 
-    return writeSingleBandDataTile(width, height, ordered);
+    return writeSingleBandDataTile(width, height, ordered, parameterName);
   }
   catch (...)
   {

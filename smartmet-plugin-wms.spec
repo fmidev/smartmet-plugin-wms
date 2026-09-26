@@ -185,6 +185,7 @@ rm -rf $RPM_BUILD_ROOT
 - WMTS and OGC API Tiles now accept the datatile format; it was handled but missing from the format whitelists
 - WMTS capabilities publish a .datatile ResourceURL
 - Dual-band datatiles carry datatile:components (uv or dirspeed) so clients can tell direction+speed from U+V
+- Single-band datatiles carry datatile:parameter, the queried parameter name
 
 * Sat Sep 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.26-1.fmi
 - Repackaged due to grid-files ABI changes

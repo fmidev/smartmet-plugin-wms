@@ -4960,7 +4960,8 @@ output, so clients can self-discover the scale and offset.
 | A       | 255 = valid, 0 = missing/nodata |
 
 PNG tEXt chunks: `datatile:bands=1`, `datatile:min`, `datatile:max`,
-`datatile:encoding=uint16`.
+`datatile:encoding=uint16`, and `datatile:parameter` with the queried parameter
+name (as the producer names it, e.g. `Precipitation1h` or `PRECIP-MM`).
 
 Client-side decode:
 

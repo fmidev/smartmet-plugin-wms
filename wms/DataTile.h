@@ -51,10 +51,12 @@ namespace Dali
 class Layer;
 class State;
 
-// Write a single-band datatile PNG.
+// Write a single-band datatile PNG. A non-empty parameter name is stored as
+// datatile:parameter so clients can tell what the values are.
 std::string writeSingleBandDataTile(int width,
                                      int height,
-                                     const std::vector<float>& values);
+                                     const std::vector<float>& values,
+                                     const std::string& parameter);
 
 // Write a dual-band datatile PNG (e.g. wind U + V). The components string is
 // stored as datatile:components so clients can tell what the bands hold
