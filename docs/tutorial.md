@@ -732,7 +732,7 @@ requested type.
 
 | Type | Call | How |
 |------|------|-----|
-| `png` | `Giza::Svg::topng(svg, product.png.options)` | librsvg parses the SVG and renders it onto a Cairo ARGB32 image surface; Giza then quantises colours according to the `png` options (palette size, alpha handling) and encodes with libpng |
+| `png` | `Giza::Svg::topng(svg, product.png.options)` | librsvg parses the SVG and renders it onto a Cairo ARGB32 image surface; Giza then quantises colours according to the `png` options (palette size, alpha handling) and encodes with libdeflate |
 | `webp` | `Giza::Svg::towebp(svg, png.options, webp.options)` | same rendering, encoded with libwebp; `webp.quality` and lossless options apply |
 | animated `webp` | `Giza::Svg::towebpanim(frames, durations, loop, ...)` | `injectFrameStyle` inserts a `<style>` rule into the SVG per frame that shows only the elements of that animation bucket; each SVG is rendered separately and the frames are muxed into one animated WebP |
 | `pdf` | `Giza::Svg::topdf(svg)` | librsvg renders onto a Cairo PDF surface, so vectors and text stay vectors |

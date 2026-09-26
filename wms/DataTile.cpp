@@ -4,6 +4,7 @@
 #include "Layer.h"
 #include "State.h"
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <engines/grid/Engine.h>
 #include <fmt/format.h>
@@ -12,7 +13,8 @@
 #include <grid-files/grid/Typedefs.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <png.h>
+#include <boost/crc.hpp>
+#include <giza/Giza.h>
 
 namespace SmartMet
 {
@@ -23,23 +25,6 @@ namespace Dali
 namespace
 {
 // ------------------------------------------------------------------
-// libpng in-memory write callback
-// ------------------------------------------------------------------
-
-struct PngBuffer
-{
-  std::string data;
-};
-
-void pngWriteCallback(png_structp png, png_bytep buf, png_size_t len)
-{
-  auto* out = static_cast<PngBuffer*>(png_get_io_ptr(png));
-  out->data.append(reinterpret_cast<const char*>(buf), len);
-}
-
-void pngFlushCallback(png_structp /*png*/) {}
-
-// ------------------------------------------------------------------
 // Write an RGBA pixel buffer as PNG with optional tEXt metadata
 // ------------------------------------------------------------------
 
@@ -49,72 +34,62 @@ struct TextEntry
   std::string value;
 };
 
+// Append a PNG chunk: length, type, data, CRC-32 over type + data.
+void appendChunk(std::string& out, const char* type, const std::string& data)
+{
+  auto be32 = [&out](std::uint32_t v)
+  {
+    out.push_back(static_cast<char>(v >> 24));
+    out.push_back(static_cast<char>(v >> 16));
+    out.push_back(static_cast<char>(v >> 8));
+    out.push_back(static_cast<char>(v));
+  };
+  be32(static_cast<std::uint32_t>(data.size()));
+  boost::crc_32_type crc;
+  crc.process_bytes(type, 4);
+  crc.process_bytes(data.data(), data.size());
+  out.append(type, 4);
+  out.append(data);
+  be32(crc.checksum());
+}
+
+// The pixels are data, not a picture: they are written byte for byte (no
+// colour reduction, straight alpha) by Giza::topng_argb, which compresses with
+// libdeflate. libpng's streaming zlib at level 6 spent most of its time in
+// deflate_slow: a 1024x1024 dual-band wind tile took 192 ms and 2.49 MB,
+// libdeflate level 1 takes 39 ms and 2.25 MB (a single-band precipitation
+// tile 59 ms -> 15 ms, 0.68 -> 0.77 MB).
 std::string writePng(int width,
                      int height,
                      const std::vector<uint8_t>& pixels,
                      const std::vector<TextEntry>& text)
 {
-  PngBuffer buf;
-
-  auto* png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!png)
-    throw Fmi::Exception(BCP, "png_create_write_struct failed");
-
-  auto* info = png_create_info_struct(png);
-  if (!info)
+  const std::size_t n = static_cast<std::size_t>(width) * height;
+  std::vector<std::uint32_t> argb(n);
+  for (std::size_t i = 0; i < n; ++i)
   {
-    png_destroy_write_struct(&png, nullptr);
-    throw Fmi::Exception(BCP, "png_create_info_struct failed");
+    const auto* p = &pixels[i * 4];
+    argb[i] = (static_cast<std::uint32_t>(p[3]) << 24) | (static_cast<std::uint32_t>(p[0]) << 16) |
+              (static_cast<std::uint32_t>(p[1]) << 8) | p[2];
   }
 
-  if (setjmp(png_jmpbuf(png)))
-  {
-    png_destroy_write_struct(&png, &info);
-    throw Fmi::Exception(BCP, "libpng error during write");
-  }
+  std::string png = Giza::topng_argb(argb.data(), width, height, 1);
 
-  png_set_write_fn(png, &buf, pngWriteCallback, pngFlushCallback);
+  if (text.empty())
+    return png;
 
-  png_set_IHDR(png,
-               info,
-               width,
-               height,
-               8,
-               PNG_COLOR_TYPE_RGBA,
-               PNG_INTERLACE_NONE,
-               PNG_COMPRESSION_TYPE_DEFAULT,
-               PNG_FILTER_TYPE_DEFAULT);
+  // Splice the tEXt chunks in right after IHDR (8-byte signature + 25-byte
+  // IHDR chunk), where readers expect ancillary metadata before the pixels.
+  const std::size_t ihdr_end = 8 + 25;
+  if (png.size() < ihdr_end || png.compare(12, 4, "IHDR") != 0)
+    throw Fmi::Exception(BCP, "Unexpected PNG layout from Giza::topng_argb");
 
-  png_set_compression_level(png, 6);
+  std::string chunks;
+  for (const auto& entry : text)
+    appendChunk(chunks, "tEXt", entry.key + '\0' + entry.value);
 
-  // Add tEXt metadata chunks
-  if (!text.empty())
-  {
-    std::vector<png_text> chunks(text.size());
-    for (std::size_t i = 0; i < text.size(); ++i)
-    {
-      std::memset(&chunks[i], 0, sizeof(png_text));
-      chunks[i].compression = PNG_TEXT_COMPRESSION_NONE;
-      chunks[i].key = const_cast<char*>(text[i].key.c_str());
-      chunks[i].text = const_cast<char*>(text[i].value.c_str());
-      chunks[i].text_length = text[i].value.size();
-    }
-    png_set_text(png, info, chunks.data(), static_cast<int>(chunks.size()));
-  }
-
-  png_write_info(png, info);
-
-  // Write row by row
-  for (int y = 0; y < height; ++y)
-  {
-    auto* row = const_cast<uint8_t*>(pixels.data() + y * width * 4);
-    png_write_row(png, row);
-  }
-
-  png_write_end(png, info);
-  png_destroy_write_struct(&png, &info);
-
-  return std::move(buf.data);
+  png.insert(ihdr_end, chunks);
+  return png;
 }
 
 // Missing-value sentinel from grid-files

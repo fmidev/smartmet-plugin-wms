@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.26
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Sep 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.26-3.fmi
+- Datatile PNGs are encoded with Giza::topng_argb (libdeflate) instead of libpng: a 1024x1024 wind tile 192 ms -> 39 ms and 10% smaller; pixel values are unchanged
+
 * Sat Sep 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.26-2.fmi
 - WMTS and OGC API Tiles now accept the datatile format; it was handled but missing from the format whitelists
 - WMTS capabilities publish a .datatile ResourceURL
