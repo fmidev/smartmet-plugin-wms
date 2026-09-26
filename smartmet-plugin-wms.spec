@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.9.26
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Sep 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.26-2.fmi
+- WMTS and OGC API Tiles now accept the datatile format; it was handled but missing from the format whitelists
+- WMTS capabilities publish a .datatile ResourceURL
+- Dual-band datatiles carry datatile:components (uv or dirspeed) so clients can tell direction+speed from U+V
+
 * Sat Sep 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.26-1.fmi
 - Repackaged due to grid-files ABI changes
 - Require the 26.9.26 releases of the SmartMet dependencies

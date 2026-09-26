@@ -76,7 +76,8 @@ class Config
                                             "image/webp",
                                             "image/svg+xml",
                                             "image/tiff",
-                                            "application/vnd.mapbox-vector-tile"};
+                                            "application/vnd.mapbox-vector-tile",
+                                            "application/x-datatile+png"};
 };
 
 }  // namespace Tiles

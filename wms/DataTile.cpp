@@ -208,7 +208,8 @@ std::string writeSingleBandDataTile(int width,
 std::string writeDualBandDataTile(int width,
                                    int height,
                                    const std::vector<float>& values1,
-                                   const std::vector<float>& values2)
+                                   const std::vector<float>& values2,
+                                   const std::string& components)
 {
   try
   {
@@ -286,6 +287,8 @@ std::string writeDualBandDataTile(int width,
                                    {"datatile:min2", fmt::format("{:.8g}", min2)},
                                    {"datatile:max2", fmt::format("{:.8g}", max2)},
                                    {"datatile:encoding", "uint16"}};
+    if (!components.empty())
+      text.push_back({"datatile:components", components});
 
     return writePng(width, height, pixels, text);
   }

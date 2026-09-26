@@ -56,11 +56,14 @@ std::string writeSingleBandDataTile(int width,
                                      int height,
                                      const std::vector<float>& values);
 
-// Write a dual-band datatile PNG (e.g. wind U + V).
+// Write a dual-band datatile PNG (e.g. wind U + V). The components string is
+// stored as datatile:components so clients can tell what the bands hold
+// ("uv" or "dirspeed" for wind).
 std::string writeDualBandDataTile(int width,
                                    int height,
                                    const std::vector<float>& values1,
-                                   const std::vector<float>& values2);
+                                   const std::vector<float>& values2,
+                                   const std::string& components);
 
 // Query grid engine for a single scalar parameter and return datatile PNG
 // bytes.  Mirrors gridDataGeoTiff() from GridDataGeoTiff.h.

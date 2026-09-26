@@ -116,6 +116,9 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>

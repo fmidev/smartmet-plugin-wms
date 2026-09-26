@@ -4936,7 +4936,14 @@ Via WMS GetMap, use the MIME type `application/x-datatile+png` as the FORMAT:
 GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:datatile_temperature&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=64&height=64&format=application/x-datatile%2Bpng&time=200808050800
 ```
 
-Via WMTS and OGC API Tiles, use `datatile` as the format extension or `f=` parameter.
+Via WMTS and OGC API Tiles, use `datatile` as the format extension or `f=` parameter:
+
+```
+GET /wmts/1.0.0/grid:wind_speed_and_direction_1/default/EPSG:3857/5/9/18.datatile?TIME=20080805T080000
+GET /tiles/collections/grid:wind_speed_and_direction_1/tiles/EPSG:3857/5/9/18?f=datatile&datetime=2008-08-05T08:00:00Z
+```
+
+The WMTS capabilities advertise the format and a matching `.datatile` ResourceURL.
 
 ### Encoding schemes
 
@@ -4974,7 +4981,10 @@ Valid values are quantised to [1, 65535]; a pixel with all four bytes zero indic
 missing data.
 
 PNG tEXt chunks: `datatile:bands=2`, `datatile:min1`, `datatile:max1`,
-`datatile:min2`, `datatile:max2`, `datatile:encoding=uint16`.
+`datatile:min2`, `datatile:max2`, `datatile:encoding=uint16`, and
+`datatile:components` telling what the bands hold: `uv` (band 1 = U, band 2 = V,
+m/s) or `dirspeed` (band 1 = meteorological direction the wind blows from in
+degrees, band 2 = speed with the layer's multiplier/offset applied).
 
 Client-side decode:
 

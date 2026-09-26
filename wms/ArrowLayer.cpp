@@ -2057,7 +2057,7 @@ std::string ArrowLayer::generateDataTile(State& theState)
       }
     }
 
-    return writeDualBandDataTile(width, height, band1, band2);
+    return writeDualBandDataTile(width, height, band1, band2, uv_mode ? "uv" : "dirspeed");
   }
   catch (...)
   {

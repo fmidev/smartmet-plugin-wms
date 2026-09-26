@@ -26,6 +26,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Aelymap&amp;width=150&amp;height=160"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -64,6 +65,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/ely:elymap/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/ely:elymap/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/ely:elymap/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -83,6 +87,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap&amp;width=150&amp;height=160"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -121,6 +126,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/ely:wmsmap/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/ely:wmsmap/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/ely:wmsmap/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -140,6 +148,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -165,6 +174,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:animation/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:animation/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -184,6 +196,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -209,6 +222,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:animation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:animation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -228,6 +244,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -253,6 +270,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:animation_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:animation_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -272,6 +292,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -297,6 +318,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:animation_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:animation_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -316,6 +340,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -341,6 +366,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:animation_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:animation_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:animation_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -361,6 +389,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Adatatile_temperature&amp;width=150&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -386,6 +415,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:datatile_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:datatile_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:datatile_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -405,6 +437,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_1&amp;width=150&amp;height=133"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -430,6 +463,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:precipitation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:precipitation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:precipitation_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -449,6 +485,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_kgm2_1&amp;width=150&amp;height=196"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -474,6 +511,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:precipitation_kgm2_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:precipitation_kgm2_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:precipitation_kgm2_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -494,6 +534,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_1&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -519,6 +560,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:raster_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:raster_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -539,6 +583,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_2&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -564,6 +609,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:raster_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:raster_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -584,6 +632,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_3&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -609,6 +658,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:raster_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:raster_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -629,6 +681,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_4&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -654,6 +707,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:raster_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:raster_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -674,6 +730,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_5&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -699,6 +756,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:raster_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:raster_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -719,6 +779,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_6&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -744,6 +805,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:raster_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:raster_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:raster_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -764,6 +828,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1&amp;width=150&amp;height=485"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -789,6 +854,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:temperature_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -809,6 +877,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2&amp;width=300&amp;height=485"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -834,6 +903,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:temperature_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -854,6 +926,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3&amp;width=150&amp;height=485"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -879,6 +952,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:temperature_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -899,6 +975,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4&amp;width=150&amp;height=485"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -924,6 +1001,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:temperature_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -944,6 +1024,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_5&amp;width=300&amp;height=485"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -969,6 +1050,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:temperature_5/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -989,6 +1073,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_6&amp;width=300&amp;height=485"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1014,6 +1099,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:temperature_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:temperature_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:temperature_6/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1033,6 +1121,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_direction_1&amp;width=116&amp;height=85"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1058,6 +1147,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1077,6 +1169,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_1&amp;width=300&amp;height=142"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1102,6 +1195,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1121,6 +1217,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_2&amp;width=300&amp;height=142"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1146,6 +1243,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1165,6 +1265,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_1&amp;width=116&amp;height=85"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1190,6 +1291,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1209,6 +1313,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_2&amp;width=116&amp;height=85"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1234,6 +1339,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_speed_and_direction_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1254,6 +1362,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_1&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1279,6 +1388,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_1/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1299,6 +1411,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_2&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1324,6 +1437,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_2/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1344,6 +1460,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_3&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1369,6 +1486,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_3/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1389,6 +1509,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_4&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1414,6 +1535,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/grid:wind_stream_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/grid:wind_stream_4/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1433,6 +1557,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Abackgroundmap&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1458,6 +1583,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:backgroundmap/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:backgroundmap/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:backgroundmap/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1477,6 +1605,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Acities&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1515,6 +1644,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:cities/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:cities/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:cities/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1534,6 +1666,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1559,6 +1692,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:coordinate_grid/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:coordinate_grid/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:coordinate_grid/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1578,6 +1714,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aflash15min&amp;width=145&amp;height=120"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1610,6 +1747,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:flash15min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:flash15min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:flash15min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1629,6 +1769,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1667,6 +1808,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:frame_layer/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:frame_layer/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:frame_layer/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1686,6 +1830,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1711,6 +1856,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:harbours/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:harbours/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:harbours/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1730,6 +1878,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aice_pg&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1762,6 +1911,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:ice_pg/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:ice_pg/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:ice_pg/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1781,6 +1933,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1813,6 +1966,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_areas/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_areas/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_areas/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1833,6 +1989,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_bw&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1865,6 +2022,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_bob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_bob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_bob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1885,6 +2045,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_color&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1917,6 +2078,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_bob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_bob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_bob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1937,6 +2101,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_bw&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -1969,6 +2134,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -1989,6 +2157,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_color&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2021,6 +2190,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2041,6 +2213,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_bw&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2073,6 +2246,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2093,6 +2269,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_color&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2125,6 +2302,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_fmi_smhi_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2145,6 +2325,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_bw&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2177,6 +2358,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_gof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_gof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_gof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2197,6 +2381,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_color&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2229,6 +2414,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_gof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_gof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_gof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2248,6 +2436,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2273,6 +2462,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_legend/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_legend/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_legend/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2293,6 +2485,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_bw&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2325,6 +2518,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_nsp2_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_nsp2_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_nsp2_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2345,6 +2541,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_color&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2377,6 +2574,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_nsp2_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_nsp2_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_nsp2_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2397,6 +2597,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_bw&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2429,6 +2630,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_sob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_sob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_sob_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2449,6 +2653,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_color&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2481,6 +2686,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_sob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_sob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_sob_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2501,6 +2709,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_bw&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2533,6 +2742,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_wgof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_wgof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_wgof_bw/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2553,6 +2765,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_color&amp;width=188&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2585,6 +2798,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:icechart_wgof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:icechart_wgof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:icechart_wgof_color/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2614,6 +2830,7 @@
         <ows:Identifier>isolabel_small_blue_text_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=isolabel_small_blue_text_style&amp;format=image%2Fpng&amp;layer=test%3Aisolabel&amp;width=150&amp;height=100"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2652,6 +2869,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:isolabel/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:isolabel/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:isolabel/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2671,6 +2891,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2696,6 +2917,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:land_mask/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:land_mask/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:land_mask/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2715,6 +2939,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2740,6 +2965,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:lighthouses/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:lighthouses/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:lighthouses/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2759,6 +2987,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2784,6 +3013,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:mean_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:mean_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:mean_temperature/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2803,6 +3035,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anetatmo5min&amp;width=160&amp;height=155"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2835,6 +3068,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:netatmo5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:netatmo5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:netatmo5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2855,6 +3091,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anonvariant_ground&amp;width=180&amp;height=520"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2893,6 +3130,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_ground/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:nonvariant_ground/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_ground/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2913,6 +3153,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anonvariant_hires&amp;width=500&amp;height=1959"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -2951,6 +3192,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_hires/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:nonvariant_hires/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_hires/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -2971,6 +3215,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anonvariant_pal&amp;width=500&amp;height=990"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3009,6 +3254,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_pal/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:nonvariant_pal/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:nonvariant_pal/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3028,6 +3276,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3060,6 +3309,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3079,6 +3331,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_aggregate_max&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3111,6 +3364,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3130,6 +3386,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_aggregate_min&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3162,6 +3419,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_aggregate_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3181,6 +3441,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3213,6 +3474,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3232,6 +3496,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_array&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3264,6 +3529,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3283,6 +3551,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_extrema&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3315,6 +3584,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3334,6 +3606,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_max&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3366,6 +3639,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3385,6 +3661,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_min&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3417,6 +3694,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3436,6 +3716,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_none&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3468,6 +3749,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_meteorological_windarrows_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3487,6 +3771,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3519,6 +3804,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3538,6 +3826,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_max&amp;width=262&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3570,6 +3859,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3589,6 +3881,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_min&amp;width=260&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3621,6 +3914,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3640,6 +3936,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3672,6 +3969,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3691,6 +3991,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_array&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3723,6 +4024,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3742,6 +4046,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_extrema&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3774,6 +4079,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3793,6 +4101,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_max&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3825,6 +4134,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3844,6 +4156,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_min&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3876,6 +4189,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3895,6 +4211,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_none&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3927,6 +4244,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_numbers_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3946,6 +4266,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=139&amp;height=1800"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -3978,6 +4299,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -3997,6 +4321,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=139&amp;height=1800"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4029,6 +4354,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4048,6 +4376,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=139&amp;height=1800"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4080,6 +4409,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_array/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4099,6 +4431,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=139&amp;height=1800"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4131,6 +4464,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_extrema/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4150,6 +4486,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=139&amp;height=1800"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4182,6 +4519,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_max/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4201,6 +4541,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=139&amp;height=1800"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4233,6 +4574,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4252,6 +4596,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=139&amp;height=1800"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4284,6 +4629,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4318,6 +4666,7 @@
         <ows:Identifier>precipitation_thin_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=624&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4356,6 +4705,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:precipitation/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:precipitation/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4385,6 +4737,7 @@
         <ows:Identifier>precipitation_thin_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_areas&amp;width=300&amp;height=133"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4423,6 +4776,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation_areas/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_areas/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:precipitation_areas/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4442,6 +4798,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_isoband_labels&amp;width=150&amp;height=133"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4480,6 +4837,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation_isoband_labels/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_isoband_labels/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:precipitation_isoband_labels/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4499,6 +4859,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_modified&amp;width=624&amp;height=330"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4537,6 +4898,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitation_modified/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:precipitation_modified/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:precipitation_modified/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4556,6 +4920,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitationform_symbols&amp;width=142&amp;height=85"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4594,6 +4959,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:precipitationform_symbols/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:precipitationform_symbols/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:precipitationform_symbols/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4613,6 +4981,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Apressure_isoline_groups&amp;width=774&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4651,6 +5020,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4670,6 +5042,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Apressure_isoline_groups_aggregate_max&amp;width=820&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4708,6 +5081,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4727,6 +5103,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Apressure_isoline_groups_aggregate_min&amp;width=819&amp;height=295"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4765,6 +5142,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:pressure_isoline_groups_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4784,6 +5164,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aroadcloud5min&amp;width=160&amp;height=155"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4816,6 +5197,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:roadcloud5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:roadcloud5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:roadcloud5min/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4835,6 +5219,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aroadcondition_isoband&amp;width=150&amp;height=142"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4873,6 +5258,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:roadcondition_isoband/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:roadcondition_isoband/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:roadcondition_isoband/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4893,6 +5281,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_ctth&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4926,6 +5315,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:satellite_ctth/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:satellite_ctth/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:satellite_ctth/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4946,6 +5338,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_eckert&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -4978,6 +5371,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:satellite_eckert/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:satellite_eckert/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:satellite_eckert/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -4997,6 +5393,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5029,6 +5426,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:satellite_fog/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:satellite_fog/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:satellite_fog/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5049,6 +5449,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_geos&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5081,6 +5482,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:satellite_geos/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:satellite_geos/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:satellite_geos/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5101,6 +5505,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_meteosat&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5133,6 +5538,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:satellite_meteosat/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:satellite_meteosat/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:satellite_meteosat/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5153,6 +5561,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asnow_drift_index&amp;width=223&amp;height=97"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5191,6 +5600,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:snow_drift_index/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:snow_drift_index/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:snow_drift_index/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5225,6 +5637,7 @@
         <ows:Identifier>temperature_two_degrees</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_two_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m&amp;width=500&amp;height=990"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5263,6 +5676,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:t2m/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:t2m/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5282,6 +5698,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_circles&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5307,6 +5724,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_circles/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:t2m_circles/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:t2m_circles/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5326,6 +5746,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_isoband_labels&amp;width=500&amp;height=990"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5364,6 +5785,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_isoband_labels/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:t2m_isoband_labels/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:t2m_isoband_labels/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5383,6 +5807,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_numbers&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5421,6 +5846,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_numbers/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:t2m_numbers/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:t2m_numbers/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5440,6 +5868,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_p&amp;width=800&amp;height=990"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5478,6 +5907,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_p/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:t2m_p/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:t2m_p/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5498,6 +5930,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_pressure&amp;width=650&amp;height=990"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5606,6 +6039,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:t2m_pressure/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:t2m_pressure/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:t2m_pressure/{Style}/{Time}/{Reference_time}/{Elevation}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5625,6 +6061,7 @@
         <ows:Title>Default</ows:Title>
         <ows:Identifier>default</ows:Identifier>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5657,6 +6094,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:temperature_isotherm/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:temperature_isotherm/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:temperature_isotherm/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5692,6 +6132,7 @@
         <ows:Identifier>style3</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend2&amp;sourcelayer=test%3Awind&amp;width=300&amp;height=8000"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5730,6 +6171,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:wind/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:wind/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:wind/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5750,6 +6194,7 @@
         <ows:Identifier>alternative_legend_style1</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style1&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;sourcelayer=test%3Awind_alternative_legend_style&amp;width=80&amp;height=150"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5788,6 +6233,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:wind_alternative_legend_style/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:wind_alternative_legend_style/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:wind_alternative_legend_style/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5813,6 +6261,7 @@
         <ows:Identifier>windarrows_sparse_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windarrows_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindarrows&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5851,6 +6300,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windarrows/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:windarrows/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:windarrows/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5876,6 +6328,7 @@
         <ows:Identifier>windarrows_sparse_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windarrows_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindarrows_aggregate_max&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5914,6 +6367,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -5939,6 +6395,7 @@
         <ows:Identifier>windarrows_sparse_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windarrows_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindarrows_aggregate_min&amp;width=30&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -5977,6 +6434,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:windarrows_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6001,6 +6461,7 @@
         <ows:Identifier>windnumbers_sparse_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windnumbers_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers&amp;width=137&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6039,6 +6500,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windnumbers/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:windnumbers/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6063,6 +6527,7 @@
         <ows:Identifier>windnumbers_sparse_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windnumbers_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers_aggregate_max&amp;width=276&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6101,6 +6566,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_max/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6125,6 +6593,7 @@
         <ows:Identifier>windnumbers_sparse_style</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windnumbers_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers_aggregate_min&amp;width=274&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6163,6 +6632,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:windnumbers_aggregate_min/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6182,6 +6654,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf1&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6220,6 +6693,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf1/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf1/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf1/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6239,6 +6715,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf2&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6277,6 +6754,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf2/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf2/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:aaa:leaf2/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6296,6 +6776,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Azzz&amp;width=124&amp;height=10"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6334,6 +6815,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:zzz/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:zzregtime:zzz/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/test:zzregtime:zzz/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6354,6 +6838,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=variant%3Aecmwf%3Atemperature&amp;width=500&amp;height=990"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6392,6 +6877,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/variant:ecmwf:temperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/variant:ecmwf:temperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/variant:ecmwf:temperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6412,6 +6900,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=variant%3Aground%3Agroundtemperature&amp;width=180&amp;height=520"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6450,6 +6939,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/variant:ground:groundtemperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/variant:ground:groundtemperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/variant:ground:groundtemperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6470,6 +6962,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=variant%3Apal%3Ahirestemperature&amp;width=500&amp;height=1959"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6508,6 +7001,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/variant:pal:hirestemperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/variant:pal:hirestemperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/variant:pal:hirestemperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
@@ -6528,6 +7024,7 @@
         <ows:Identifier>default</ows:Identifier>
         <LegendURL format="image/png" xlink:href="http://localhost/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=variant%3Apal%3Atemperature&amp;width=500&amp;height=990"/>
       </Style>
+      <Format>application/x-datatile+png</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <Format>image/tiff</Format>
@@ -6566,6 +7063,9 @@
       <ResourceURL format="image/webp"
                    resourceType="tile"
                    template="http://localhost/wmts/1.0.0/variant:pal:temperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/variant:pal:temperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
       <ResourceURL format="application/json"
                    resourceType="FeatureInfo"
                    template="http://localhost/wmts/1.0.0/variant:pal:temperature/{Style}/{Time}/{Reference_time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
