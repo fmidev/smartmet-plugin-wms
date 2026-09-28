@@ -5129,7 +5129,7 @@ Returns the capabilities document listing all available layers, CRS, and formats
 | `REQUEST=GetCapabilities` | Request type. |
 | `FORMAT` | `text/xml` (default) or `application/json`. |
 | `LANGUAGE` | Language code for titles/abstracts; defaults to the configured default language. |
-| `NAMESPACE` | Restrict the listing to layers in the given namespace. |
+| `NAMESPACE` | Restrict the listing to layers in the given namespace. A value of the form `/regex/` is matched case-insensitively against the layer names instead, for example `/fmi:ecmwf:pop:rain\|fmi:wwi:pop:snow/`. By default the regex may be long enough to list every available layer; `wms.get_capabilities.max_namespace_length` sets a fixed limit. |
 | `LAYOUT` | Layer hierarchy in the response: `flat` (default), `recursive`, or `recursivetimes`. Overrides the configured default. |
 | `STARTTIME` / `ENDTIME` | Limit the advertised time dimension to the given range (ISO 8601). |
 | `DIM_REFERENCE_TIME` | Advertise the time dimension for the given model run (origin time). |
@@ -5500,6 +5500,8 @@ wms:
         version         = "1.3.0";
         disable_updates = false;
         expiration_time = 60;
+        // Maximum length of a NAMESPACE=/regex/ value, 0 (default) = long enough to list all layers
+        max_namespace_length = 0;
 
         service:
         {

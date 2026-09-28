@@ -334,6 +334,26 @@ void warn_layer(const std::string& badfile, std::set<std::string>& warned_files)
   warned_files.insert(badfile);
 }
 
+// Machine generated namespace patterns may list all available layers as alternatives, hence
+// by default the maximum length allows listing every layer
+void check_namespace_length(const std::string& pattern,
+                            const std::map<std::string, LayerProxy>& layers,
+                            int configured_max_length)
+{
+  std::size_t max_length = configured_max_length;
+  if (max_length == 0)
+  {
+    max_length = 2;  // the surrounding slashes
+    for (const auto& name_layer : layers)
+      max_length += name_layer.first.size() + 1;  // name and separator
+  }
+
+  if (pattern.size() > max_length)
+    throw Fmi::Exception(BCP, "Namespace pattern is too long")
+        .addParameter("Length", std::to_string(pattern.size()))
+        .addParameter("Maximum length", std::to_string(max_length));
+}
+
 }  // namespace
 
 CTPP::CDT Config::get_request(const libconfig::Config& config,
@@ -745,6 +765,9 @@ Config::Config(const Dali::Config& daliConfig,
     config.lookupValue("wms.get_capabilities.disable_updates", itsCapabilityUpdatesDisabled);
     config.lookupValue("wms.get_capabilities.update_interval", itsCapabilityUpdateInterval);
     config.lookupValue("wms.get_capabilities.expiration_time", itsCapabilityExpirationTime);
+    config.lookupValue("wms.get_capabilities.max_namespace_length", itsMaxNamespaceLength);
+    if (itsMaxNamespaceLength < 0)
+      throw Fmi::Exception(BCP, "wms.get_capabilities.max_namespace_length cannot be negative");
 
     const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
     if (!exceptions.isArray())
@@ -1226,6 +1249,9 @@ CTPP::CDT Config::getCapabilities(const std::optional<std::string>& apikey,
   {
     // Atomic copy of layer data
     auto my_layers = itsLayers.load();
+
+    if (wms_namespace && OGC::is_namespace_pattern(*wms_namespace))
+      check_namespace_length(*wms_namespace, *my_layers, itsMaxNamespaceLength);
 
     if (hierarchy_type != LayerHierarchy::HierarchyType::flat)
     {

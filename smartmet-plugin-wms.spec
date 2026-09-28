@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.26
-Release: 3%{?dist}.fmi
+Version: 26.9.28
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Sep 28 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.28-1.fmi
+- GetCapabilities NAMESPACE=/regex/ values are no longer limited to 100 characters: by default the regex may be long enough to list every available layer, and the new setting wms.get_capabilities.max_namespace_length sets a fixed limit
+
 * Sat Sep 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.26-3.fmi
 - Datatile PNGs are encoded with Giza::topng_argb (libdeflate) instead of libpng: a 1024x1024 wind tile 192 ms -> 39 ms and 10% smaller; pixel values are unchanged
 

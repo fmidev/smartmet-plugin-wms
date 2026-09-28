@@ -236,6 +236,9 @@ class Config
   int itsCapabilityUpdateInterval = 5;        // scan interval in seconds
   int itsCapabilityExpirationTime = 60;
 
+  // Maximum length of a GetCapabilities namespace regex, 0 = long enough to list all layers
+  int itsMaxNamespaceLength = 0;
+
   bool itsInspireExtensionSupported = false;
 
   // Valid WMS layers (name -> layer proxy). This must be a shared pointer
