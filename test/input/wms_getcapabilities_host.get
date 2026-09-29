@@ -1,3 +1,4 @@
 GET /wms?service=wms&request=GetCapabilities&debug=1 HTTP/1.0
 Host: test.fmi.fi
-
+fmi-apikey: foobar
+omit-fmi-apikey: 1
