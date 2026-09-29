@@ -210,7 +210,7 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
 
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
     std::string apikey_path;
-    if (apikey)
+    if (apikey && Spine::FmiApiKey::shouldReturnApiKey(theRequest))
       apikey_path = "/fmi-apikey/" + *apikey;
 
     hash["wmts_url"] = protocol + host + apikey_path + "/wmts";
@@ -327,11 +327,9 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
     boost::replace_all(output, "__hostname__", protocol + host);
     {
       std::string apirepl;
-      if (apikey)
+      if (apikey && Spine::FmiApiKey::shouldReturnApiKey(theRequest))
       {
-        auto omit = theRequest.getHeader("omit-fmi-apikey");
-        if (!omit || omit == std::string("0") || omit == std::string("false"))
-          apirepl = "/fmi-apikey/" + *apikey;
+        apirepl = "/fmi-apikey/" + *apikey;
       }
       boost::replace_all(output, "__apikey__", apirepl);
     }
