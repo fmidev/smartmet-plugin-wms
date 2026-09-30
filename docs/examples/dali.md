@@ -9,6 +9,8 @@ Each request URL is decomposed into a table showing every query parameter and it
 - [Output Formats](#output-formats)
 - [Isoband and Isoline](#isoband-and-isoline)
 - [Pressure smoothing comparison](#pressure-smoothing-comparison)
+- [Grid smoother comparison](#grid-smoother-comparison)
+- [Grid smoother comparison — low cost](#grid-smoother-comparison--low-cost)
 - [TFP — Thermal-Front Parameter diagnostics](#tfp--thermal-front-parameter-diagnostics)
 - [Isoband Labels](#isoband-labels)
 - [Isolabel examples](#isolabel-examples)
@@ -532,6 +534,50 @@ The fitting algorithm is a C++ port of [Raph Levien](https://raphlinus.github.io
 
 ---
 
+### Grid smoother comparison
+
+**Input:** [`test/input/smoother_compare.get`](../../test/input/smoother_compare.get)
+
+```
+GET /dali?customer=test&product=smoother_compare&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `smoother_compare` | Product JSON: [`test/dali/customers/test/products/smoother_compare.json`](../../test/dali/customers/test/products/smoother_compare.json) |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+Five panels over the same `pal_skandinavia` temperature field: the unsmoothed original followed by the four grid smoothers applied **at a matched scale** so the comparison is about each filter's *character* rather than how hard it happens to be pushed. The Savitzky-Golay `size 3` (7×7) window sets the reference scale; `box`, `median` and `morphology` are tuned to remove the same spatial scale (`box radius 1, passes 3`; `median radius 2`; `morphology radius 2`) — note that at equal `radius` the rank/morphological filters would remove far more than the polynomial fit, which is what made the earlier per-method gallery misleading.
+
+At this matched scale the differences are qualitative: **Savitzky-Golay** keeps the most fine detail and the strongest extrema (and costs the most); **box** removes the same scale of structure but, as a linear low-pass, attenuates the cold pockets the most; **median** gives sharp, overshoot-free edges (every output value existed in the input) and holds features broader than its window; **morphology** (openclose) keeps the magnitude of the broad extrema but leaves visibly blocky, axis-aligned boundaries. See the [Smoother structure section of the reference](../reference.md) for the full parameter list and the [Trax grid smoother docs](https://github.com/fmidev/smartmet-library-trax) for the algorithms.
+
+**Output:**
+
+![smoother_compare](../images/smoother_compare.png)
+
+---
+
+### Grid smoother comparison — low cost
+
+**Input:** [`test/input/smoother_compare_small.get`](../../test/input/smoother_compare_small.get)
+
+```
+GET /dali?customer=test&product=smoother_compare_small&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `smoother_compare_small` | Product JSON: [`test/dali/customers/test/products/smoother_compare_small.json`](../../test/dali/customers/test/products/smoother_compare_small.json) |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+The companion to the comparison above, but with every method at its **minimal setting** (Savitzky-Golay reduced to a 5×5 window; `box`, `median` and `morphology` to a single 3×3-class pass). The previous example is tuned to equal smoothing *quality*, which makes Savitzky-Golay look like the obvious choice — but it is the slowest filter, whereas `box` and `morphology` cost O(N) per pass independent of radius and `median` grows with radius. This panel answers the practical question on a loaded server: *which is the cheapest filter that smooths well enough?* A single cheap `box r1 p1` pass already removes the grid speckle nearly as well as the much more expensive Savitzky-Golay fit. Prefer `box` for plain smoothing, `median`/`morphology` for their edge/speckle behaviour, and reserve Savitzky-Golay for when exact extremum-height preservation is genuinely required. See the [Smoother structure section of the reference](../reference.md) for the per-method cost notes.
+
+**Output:**
+
+![smoother_compare_small](../images/smoother_compare_small.png)
+
+---
+
 ### TFP — Thermal-Front Parameter diagnostics
 
 The TFP (Thermal-Front Parameter) diagnostic highlights baroclinic zones — boundaries where temperature/humidity changes sharply.  These three tests apply TFP isobands to different upper-level fields to reveal jet-stream edges, moisture boundaries, and frontal surfaces.  Each test is a `/dali?customer=test&product=tfp_*&type=png&time=200809101200` request.  See the [TFP metaparameter section in the reference](../reference.md) for the underlying scalar field options.
@@ -975,6 +1021,47 @@ Same projection as `location_labels_pan_invariant` but with `cx` shifted by +0.5
 **Output:**
 
 ![location_labels_pan_invariant_shifted](../images/dali/location_labels_pan_invariant_shifted.png)
+
+---
+
+### location_labels_country_off / _on — Country constraint
+
+This pair demonstrates the `country_constraint` option, zoomed to the
+Finland–Russia border around Lappeenranta / Imatra (Finland) and Viipuri /
+Vyborg (Russia).  Finland is tinted blue and Russia red so it is obvious which
+side of the border each label lands on.  The keyword `ajax_fi_all` is a
+worldwide place set, so non-Finnish names (e.g. Viipuri) appear alongside the
+Finnish towns.  Both products are identical except for the single
+`"country_constraint": true` flag.
+
+**Input:** [`test/input/location_labels_country_off.get`](../../test/input/location_labels_country_off.get) · [`test/input/location_labels_country_on.get`](../../test/input/location_labels_country_on.get)
+
+```
+GET /dali?customer=test&product=location_labels_country_off&type=svg HTTP/1.0
+GET /dali?customer=test&product=location_labels_country_on&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `location_labels_country_off` | Product JSON: [`test/dali/customers/test/products/location_labels_country_off.json`](../../test/dali/customers/test/products/location_labels_country_off.json) — greedy placement, no constraint |
+| `product` | `location_labels_country_on` | Product JSON: [`test/dali/customers/test/products/location_labels_country_on.json`](../../test/dali/customers/test/products/location_labels_country_on.json) — same, with `"country_constraint": true` |
+
+Watch the border-hugging towns **Nuijamaa**, **Vainikkala**, **Hiivaniemi** and
+**Ahola**.  Without the constraint their labels lean east, across the border
+into Russia (red).  With the constraint enabled every label is forced to stay
+within its own country's polygon, so those labels flip west into Finland
+(blue).  Towns far from the border — Viipuri (RU), Lappeenranta and Imatra (FI)
+— are unaffected: the constraint only intervenes where a label would otherwise
+cross a border.
+
+**Output — without `country_constraint` (left) vs with it (right):**
+
+<table>
+<tr>
+  <td align="center"><b>country_constraint: off</b><br><img src="../images/dali/location_labels_country_off.png" width="340"></td>
+  <td align="center"><b>country_constraint: on</b><br><img src="../images/dali/location_labels_country_on.png" width="340"></td>
+</tr>
+</table>
 
 ---
 

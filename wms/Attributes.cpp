@@ -9,6 +9,7 @@
 
 #include <ctpp2/CDT.hpp>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <spine/HTTP.h>
 
 namespace SmartMet
@@ -171,7 +172,7 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
       // Handle the attribute
 
       if (is_regular)
-        attrs[attr_name] = attr_value;
+        attrs[attr_name] = Fmi::safexmlescape(attr_value);
       else if (is_presentation)
         style[attr_name] = attr_value;
     }
@@ -199,7 +200,7 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
           text += name_value.first + ':' + name_value.second;
         }
       }
-      attrs["style"] = text;
+      attrs["style"] = Fmi::safexmlescape(text);
     }
 
     // There may be pre-existing attributes, so we merge instead of assigning

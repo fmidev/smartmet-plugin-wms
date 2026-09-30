@@ -19,11 +19,13 @@
 #include <engines/grid/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <engines/satellite/Engine.h>
 #include <macgyver/AsyncTask.h>
 #include <macgyver/AtomicSharedPtr.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
 #include <libconfig.h++>
+#include <chrono>
 #include <map>
 #include <optional>
 #include <set>
@@ -77,6 +79,13 @@ class Config
             Engine::Grid::Engine* gridEngine);
 
   virtual ~Config();
+
+  // The satellite engine is optional and is set separately to avoid
+  // multiplying the constructor variants
+  void setSatelliteEngine(const Engine::Satellite::Engine* theEngine)
+  {
+    itsSatelliteEngine = theEngine;
+  }
 
   Config() = delete;
   Config(const Config& other) = delete;
@@ -196,6 +205,7 @@ class Config
   Engine::Querydata::Engine* itsQEngine = nullptr;
   Engine::Gis::Engine* itsGisEngine = nullptr;
   Engine::Grid::Engine* itsGridEngine = nullptr;
+  const Engine::Satellite::Engine* itsSatelliteEngine = nullptr;
 
 #ifndef WITHOUT_AUTHENTICATION
   // For GetCapabilities and GetMap Authentication
@@ -225,6 +235,9 @@ class Config
   bool itsCapabilityUpdatesDisabled = false;  // disable updates after initial scan?
   int itsCapabilityUpdateInterval = 5;        // scan interval in seconds
   int itsCapabilityExpirationTime = 60;
+
+  // Maximum length of a GetCapabilities namespace regex, 0 = long enough to list all layers
+  int itsMaxNamespaceLength = 0;
 
   bool itsInspireExtensionSupported = false;
 
@@ -283,6 +296,20 @@ class Config
 
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
+
+  // What one pass over the product files cost, for the log. Touched by
+  // the update thread only.
+  struct UpdateStats
+  {
+    std::chrono::steady_clock::time_point start;
+    std::size_t files_created = 0;
+    std::size_t layers_created = 0;
+    std::size_t reused = 0;
+    std::vector<std::pair<double, std::string>> durations;  // seconds, product file
+  };
+  UpdateStats itsUpdateStats;
+  bool itsFirstUpdateReported = false;
+  void reportUpdateStats();
 
   Fmi::DateTime itsCapabilitiesModificationTime = Fmi::date_time::from_time_t(0);
 

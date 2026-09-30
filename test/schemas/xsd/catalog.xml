@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- Maps the OGC and W3C schemaLocation URLs to the vendored copies next to this file. -->
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <rewriteURI uriStartString="http://schemas.opengis.net/" rewritePrefix="./"/>
+  <rewriteURI uriStartString="https://schemas.opengis.net/" rewritePrefix="./"/>
+  <uri name="http://www.w3.org/1999/xlink.xsd" uri="xlink.xsd"/>
+  <uri name="http://www.w3.org/2001/xml.xsd" uri="xml.xsd"/>
+</catalog>

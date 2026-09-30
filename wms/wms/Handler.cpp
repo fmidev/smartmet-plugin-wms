@@ -1037,25 +1037,25 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
     theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
     theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
 
-    // If the client already has this exact version, return 304 Not Modified
-    // (no body, no Content-Type). The Expires / Last-Modified headers
-    // attached by the state above remain in the response per RFC 7232.
-    if (auto if_none_match = theRequest.getHeader("If-None-Match"))
-    {
-      if (*if_none_match == etag)
-      {
-        theResponse.setStatus(Spine::HTTP::Status::not_modified);
-        return QueryStatus::OK;
-      }
-    }
-
     // X-Request-ETag is the internal "just give me the hash, no body"
     // shortcut used by the SmartMet frontend's ResponseCache to probe the
-    // backend before deciding whether to fetch the body.
+    // backend before deciding whether to fetch the body. It is checked before
+    // the conditional evaluation, because while probing the frontend performs
+    // the If-Match / If-None-Match decision itself.
     if (theRequest.getHeader("X-Request-ETag"))
     {
       theResponse.setHeader("Content-Type", mimeType(getCapabilityFormat(format)));
       theResponse.setStatus(Spine::HTTP::Status::no_content);
+      return QueryStatus::OK;
+    }
+
+    // Standalone conditional handling (RFC 7232): return 304 Not Modified when
+    // the client already has this version (If-None-Match), or 412 Precondition
+    // Failed when an If-Match precondition fails, with no body. The Expires /
+    // Last-Modified headers attached by the state above remain in the response.
+    if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+    {
+      theResponse.setStatus(*status);
       return QueryStatus::OK;
     }
 
@@ -1121,7 +1121,8 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
 
   if (product_hash != Fmi::bad_hash)
   {
-    theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+    auto etag = fmt::sprintf("\"%x\"", product_hash);
+    theResponse.setHeader("ETag", etag);
 
     // If request was an ETag request, we're done already
 
@@ -1129,6 +1130,14 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
     {
       theResponse.setHeader("Content-Type", mimeType(theProduct.type));
       theResponse.setStatus(Spine::HTTP::Status::no_content);
+      return QueryStatus::OK;
+    }
+
+    // Standalone conditional handling (RFC 7232): If-None-Match -> 304,
+    // If-Match failure -> 412, with no body, before generating the product.
+    if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+    {
+      theResponse.setStatus(*status);
       return QueryStatus::OK;
     }
   }
@@ -1184,14 +1193,13 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
     }
     catch (...)
     {
-      Fmi::Exception e(BCP, "Failed to generate product", nullptr);
-      e.addParameter("URI", theRequest.getURI());
-      e.addParameter("ClientIP", theRequest.getClientIP());
-      e.addParameter("HostName", Spine::HostInfo::getHostName(theRequest.getClientIP()));
-      const bool check_token = true;
-      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
-      e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
-      e.printError();
+      // Do not continue with a half-built CDT: Views::generate() only appends a view after
+      // its layers have been generated, so a failure here leaves 'views' empty and we would
+      // silently serve - and cache - a blank image with status 200.
+      Fmi::Exception ex(BCP, "Failed to generate product", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, theRequest, theResponse);
     }
 
     // Build the template
@@ -1260,6 +1268,12 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
         }
         catch (...)
         {
+          // Same reasoning as the non-animated branch: a partially built CDT would render
+          // an empty frame, and the frame count is then wrong for the whole animation.
+          Fmi::Exception ex(BCP, "Failed to generate product", nullptr);
+          if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+            ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+          return handleWmsException(ex, theState, theRequest, theResponse);
         }
 
         std::string output;
@@ -1390,6 +1404,34 @@ QueryStatus Handler::wmsGenerateFeatureInfo(Dali::State &theState,
     theProduct.getFeatureInfo(info, theState);
     // std::cout << fmt::format("Generated CDT:\n{}\n", info.RecursiveDump());
 
+    // Name the clicked point: nearest place from the geonames engine within
+    // the configured search radius (featureinfo.location_search_radius, km).
+    // Best effort — a failed or empty lookup never fails the query. The
+    // engine returns a coordinate-named placeholder with geoid 0 when no
+    // place is found within the radius.
+    const double search_radius = itsDaliConfig.featureInfoSearchRadius();
+    if (search_radius > 0 && info.Exists("longitude") && info.Exists("latitude"))
+    {
+      try
+      {
+        const double lon = info.At("longitude").GetFloat();
+        const double lat = info.At("latitude").GetFloat();
+        auto language = Spine::optional_string(theRequest.getParameter("LANGUAGE"),
+                                               itsDaliConfig.defaultLanguage());
+        auto loc = theState.getGeoEngine().lonlatSearch(lon, lat, language, search_radius);
+        if (loc && loc->geoid != 0 && !loc->name.empty())
+        {
+          info["location"] = loc->name;
+          if (!loc->area.empty() && loc->area != loc->name)
+            info["region"] = loc->area;
+        }
+      }
+      catch (...)
+      {
+        // best effort only
+      }
+    }
+
     auto tmpl_name = "wms_get_feature_info_" + theState.getType();
     auto tmpl = theState.getPlugin().getTemplate(tmpl_name);
 
@@ -1505,6 +1547,12 @@ void Handler::wmsPreprocessJSON(Dali::State &theState,
     throw Fmi::Exception(BCP, ERROR_NO_CUSTOMER)
         .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
 
+  // The customer is inserted into a path below
+  if (customer.find("..") != std::string::npos || customer.find("./") != std::string::npos)
+    throw Fmi::Exception(BCP, "Attack IRI detected, relative paths upwards are not safe")
+        .addParameter("customer", customer)
+        .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+
   theState.setCustomer(customer);
 
   // Preprocess
@@ -1514,6 +1562,10 @@ void Handler::wmsPreprocessJSON(Dali::State &theState,
 
   std::string layers_root = customer_root + "/layers/";
 
+  // Variant settings with json:/ref: values (e.g. a different isobands file) must be
+  // substituted before the includes are expanded, the rest after (see apply_variant)
+  Dali::JsonTools::apply_variant_references(theJson, theName);
+
   if (!isCnfRequest || (theStage == 0 || theStage > 1))
     Spine::JSON::preprocess(
         theJson, itsDaliConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
@@ -1522,30 +1574,7 @@ void Handler::wmsPreprocessJSON(Dali::State &theState,
     Spine::JSON::dereference(theJson);
 
   // Handle variants before query string parameters
-
-  auto variants = Dali::JsonTools::remove(theJson, "variants");
-  if (!theName.empty() && !variants.isNull())
-  {
-    bool found = false;
-    for (auto &variant : variants)
-    {
-      std::string name;
-      Dali::JsonTools::remove_string(name, variant, "name");
-      if (name == theName)
-      {
-        std::map<std::string, Json::Value> substitutes;
-        const auto members = variant.getMemberNames();
-        for (const auto &member : members)
-          substitutes.insert({member, variant[member]});
-        SmartMet::Spine::JSON::expand(theJson, substitutes);
-        found = true;
-        break;
-      }
-    }
-    if (!found)
-      throw Fmi::Exception(BCP, "Desired WMS layer variant not found")
-          .addParameter("name", theName);
-  }
+  Dali::JsonTools::apply_variant(theJson, theName);
 
   if (!isCnfRequest || (theStage == 0 || theStage > 3))
   {
@@ -1714,8 +1743,10 @@ Json::Value Handler::getExceptionJson(const std::string &description,
     jsonStr += "     \"tag\": \"text\",\n";
     jsonStr += "     \"cdata\":\n";
     jsonStr += "     {\n";
-    jsonStr += ("           \"en\": \"" + errorString + "\",\n");
-    jsonStr += ("           \"fi\": \"" + errorString + "\"\n");
+    // The error message may echo request values, hence it must be JSON quoted
+    const auto quotedError = Json::valueToQuotedString(errorString.c_str());
+    jsonStr += ("           \"en\": " + quotedError + ",\n");
+    jsonStr += ("           \"fi\": " + quotedError + "\n");
     jsonStr += "     },\n";
     jsonStr += "     \"attributes\":\n";
     jsonStr += "     {\n";

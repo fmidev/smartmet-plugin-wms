@@ -29,6 +29,7 @@
 #include "HovmoellerLayer.h"
 #include "MetarLayer.h"
 #include "RasterLayer.h"
+#include "SatelliteLayer.h"
 #include "StreamLayer.h"
 #include "SymbolLayer.h"
 #include "TagLayer.h"
@@ -95,6 +96,9 @@ Layer* create(const Json::Value& theJson)
       return new NumberLayer;
     if (name == "raster")
       return new RasterLayer;
+
+    if (name == "satellite")
+      return new SatelliteLayer;
     if (name == "geotiff")
       return new GeoTiffLayer;
     if (name == "hovmoeller")

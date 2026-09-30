@@ -87,7 +87,7 @@
 		{
 		    "qid": "sea",
 		    "layer_type": "background",
-		    "css": "maps/map.css",
+		    "css": "maps/wmsroot.css",
 		    "attributes":
 		    {
 			"class": "Sea"

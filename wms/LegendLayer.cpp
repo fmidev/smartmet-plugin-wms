@@ -391,7 +391,7 @@ void LegendLayer::generate_from_symbol_vector(CTPP::CDT& theGlobals,
         CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
         text_cdt["start"] = "<text";
         text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = text;
+        text_cdt["cdata"] = Fmi::safexmlescape(text);
 
         auto attrs = labels.attributes;
         theState.addAttributes(theGlobals, text_cdt, attrs);
@@ -543,7 +543,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
         text_cdt["start"] = "<text";
         text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = text;
+        text_cdt["cdata"] = Fmi::safexmlescape(text);
 
         auto attrs = labels.attributes;
         if (isoband.label)
@@ -606,7 +606,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
         text_cdt["start"] = "<text";
         text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = text;
+        text_cdt["cdata"] = Fmi::safexmlescape(text);
 
         auto attrs = labels.attributes;
         if (isoline.label)

@@ -175,6 +175,39 @@ Two cities with `bucket(p_a) == bucket(p_b)` compare as equal. The within-bucket
 
 Shorter labels packed into prime NE positions free up room for other labels, so on dense maps bucketing typically places **more** total labels than strict-population sort: in our `location_labels_priority_greedy_bucketed` test (mindistance=18) it places 71 cities vs 69 for the strict-population variant — Kauhava and Nurmes win their bucket against slightly-bigger but longer-named neighbours.
 
+## Country constraint
+
+`country_constraint: true` keeps every label inside the country its location belongs to. A label that drifts across a national border can read as if the place belonged to the neighbour — a real problem for names near contested or sensitive borders. The rule is enforced for `greedy`, `priority-greedy` and `simulated-annealing`; `fixed` can only drop a label whose single position is foreign.
+
+### Negative formulation
+
+The rule is deliberately *permissive*: a candidate position is rejected **only if it would land inside a _different_ country**. Sea, no-man's-land, and the location's own country are all allowed. The opposite ("the label must lie fully inside the home country") would drop every label in a small or narrow country (Monaco, Singapore, a town on a peninsula) and every coastal label hanging over water. The negative rule kills exactly the border-crossing case and nothing else.
+
+A position is tested by sampling five representative points of the label bbox — its centroid and four corners — and rejecting the position if **any** of them falls inside a foreign country polygon.
+
+### Where the geography lives
+
+`LabelPlacement` is intentionally dependency-free (no GIS / OGR / jsoncpp) so the algorithms stay unit-testable in isolation. The country test is therefore *injected*: `LocationLayer` fetches the country polygons, builds a `FeasibilityFn` closure `(candidate, bbox) → bool`, and passes it to `placeLabels`. Each `LabelCandidate` carries an opaque integer `region_id` (its home country); the closure compares sampled points against the polygons of every *other* region. An empty closure (the default) imposes no constraint, so the default-off path is byte-for-byte the previous behaviour.
+
+Per algorithm:
+
+- **greedy / priority-greedy** — the candidate loop skips any position the closure rejects, exactly like an out-of-bounds or marker-overlapping position. If every position is rejected the label is dropped (and its marker with it).
+- **simulated-annealing** — feasibility is precomputed once per `(label, position)` into a matrix, because the polygons are static for the whole anneal. The initial assignment and every proposed move consult the matrix; an infeasible position is treated like a drop. This keeps the per-move cost `O(n)` and makes the constraint *hard* — SA can never trade a border crossing for lower overlap energy.
+- **fixed** — the one chosen position is tested; if foreign, the label is dropped.
+
+### Why the test runs in WGS84
+
+The polygons are fetched and tested in **WGS84 (lon/lat)**, not in the map CRS. The whole world's borders are loaded, and projecting far-away geometry — e.g. all of Russia, which stretches to 180°E — into a local CRS such as ETRS-TM35FIN produces degenerate coordinates that make the point-in-polygon test misfire (in testing, this dropped *every* label). Working in lon/lat keeps every polygon well-formed; the closure inverse-projects each sampled label pixel (`image px → map CRS → WGS84`) before the `Fmi::OGR::inside` test, with a cheap bounding-box reject first.
+
+### Data source and edge cases
+
+The polygons come from a PostGIS layer (`country_schema` / `country_table` / `country_field`, default `natural_earth.admin_0_countries` with `iso_a2`). The borders dataset and each location's ISO code *are* the politics: the algorithm only enforces consistency with whatever that layer and geonames assert — it does not resolve disputed territories. That choice can be made per customer by pointing the source fields at a different table.
+
+- A location whose ISO code is not among the fetched polygons gets `region_id = -1` and is left **unconstrained** (better than over-dropping when the home country is unknown).
+- A location whose marker itself straddles the border (an anchor right on the line) may have no feasible position and is dropped. A future `fallback` policy (relax / centre-on-anchor) could place it instead; not implemented.
+
+See the [`location_labels_country_off` / `_on` example](examples/dali.md#location_labels_country_off--_on--country-constraint) for a before/after at the Finland–Russia border.
+
 ## Cross-platform stability
 
 Cairo text measurement varies sub-pixel between distros (Rocky10's fontconfig vs RHEL9's). A 1–2 px difference in `label_w` for a single label can flip a close greedy decision and cascade into completely different placement.
@@ -221,4 +254,4 @@ The `pan_invariant` flag does not address *cross-zoom* stability — labels can 
 
 - **SHW 4-position max-IS** (Schwartges, Haunert, Wolff 2012, arxiv:1209.5765). Our `candidates: 4` mode already restricts to the four corners, but uses greedy/SA priority placement rather than maximum-independent-set on the conflict graph. The MaxIS objective explicitly drops "place high-priority first" in favour of "place as many as possible", which doesn't fit a weather-map use case where Helsinki must always win.
 - **Persistent labelling** (Been, Daiches, Yap 2006, "Dynamic Map Labeling"). Per-feature `[zoom_min, zoom_max]` ranges with stable positions across zoom. Would solve cross-zoom jitter but requires either a known dataset extent at compile-time or a per-feature server-side state.
-- **Sea / land masks**. The free-space bias is a cheap proxy that works because *other markers* tend to mark "occupied" land. A genuine land/water mask would do better at coastlines but adds substantial query and computation cost per request.
+- **Sea / land masks**. The free-space bias is a cheap proxy that works because *other markers* tend to mark "occupied" land. A genuine land/water mask would do better at coastlines but adds substantial query and computation cost per request. (Note: the [country constraint](#country-constraint) *does* load real country polygons — but as a hard keep-inside-the-border filter, not as a soft placement bias; it does not distinguish land from sea.)

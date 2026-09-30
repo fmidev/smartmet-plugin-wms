@@ -1,0 +1,2 @@
+GET /wmts/1.0.0/variant:ground:groundtemperature/default/20160414T0000/EPSG:4326/5/4/36.png HTTP/1.0
+

@@ -1,0 +1,31 @@
+{
+  "title": "Meteosat cloud top temperature",
+  "abstract": "NWC SAF cloud top temperature, coloured with a colour map",
+  "producer": "meteosat",
+  "parameter": "ctth_tempe",
+  "projection": {},
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "sat",
+          "layer_type": "satellite",
+          "colormap": "cloud_top_temperature"
+        },
+        {
+          "qid": "borders",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3"
+          }
+        }
+      ]
+    }
+  ]
+}

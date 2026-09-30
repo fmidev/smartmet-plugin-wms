@@ -49,7 +49,10 @@ void View::init(Json::Value& theJson,
 
     auto json = theJson.get("qid", nulljson);
     if (!json.isNull())
+    {
       qid = json.asString();
+      State::validateId(qid);
+    }
 
     json = theJson.get("attributes", nulljson);
     if (!json.isNull())

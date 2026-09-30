@@ -39,6 +39,10 @@ class TimeDimension
 
   virtual Fmi::DateTime mostCurrentTime() const;
 
+  // First and last available time, NOT_A_DATE_TIME when there is none
+  virtual Fmi::DateTime firstTime() const;
+  virtual Fmi::DateTime lastTime() const;
+
   std::set<Fmi::DateTime> getTimeSteps() const;
 
   virtual std::string getCapabilities(bool multiple_intervals,
@@ -106,6 +110,8 @@ class IntervalTimeDimension : public TimeDimension
                               const std::optional<Fmi::DateTime>& starttime,
                               const std::optional<Fmi::DateTime>& endtime) const override;
   Fmi::DateTime mostCurrentTime() const override;
+  Fmi::DateTime firstTime() const override;
+  Fmi::DateTime lastTime() const override;
   bool isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const override;
 
  private:
@@ -195,17 +201,25 @@ class TimeDimensions
 
   bool isValidReferenceTime(const Fmi::DateTime& origintime) const;
   bool isValidTime(const Fmi::DateTime& t, const std::optional<Fmi::DateTime>& origintime) const;
+  // The default time of the layer, used when a request names none:
+  //  - observation-like data (useLatestTimeAsDefault): the latest available time
+  //  - forecasts: the time closest to the wall clock, or the first time when
+  //    the whole forecast is in the past, so historical data is browsed from
+  //    its beginning and current data from now
   Fmi::DateTime mostCurrentTime(const std::optional<Fmi::DateTime>& origintime) const;
   bool currentValue() const;
   bool isIdentical(const TimeDimensions& td) const;
   void useWallClockTimeAsEndTime(bool wall_clock = true) { itsEndTimeIsWallClockTime = wall_clock; }
   bool endTimeFromWallClock() const { return itsEndTimeIsWallClockTime; }
+  void useLatestTimeAsDefault(bool latest = true) { itsLatestTimeIsDefault = latest; }
+  bool latestTimeIsDefault() const { return itsLatestTimeIsDefault; }
 
  private:
   std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> itsTimeDimensions;
   Fmi::DateTime itsDefaultOrigintime{Fmi::DateTime::NOT_A_DATE_TIME};
   std::vector<Fmi::DateTime> itsOrigintimes;
   bool itsEndTimeIsWallClockTime{false};
+  bool itsLatestTimeIsDefault{false};
 };
 
 std::ostream& operator<<(std::ostream& ost, const TimeDimensions& timeDimensions);

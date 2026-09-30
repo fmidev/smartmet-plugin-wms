@@ -1,0 +1,2 @@
+GET /wmts/1.0.0/grid:wind_speed_and_direction_1/default/EPSG:4326/5/4/36.datatile?TIME=20080805T080000 HTTP/1.0
+

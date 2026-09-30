@@ -85,7 +85,7 @@ OBJS += $(PROTO_OBJS)
 
 INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
-.PHONY: test test-dali test-wms test-wmts test-tiles update-outputs rpm
+.PHONY: test test-dali test-wms test-wmts test-tiles update-outputs update-schemas check-schemas rpm
 
 # The rules
 
@@ -137,8 +137,20 @@ clean:
 	$(MAKE) -C test $@
 
 
+# vector_tile.pb.{h,cc} are protoc output and must never be formatted: clang-format
+# sorts their includes, which moves <google/protobuf/port_undef.inc> in among the
+# other includes and ahead of port_def.inc, and the file then fails to compile with
+# "PROTOBUF_VERSION was previously defined". Regenerate with "make proto" if it happens.
+FORMAT_FILES := $(filter-out $(SUBNAME)/vector_tile.pb.h, $(wildcard $(SUBNAME)/*.h)) \
+	$(wildcard $(SUBNAME)/*.cpp) \
+	$(wildcard $(SUBNAME)/wms/*.h) $(wildcard $(SUBNAME)/wms/*.cpp) \
+	$(wildcard $(SUBNAME)/ogc/*.h) $(wildcard $(SUBNAME)/ogc/*.cpp) \
+	$(wildcard $(SUBNAME)/wmts/*.h) $(wildcard $(SUBNAME)/wmts/*.cpp) \
+	$(wildcard $(SUBNAME)/tiles/*.h) $(wildcard $(SUBNAME)/tiles/*.cpp) \
+	$(wildcard test/*.cpp)
+
 format:
-	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp $(SUBNAME)/wms/*.h $(SUBNAME)/wms/*.cpp $(SUBNAME)/ogc/*.h $(SUBNAME)/ogc/*.cpp $(SUBNAME)/wmts/*.h $(SUBNAME)/wmts/*.cpp $(SUBNAME)/tiles/*.h $(SUBNAME)/tiles/*.cpp test/*.cpp
+	clang-format -i -style=file $(FORMAT_FILES)
 
 install:
 	@mkdir -p $(plugindir)
@@ -151,7 +163,7 @@ install:
 test: configtest
 	cd test && make test
 
-test-dali test-wms test-wmts test-tiles update-outputs:
+test-dali test-wms test-wmts test-tiles update-outputs update-schemas check-schemas:
 	cd test && make $@
 
 objdir:

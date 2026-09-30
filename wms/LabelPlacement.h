@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
@@ -77,6 +78,14 @@ struct LabelCandidate
   double population = 0;
   unsigned int label_w = 0;  // pre-measured pixel width
   unsigned int label_h = 0;  // pre-measured pixel height
+
+  // Opaque id of the geographic region (country) this location belongs to,
+  // used by the optional country constraint (see FeasibilityFn below).  The
+  // value is meaningful only to the caller-supplied feasibility predicate;
+  // this module never interprets it.  -1 means "unknown" — the predicate is
+  // expected to impose no constraint in that case.  Kept as a plain int so
+  // this header stays free of SmartMet/OGR dependencies.
+  int region_id = -1;
   // Cairo y_bearing — the offset from the SVG <text> baseline to the
   // top of the visual glyph extent.  Typically negative.  Threading
   // this through placement to render lets emit code align the visual
@@ -224,6 +233,20 @@ struct LabelConfig
   // 1.1 ≈ 10 % ratio, 2.0 = power-of-two buckets.
   double priority_bucket_ratio = 1.0;
 
+  // Country constraint: when true, a candidate label position is rejected
+  // if it would render inside a *different* country than the one the
+  // location belongs to (sea, no-man's-land and the home country all stay
+  // allowed — a deliberately permissive "negative" rule so coastal and
+  // small-country labels are not dropped).  The geographic test itself is
+  // supplied by the caller via the FeasibilityFn passed to placeLabels();
+  // these fields only select the polygon source and live here so they take
+  // part in the layer cache hash.  Default off → no behavioural change.
+  bool country_constraint = false;
+  std::string country_schema = "natural_earth";
+  std::string country_table = "admin_0_countries";
+  std::string country_field = "iso_a2";
+  std::string country_pgname;  // PostGIS connection; empty = GIS engine default
+
   // Population-dependent style overrides (first match wins)
   std::vector<LabelStyleClass> classes;
 
@@ -257,17 +280,33 @@ std::vector<LabelBBox> candidateBBoxes(double ax,
                                        double symbol_half_h = 0.0);
 
 // -----------------------------------------------------------------------
+// Optional per-candidate feasibility predicate.
+//
+// Returns true if the given label bounding box is an acceptable placement
+// for the given candidate, false to forbid it.  Used to implement the
+// country constraint without giving this module any GIS/OGR dependency:
+// the caller captures the projected country polygons and tests, for each
+// queried bbox, whether it stays within candidate.region_id's territory.
+// An empty function (default) imposes no constraint — current behaviour.
+// -----------------------------------------------------------------------
+using FeasibilityFn = std::function<bool(const LabelCandidate&, const LabelBBox&)>;
+
+// -----------------------------------------------------------------------
 // Main placement function
 //
 // Applies the algorithm specified in config to the given candidates and
 // returns one PlacedLabel per input (placed=false for dropped labels).
 // map_width / map_height are used as hard bounds: no label may extend
 // outside [0, map_width] x [0, map_height].
+//
+// When `feasible` is set, every accepted position must additionally satisfy
+// the predicate; a candidate with no feasible position is dropped.
 // -----------------------------------------------------------------------
 std::vector<PlacedLabel> placeLabels(const LabelConfig& config,
                                      std::vector<LabelCandidate> candidates,
                                      double map_width,
-                                     double map_height);
+                                     double map_height,
+                                     const FeasibilityFn& feasible = {});
 
 }  // namespace Dali
 }  // namespace Plugin

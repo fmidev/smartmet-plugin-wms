@@ -12,6 +12,7 @@
 #include <engines/gis/MapOptions.h>
 #include <gis/Types.h>
 #include <optional>
+#include <string>
 
 namespace SmartMet
 {
@@ -22,6 +23,14 @@ namespace Dali
 class Config;
 class Plugin;
 class State;
+
+// Explain an empty map fetch. The geometry can be missing either because the
+// query matched no rows or because the configured filters removed everything
+// that was returned -- the GIS engine reports both as a null geometry. A read
+// that actually failed throws from Fmi::PostGIS::read() instead of looking
+// empty, so it never reaches here. Report the filters that are in effect rather
+// than blaming minarea unconditionally.
+std::string emptyMapMessage(const Engine::Gis::MapOptions& theMapOptions);
 
 class PostGISLayerBase : public Layer
 {

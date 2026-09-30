@@ -6,14 +6,19 @@
 
 #include "Handler.h"
 #include "../Hash.h"
+#include "../JsonTools.h"
+#include "../MapboxStyle.h"
 #include "../Mime.h"
 #include "../Plugin.h"
 #include "../Product.h"
 #include "../State.h"
 #include "../ogc/LayerHierarchy.h"
 #include "../ogc/StyleSelection.h"
+#include "../wms/Handler.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <algorithm>
+#include <optional>
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <json/json.h>
@@ -46,8 +51,7 @@ namespace
 // Returns segments as a vector; empty vector means the landing page.
 // Example: "/tiles/collections/rain/tiles/EPSG:3857/10/512/256"
 //   → ["collections", "rain", "tiles", "EPSG:3857", "10", "512", "256"]
-std::vector<std::string> splitTilesPath(const std::string& resource,
-                                         const std::string& base_url)
+std::vector<std::string> splitTilesPath(const std::string& resource, const std::string& base_url)
 {
   // Strip base_url prefix (e.g. "/tiles")
   if (resource.size() < base_url.size())
@@ -119,6 +123,174 @@ std::string extensionOrParamToMime(const std::string& f)
   return {};
 }
 
+// -----------------------------------------------------------------------
+/*!
+ * \brief Add the OGC API - Common Part 2 extent (spatial, temporal, vertical)
+ *        of a capabilities layer entry to a collection description.
+ *
+ * Used both for the /collections list and the /collections/{id} description,
+ * which the spec requires to carry identical extents.
+ */
+// -----------------------------------------------------------------------
+
+void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
+{
+  // Spatial extent
+  if (wl.Exists("ex_geographic_bounding_box"))
+  {
+    CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
+    Json::Value spatial;
+    Json::Value bboxArr(Json::arrayValue);
+    // The schema requires numbers, not the strings CTPP would render.
+    auto corner = [&](const char* key, double dflt)
+    { return bb.Exists(key) ? bb.At(key).GetFloat() : dflt; };
+    Json::Value corners(Json::arrayValue);
+    corners.append(corner("west_bound_longitude", -180));
+    corners.append(corner("south_bound_latitude", -90));
+    corners.append(corner("east_bound_longitude", 180));
+    corners.append(corner("north_bound_latitude", 90));
+    bboxArr.append(corners);
+    spatial["bbox"] = bboxArr;
+    spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
+    doc["extent"]["spatial"] = spatial;
+  }
+
+  // Temporal and vertical (elevation) extents from the layer's dimensions.
+  auto splitCsv = [](const std::string& s) {
+    std::vector<std::string> out;
+    boost::algorithm::split(out, s, boost::is_any_of(","));
+    return out;
+  };
+
+  // Temporal extent (OGC API - Common Part 2): interval [[start, end]].
+  //
+  // A WMS time dimension is a comma separated list whose items are either
+  // instants or ISO 8601 "start/end/period" ranges. Taking the first and
+  // last item verbatim only works for a list of instants: for a single
+  // range it published interval [[range, range]], which no client can
+  // parse. Split the endpoints out of the range, and additionally report
+  // the discrete instants (as "vertical" already does) and the period --
+  // the interval alone gives a client no cadence to step a time slider by.
+  if (wl.Exists("time_dimension"))
+  {
+    CTPP::CDT& td = wl.At("time_dimension");
+
+    auto emitTime = [&](CTPP::CDT& e) {
+      if (!e.Exists("name") || e.At("name").GetString() != "time" || !e.Exists("value"))
+        return;
+
+      auto items = splitCsv(e.At("value").GetString());
+      if (items.empty())
+        return;
+
+      auto slashParts = [](const std::string& item) {
+        std::vector<std::string> parts;
+        boost::algorithm::split(parts, item, boost::is_any_of("/"));
+        return parts;
+      };
+
+      std::vector<std::string> instants;
+      std::string resolution;
+      bool has_range = false;
+
+      for (const auto& item : items)
+      {
+        auto parts = slashParts(item);
+        if (parts.size() >= 2)
+        {
+          has_range = true;
+          if (parts.size() >= 3 && resolution.empty())
+            resolution = parts[2];
+        }
+        else
+          instants.push_back(item);
+      }
+
+      const auto first_parts = slashParts(items.front());
+      const auto last_parts = slashParts(items.back());
+
+      Json::Value pair(Json::arrayValue);
+      pair.append(first_parts.front());
+      pair.append(last_parts.size() >= 2 ? last_parts[1] : last_parts.front());
+      Json::Value interval(Json::arrayValue);
+      interval.append(pair);
+      doc["extent"]["temporal"]["interval"] = interval;
+      doc["extent"]["temporal"]["trs"] =
+          "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
+
+      // Only a pure list of instants can be enumerated exactly; a range is
+      // described by its period instead.
+      if (!has_range && !instants.empty())
+      {
+        Json::Value values(Json::arrayValue);
+        for (const auto& v : instants)
+          values.append(v);
+        doc["extent"]["temporal"]["values"] = values;
+      }
+      if (!resolution.empty())
+        doc["extent"]["temporal"]["resolution"] = resolution;
+    };
+
+    if (td.GetType() == CTPP::CDT::ARRAY_VAL)
+      for (std::size_t i = 0; i < td.Size(); ++i)
+        emitTime(td[i]);
+    else if (td.GetType() == CTPP::CDT::HASH_VAL)
+      emitTime(td);
+  }
+
+  // Vertical (elevation) extent — discrete levels the layer offers.
+  //
+  // Surface-level data carries a single level 0 with no units. That is not a
+  // vertical extent a client could select anything from, so it is not emitted.
+  if (wl.Exists("elevation_dimension"))
+  {
+    CTPP::CDT& ed = wl.At("elevation_dimension");
+    auto isTrivial = [](const std::vector<std::string>& vals) {
+      if (vals.size() != 1)
+        return false;
+      try
+      {
+        return Fmi::stod(vals.front()) == 0.0;
+      }
+      catch (...)
+      {
+        return false;
+      }
+    };
+    auto emitElevation = [&](CTPP::CDT& e) {
+      if (!e.Exists("value"))
+        return;
+      auto vals = splitCsv(e.At("value").GetString());
+      if (vals.empty() || isTrivial(vals))
+        return;
+      Json::Value values(Json::arrayValue);
+      for (const auto& v : vals)
+        values.append(v);
+      Json::Value pair(Json::arrayValue);
+      pair.append(vals.front());
+      pair.append(vals.back());
+      Json::Value interval(Json::arrayValue);
+      interval.append(pair);
+      doc["extent"]["vertical"]["interval"] = interval;
+      doc["extent"]["vertical"]["values"] = values;
+      // The schema requires a vrs for every additional dimension. Levels
+      // without a unit symbol (hybrid, sounding, ...) are named by type.
+      std::string vrs;
+      if (e.Exists("units"))
+        vrs = e.At("units").GetString();
+      if (vrs.empty() && e.Exists("level_name"))
+        vrs = e.At("level_name").GetString();
+      if (!vrs.empty())
+        doc["extent"]["vertical"]["vrs"] = vrs;
+    };
+    if (ed.GetType() == CTPP::CDT::ARRAY_VAL)
+      for (std::size_t i = 0; i < ed.Size(); ++i)
+        emitElevation(ed[i]);
+    else if (ed.GetType() == CTPP::CDT::HASH_VAL)
+      emitElevation(ed);
+  }
+}
+
 }  // namespace
 
 // -----------------------------------------------------------------------
@@ -140,10 +312,10 @@ void Handler::shutdown()
  * \brief Main OGC API - Tiles entry point
  */
 // -----------------------------------------------------------------------
-QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
-                            Dali::State& theState,
-                            const Spine::HTTP::Request& theRequest,
-                            Spine::HTTP::Response& theResponse)
+QueryStatus Handler::query(Spine::Reactor& theReactor,
+                           Dali::State& theState,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& theResponse)
 {
   try
   {
@@ -169,6 +341,10 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
         return handleTileMatrixSet(base, parts[1], theResponse);
     }
 
+    // --- /styles (OGC API - Styles style set list) ---
+    if (parts[0] == "styles" && parts.size() == 1)
+      return handleStyles(base, theState, theRequest, theResponse);
+
     // --- /collections ---
     if (parts[0] == "collections")
     {
@@ -186,6 +362,13 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
       if (parts.size() == 4 && parts[2] == "tiles")
         return handleTilesetMetadata(base, collId, parts[3], theResponse);
 
+      // --- /collections/{id}/styles (OGC API - Styles) ---
+      if (parts.size() == 3 && parts[2] == "styles")
+        return handleCollectionStyles(base, collId, theRequest, theResponse);
+
+      if (parts.size() == 4 && parts[2] == "styles")
+        return handleStyle(base, collId, parts[3], theState, theRequest, theResponse);
+
       // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}
       if (parts.size() == 7 && parts[2] == "tiles")
       {
@@ -201,7 +384,9 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
         }
         catch (...)
         {
-          sendError(400, "Bad Request", "Invalid tile row or column: " + parts[5] + "/" + parts[6],
+          sendError(400,
+                    "Bad Request",
+                    "Invalid tile row or column: " + parts[5] + "/" + parts[6],
                     theResponse);
           return QueryStatus::OK;
         }
@@ -216,10 +401,41 @@ QueryStatus Handler::query(Spine::Reactor& /* theReactor */,
         return handleGetTile(
             theState, theRequest, theResponse, collId, tmsId, tmId, row, col, format);
       }
+
+      // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}/{j}/{i} — feature info
+      // (non-standard extension mirroring the WMTS FeatureInfo resource)
+      if (parts.size() == 9 && parts[2] == "tiles")
+      {
+        const std::string& tmsId = parts[3];
+        const std::string& tmId = parts[4];
+
+        unsigned row = 0;
+        unsigned col = 0;
+        unsigned pixel_j = 0;
+        unsigned pixel_i = 0;
+        try
+        {
+          row = Fmi::stoul(parts[5]);
+          col = Fmi::stoul(parts[6]);
+          pixel_j = Fmi::stoul(parts[7]);
+          pixel_i = Fmi::stoul(parts[8]);
+        }
+        catch (...)
+        {
+          sendError(400,
+                    "Bad Request",
+                    "Invalid tile row/column or pixel J/I in feature info request",
+                    theResponse);
+          return QueryStatus::OK;
+        }
+
+        return handleGetFeatureInfo(theReactor, theState, theRequest, theResponse,
+                                    collId, tmsId, tmId, row, col, pixel_j, pixel_i);
+      }
     }
 
-    sendError(404, "Not Found", "No matching OGC API - Tiles endpoint for: " + resource,
-              theResponse);
+    sendError(
+        404, "Not Found", "No matching OGC API - Tiles endpoint for: " + resource, theResponse);
     return QueryStatus::OK;
   }
   catch (...)
@@ -252,6 +468,10 @@ QueryStatus Handler::handleLandingPage(const std::string& base, Spine::HTTP::Res
                           "http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes",
                           "application/json",
                           "Tile Matrix Sets"));
+    links.append(makeLink(base + "/styles",
+                          "http://www.opengis.net/def/rel/ogc/1.0/styles",
+                          "application/json",
+                          "Styles"));
     doc["links"] = links;
 
     setJsonResponse(resp, toJson(doc));
@@ -283,6 +503,9 @@ QueryStatus Handler::handleConformance(const std::string& /* base */, Spine::HTT
     uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/png");
     uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/jpeg");
     uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/webp");
+    // OGC API - Styles (Part 1: Core) with the Mapbox style encoding
+    uris.append("http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/core");
+    uris.append("http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/mapbox-styles");
     doc["conformsTo"] = uris;
 
     setJsonResponse(resp, toJson(doc));
@@ -320,10 +543,8 @@ QueryStatus Handler::handleTileMatrixSets(const std::string& base, Spine::HTTP::
         entry["wellKnownScaleSet"] = Config::wellKnownScaleSetUri(tms.well_known_scale_set);
 
       Json::Value links(Json::arrayValue);
-      links.append(makeLink(base + "/tileMatrixSets/" + tms.identifier,
-                            "self",
-                            "application/json",
-                            tms.identifier));
+      links.append(makeLink(
+          base + "/tileMatrixSets/" + tms.identifier, "self", "application/json", tms.identifier));
       entry["links"] = links;
       list.append(entry);
     }
@@ -344,8 +565,8 @@ QueryStatus Handler::handleTileMatrixSets(const std::string& base, Spine::HTTP::
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleTileMatrixSet(const std::string& base,
-                                          const std::string& tmsId,
-                                          Spine::HTTP::Response& resp)
+                                         const std::string& tmsId,
+                                         Spine::HTTP::Response& resp)
 {
   try
   {
@@ -426,9 +647,9 @@ QueryStatus Handler::handleTileMatrixSet(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollections(const std::string& base,
-                                        Dali::State& theState,
-                                        const Spine::HTTP::Request& theRequest,
-                                        Spine::HTTP::Response& resp)
+                                       Dali::State& theState,
+                                       const Spine::HTTP::Request& theRequest,
+                                       Spine::HTTP::Response& resp)
 {
   try
   {
@@ -443,15 +664,8 @@ QueryStatus Handler::handleCollections(const std::string& base,
     const bool check_token = true;
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
 
-    CTPP::CDT layer_list = wmsConfig.getCapabilities(apikey,
-                                                      language,
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      OGC::LayerHierarchy::HierarchyType::flat,
-                                                      false,
-                                                      false);
+    CTPP::CDT layer_list = wmsConfig.getCapabilities(
+        apikey, language, {}, {}, {}, {}, OGC::LayerHierarchy::HierarchyType::flat, false, false);
 
     Json::Value doc;
     Json::Value collections(Json::arrayValue);
@@ -473,6 +687,8 @@ QueryStatus Handler::handleCollections(const std::string& base,
 
       if (wl.Exists("abstract"))
         entry["description"] = wl.At("abstract").GetString();
+
+      addCollectionExtent(entry, wl);
 
       Json::Value links(Json::arrayValue);
       links.append(makeLink(coll_base, "self", "application/json", id));
@@ -505,10 +721,10 @@ QueryStatus Handler::handleCollections(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollection(const std::string& base,
-                                       const std::string& collId,
-                                       Dali::State& theState,
-                                       const Spine::HTTP::Request& theRequest,
-                                       Spine::HTTP::Response& resp)
+                                      const std::string& collId,
+                                      Dali::State& theState,
+                                      const Spine::HTTP::Request& theRequest,
+                                      Spine::HTTP::Response& resp)
 {
   try
   {
@@ -530,15 +746,8 @@ QueryStatus Handler::handleCollection(const std::string& base,
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
 
     // Find layer entry in capabilities CDT
-    CTPP::CDT layer_list = wmsConfig.getCapabilities(apikey,
-                                                      language,
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      {},
-                                                      OGC::LayerHierarchy::HierarchyType::flat,
-                                                      false,
-                                                      false);
+    CTPP::CDT layer_list = wmsConfig.getCapabilities(
+        apikey, language, {}, {}, {}, {}, OGC::LayerHierarchy::HierarchyType::flat, false, false);
 
     const std::string coll_base = base + "/collections/" + collId;
     Json::Value doc;
@@ -555,30 +764,8 @@ QueryStatus Handler::handleCollection(const std::string& base,
       if (wl.Exists("abstract"))
         doc["description"] = wl.At("abstract").GetString();
 
-      // Spatial extent
-      if (wl.Exists("ex_geographic_bounding_box"))
-      {
-        CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
-        Json::Value spatial;
-        Json::Value bboxArr(Json::arrayValue);
-        Json::Value corners(Json::arrayValue);
-        corners.append(bb.Exists("west_bound_longitude")
-                           ? bb.At("west_bound_longitude").GetString()
-                           : "-180");
-        corners.append(bb.Exists("south_bound_latitude")
-                           ? bb.At("south_bound_latitude").GetString()
-                           : "-90");
-        corners.append(bb.Exists("east_bound_longitude")
-                           ? bb.At("east_bound_longitude").GetString()
-                           : "180");
-        corners.append(bb.Exists("north_bound_latitude")
-                           ? bb.At("north_bound_latitude").GetString()
-                           : "90");
-        bboxArr.append(corners);
-        spatial["bbox"] = bboxArr;
-        spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
-        doc["extent"]["spatial"] = spatial;
-      }
+      addCollectionExtent(doc, wl);
+
       break;
     }
 
@@ -605,8 +792,8 @@ QueryStatus Handler::handleCollection(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollectionTilesets(const std::string& base,
-                                               const std::string& collId,
-                                               Spine::HTTP::Response& resp)
+                                              const std::string& collId,
+                                              Spine::HTTP::Response& resp)
 {
   try
   {
@@ -662,9 +849,9 @@ QueryStatus Handler::handleCollectionTilesets(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleTilesetMetadata(const std::string& base,
-                                            const std::string& collId,
-                                            const std::string& tmsId,
-                                            Spine::HTTP::Response& resp)
+                                           const std::string& collId,
+                                           const std::string& tmsId,
+                                           Spine::HTTP::Response& resp)
 {
   try
   {
@@ -728,19 +915,344 @@ QueryStatus Handler::handleTilesetMetadata(const std::string& base,
 }
 
 // -----------------------------------------------------------------------
+// OGC API - Styles (Mapbox style encoding)
+//
+// The MVT output tags every isoband/isoline feature with a "class" attribute;
+// the wms-conf CSS maps that class to fill / stroke / stroke-width. mapboxStyle()
+// assembles the two into a Mapbox GL style whose fill-color / line-color are
+// ["match", ["get","class"], …] expressions — the same colours the raster
+// renderer bakes, with the CSS remaining the single source of truth.
+// -----------------------------------------------------------------------
+
+namespace
+{
+// Collect every styleable (isoband/isoline) Dali layer in the resolved product,
+// depth-first in document order, into MapboxStyleLayer specs. The MVT source-
+// layer is the Dali layer qid (falling back to the parameter, then "l").
+void collectStyleLayers(const Json::Value& node,
+                        Dali::State& theState,
+                        std::vector<Dali::MapboxStyleLayer>& out)
+{
+  if (node.isObject())
+  {
+    const std::string type = node.isMember("layer_type") && node["layer_type"].isString()
+                                 ? node["layer_type"].asString()
+                                 : "";
+    const bool isoband =
+        (type == "isoband" && node.isMember("isobands") && node["isobands"].isArray());
+    const bool isoline =
+        (type == "isoline" && node.isMember("isolines") && node["isolines"].isArray());
+    if (isoband || isoline)
+    {
+      Dali::MapboxStyleLayer spec;
+      spec.geometry = isoband ? Dali::MapboxStyleLayer::Geometry::Isoband
+                              : Dali::MapboxStyleLayer::Geometry::Isoline;
+      spec.levels = isoband ? node["isobands"] : node["isolines"];
+      if (node.isMember("parameter") && node["parameter"].isString())
+        spec.parameter = node["parameter"].asString();
+      if (node.isMember("qid") && node["qid"].isString() && !node["qid"].asString().empty())
+        spec.sourceLayer = node["qid"].asString();
+      else if (!spec.parameter.empty())
+        spec.sourceLayer = spec.parameter;
+      else
+        spec.sourceLayer = "l";
+      if (node.isMember("css") && node["css"].isString())
+        spec.css = theState.getStyle(node["css"].asString());
+      out.push_back(std::move(spec));
+      // An isoband/isoline layer has no styleable children — don't recurse into it.
+      return;
+    }
+    for (const auto& key : node.getMemberNames())
+      collectStyleLayers(node[key], theState, out);
+  }
+  else if (node.isArray())
+  {
+    for (const auto& elem : node)
+      collectStyleLayers(elem, theState, out);
+  }
+}
+}  // namespace
+
+std::vector<Dali::MapboxStyleLayer> Handler::resolveStyleLayers(
+    const std::string& collId,
+    const std::string& styleId,
+    Dali::State& theState,
+    const Spine::HTTP::Request& theRequest)
+{
+  const auto& wmsConfig = itsTilesConfig->wmsConfig();
+  const std::string customer = wmsConfig.layerCustomer(collId);
+
+  // Resolve the product JSON exactly as the tile renderer does, so the "json:"
+  // level includes are inlined into arrays and any style variant is applied.
+  Json::Value json = wmsConfig.json(collId);
+  const std::string root = itsDaliConfig.rootDirectory(true);
+  const std::string layers_root = root + "/customers/" + customer + "/layers/";
+  Dali::JsonTools::apply_variant_references(json, collId);
+  Spine::JSON::preprocess(json, root, layers_root, wmsConfig.getJsonCache());
+  Spine::JSON::dereference(json);
+  Dali::JsonTools::apply_variant(json, collId);
+  auto params = Dali::Plugin::extractValidParameters(theRequest.getParameterMap());
+  Spine::JSON::expand(json, params, "", false);
+  useStyle(json, styleId);
+
+  // CSS is loaded via the same customer lookup the raster tile path uses.
+  theState.setName(collId);
+  theState.setCustomer(customer);
+
+  // Style only the active render tree ("views"); the product's top-level "styles"
+  // array holds selectable variants (inactive alternatives) that useStyle() folds
+  // into "views" for a named style, and "defs" holds reusable definitions — neither
+  // is rendered, so neither should be collected.
+  std::vector<Dali::MapboxStyleLayer> layers;
+  const Json::Value& renderRoot = json.isMember("views") ? json["views"] : json;
+  collectStyleLayers(renderRoot, theState, layers);
+  return layers;
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /tiles/collections/{id}/styles/{styleId}  — Mapbox GL style
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleStyle(const std::string& base,
+                                 const std::string& collId,
+                                 const std::string& styleId,
+                                 Dali::State& theState,
+                                 const Spine::HTTP::Request& theRequest,
+                                 Spine::HTTP::Response& resp)
+{
+  try
+  {
+    if (!itsTilesConfig->isValidCollection(collId))
+    {
+      sendError(404, "Not Found", "Collection not found: " + collId, resp);
+      return QueryStatus::OK;
+    }
+
+    // "default" is always valid — it is the product as configured, and a layer
+    // with no explicit style list still renders it. Named variants must exist.
+    if (styleId != "default" && !itsTilesConfig->isValidStyle(collId, styleId))
+    {
+      sendError(404,
+                "Not Found",
+                "Style '" + styleId + "' not found for collection: " + collId,
+                resp);
+      return QueryStatus::OK;
+    }
+
+    auto layers = resolveStyleLayers(collId, styleId, theState, theRequest);
+    if (layers.empty())
+    {
+      sendError(404,
+                "Not Found",
+                "No vector (isoband/isoline) style available for collection: " + collId,
+                resp);
+      return QueryStatus::OK;
+    }
+
+    // MVT tile template the style's vector source points at. Clients that manage
+    // their own (time-parameterised) source may instead lift just the paint.
+    const std::string tms = "EPSG:3857";
+    const std::string tileUrlTemplate = base + "/collections/" + collId + "/tiles/" + tms +
+                                        "/{tileMatrix}/{tileRow}/{tileCol}"
+                                        "?f=application/vnd.mapbox-vector-tile";
+
+    const std::string style = Dali::mapboxStyle(collId, tileUrlTemplate, layers);
+
+    resp.setHeader("Content-Type", "application/vnd.mapbox.style+json; charset=UTF-8");
+    resp.setStatus(Spine::HTTP::Status::ok);
+    resp.setContent(style);
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    Fmi::Exception ex(BCP, "OGC Tiles style failed!", nullptr);
+    sendError(500, "Internal Server Error", ex.what(), resp);
+    return QueryStatus::OK;
+  }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /tiles/collections/{id}/styles  — Styles for a collection
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleCollectionStyles(const std::string& base,
+                                            const std::string& collId,
+                                            const Spine::HTTP::Request& theRequest,
+                                            Spine::HTTP::Response& resp)
+{
+  try
+  {
+    if (!itsTilesConfig->isValidCollection(collId))
+    {
+      sendError(404, "Not Found", "Collection not found: " + collId, resp);
+      return QueryStatus::OK;
+    }
+
+    const std::string coll_base = base + "/collections/" + collId;
+
+    const auto& dali = itsTilesConfig->getDaliConfig();
+    auto language = dali.defaultLanguage();
+    auto query_lang = theRequest.getParameter("LANGUAGE");
+    if (query_lang)
+      language = *query_lang;
+
+    // Enumerate the layer's real styles — the same list WMS/WMTS capabilities
+    // publish — instead of just the implicit default. Every style name here is
+    // accepted by /styles/{styleId} (resolveStyleLayers folds the named variant
+    // into the render tree with useStyle()).
+    struct StyleEntry
+    {
+      std::string id;
+      std::string title;
+    };
+    std::vector<StyleEntry> entries;
+
+    const auto& wmsConfig = itsTilesConfig->wmsConfig();
+    auto layer_obj = wmsConfig.getLayer(collId);
+    if (layer_obj)
+    {
+      auto style_info = layer_obj->getStyleInfo(language, dali.defaultLanguage());
+      if (style_info && style_info->Exists("style"))
+      {
+        CTPP::CDT& style_list = (*style_info)["style"];
+        if (style_list.GetType() == CTPP::CDT::ARRAY_VAL)
+        {
+          for (std::size_t i = 0; i < style_list.Size(); ++i)
+          {
+            if (!style_list[i].Exists("name"))
+              continue;
+            StyleEntry e;
+            e.id = style_list[i].At("name").GetString();
+            if (style_list[i].Exists("title"))
+              e.title = style_list[i].At("title").GetString();
+            entries.push_back(std::move(e));
+          }
+        }
+      }
+    }
+
+    // The default style is always available even when the capabilities list is
+    // empty or lists only named variants; keep it first, variants in
+    // capabilities order after it.
+    const bool has_default = std::any_of(entries.begin(),
+                                         entries.end(),
+                                         [](const StyleEntry& e) { return e.id == "default"; });
+    if (!has_default)
+      entries.insert(entries.begin(), StyleEntry{"default", ""});
+    std::stable_partition(entries.begin(),
+                          entries.end(),
+                          [](const StyleEntry& e) { return e.id == "default"; });
+
+    Json::Value styles(Json::arrayValue);
+    for (const auto& e : entries)
+    {
+      Json::Value entry;
+      entry["id"] = e.id;
+      if (!e.title.empty())
+        entry["title"] = e.title;
+      Json::Value styleLinks(Json::arrayValue);
+      styleLinks.append(makeLink(coll_base + "/styles/" + e.id + "?f=mapbox",
+                                 "stylesheet",
+                                 "application/vnd.mapbox.style+json",
+                                 "Mapbox GL style"));
+      entry["links"] = styleLinks;
+      styles.append(entry);
+    }
+
+    Json::Value doc;
+    doc["styles"] = styles;
+    Json::Value links(Json::arrayValue);
+    links.append(makeLink(coll_base + "/styles", "self", "application/json", "Styles"));
+    doc["links"] = links;
+
+    setJsonResponse(resp, toJson(doc));
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "OGC Tiles collection styles failed!");
+  }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /tiles/styles  — Style set list (a default style per collection)
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleStyles(const std::string& base,
+                                  Dali::State& /* theState */,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& resp)
+{
+  try
+  {
+    const auto& wmsConfig = itsTilesConfig->wmsConfig();
+    const auto& dali = itsTilesConfig->getDaliConfig();
+
+    auto language = dali.defaultLanguage();
+    auto query_lang = theRequest.getParameter("LANGUAGE");
+    if (query_lang)
+      language = *query_lang;
+
+    const bool check_token = true;
+    auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
+
+    CTPP::CDT layer_list = wmsConfig.getCapabilities(
+        apikey, language, {}, {}, {}, {}, OGC::LayerHierarchy::HierarchyType::flat, false, false);
+
+    Json::Value styles(Json::arrayValue);
+    for (std::size_t i = 0; i < layer_list.Size(); ++i)
+    {
+      CTPP::CDT& wl = layer_list[i];
+      if (!wl.Exists("name"))
+        continue;
+      const std::string id = wl.At("name").GetString();
+      const std::string coll_base = base + "/collections/" + id;
+
+      Json::Value entry;
+      entry["id"] = id;
+      if (wl.Exists("title"))
+        entry["title"] = wl.At("title").GetString();
+      Json::Value links(Json::arrayValue);
+      links.append(makeLink(coll_base + "/styles/default?f=mapbox",
+                            "stylesheet",
+                            "application/vnd.mapbox.style+json",
+                            "Mapbox GL style"));
+      entry["links"] = links;
+      styles.append(entry);
+    }
+
+    Json::Value doc;
+    doc["styles"] = styles;
+    Json::Value links(Json::arrayValue);
+    links.append(makeLink(base + "/styles", "self", "application/json", "Styles"));
+    doc["links"] = links;
+
+    setJsonResponse(resp, toJson(doc));
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "OGC Tiles styles list failed!");
+  }
+}
+
+// -----------------------------------------------------------------------
 /*!
  * \brief GET /tiles/collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}  — Tile image
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleGetTile(Dali::State& theState,
-                                    const Spine::HTTP::Request& theRequest,
-                                    Spine::HTTP::Response& theResponse,
-                                    const std::string& collId,
-                                    const std::string& tmsId,
-                                    const std::string& tmId,
-                                    unsigned row,
-                                    unsigned col,
-                                    const std::string& format)
+                                   const Spine::HTTP::Request& theRequest,
+                                   Spine::HTTP::Response& theResponse,
+                                   const std::string& collId,
+                                   const std::string& tmsId,
+                                   const std::string& tmId,
+                                   unsigned row,
+                                   unsigned col,
+                                   const std::string& format)
 {
   try
   {
@@ -766,11 +1278,12 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
 
     if (row >= tm->matrix_height || col >= tm->matrix_width)
     {
-      sendError(400,
-                "Bad Request",
-                fmt::format("Tile ({},{}) out of range ({}x{})", col, row, tm->matrix_width,
-                            tm->matrix_height),
-                theResponse);
+      sendError(
+          400,
+          "Bad Request",
+          fmt::format(
+              "Tile ({},{}) out of range ({}x{})", col, row, tm->matrix_width, tm->matrix_height),
+          theResponse);
       return QueryStatus::OK;
     }
 
@@ -786,40 +1299,65 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     // For geographic CRS (EPSG:4326), Projection::init() expects bbox in lat,lon order
     // (EPSGTreatsAsLatLong() returns true, so it reads parts as y1,x1,y2,x2).
     // computeTileBBox() always returns min_x=longitude, min_y=latitude, so we must swap.
-    std::string bbox_str = tms->is_geographic
-        ? fmt::format("{},{},{},{}", bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
-        : fmt::format("{},{},{},{}", bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y);
+    std::string bbox_str =
+        tms->is_geographic
+            ? fmt::format("{},{},{},{}", bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
+            : fmt::format("{},{},{},{}", bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y);
     thisRequest.addParameter("projection.bbox", bbox_str);
-    thisRequest.addParameter("projection.xsize", Fmi::to_string(tm->tile_width));
-    thisRequest.addParameter("projection.ysize", Fmi::to_string(tm->tile_height));
+    // Honor a client-requested output size (WIDTH/HEIGHT); the projection size
+    // must equal the output size, or the data is rendered against the wrong grid
+    // and ends up displaced (worst at low zoom). Fall back to the TileMatrix's
+    // native tile dimensions when the client does not specify a size.
+    auto req_width = theRequest.getParameter("WIDTH");
+    auto req_height = theRequest.getParameter("HEIGHT");
+    thisRequest.addParameter(
+        "projection.xsize",
+        (req_width && !req_width->empty()) ? *req_width : Fmi::to_string(tm->tile_width));
+    thisRequest.addParameter(
+        "projection.ysize",
+        (req_height && !req_height->empty()) ? *req_height : Fmi::to_string(tm->tile_height));
     thisRequest.addParameter("projection.crs", wmsConfig.getCRSDefinition(tms->crs));
     thisRequest.addParameter("type", demimetype(format));
     thisRequest.addParameter("customer", wmsConfig.layerCustomer(collId));
 
-    // Accept TIME query parameter or use most current time for temporal layers
+    // Dimension query parameters (OGC API - Common Part 2):
+    //   datetime  — time instant (OGC-standard spelling; TIME accepted for parity)
+    //   elevation — vertical level (already present in thisRequest as a copied
+    //               query parameter; Dali reads it directly by that name)
+    //   reference_time — model analysis/origin time
+    auto datetime_param = theRequest.getParameter("datetime");
     auto time_param = theRequest.getParameter("TIME");
-    if (time_param && !time_param->empty())
-    {
+    auto elevation_param = theRequest.getParameter("elevation");
+    auto reftime_param = theRequest.getParameter("reference_time");
+    const bool has_dimension = (datetime_param && !datetime_param->empty()) ||
+                               (elevation_param && !elevation_param->empty()) ||
+                               (reftime_param && !reftime_param->empty());
+
+    if (datetime_param && !datetime_param->empty())
+      thisRequest.addParameter("time", *datetime_param);
+    else if (time_param && !time_param->empty())
       thisRequest.addParameter("time", *time_param);
-    }
     else if (wmsConfig.isTemporal(collId))
     {
       Fmi::DateTime current_time = wmsConfig.mostCurrentTime(collId, {});
       if (!current_time.is_not_a_date_time())
         thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
     }
+    if (reftime_param && !reftime_param->empty())
+      thisRequest.addParameter("origintime", *reftime_param);
 
     // Use default style (OGC API Tiles does not require a style in the URL)
-    const std::string style =
-        Spine::optional_string(theRequest.getParameter("style"), "default");
+    const std::string style = Spine::optional_string(theRequest.getParameter("style"), "default");
 
     Json::Value json = wmsConfig.json(collId);
     {
       const std::string customer = wmsConfig.layerCustomer(collId);
       const std::string root = itsDaliConfig.rootDirectory(true);
       const std::string layers_root = root + "/customers/" + customer + "/layers/";
+      Dali::JsonTools::apply_variant_references(json, collId);
       Spine::JSON::preprocess(json, root, layers_root, wmsConfig.getJsonCache());
       Spine::JSON::dereference(json);
+      Dali::JsonTools::apply_variant(json, collId);
       auto params = Dali::Plugin::extractValidParameters(thisRequest.getParameterMap());
       Spine::JSON::expand(json, params, "", false);
     }
@@ -830,30 +1368,196 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     if (!json.isMember("ymargin"))
       json["ymargin"] = wmsConfig.getMargin();
 
-    theState.setName(collId);
-    theState.setCustomer(wmsConfig.layerCustomer(collId));
+    // Dali reads dimension parameters (time, elevation, reference/origin time)
+    // from the State's request, which is fixed at construction. When the request
+    // carried dimension parameters, bind a State to the augmented request so the
+    // normalized dimensions reach the renderer. Non-dimension tiles keep the
+    // original State unchanged.
+    std::optional<Dali::State> dimState;
+    if (has_dimension)
+    {
+      dimState.emplace(theState.getPlugin(), thisRequest);
+      dimState->setType(demimetype(format));
+      // A freshly constructed State defaults to useWms(false), which resolves
+      // CSS, markers, patterns, filters and gradients under the Dali root
+      // instead of the WMS root. Carry the flag over from the State the plugin
+      // configured for this request, or a tile that renders fine without
+      // dimensions fails with "Failed to find CSS file" once datetime,
+      // elevation or reference_time is added.
+      dimState->useWms(theState.useWms());
+    }
+    Dali::State& renderState = dimState ? *dimState : theState;
+
+    renderState.setName(collId);
+    renderState.setCustomer(wmsConfig.layerCustomer(collId));
 
     // Store tile z/x/y in State so PMTiles-backed OSMLayers can do direct passthrough.
     // tmId is the zoom level identifier ("0"-"21"); col=x, row=y in tile coordinates.
     try
     {
       const auto zoom = static_cast<uint8_t>(Fmi::stoul(tmId));
-      theState.setTileCoords(zoom, static_cast<uint32_t>(col), static_cast<uint32_t>(row));
+      renderState.setTileCoords(zoom, static_cast<uint32_t>(col), static_cast<uint32_t>(row));
     }
     catch (...)
     { /* non-numeric tmId — no tile coords set, passthrough disabled */
     }
 
     Dali::Product product;
-    product.init(json, theState, itsDaliConfig);
+    product.init(json, renderState, itsDaliConfig);
     if (product.type.empty())
-      product.type = theState.getType();
+      product.type = renderState.getType();
 
-    return generateTile(theState, thisRequest, theResponse, product);
+    return generateTile(renderState, thisRequest, theResponse, product);
   }
   catch (...)
   {
     Fmi::Exception ex(BCP, "OGC Tiles GetTile failed!", nullptr);
+    sendError(500, "Internal Server Error", ex.what(), theResponse);
+    return QueryStatus::OK;
+  }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief Serve a feature-info request for a tile pixel
+ *
+ * Non-standard extension (OGC API - Tiles defines no GetFeatureInfo
+ * equivalent) mirroring the WMTS RESTful FeatureInfo resource: the tile
+ * address is converted into WMS GetFeatureInfo vocabulary and delegated to
+ * the WMS handler, so all three services share one feature-info
+ * implementation, output templates and the geonames place naming.
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleGetFeatureInfo(Spine::Reactor& theReactor,
+                                          Dali::State& theState,
+                                          const Spine::HTTP::Request& theRequest,
+                                          Spine::HTTP::Response& theResponse,
+                                          const std::string& collId,
+                                          const std::string& tmsId,
+                                          const std::string& tmId,
+                                          unsigned row,
+                                          unsigned col,
+                                          unsigned pixel_j,
+                                          unsigned pixel_i)
+{
+  try
+  {
+    if (itsWMSHandler == nullptr)
+      throw Fmi::Exception(BCP, "WMS handler not wired to the Tiles handler");
+
+    if (!itsTilesConfig->isValidCollection(collId))
+    {
+      sendError(404, "Not Found", "Collection not found: " + collId, theResponse);
+      return QueryStatus::OK;
+    }
+
+    const std::string style =
+        Spine::optional_string(theRequest.getParameter("style"), "default");
+    if (style != "default" && !itsTilesConfig->isValidStyle(collId, style))
+    {
+      sendError(404,
+                "Not Found",
+                "Style '" + style + "' not found for collection: " + collId,
+                theResponse);
+      return QueryStatus::OK;
+    }
+
+    const auto& wmsConfig = itsTilesConfig->wmsConfig();
+    const WMTS::TileMatrixSet* tms = itsTilesConfig->findTileMatrixSet(tmsId);
+    if (tms == nullptr)
+    {
+      sendError(404, "Not Found", "TileMatrixSet not found: " + tmsId, theResponse);
+      return QueryStatus::OK;
+    }
+
+    const WMTS::TileMatrix* tm = itsTilesConfig->findTileMatrix(*tms, tmId);
+    if (tm == nullptr)
+    {
+      sendError(404, "Not Found", "TileMatrix '" + tmId + "' not found in: " + tmsId, theResponse);
+      return QueryStatus::OK;
+    }
+
+    if (row >= tm->matrix_height || col >= tm->matrix_width)
+    {
+      sendError(400,
+                "Bad Request",
+                fmt::format("Tile ({},{}) out of range ({}x{})",
+                            col, row, tm->matrix_width, tm->matrix_height),
+                theResponse);
+      return QueryStatus::OK;
+    }
+
+    if (pixel_i >= tm->tile_width || pixel_j >= tm->tile_height)
+    {
+      sendError(400,
+                "Bad Request",
+                fmt::format("Pixel ({},{}) out of range ({}x{})",
+                            pixel_i, pixel_j, tm->tile_width, tm->tile_height),
+                theResponse);
+      return QueryStatus::OK;
+    }
+
+    // Info format from the 'f' parameter (the tile route's negotiation covers
+    // image formats only): json is the OGC-natural default, html for browsers.
+    const std::string f = Spine::optional_string(theRequest.getParameter("f"), "json");
+    std::string info_format;
+    if (f == "json" || f == "application/json")
+      info_format = "application/json";
+    else if (f == "html" || f == "text/html")
+      info_format = "text/html";
+    else
+    {
+      sendError(400, "Bad Request", "Unsupported info format: " + f, theResponse);
+      return QueryStatus::OK;
+    }
+
+    WMTS::TileBBox bbox = WMTS::computeTileBBox(*tms, *tm, row, col);
+
+    // Build the WMS GetFeatureInfo request. WMS 1.3.0 BBOX uses the CRS axis
+    // order: lat,lon for geographic CRSs, x,y otherwise (same convention the
+    // tile route uses for the Dali projection bbox).
+    auto thisRequest = theRequest;
+    thisRequest.addParameter("service", "WMS");
+    thisRequest.addParameter("request", "GetFeatureInfo");
+    thisRequest.addParameter("version", "1.3.0");
+    thisRequest.addParameter("layers", collId);
+    thisRequest.addParameter("query_layers", collId);
+    thisRequest.addParameter("styles", style == "default" ? "" : style);
+    thisRequest.addParameter("crs", tms->crs);
+    thisRequest.addParameter("bbox",
+                             tms->is_geographic
+                                 ? fmt::format("{},{},{},{}",
+                                               bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
+                                 : fmt::format("{},{},{},{}",
+                                               bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y));
+    thisRequest.addParameter("width", Fmi::to_string(tm->tile_width));
+    thisRequest.addParameter("height", Fmi::to_string(tm->tile_height));
+    thisRequest.addParameter("format", "image/png");
+    thisRequest.addParameter("info_format", info_format);
+    thisRequest.addParameter("i", Fmi::to_string(pixel_i));
+    thisRequest.addParameter("j", Fmi::to_string(pixel_j));
+
+    // Dimension query parameters (OGC API - Common Part 2), same vocabulary
+    // as the tile route: datetime -> time, reference_time -> origintime;
+    // elevation is already present verbatim.
+    auto datetime_param = theRequest.getParameter("datetime");
+    if (datetime_param && !datetime_param->empty())
+      thisRequest.addParameter("time", *datetime_param);
+    else if (wmsConfig.isTemporal(collId))
+    {
+      Fmi::DateTime current_time = wmsConfig.mostCurrentTime(collId, {});
+      if (!current_time.is_not_a_date_time())
+        thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
+    }
+    auto reftime_param = theRequest.getParameter("reference_time");
+    if (reftime_param && !reftime_param->empty())
+      thisRequest.addParameter("origintime", *reftime_param);
+
+    return itsWMSHandler->query(theReactor, theState, thisRequest, theResponse);
+  }
+  catch (...)
+  {
+    Fmi::Exception ex(BCP, "OGC Tiles feature info failed!", nullptr);
     sendError(500, "Internal Server Error", ex.what(), theResponse);
     return QueryStatus::OK;
   }
@@ -866,9 +1570,9 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::generateTile(Dali::State& theState,
-                                   const Spine::HTTP::Request& theRequest,
-                                   Spine::HTTP::Response& theResponse,
-                                   Dali::Product& theProduct)
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse,
+                                  Dali::Product& theProduct)
 {
   try
   {
@@ -882,7 +1586,18 @@ QueryStatus Handler::generateTile(Dali::State& theState,
     }
 
     if (product_hash != Fmi::bad_hash)
-      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+    {
+      auto etag = fmt::sprintf("\"%x\"", product_hash);
+      theResponse.setHeader("ETag", etag);
+
+      // Standalone conditional handling (RFC 7232): If-None-Match -> 304,
+      // If-Match failure -> 412, with no body, before generating the tile.
+      if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+      {
+        theResponse.setStatus(*status);
+        return QueryStatus::OK;
+      }
+    }
 
     auto cached = theState.getPlugin().findInImageCache(product_hash);
     if (cached)
@@ -937,9 +1652,13 @@ QueryStatus Handler::generateTile(Dali::State& theState,
     std::string log;
     tmpl->process(hash, output, log);
 
-    theState.getPlugin().formatResponse(
-        output, theProduct.type, theRequest, theResponse, theState.useTimer(), theProduct,
-        product_hash);
+    theState.getPlugin().formatResponse(output,
+                                        theProduct.type,
+                                        theRequest,
+                                        theResponse,
+                                        theState.useTimer(),
+                                        theProduct,
+                                        product_hash);
 
     return QueryStatus::OK;
   }
@@ -955,9 +1674,9 @@ QueryStatus Handler::generateTile(Dali::State& theState,
  */
 // -----------------------------------------------------------------------
 void Handler::sendError(int status,
-                         const std::string& title,
-                         const std::string& detail,
-                         Spine::HTTP::Response& resp)
+                        const std::string& title,
+                        const std::string& detail,
+                        Spine::HTTP::Response& resp)
 {
   try
   {

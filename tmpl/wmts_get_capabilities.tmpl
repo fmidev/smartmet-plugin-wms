@@ -54,19 +54,18 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       <-TMPL_if defined(layer.abstract)>
       <ows:Abstract><TMPL_var XMLESCAPE(layer.abstract)></ows:Abstract>
       <-/TMPL_if>
-      <ows:Identifier><TMPL_var XMLESCAPE(layer.identifier)></ows:Identifier>
-
       <-TMPL_if defined(layer.bbox_min_x)>
       <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
         <ows:LowerCorner><TMPL_var layer.bbox_min_x> <TMPL_var layer.bbox_min_y></ows:LowerCorner>
         <ows:UpperCorner><TMPL_var layer.bbox_max_x> <TMPL_var layer.bbox_max_y></ows:UpperCorner>
       </ows:WGS84BoundingBox>
       <-/TMPL_if>
+      <ows:Identifier><TMPL_var XMLESCAPE(layer.identifier)></ows:Identifier>
 
       <-TMPL_foreach layer.styles as style>
       <Style>
-        <ows:Identifier><TMPL_var XMLESCAPE(style.identifier)></ows:Identifier>
         <ows:Title><TMPL_if defined(style.title)><TMPL_var XMLESCAPE(style.title)><TMPL_else><TMPL_var XMLESCAPE(style.identifier)></TMPL_if></ows:Title>
+        <ows:Identifier><TMPL_var XMLESCAPE(style.identifier)></ows:Identifier>
         <-TMPL_if defined(style.legend_url)>
         <-TMPL_foreach style.legend_url as legend_url>
         <LegendURL format="<TMPL_var legend_url.format>" xlink:href="<TMPL_var legend_url.online_resource>"/>
@@ -78,6 +77,32 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
       <-TMPL_foreach layer.formats as fmt>
       <Format><TMPL_var fmt></Format>
       <-/TMPL_foreach>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
+
+      <-TMPL_if defined(layer.dimensions)>
+      <-TMPL_foreach layer.dimensions as dimension>
+      <Dimension>
+        <ows:Identifier><TMPL_var XMLESCAPE(dimension.identifier)></ows:Identifier>
+        <-TMPL_if defined(dimension.uom)>
+        <ows:UOM><TMPL_var XMLESCAPE(dimension.uom)></ows:UOM>
+        <-/TMPL_if>
+
+        <-TMPL_if defined(dimension.unit_symbol)>
+        <UnitSymbol><TMPL_var XMLESCAPE(dimension.unit_symbol)></UnitSymbol>
+        <-/TMPL_if>
+        <-TMPL_if defined(dimension.default)>
+        <Default><TMPL_var XMLESCAPE(dimension.default)></Default>
+        <-/TMPL_if>
+        <-TMPL_if defined(dimension.current)>
+        <Current>true</Current>
+        <-/TMPL_if>
+        <-TMPL_foreach dimension.values as value>
+        <Value><TMPL_var XMLESCAPE(value)></Value>
+        <-/TMPL_foreach>
+      </Dimension>
+      <-/TMPL_foreach>
+      <-/TMPL_if>
 
       <-TMPL_foreach layer.tile_matrix_set_links as tms_id>
       <TileMatrixSetLink>
@@ -87,10 +112,19 @@ CDT variables populated by WMTS::Handler::handleGetCapabilities():
 
       <ResourceURL format="image/png"
                    resourceType="tile"
-                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
       <ResourceURL format="image/webp"
                    resourceType="tile"
-                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}<TMPL_var layer.dim_path>/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <-/TMPL_foreach>
 

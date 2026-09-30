@@ -11,8 +11,10 @@
 #include <macgyver/StringConversion.h>
 #include <spine/ConfigTools.h>
 #include <spine/Exceptions.h>
+#include <algorithm>
 #include <filesystem>
 #include <stdexcept>
+#include <thread>
 
 using std::string;
 
@@ -24,19 +26,46 @@ namespace Dali
 {
 namespace
 {
-std::size_t parse_size(const libconfig::Setting& setting, const char* name)
+// Parse a thread count given as an absolute number or as "NN%" of the number of cores.
+// The result is always clamped to the number of cores (never more threads than cores).
+unsigned int parse_threads(const std::string& str)
 {
-  switch (setting.getType())
+  try
   {
-    case libconfig::Setting::TypeInt:
-      return static_cast<unsigned int>(setting);
-    case libconfig::Setting::TypeInt64:
-      return static_cast<unsigned long>(setting);
-    case libconfig::Setting::TypeString:
-      return Fmi::stosz(static_cast<const char*>(setting));
-    default:
-      throw Fmi::Exception(BCP, "Invalid type for size setting").addParameter("Setting", name);
+    unsigned int max_threads = std::max(1U, std::thread::hardware_concurrency());
+
+    unsigned int num = 0;
+    if (!boost::algorithm::ends_with(str, "%"))
+      num = Fmi::stoi(str);
+    else
+    {
+      auto percent = Fmi::stoi(str.substr(0, str.size() - 1));
+      if (percent <= 0)
+        return 0;  // disabled
+      num = std::max(1U, max_threads * static_cast<unsigned int>(percent) / 100);
+    }
+
+    return std::min(num, max_threads);
   }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to parse thread setting").addParameter("Threads", str);
+  }
+}
+
+// Read a thread-count setting that may be given as an integer or as a "NN%" string.
+unsigned int parse_threads(const libconfig::Config& config, const char* name)
+{
+  if (!config.exists(name))
+    return 0;
+
+  const auto& value = config.lookup(name);
+  if (value.getType() == libconfig::Setting::TypeString)
+    return parse_threads(std::string(static_cast<const char*>(value)));
+
+  int num = value;
+  unsigned int max_threads = std::max(1U, std::thread::hardware_concurrency());
+  return std::min(static_cast<unsigned int>(std::max(0, num)), max_threads);
 }
 
 }  // namespace
@@ -89,20 +118,21 @@ Config::Config(const string& configfile)
 
     itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
 
-    const char* memory_bytes = "cache.memory_bytes";
-    if (itsConfig.exists(memory_bytes))
-      itsMaxMemoryCacheSize = parse_size(itsConfig.lookup(memory_bytes), memory_bytes);
-
-    const char* filesystem_bytes = "cache.filesystem_bytes";
-    if (itsConfig.exists(filesystem_bytes))
-      itsMaxFilesystemCacheSize = parse_size(itsConfig.lookup(filesystem_bytes), filesystem_bytes);
+    itsMaxMemoryCacheSize =
+        Spine::lookupSizeSetting(itsConfig, "cache.memory_bytes", itsMaxMemoryCacheSize);
+    itsMaxFilesystemCacheSize =
+        Spine::lookupSizeSetting(itsConfig, "cache.filesystem_bytes", itsMaxFilesystemCacheSize);
 
     itsConfig.lookupValue("max_image_size", itsMaxImageSize);
     itsConfig.lookupValue("wms.max_layers", itsMaxWMSLayers);
     itsConfig.lookupValue("wmts.tile_width", itsWmtsTileWidth);
     itsConfig.lookupValue("wmts.tile_height", itsWmtsTileHeight);
+    itsConfig.lookupValue("featureinfo.location_search_radius", itsFeatureInfoSearchRadius);
 
     itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
+
+    // Trax contouring worker pool size: absolute count or "NN%" of cores, capped to cores.
+    itsContourWorkerThreads = parse_threads(itsConfig, "contour.worker_threads");
 
     itsConfig.lookupValue("wms.url", itsWmsUrl);
     itsConfig.lookupValue("wmts.url", itsWmtsUrl);
@@ -381,6 +411,11 @@ unsigned int Config::wmtsTileWidth() const
 unsigned int Config::wmtsTileHeight() const
 {
   return itsWmtsTileHeight;
+}
+
+double Config::featureInfoSearchRadius() const
+{
+  return itsFeatureInfoSearchRadius;
 }
 
 unsigned Config::maxHeatmapPoints() const

@@ -2,17 +2,17 @@
 
 #include "IsolineLayer.h"
 #include "Config.h"
-#include "Geometry.h"
 #include "DataTile.h"
+#include "Geometry.h"
 #include "GridDataGeoTiff.h"
-#include "MapboxVectorTile.h"
-#include "SubdivideGate.h"
 #include "Hash.h"
 #include "Isoline.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "State.h"
 #include "StyleSheet.h"
+#include "SubdivideGate.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -524,6 +524,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (subdivide > 0)
     originalGridQuery->mAttributeList.addAttribute("contour.subdivide",
                                                    Fmi::to_string(subdivide));
+
+  if (contour_threads)
+    originalGridQuery->mAttributeList.addAttribute("contour.threads",
+                                                   Fmi::to_string(*contour_threads));
   /*
     if (minarea)
     {
@@ -776,6 +780,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   options.filter_size = smoother.size;
   options.filter_degree = smoother.degree;
+  options.smoother = smoother.trax_options;
 
   options.extrapolation = extrapolation;
 
@@ -790,6 +795,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   options.validate = validate;
   options.desliver = desliver;
   options.subdivide = subdivide;
+  options.threads = contour_threads;
 
   // Do the actual contouring, either full grid or just
   // a sampled section
@@ -1069,7 +1075,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
 
     if (!(paraminfo.source == std::string("grid")))
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isolines, theState));

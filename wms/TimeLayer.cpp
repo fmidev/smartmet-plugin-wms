@@ -17,6 +17,7 @@
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/LocalDateTime.h>
+#include <macgyver/StringConversion.h>
 #include <spine/Json.h>
 #include <array>
 #include <ogr_spatialref.h>
@@ -455,7 +456,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     }
     msg << suffix;
 
-    text_cdt["cdata"] = msg.str();
+    text_cdt["cdata"] = Fmi::safexmlescape(msg.str());
     theLayersCdt.PushBack(text_cdt);
   }
   catch (...)
@@ -654,7 +655,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     }
     msg << suffix;
 
-    text_cdt["cdata"] = msg.str();
+    text_cdt["cdata"] = Fmi::safexmlescape(msg.str());
     theLayersCdt.PushBack(text_cdt);
   }
   catch (...)
@@ -687,7 +688,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
 
     if (paraminfo.source != std::string("grid"))
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
 
     Fmi::hash_combine(hash, Fmi::hash_value(timezone));
     Fmi::hash_combine(hash, Fmi::hash_value(prefix));

@@ -1,7 +1,9 @@
 {
-<TMPL_if defined(time)>"time": <TMPL_var time>,</TMPL_if>
+<TMPL_if defined(time)>"time": "<TMPL_var JSONESCAPE(time)>",</TMPL_if>
 <TMPL_if defined(longitude)>"longitude": <TMPL_var longitude>,</TMPL_if>
 <TMPL_if defined(latitude)>"latitude": <TMPL_var latitude>,</TMPL_if>
+<TMPL_if defined(location)>"location": "<TMPL_var JSONESCAPE(location)>",</TMPL_if>
+<TMPL_if defined(region)>"region": "<TMPL_var JSONESCAPE(region)>",</TMPL_if>
 "features":
 {
   <-TMPL_if defined(features)>

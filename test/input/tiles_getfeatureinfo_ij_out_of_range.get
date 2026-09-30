@@ -1,0 +1,1 @@
+GET /tiles/collections/test:t2m_p/tiles/EPSG:4326/5/4/36/512/4096?f=json&datetime=20080805T0600 HTTP/1.0

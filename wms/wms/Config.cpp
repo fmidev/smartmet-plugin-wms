@@ -10,6 +10,7 @@
 #include "Exception.h"
 #include "../ogc/LayerFactory.h"
 #include "../ogc/LayerHierarchy.h"
+#include "../ogc/NamespacePattern.h"
 
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -33,6 +34,8 @@
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
 #include <algorithm>
+#include <chrono>
+#include <iostream>
 #include <map>
 #include <ogr_spatialref.h>
 #include <stdexcept>
@@ -91,30 +94,6 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
   {
     throw Fmi::Exception::Trace(BCP, "Failed getting maximum modification time!");
   }
-}
-
-/*
- * namespace patterns look like "/..../"
- */
-
-bool looks_like_pattern(const std::string& pattern)
-{
-  return (boost::algorithm::starts_with(pattern, "/") && boost::algorithm::ends_with(pattern, "/"));
-}
-
-/*
- * Apply namespace filtering as in GeoServer with regex extension
- */
-
-bool match_namespace_pattern(const std::string& name, const std::string& pattern)
-{
-  if (!looks_like_pattern(pattern))
-    return (boost::algorithm::istarts_with(name, pattern + ":") || name == pattern);
-
-  // Strip surrounding slashes first
-  const std::string re_str = pattern.substr(1, pattern.size() - 2);
-  const boost::regex re(re_str, boost::regex::icase);
-  return boost::regex_search(name, re);
 }
 
 // Create layer name from customer name and the path to the configuration file
@@ -353,6 +332,26 @@ void warn_layer(const std::string& badfile, std::set<std::string>& warned_files)
 
   // Don't warn again about the same file
   warned_files.insert(badfile);
+}
+
+// Machine generated namespace patterns may list all available layers as alternatives, hence
+// by default the maximum length allows listing every layer
+void check_namespace_length(const std::string& pattern,
+                            const std::map<std::string, LayerProxy>& layers,
+                            int configured_max_length)
+{
+  std::size_t max_length = configured_max_length;
+  if (max_length == 0)
+  {
+    max_length = 2;  // the surrounding slashes
+    for (const auto& name_layer : layers)
+      max_length += name_layer.first.size() + 1;  // name and separator
+  }
+
+  if (pattern.size() > max_length)
+    throw Fmi::Exception(BCP, "Namespace pattern is too long")
+        .addParameter("Length", std::to_string(pattern.size()))
+        .addParameter("Maximum length", std::to_string(max_length));
 }
 
 }  // namespace
@@ -766,6 +765,9 @@ Config::Config(const Dali::Config& daliConfig,
     config.lookupValue("wms.get_capabilities.disable_updates", itsCapabilityUpdatesDisabled);
     config.lookupValue("wms.get_capabilities.update_interval", itsCapabilityUpdateInterval);
     config.lookupValue("wms.get_capabilities.expiration_time", itsCapabilityExpirationTime);
+    config.lookupValue("wms.get_capabilities.max_namespace_length", itsMaxNamespaceLength);
+    if (itsMaxNamespaceLength < 0)
+      throw Fmi::Exception(BCP, "wms.get_capabilities.max_namespace_length cannot be negative");
 
     const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
     if (!exceptions.isArray())
@@ -854,7 +856,7 @@ void Config::init()
 
   if (!itsCapabilityUpdatesDisabled)
   {
-    itsGetCapabilitiesTask.reset(new Fmi::AsyncTask("Config: capabilities update task",
+    itsGetCapabilitiesTask.reset(new Fmi::AsyncTask("upd-wms-caps",
                                                     [this]() { capabilitiesUpdateLoop(); }));
   }
 }
@@ -1009,11 +1011,18 @@ void Config::updateLayerMetaDataForCustomerLayer(
     {
       const auto& oldProxy = mylayers->at(fullLayername);
       newProxies.insert({fullLayername, oldProxy});
+      ++itsUpdateStats.reused;
     }
     else
     {
+      const auto started = std::chrono::steady_clock::now();
       auto newlayers = OGC::LayerFactory::createLayers(
           pathname, fullLayername, layerNamespace, customer, layerConfig());
+      const auto seconds =
+          std::chrono::duration<double>(std::chrono::steady_clock::now() - started).count();
+      ++itsUpdateStats.files_created;
+      itsUpdateStats.layers_created += newlayers.size();
+      itsUpdateStats.durations.emplace_back(seconds, pathname);
 
       if (newlayers.empty())
         warn_layer(pathname, itsWarnedFiles);
@@ -1084,6 +1093,9 @@ void Config::updateLayerMetaData()
 {
   try
   {
+    itsUpdateStats = UpdateStats{};
+    itsUpdateStats.start = std::chrono::steady_clock::now();
+
     auto mylayers = itsLayers.load();
 
     // New shared pointer which will be atomically set into production
@@ -1133,11 +1145,63 @@ void Config::updateLayerMetaData()
     }
 
     itsLayers.store(newProxies);
+
+    reportUpdateStats();
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Layer metadata update failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Report what the pass over the product files cost
+ *
+ * The first pass is reported always, since it is what the server start
+ * waits for. Later passes are reported only when they take long, which
+ * is how a product file which has become slow to create shows up: every
+ * layer whose metadata has expired is created again from its file, so
+ * a slow file costs its time on every pass.
+ */
+// ----------------------------------------------------------------------
+
+void Config::reportUpdateStats()
+{
+  if (itsDaliConfig.quiet())
+    return;
+
+  auto& stats = itsUpdateStats;
+  const auto elapsed =
+      std::chrono::duration<double>(std::chrono::steady_clock::now() - stats.start).count();
+
+  const bool slow = (elapsed >= 5.0);
+  if (itsFirstUpdateReported && !slow)
+    return;
+  itsFirstUpdateReported = true;
+
+  std::cout << Spine::log_time_str()
+            << fmt::format(
+                   " WMS layer metadata: {} layers created from {} product files, {} "
+                   "layers reused, in {:.1f} seconds\n",
+                   stats.layers_created,
+                   stats.files_created,
+                   stats.reused,
+                   elapsed);
+
+  if (!slow || stats.durations.empty())
+    return;
+
+  const std::size_t count = std::min<std::size_t>(10, stats.durations.size());
+  std::partial_sort(stats.durations.begin(),
+                    stats.durations.begin() + count,
+                    stats.durations.end(),
+                    [](const auto& a, const auto& b) { return a.first > b.first; });
+
+  std::cout << Spine::log_time_str() << " WMS layer metadata: the slowest product files were\n";
+  for (std::size_t i = 0; i < count; i++)
+    std::cout << fmt::format(
+        "    {:8.2f} s  {}\n", stats.durations[i].first, stats.durations[i].second);
 }
 
 void Config::updateModificationTime()
@@ -1185,6 +1249,9 @@ CTPP::CDT Config::getCapabilities(const std::optional<std::string>& apikey,
   {
     // Atomic copy of layer data
     auto my_layers = itsLayers.load();
+
+    if (wms_namespace && OGC::is_namespace_pattern(*wms_namespace))
+      check_namespace_length(*wms_namespace, *my_layers, itsMaxNamespaceLength);
 
     if (hierarchy_type != LayerHierarchy::HierarchyType::flat)
     {
@@ -1246,7 +1313,7 @@ CTPP::CDT Config::getCapabilities(const std::optional<std::string>& apikey,
           if (cdt->Exists("name"))
           {
             std::string name = (*cdt)["name"].GetString();
-            if (match_namespace_pattern(name, *wms_namespace))
+            if (OGC::match_namespace_pattern(name, *wms_namespace))
               layersCapabilities.PushBack(*cdt);
           }
         }
@@ -1778,6 +1845,7 @@ OGC::LayerConfig Config::layerConfig() const
     .setQEngine(itsQEngine)
     .setGisEngine(itsGisEngine)
     .setGridEngine(itsGridEngine)
+    .setSatelliteEngine(itsSatelliteEngine)
     .setSupportedReferences(itsSupportedReferences);
 #ifndef WITHOUT_OBSERVATION
   lc.setObsEngine(itsObsEngine);

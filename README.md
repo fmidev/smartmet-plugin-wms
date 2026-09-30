@@ -111,6 +111,14 @@ The requested product is defined by the "product" parameter in the HTTP request.
 The [WMS and Dali reference](docs/reference.md) describes how to
 configure both products and the plugin itself.
 
+The [programmer's tutorial](docs/tutorial.md) walks through the rendering
+pipeline end to end: product JSON, URL overrides, the C++ object model, the
+CTPP2 data tree and templates, SVG to raster conversion, GeoJSON/KML/GeoTIFF/
+MVT/DataTile outputs, and how WMS, WMTS and OGC API Tiles relate.
+
+[Grid support](docs/grid-support.md) (developer notes) explains how layers get their data
+from the grid engine.
+
 ### Illustrated examples
 
 The test suite doubles as a gallery of worked examples — each page
@@ -176,13 +184,18 @@ The WMS plugin uses extensive caching which is defined in `cache` block:
 ```
 cache =
 {
-  memory_bytes            = 4294967296L; # 4 GB
-  filesystem_bytes        = 2147483648L; # 2 GB
+  memory_bytes            = "4G";
+  filesystem_bytes        = "2G";
   directory               = "/var/smartmet/imagecache";
 };
 ```
 
 The example cache uses 4 GB of system memory and 2 GB of file cache at `/var/smartmet/imagecache`.
+
+The sizes may also be given as plain integers (`4294967296L`), but the string form is
+easier to read. The unit is optional and case insensitive, `B`, `K`, `M`, `G`, `T` and `P`
+are accepted both alone and followed by `B` or `iB`, and all units are binary multiples,
+so `"4G"`, `"4GB"` and `"4 GiB"` all mean the same thing.
 
 ### Layer configuration and directory structure
 

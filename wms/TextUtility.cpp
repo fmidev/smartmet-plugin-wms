@@ -148,7 +148,7 @@ void addTextField(double xPos,
     CTPP::CDT textCdt(CTPP::CDT::HASH_VAL);
     textCdt["start"] = "<text";
     textCdt["end"] = "</text>";
-    textCdt["cdata"] = rows[i];
+    textCdt["cdata"] = Fmi::safexmlescape(rows[i]);
     textCdt["attributes"]["x"] = Fmi::to_string(lround(xPos));
     textCdt["attributes"]["y"] = Fmi::to_string(lround(yPos + i * rowHeight));
     textCdt["attributes"]["xml:space"] = "preserve";
@@ -189,7 +189,7 @@ void addTextField(double xPos,
     CTPP::CDT textCdt(CTPP::CDT::HASH_VAL);
     textCdt["start"] = "<text";
     textCdt["end"] = "</text>";
-    textCdt["cdata"] = rows[i];
+    textCdt["cdata"] = Fmi::safexmlescape(rows[i]);
     textCdt["attributes"]["x"] = Fmi::to_string(lround(xCoord));
     textCdt["attributes"]["y"] = Fmi::to_string(lround(yPos + i * rowHeight));
     textCdt["attributes"]["xml:space"] = "preserve";

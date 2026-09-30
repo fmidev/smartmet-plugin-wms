@@ -233,6 +233,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -341,6 +351,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -2369,6 +2389,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -2685,6 +2715,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -4730,6 +4770,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -5255,6 +5305,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2016-04-13T06:23:00Z",
+						"default": "2016-04-13T06:23:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -5273,6 +5333,129 @@
 								},
 								"width":180,
 								"height":520
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "PAL Skandinavia HiRes Temperature",
+				"queryable": 1,
+				"Name": "test:nonvariant_hires",
+				"Abstract": "PAL HiRes abstract",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -9.09870632718,
+					"eastBoundLongitude": 49,
+					"southBoundLatitude": 51.3,
+					"northBoundLatitude": 72.6420840803
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -1370208.73749,
+						"miny": -3957215.70836,
+						"maxx": 2152881.41537,
+						"maxy": -2658587.1382
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2036555.48431,
+						"miny": -3659162.45965,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 3006482.43753,
+						"miny": 3305514.91803,
+						"maxx": 5439122.40217,
+						"maxy": 5793050.59535
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -1012863.35522,
+						"miny": 6674532.79847,
+						"maxx": 5454655.04887,
+						"maxy": 11988575.3708
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anonvariant_hires&amp;width=500&amp;height=1959"
+								},
+								"width":500,
+								"height":1959
 							}
 						]
 					}
@@ -5364,6 +5547,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -7377,9 +7570,9 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=140&amp;height=1800"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=139&amp;height=1800"
 								},
-								"width":140,
+								"width":139,
 								"height":1800
 							}
 						]
@@ -7482,9 +7675,9 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=140&amp;height=1800"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=139&amp;height=1800"
 								},
-								"width":140,
+								"width":139,
 								"height":1800
 							}
 						]
@@ -7587,9 +7780,9 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=140&amp;height=1800"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=139&amp;height=1800"
 								},
-								"width":140,
+								"width":139,
 								"height":1800
 							}
 						]
@@ -7692,9 +7885,9 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=140&amp;height=1800"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=139&amp;height=1800"
 								},
-								"width":140,
+								"width":139,
 								"height":1800
 							}
 						]
@@ -7797,9 +7990,9 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=140&amp;height=1800"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=139&amp;height=1800"
 								},
-								"width":140,
+								"width":139,
 								"height":1800
 							}
 						]
@@ -7902,9 +8095,9 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=140&amp;height=1800"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=139&amp;height=1800"
 								},
-								"width":140,
+								"width":139,
 								"height":1800
 							}
 						]
@@ -8007,9 +8200,9 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=140&amp;height=1800"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=139&amp;height=1800"
 								},
-								"width":140,
+								"width":139,
 								"height":1800
 							}
 						]
@@ -8101,6 +8294,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -8271,6 +8474,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -8419,6 +8632,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -8527,6 +8750,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -8643,6 +8876,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -8751,6 +8994,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -8867,6 +9120,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -8975,6 +9238,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -9217,6 +9490,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2026-03-31T17:58:00Z",
+						"default": "2026-03-31T17:58:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -9235,6 +9518,551 @@
 								},
 								"width":150,
 								"height":142
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Meteosat cloud top temperature",
+				"queryable": 1,
+				"Name": "test:satellite_ctth",
+				"Abstract": "NWC SAF cloud top temperature, coloured with a colour map",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -44.8341977761,
+					"eastBoundLongitude": 63.2346333934,
+					"southBoundLatitude": 27.6432215864,
+					"northBoundLatitude": 75.5867086753
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4026475.75074,
+						"miny": -5969495.78871,
+						"maxx": 2740510.13325,
+						"maxy": -2047581.05324
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 1876.71271849,
+						"miny": 1828180.77256,
+						"maxx": 5257446.52168,
+						"maxy": 6069857.08099
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -4990920.06656,
+						"miny": 3204066.20637,
+						"maxx": 7039247.18985,
+						"maxy": 13189542.706
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2026-08-26T14:00:00Z,2026-08-26T14:15:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_ctth&amp;width=30&amp;height=10"
+								},
+								"width":30,
+								"height":10
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Meteosat water vapour 7.3 um in Eckert IV",
+				"queryable": 1,
+				"Name": "test:satellite_eckert",
+				"Abstract": "SEVIRI water vapour imagery in the Eckert IV projection",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -137.440290252,
+					"eastBoundLongitude": 137.456627037,
+					"southBoundLatitude": -81.499357368,
+					"northBoundLatitude": 81.5
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -137.440290252,
+						"miny": -81.499357368,
+						"maxx": 137.456627037,
+						"maxy": 81.5
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -137.440290252,
+						"miny": -81.499357368,
+						"maxx": 137.456627037,
+						"maxy": 81.5
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -137.440290252,
+						"miny": -81.499357368,
+						"maxx": 137.456627037,
+						"maxy": 81.5
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4460461.91185,
+						"miny": -6612906.73204,
+						"maxx": 3387669.86061,
+						"maxy": -476105.949907
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": -146473.113242,
+						"miny": 1527541.11022,
+						"maxx": 4882431.87493,
+						"maxy": 6614901.9063
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -15299783.1253,
+						"miny": -16579301.8546,
+						"maxx": 15301601.7279,
+						"maxy": 16579785.821
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -137.440290252,
+						"miny": -81.499357368,
+						"maxx": 137.456627037,
+						"maxy": 81.5
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2026-08-26T14:15:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_eckert&amp;width=30&amp;height=10"
+								},
+								"width":30,
+								"height":10
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Meteosat fog RGB",
+				"queryable": 1,
+				"Name": "test:satellite_fog",
+				"Abstract": "Fog RGB composite based on infrared channels",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -35.6127700767,
+					"eastBoundLongitude": 56.9508878748,
+					"southBoundLatitude": 34.306988383,
+					"northBoundLatitude": 72.1763236276
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -35.6127700767,
+						"miny": 34.306988383,
+						"maxx": 56.9508878748,
+						"maxy": 72.1763236276
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -35.6127700767,
+						"miny": 34.306988383,
+						"maxx": 56.9508878748,
+						"maxy": 72.1763236276
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -35.6127700767,
+						"miny": 34.306988383,
+						"maxx": 56.9508878748,
+						"maxy": 72.1763236276
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -3517598.64661,
+						"miny": -5215054.45636,
+						"maxx": 2499932.76732,
+						"maxy": -2335234.48907
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 351061.235938,
+						"miny": 2481198.06961,
+						"maxx": 5467539.60993,
+						"maxy": 5748961.77135
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -3964395.43067,
+						"miny": 4070097.92983,
+						"maxx": 6339743.83845,
+						"maxy": 11817005.8042
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -35.6127700767,
+						"miny": 34.306988383,
+						"maxx": 56.9508878748,
+						"maxy": 72.1763236276
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2023-09-29T15:30:00Z/2023-09-29T16:30:00Z/PT15M",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				]
+
+			},
+			{
+				"Title": "Meteosat infrared 10.8 um",
+				"queryable": 1,
+				"Name": "test:satellite_geos",
+				"Abstract": "SEVIRI infrared imagery in the satellite projection",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -77.3654860215,
+					"eastBoundLongitude": 76.9328334224,
+					"southBoundLatitude": -77.0855377363,
+					"northBoundLatitude": 77.5731828406
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -77.3654860215,
+						"miny": -77.0855377363,
+						"maxx": 76.9328334224,
+						"maxy": 77.5731828406
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -77.3654860215,
+						"miny": -77.0855377363,
+						"maxx": 76.9328334224,
+						"maxy": 77.5731828406
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -77.3654860215,
+						"miny": -77.0855377363,
+						"maxx": 76.9328334224,
+						"maxy": 77.5731828406
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4460461.91185,
+						"miny": -6612906.73204,
+						"maxx": 3147443.40223,
+						"maxy": -1340367.11008
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": -146473.113242,
+						"miny": 1527541.11022,
+						"maxx": 5132955.78952,
+						"maxy": 6254628.29192
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -8612286.50889,
+						"miny": -13896557.3653,
+						"maxx": 8564123.84186,
+						"maxy": 14144070.3544
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -77.3654860215,
+						"miny": -77.0855377363,
+						"maxx": 76.9328334224,
+						"maxy": 77.5731828406
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2026-08-26T14:15:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_geos&amp;width=30&amp;height=10"
+								},
+								"width":30,
+								"height":10
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Meteosat natural colours",
+				"queryable": 1,
+				"Name": "test:satellite_meteosat",
+				"Abstract": "SEVIRI natural colour composite with colorized IR clouds",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -44.8341977761,
+					"eastBoundLongitude": 63.2346333934,
+					"southBoundLatitude": 27.6432215864,
+					"northBoundLatitude": 75.5867086753
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4026475.75074,
+						"miny": -5969495.78871,
+						"maxx": 2740510.13325,
+						"maxy": -2047581.05324
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 1876.71271849,
+						"miny": 1828180.77256,
+						"maxx": 5257446.52168,
+						"maxy": 6069857.08099
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -4990920.06656,
+						"miny": 3204066.20637,
+						"maxx": 7039247.18985,
+						"maxy": 13189542.706
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -44.8341977761,
+						"miny": 27.6432215864,
+						"maxx": 63.2346333934,
+						"maxy": 75.5867086753
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2026-08-26T14:15:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asatellite_meteosat&amp;width=30&amp;height=10"
+								},
+								"width":30,
+								"height":10
 							}
 						]
 					}
@@ -9326,6 +10154,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -9438,6 +10276,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -9708,6 +10556,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -9816,6 +10674,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -9932,6 +10800,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -9949,6 +10827,129 @@
 									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_p&amp;width=800&amp;height=990"
 								},
 								"width":800,
+								"height":990
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Temperature on pressure levels",
+				"queryable": 1,
+				"Name": "test:t2m_pressure",
+				"Abstract": "ECMWF temperature isobands on constant pressure levels. Carries an elevation dimension (pressure level) for testing WMS/WMTS/OGC-Tiles elevation handling.",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -9.09870632718,
+					"eastBoundLongitude": 49,
+					"southBoundLatitude": 51.3,
+					"northBoundLatitude": 72.6420840803
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -1370208.73749,
+						"miny": -3957215.70836,
+						"maxx": 2152881.41537,
+						"maxy": -2658587.1382
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2036555.48431,
+						"miny": -3659162.45965,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 3006482.43753,
+						"miny": 3305514.91803,
+						"maxx": 5439122.40217,
+						"maxy": 5793050.59535
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -1012863.35522,
+						"miny": 6674532.79847,
+						"maxx": 5454655.04887,
+						"maxy": 11988575.3708
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2008-09-09T00:00:00Z,2008-09-09T03:00:00Z,2008-09-09T06:00:00Z,2008-09-09T09:00:00Z,2008-09-09T12:00:00Z,2008-09-09T15:00:00Z,2008-09-09T18:00:00Z,2008-09-09T21:00:00Z,2008-09-10T00:00:00Z,2008-09-10T03:00:00Z,2008-09-10T06:00:00Z,2008-09-10T09:00:00Z,2008-09-10T12:00:00Z,2008-09-10T15:00:00Z,2008-09-10T18:00:00Z,2008-09-10T21:00:00Z,2008-09-11T00:00:00Z,2008-09-11T03:00:00Z,2008-09-11T06:00:00Z,2008-09-11T09:00:00Z,2008-09-11T12:00:00Z,2008-09-11T15:00:00Z,2008-09-11T18:00:00Z,2008-09-11T21:00:00Z,2008-09-12T00:00:00Z,2008-09-12T03:00:00Z,2008-09-12T06:00:00Z,2008-09-12T09:00:00Z,2008-09-12T12:00:00Z,2008-09-12T15:00:00Z,2008-09-12T18:00:00Z,2008-09-12T21:00:00Z,2008-09-13T00:00:00Z,2008-09-13T03:00:00Z,2008-09-13T06:00:00Z,2008-09-13T09:00:00Z,2008-09-13T12:00:00Z,2008-09-13T15:00:00Z,2008-09-13T18:00:00Z,2008-09-13T21:00:00Z,2008-09-14T00:00:00Z,2008-09-14T06:00:00Z,2008-09-14T12:00:00Z,2008-09-14T18:00:00Z,2008-09-15T00:00:00Z,2008-09-15T06:00:00Z,2008-09-15T12:00:00Z,2008-09-15T18:00:00Z,2008-09-16T00:00:00Z,2008-09-16T06:00:00Z,2008-09-16T12:00:00Z,2008-09-16T18:00:00Z,2008-09-17T00:00:00Z,2008-09-17T06:00:00Z,2008-09-17T12:00:00Z,2008-09-17T18:00:00Z,2008-09-18T00:00:00Z,2008-09-18T06:00:00Z,2008-09-18T12:00:00Z,2008-09-18T18:00:00Z,2008-09-19T00:00:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-09-09T00:00:00Z",
+						"default": "2008-09-09T00:00:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_pressure&amp;width=650&amp;height=990"
+								},
+								"width":650,
 								"height":990
 							}
 						]
@@ -10143,6 +11144,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -10315,6 +11326,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -10429,6 +11450,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -10569,6 +11600,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -10705,6 +11746,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -10831,6 +11882,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -10965,6 +12026,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -11095,6 +12166,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -11130,6 +12211,372 @@
 									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windnumbers_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers_aggregate_min&amp;width=274&amp;height=10"
 								},
 								"width":274,
+								"height":10
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Regression test layer 1 (under intermediate aaa)",
+				"queryable": 1,
+				"Name": "test:zzregtime:aaa:leaf1",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -9.09870632718,
+					"eastBoundLongitude": 49,
+					"southBoundLatitude": 51.3,
+					"northBoundLatitude": 72.6420840803
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -1370208.73749,
+						"miny": -3957215.70836,
+						"maxx": 2152881.41537,
+						"maxy": -2658587.1382
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2036555.48431,
+						"miny": -3659162.45965,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 3006482.43753,
+						"miny": 3305514.91803,
+						"maxx": 5439122.40217,
+						"maxy": 5793050.59535
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -1012863.35522,
+						"miny": 6674532.79847,
+						"maxx": 5454655.04887,
+						"maxy": 11988575.3708
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf1&amp;width=124&amp;height=10"
+								},
+								"width":124,
+								"height":10
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Regression test layer 2 (under intermediate aaa)",
+				"queryable": 1,
+				"Name": "test:zzregtime:aaa:leaf2",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -9.09870632718,
+					"eastBoundLongitude": 49,
+					"southBoundLatitude": 51.3,
+					"northBoundLatitude": 72.6420840803
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -1370208.73749,
+						"miny": -3957215.70836,
+						"maxx": 2152881.41537,
+						"maxy": -2658587.1382
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2036555.48431,
+						"miny": -3659162.45965,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 3006482.43753,
+						"miny": 3305514.91803,
+						"maxx": 5439122.40217,
+						"maxy": 5793050.59535
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -1012863.35522,
+						"miny": 6674532.79847,
+						"maxx": 5454655.04887,
+						"maxy": 11988575.3708
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf2&amp;width=124&amp;height=10"
+								},
+								"width":124,
+								"height":10
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Regression test sibling leaf (zzz, sorts after intermediate aaa)",
+				"queryable": 1,
+				"Name": "test:zzregtime:zzz",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -9.09870632718,
+					"eastBoundLongitude": 49,
+					"southBoundLatitude": 51.3,
+					"northBoundLatitude": 72.6420840803
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -1370208.73749,
+						"miny": -3957215.70836,
+						"maxx": 2152881.41537,
+						"maxy": -2658587.1382
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2036555.48431,
+						"miny": -3659162.45965,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 3006482.43753,
+						"miny": 3305514.91803,
+						"maxx": 5439122.40217,
+						"maxy": 5793050.59535
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -1012863.35522,
+						"miny": 6674532.79847,
+						"maxx": 5454655.04887,
+						"maxy": 11988575.3708
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Azzz&amp;width=124&amp;height=10"
+								},
+								"width":124,
 								"height":10
 							}
 						]
@@ -11222,6 +12669,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2015-03-13T12:00:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2015-03-13T00:00:00Z",
+						"default": "2015-03-13T00:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1
@@ -11339,6 +12796,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2016-04-13T06:23:00Z",
+						"default": "2016-04-13T06:23:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -11357,6 +12824,129 @@
 								},
 								"width":180,
 								"height":520
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "PAL Skandinavia HiRes Temperature",
+				"queryable": 1,
+				"Name": "variant:pal:hirestemperature",
+				"Abstract": "PAL HiRes abstract",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -9.09870632718,
+					"eastBoundLongitude": 49,
+					"southBoundLatitude": 51.3,
+					"northBoundLatitude": 72.6420840803
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -1370208.73749,
+						"miny": -3957215.70836,
+						"maxx": 2152881.41537,
+						"maxy": -2658587.1382
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2036555.48431,
+						"miny": -3659162.45965,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 3006482.43753,
+						"miny": 3305514.91803,
+						"maxx": 5439122.40217,
+						"maxy": 5793050.59535
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -1012863.35522,
+						"miny": 6674532.79847,
+						"maxx": 5454655.04887,
+						"maxy": 11988575.3708
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -9.09870632718,
+						"miny": 51.3,
+						"maxx": 49,
+						"maxy": 72.6420840803
+					}
+				],
+				"Dimension":
+				[
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=variant%3Apal%3Ahirestemperature&amp;width=500&amp;height=1959"
+								},
+								"width":500,
+								"height":1959
 							}
 						]
 					}
@@ -11452,6 +13042,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -11470,342 +13070,6 @@
 								},
 								"width":500,
 								"height":990
-							}
-						]
-					}
-				]
-
-			},
-			{
-				"Title": "Regression test layer 1 (under intermediate aaa)",
-				"queryable": 1,
-				"Name": "test:zzregtime:aaa:leaf1",
-				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": -9.09870632718,
-					"eastBoundLongitude": 49,
-					"southBoundLatitude": 51.3,
-					"northBoundLatitude": 72.6420840803
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "CRS:27",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:83",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:84",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:SmartMetEurope",
-						"minx": -1370208.73749,
-						"miny": -3957215.70836,
-						"maxx": 2152881.41537,
-						"maxy": -2658587.1382
-					},
-					{
-						"CRS": "CRS:SmartMetScandinavia",
-						"minx": -2036555.48431,
-						"miny": -3659162.45965,
-						"maxx": 1010088.45179,
-						"maxy": -1822247.80407
-					},
-					{
-						"CRS": "EPSG:3035",
-						"minx": 3006482.43753,
-						"miny": 3305514.91803,
-						"maxx": 5439122.40217,
-						"maxy": 5793050.59535
-					},
-					{
-						"CRS": "EPSG:3067",
-						"minx": 43547.7892277,
-						"miny": 6549298.62199,
-						"maxx": 674306.988933,
-						"maxy": 7782478.68382
-					},
-					{
-						"CRS": "EPSG:3857",
-						"minx": -1012863.35522,
-						"miny": 6674532.79847,
-						"maxx": 5454655.04887,
-						"maxy": 11988575.3708
-					},
-					{
-						"CRS": "EPSG:4326",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					}
-				],
-				"Dimension":
-				[
-					{
-						"name": "time",
-						"units": "ISO8601",
-						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
-						"multipleValues": 0,
-						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf1&amp;width=124&amp;height=10"
-								},
-								"width":124,
-								"height":10
-							}
-						]
-					}
-				]
-
-			},
-			{
-				"Title": "Regression test layer 2 (under intermediate aaa)",
-				"queryable": 1,
-				"Name": "test:zzregtime:aaa:leaf2",
-				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": -9.09870632718,
-					"eastBoundLongitude": 49,
-					"southBoundLatitude": 51.3,
-					"northBoundLatitude": 72.6420840803
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "CRS:27",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:83",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:84",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:SmartMetEurope",
-						"minx": -1370208.73749,
-						"miny": -3957215.70836,
-						"maxx": 2152881.41537,
-						"maxy": -2658587.1382
-					},
-					{
-						"CRS": "CRS:SmartMetScandinavia",
-						"minx": -2036555.48431,
-						"miny": -3659162.45965,
-						"maxx": 1010088.45179,
-						"maxy": -1822247.80407
-					},
-					{
-						"CRS": "EPSG:3035",
-						"minx": 3006482.43753,
-						"miny": 3305514.91803,
-						"maxx": 5439122.40217,
-						"maxy": 5793050.59535
-					},
-					{
-						"CRS": "EPSG:3067",
-						"minx": 43547.7892277,
-						"miny": 6549298.62199,
-						"maxx": 674306.988933,
-						"maxy": 7782478.68382
-					},
-					{
-						"CRS": "EPSG:3857",
-						"minx": -1012863.35522,
-						"miny": 6674532.79847,
-						"maxx": 5454655.04887,
-						"maxy": 11988575.3708
-					},
-					{
-						"CRS": "EPSG:4326",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					}
-				],
-				"Dimension":
-				[
-					{
-						"name": "time",
-						"units": "ISO8601",
-						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
-						"multipleValues": 0,
-						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Aaaa%3Aleaf2&amp;width=124&amp;height=10"
-								},
-								"width":124,
-								"height":10
-							}
-						]
-					}
-				]
-
-			},
-			{
-				"Title": "Regression test sibling leaf (zzz, sorts after intermediate aaa)",
-				"queryable": 1,
-				"Name": "test:zzregtime:zzz",
-				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": -9.09870632718,
-					"eastBoundLongitude": 49,
-					"southBoundLatitude": 51.3,
-					"northBoundLatitude": 72.6420840803
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "CRS:27",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:83",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:84",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					},
-					{
-						"CRS": "CRS:SmartMetEurope",
-						"minx": -1370208.73749,
-						"miny": -3957215.70836,
-						"maxx": 2152881.41537,
-						"maxy": -2658587.1382
-					},
-					{
-						"CRS": "CRS:SmartMetScandinavia",
-						"minx": -2036555.48431,
-						"miny": -3659162.45965,
-						"maxx": 1010088.45179,
-						"maxy": -1822247.80407
-					},
-					{
-						"CRS": "EPSG:3035",
-						"minx": 3006482.43753,
-						"miny": 3305514.91803,
-						"maxx": 5439122.40217,
-						"maxy": 5793050.59535
-					},
-					{
-						"CRS": "EPSG:3067",
-						"minx": 43547.7892277,
-						"miny": 6549298.62199,
-						"maxx": 674306.988933,
-						"maxy": 7782478.68382
-					},
-					{
-						"CRS": "EPSG:3857",
-						"minx": -1012863.35522,
-						"miny": 6674532.79847,
-						"maxx": 5454655.04887,
-						"maxy": 11988575.3708
-					},
-					{
-						"CRS": "EPSG:4326",
-						"minx": -9.09870632718,
-						"miny": 51.3,
-						"maxx": 49,
-						"maxy": 72.6420840803
-					}
-				],
-				"Dimension":
-				[
-					{
-						"name": "time",
-						"units": "ISO8601",
-						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
-						"multipleValues": 0,
-						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzregtime%3Azzz&amp;width=124&amp;height=10"
-								},
-								"width":124,
-								"height":10
 							}
 						]
 					}

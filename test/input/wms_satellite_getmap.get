@@ -1,0 +1,1 @@
+GET /wms?service=WMS&version=1.3.0&request=GetMap&layers=test:satellite_meteosat&styles=&crs=EPSG:3857&bbox=1500000,8000000,4000000,10500000&width=400&height=400&format=image/png&transparent=true&time=20260826T141500 HTTP/1.0

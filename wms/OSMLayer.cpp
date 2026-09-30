@@ -516,7 +516,7 @@ void OSMLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
           CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
           text_cdt["start"] = "<text";
           text_cdt["end"] = "</text>";
-          text_cdt["cdata"] = name;
+          text_cdt["cdata"] = Fmi::safexmlescape(name);
           text_cdt["attributes"]["x"] = Fmi::to_string(static_cast<long>(std::round(cx)));
           text_cdt["attributes"]["y"] = Fmi::to_string(static_cast<long>(std::round(cy)));
           theState.addAttributes(theGlobals, text_cdt, fs.attributes);

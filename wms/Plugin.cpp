@@ -14,11 +14,11 @@
 #include "Product.h"
 #include "State.h"
 #include "TextUtility.h"
+#include "ogc/QueryStatus.h"
+#include "tiles/Config.h"
 #include "wms/Config.h"
 #include "wms/Exception.h"
 #include "wmts/Config.h"
-#include "tiles/Config.h"
-#include "ogc/QueryStatus.h"
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
@@ -38,6 +38,7 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <trax/Contour.h>
 #include <memory>
 #include <stdexcept>
 
@@ -55,6 +56,29 @@ Json::CharReaderBuilder charreaderbuilder;
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Hash value of a file: its path, modification time and size
+ *
+ * The contents are not hashed, since reading and hashing every byte of every
+ * style sheet and symbol would be needed for each ETag calculation. The path
+ * must be included: two different files may well share a modification time.
+ */
+// ----------------------------------------------------------------------
+
+std::size_t file_hash(const Spine::FileCache &theFileCache, const std::string &thePath)
+{
+  if (thePath.empty())
+    return 0;
+
+  const auto stamp = theFileCache.stamp(thePath);
+
+  auto hash = Fmi::hash_value(thePath);
+  Fmi::hash_combine(hash, Fmi::hash_value(stamp.modification_time));
+  Fmi::hash_combine(hash, Fmi::hash_value(stamp.size));
+  return hash;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Validate name for inclusion
  *
  * A valid name does not lead upwards in a path if inserted into a path. If the name looks valid, we
@@ -67,7 +91,9 @@ std::string check_attack(std::string theName)
 {
   try
   {
-    if (theName.find("./") == std::string::npos)
+    // Reject both "../x" and a bare ".." (e.g. customer=".." climbs one level up
+    // when inserted as a path component)
+    if (theName.find("./") == std::string::npos && theName.find("..") == std::string::npos)
       return theName;  // cannot take const reference as input due to this line
 
     throw Fmi::Exception(
@@ -87,8 +113,8 @@ const std::set<std::string, Spine::HTTP::ParamMap::key_compare> allowed_keys = {
     "language",     "level",      "levelId",  "levelid",      "margin",
     "origintime",   "png",        "producer", "projection",   "source",
     "source",       "svg_tmpl",   "time",     "time_offset",  "timestep",
-    "title",        "type",       "tz",       "views",        "width",
-    "xmargin",      "ymargin"};
+    "title",        "type",       "tz",       "views",        "webp",
+    "width",        "xmargin",    "ymargin"};
 
 void check_remaining_dali_json(Json::Value &json, const std::string &name)
 {
@@ -106,6 +132,39 @@ void check_remaining_dali_json(Json::Value &json, const std::string &name)
                              writer.write(json))
               << std::flush;
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Inject a style element showing only one time animation frame
+ *
+ * Layers supporting time animation tag their elements with classes
+ * "flashanim flashanim-f<N>". Each animation frame is rendered from the
+ * same SVG with a style toggling the visibility of the buckets.
+ */
+// ----------------------------------------------------------------------
+
+std::string injectFrameStyle(const std::string &theSvg, int theFrame, bool theAccumulate)
+{
+  std::string style = "<style type=\"text/css\">.flashanim{display:none}";
+  if (theAccumulate)
+    for (int i = 0; i <= theFrame; i++)
+      style += ".flashanim-f" + Fmi::to_string(i) + "{display:inline}";
+  else
+    style += ".flashanim-f" + Fmi::to_string(theFrame) + "{display:inline}";
+  style += "</style>";
+
+  auto svgpos = theSvg.find("<svg");
+  auto pos = (svgpos == std::string::npos ? svgpos : theSvg.find('>', svgpos));
+  if (pos == std::string::npos)
+    throw Fmi::Exception(BCP, "Cannot animate non-SVG content");
+
+  std::string out;
+  out.reserve(theSvg.size() + style.size());
+  out.append(theSvg, 0, pos + 1);
+  out += style;
+  out.append(theSvg, pos + 1, std::string::npos);
+  return out;
 }
 
 }  // namespace
@@ -294,6 +353,21 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       }
     }
 
+    // With a valid hash we can serve conditional requests: advertise the ETag
+    // for every response path below and, when running standalone (no frontend
+    // probe), honour If-None-Match / If-Match with 304 / 412 before generating
+    // or returning any body.
+    if (product_hash != Fmi::bad_hash)
+    {
+      auto etag = fmt::sprintf("\"%x\"", product_hash);
+      theResponse.setHeader("ETag", etag);
+      if (auto status = Spine::HTTP::conditionalResponseStatus(theRequest, etag))
+      {
+        theResponse.setStatus(*status);
+        return;
+      }
+    }
+
     auto obj = itsImageCache->find(product_hash);
 
     if (obj)
@@ -311,8 +385,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("geotiff"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -324,8 +396,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("mvt"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -337,8 +407,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("datatile"));
-      if (product_hash != Fmi::bad_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);
       return;
     }
@@ -468,7 +536,26 @@ void Plugin::formatResponse(const std::string &theSvg,
       if (theType == "png")
         buffer = std::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
       else if (theType == "webp")
-        buffer = std::make_shared<std::string>(Giza::Svg::towebp(theSvg));
+      {
+        if (theProduct.webp.frames)
+        {
+          // Animated WebP: render one frame per time animation bucket
+          const int nframes = *theProduct.webp.frames;
+          std::vector<std::string> svgs;
+          svgs.reserve(nframes);
+          for (int i = 0; i < nframes; i++)
+            svgs.push_back(injectFrameStyle(theSvg, i, theProduct.webp.accumulate));
+          std::vector<int> durations(nframes, theProduct.webp.frame_duration);
+          buffer = std::make_shared<std::string>(Giza::Svg::towebpanim(svgs,
+                                                                       durations,
+                                                                       theProduct.webp.loop,
+                                                                       theProduct.png.options,
+                                                                       theProduct.webp.options));
+        }
+        else
+          buffer = std::make_shared<std::string>(
+              Giza::Svg::towebp(theSvg, theProduct.png.options, theProduct.webp.options));
+      }
       else if (theType == "pdf")
         buffer = std::make_shared<std::string>(Giza::Svg::topdf(theSvg));
       else if (theType == "ps")
@@ -516,7 +603,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       using Fmi::DateTime;
 
-      const std::string& resource = theRequest.getResource();
+      const std::string &resource = theRequest.getResource();
 
       if (resource == "/wms")
       {
@@ -527,7 +614,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
         // may modify HTTP status set above
         try
         {
-          OGC::QueryStatus status = itsWMSHandler->query(theReactor, state, theRequest, theResponse);
+          OGC::QueryStatus status =
+              itsWMSHandler->query(theReactor, state, theRequest, theResponse);
 
           switch (status)
           {
@@ -647,6 +735,12 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       {
         // Delivering the exception information as HTTP content
         std::string fullMessage = exception.getHtmlStackTrace();
+        // The stack trace includes the request URI and the Apikey parameter, either of
+        // which can carry the caller's fmi-apikey. Redact the apikey value from the
+        // client-facing debug content (the full value stays in the server log via
+        // printError above) so debug=1 cannot be used to read back an apikey.
+        if (apikey && !apikey->empty())
+          boost::algorithm::replace_all(fullMessage, *apikey, "<redacted>");
         theResponse.setContent(fullMessage);
         theResponse.setStatus(Spine::HTTP::Status::ok);
       }
@@ -704,6 +798,10 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
           ANSI_BOLD_OFF);
       return;
     }
+
+    // Size the process-wide Trax contouring worker pool once at startup. Without this the
+    // band-parallel engine stays dormant; n == 0 (the default) keeps contouring single-threaded.
+    Trax::Contour::set_worker_threads(itsConfig.contourWorkerThreads());
   }
   catch (...)
   {
@@ -758,6 +856,18 @@ void Plugin::init()
     if (Spine::Reactor::isShuttingDown())
       return;
 #endif
+
+    // Satellite (optional — only loaded when the engine is configured)
+    try
+    {
+      itsSatelliteEngine = itsReactor->getEngine<Engine::Satellite::Engine>("Satellite", nullptr);
+    }
+    catch (...)
+    {
+      itsSatelliteEngine = nullptr;
+    }
+    if (Spine::Reactor::isShuttingDown())
+      return;
 
     // QUERYDATA
 
@@ -831,19 +941,19 @@ void Plugin::init()
                                                 itsGisEngine.get(),
                                                 itsGridEngine.get());
 #else
-      wmsConfig = std::make_unique<WMS::Config>(
-          itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
+      wmsConfig =
+          std::make_unique<WMS::Config>(itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
 #endif
     }
 
 #else
 #ifndef WITHOUT_OBSERVATION
     std::unique_ptr<WMS::Config> wmsConfig = std::make_unique<WMS::Config>(itsConfig,
-                                                                            itsJsonCache,
-                                                                            itsQEngine.get(),
-                                                                            itsObsEngine.get(),
-                                                                            itsGisEngine.get(),
-                                                                            itsGridEngine.get());
+                                                                           itsJsonCache,
+                                                                           itsQEngine.get(),
+                                                                           itsObsEngine.get(),
+                                                                           itsGisEngine.get(),
+                                                                           itsGridEngine.get());
 #else
     std::unique_ptr<WMS::Config> wmsConfig = std::make_unique<WMS::Config>(
         itsConfig, itsJsonCache, itsQEngine.get(), itsGisEngine.get(), itsGridEngine.get());
@@ -852,6 +962,8 @@ void Plugin::init()
 
     if (Spine::Reactor::isShuttingDown())
       wmsConfig->shutdown();
+
+    wmsConfig->setSatelliteEngine(itsSatelliteEngine.get());
 
     wmsConfig->init();  // heavy initializations
 
@@ -868,11 +980,17 @@ void Plugin::init()
     auto wmtsConfig = std::make_unique<WMTS::Config>(itsConfig, *itsWMSConfig);
     itsWMTSHandler = std::make_unique<WMTS::Handler>(itsConfig);
     itsWMTSHandler->init(std::move(wmtsConfig));
+    // WMTS GetFeatureInfo is translated into WMS vocabulary and delegated to
+    // the WMS handler, so both services share one feature-info implementation.
+    itsWMTSHandler->setWMSHandler(itsWMSHandler.get());
 
     // Initialize OGC API - Tiles handler — shares layer registry with WMS via itsWMSConfig
     auto tilesConfig = std::make_unique<Tiles::Config>(itsConfig, *itsWMSConfig);
     itsTilesHandler = std::make_unique<Tiles::Handler>(itsConfig);
     itsTilesHandler->init(std::move(tilesConfig));
+    // Feature info is translated into WMS vocabulary and delegated to the WMS
+    // handler, like the WMTS FeatureInfo resource.
+    itsTilesHandler->setWMSHandler(itsWMSHandler.get());
 
     // Register dali content handler
 
@@ -906,7 +1024,7 @@ void Plugin::init()
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
             { callRequestHandler(theReactor, theRequest, theResponse); },
-            {},    // supportedPostContentTypes
+            {},  // supportedPostContentTypes
             true /* handlesUriPrefix */))
       throw Fmi::Exception(BCP, "Failed to register WMTS content handler");
 
@@ -919,7 +1037,7 @@ void Plugin::init()
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
             { callRequestHandler(theReactor, theRequest, theResponse); },
-            {},    // supportedPostContentTypes
+            {},  // supportedPostContentTypes
             true /* handlesUriPrefix */))
       throw Fmi::Exception(BCP, "Failed to register OGC API - Tiles content handler");
   }
@@ -971,7 +1089,7 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
   try
   {
     // WMS/WMTS/Tiles requests should be handled ASAP, others, not so much
-    const std::string& res = theRequest.getResource();
+    const std::string &res = theRequest.getResource();
     return (res == "/wms" || (res.size() >= 5 && res.substr(0, 5) == "/wmts") ||
             (res.size() >= 6 && res.substr(0, 6) == "/tiles"));
   }
@@ -1051,10 +1169,13 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
   {
     // Establish the path to the JSON file.
 
-    std::string customer_root =
-        (itsConfig.rootDirectory(theState.useWms()) + "/customers/" + theState.getCustomer());
+    // Reject relative paths leading upwards ("../") and absolute paths in the
+    // customer and product names to prevent cross-tenant path traversal.
 
-    std::string product_path = customer_root + "/products/" + theName + ".json";
+    std::string customer_root = (itsConfig.rootDirectory(theState.useWms()) + "/customers/" +
+                                 check_attack(theState.getCustomer()));
+
+    std::string product_path = customer_root + "/products/" + check_attack(theName) + ".json";
 
     if (!std::filesystem::exists(product_path))
     {
@@ -1079,6 +1200,22 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
     // Replace references (json: and ref:) from query string options
 
     auto params = extractValidParameters(theRequest.getParameterMap());
+
+    // Prevent local file inclusion: query string "json:" and "ref:" includes must
+    // not escape the configuration root via relative upward paths.
+
+    for (const auto &name_value : params)
+    {
+      const auto &value = name_value.second;
+      if (boost::algorithm::starts_with(value, "json:") ||
+          boost::algorithm::starts_with(value, "ref:"))
+      {
+        if (value.find("..") != std::string::npos)
+          throw Fmi::Exception(BCP, "Relative upward paths are not allowed in includes")
+              .addParameter("Parameter", name_value.first)
+              .addParameter("Value", value);
+      }
+    }
 
     Spine::JSON::replaceReferences(json, params);
 
@@ -1114,11 +1251,68 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Resolve a resource path, caching the result
+ *
+ * Probing the candidate locations takes up to four filesystem::exists calls,
+ * and the ETag hash value of a product resolves the path of every style sheet
+ * and symbol it refers to. The result is therefore cached and revalidated at
+ * the same interval as the contents of the files.
+ *
+ * Note that the list of tested paths is filled only when the path is actually
+ * resolved. It is used for error messages only, and the callers report the
+ * missing file even without it.
+ */
+// ----------------------------------------------------------------------
+
 std::string Plugin::resolveFilePath(const std::string &theCustomer,
                                     const std::string &theSubDir,
                                     const std::string &theFileName,
                                     bool theWmsFlag,
                                     std::list<std::string> &theTestedPaths) const
+{
+  if (theCustomer.empty() || theFileName.empty())
+    return "";
+
+  try
+  {
+    const auto key = fmt::format("{}|{}|{}|{}", theWmsFlag, theCustomer, theSubDir, theFileName);
+    const auto now = std::chrono::steady_clock::now();
+
+    {
+      Spine::ReadLock lock(itsPathCacheMutex);
+      auto pos = itsPathCache.find(key);
+      if (pos != itsPathCache.end() && now - pos->second.checked < itsPathCacheMaxAge)
+        return pos->second.path;
+    }
+
+    auto file_path = searchFilePath(theCustomer, theSubDir, theFileName, theWmsFlag, theTestedPaths);
+
+    {
+      Spine::WriteLock lock(itsPathCacheMutex);
+      itsPathCache[key] = CachedPath{file_path, now};
+    }
+
+    return file_path;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Resolving file name failed: " + theFileName);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Search the candidate locations for the given resource
+ */
+// ----------------------------------------------------------------------
+
+std::string Plugin::searchFilePath(const std::string &theCustomer,
+                                   const std::string &theSubDir,
+                                   const std::string &theFileName,
+                                   bool theWmsFlag,
+                                   std::list<std::string> &theTestedPaths) const
 {
   if (theCustomer.empty() || theFileName.empty())
     return "";
@@ -1249,6 +1443,40 @@ std::string Plugin::getStyle(const std::string &theCustomer,
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get the hash value of a style sheet
+ *
+ * The identity of a style sheet is described by its path, modification time and
+ * size. Hashing the contents would require reading the whole file and hashing
+ * every byte of it on every request. The other resource types (symbols, markers,
+ * patterns, gradients, colormaps and filters) are hashed the same way.
+ */
+// ----------------------------------------------------------------------
+
+std::size_t Plugin::getStyleHash(const std::string &theCustomer,
+                                 const std::string &theCSS,
+                                 bool theWmsFlag) const
+{
+  try
+  {
+    if (theCustomer.empty() || theCSS.empty())
+      return 0;
+
+    std::list<std::string> tested_files;
+    std::string css_path =
+        resolveFilePath(theCustomer, "/layers/", theCSS, theWmsFlag, tested_files);
+
+    return file_hash(itsFileCache, css_path);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to find the hash value of a style")
+        .addParameter("Customer", theCustomer)
+        .addParameter("CSS", theCSS);
+  }
+}
+
 std::map<std::string, std::string> Plugin::getStyle(const std::string &theCustomer,
                                                     const std::string &theCSS,
                                                     bool theWmsFlag,
@@ -1346,7 +1574,7 @@ std::size_t Plugin::getFilterHash(const std::string &theCustomer,
 
     std::string filter_path = resolveSvgPath(theCustomer, "/filters/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(filter_path);
+    return file_hash(itsFileCache, filter_path);
   }
   catch (...)
   {
@@ -1398,7 +1626,7 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
 
     std::string marker_path = resolveSvgPath(theCustomer, "/markers/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(marker_path);
+    return file_hash(itsFileCache, marker_path);
   }
   catch (...)
   {
@@ -1452,7 +1680,7 @@ std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
 
     std::string symbol_path = resolveSvgPath(theCustomer, "/symbols/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(symbol_path);
+    return file_hash(itsFileCache, symbol_path);
   }
   catch (...)
   {
@@ -1504,7 +1732,7 @@ std::size_t Plugin::getPatternHash(const std::string &theCustomer,
 
     std::string pattern_path = resolveSvgPath(theCustomer, "/patterns/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(pattern_path);
+    return file_hash(itsFileCache, pattern_path);
   }
   catch (...)
   {
@@ -1556,7 +1784,7 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
 
     std::string gradient_path = resolveSvgPath(theCustomer, "/gradients/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(gradient_path);
+    return file_hash(itsFileCache, gradient_path);
   }
   catch (...)
   {
@@ -1613,7 +1841,7 @@ std::size_t Plugin::getColorMapHash(const std::string &theCustomer,
 
     std::string colormap_path = resolveSvgPath(theCustomer, "/colormaps/", theName, theWmsFlag);
 
-    return itsFileCache.last_modified(colormap_path);
+    return file_hash(itsFileCache, colormap_path);
   }
   catch (...)
   {

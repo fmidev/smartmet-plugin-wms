@@ -29,6 +29,7 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImagePaint.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
 #include <spine/Convenience.h>
@@ -655,7 +656,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
         text_cdt["start"] = "<text";
         text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = txt;
+        text_cdt["cdata"] = Fmi::safexmlescape(txt);
 
         auto selection = Select::attribute(numbers, value);
 
@@ -885,7 +886,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
         text_cdt["start"] = "<text";
         text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = txt;
+        text_cdt["cdata"] = Fmi::safexmlescape(txt);
 
         auto selection = Select::attribute(numbers, value);
 
@@ -1063,9 +1064,9 @@ std::size_t NumberLayer::hash_value(const State& theState) const
 
     if (paraminfo.source != std::string("grid"))
     {
-      auto q = getModel(theState);
-      if (q)
-        Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
+      auto model_hash = getModelHashValue(theState);
+      if (model_hash)
+        Fmi::hash_combine(hash, *model_hash);
     }
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));

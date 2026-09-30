@@ -1,0 +1,2 @@
+GET /dali?customer=test&product=circle&time=200808050300&l1.qid=x%22%2F%3E%3Cscript%3Ealert(1)%3C%2Fscript%3E%3Cg%20id%3D%22y HTTP/1.0
+

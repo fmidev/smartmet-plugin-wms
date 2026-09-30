@@ -1,0 +1,1 @@
+GET /tiles/collections/test:t2m/styles/temperature_three_degrees?f=mapbox HTTP/1.0

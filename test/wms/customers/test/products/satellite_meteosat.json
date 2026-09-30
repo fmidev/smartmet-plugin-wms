@@ -1,0 +1,30 @@
+{
+  "title": "Meteosat natural colours",
+  "abstract": "SEVIRI natural colour composite with colorized IR clouds",
+  "producer": "meteosat",
+  "parameter": "natural",
+  "projection": {},
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "sat",
+          "layer_type": "satellite"
+        },
+        {
+          "qid": "borders",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3"
+          }
+        }
+      ]
+    }
+  ]
+}

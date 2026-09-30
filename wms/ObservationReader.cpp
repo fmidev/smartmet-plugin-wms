@@ -37,6 +37,25 @@ std::size_t add_help_parameter(std::vector<Spine::Parameter>& parameters, const 
   return n;
 }
 
+// Add extra parameter unless it is already included, keeping paramFuncs index-aligned with
+// parameters. Appending to paramFuncs unconditionally would desynchronize the two whenever a
+// help parameter is already among the layer parameters (getParameters() often lists fmisid),
+// and aggregate_data() then reads the wrong - possibly out of range - result column.
+std::size_t add_help_parameter(std::vector<Spine::Parameter>& parameters,
+                               std::vector<TS::ParameterAndFunctions>& paramFuncs,
+                               const std::string& param)
+{
+  for (auto i = 0UL; i < parameters.size(); i++)
+  {
+    if (parameters[i].name() == param)
+      return i;
+  }
+  auto n = parameters.size();
+  parameters.push_back(TS::makeParameter(param));
+  paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions(param));
+  return n;
+}
+
 struct DxDy
 {
   DxDy(int x, int y) : dx(x), dy(y) {}
@@ -93,16 +112,14 @@ PointValues read_flash_observations(const State& state,
     for (const auto& extraparam : iparams)
       settings.parameters.push_back(TS::makeParameter(extraparam));
 
-    // Generate the coordinates for the symbols
+    // Restrict the search to the drawn area. Flash observations are not tied to stations, so
+    // the bounding box must be given in settings.boundingBox for the observation engine to
+    // filter the strokes; translateToFMISID would merely resolve station identifiers which
+    // the flash queries ignore.
 
-    Engine::Querydata::Q q;
-    const bool forecast_mode = false;
-    auto points = positions.getPoints(q, crs, box, forecast_mode, state);
+    settings.boundingBox = layer.getClipBoundingBox(box, crs);
 
     auto& obsengine = state.getObsEngine();
-    Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
-    settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
 
     auto result = obsengine.values(settings);
 
@@ -158,6 +175,9 @@ PointValues read_flash_observations(const State& state,
       PointData pv{point};
       for (auto i = 0UL; i < parameters.size(); i++)
         pv.add(get_double(values.at(i).at(row)));
+
+      // The observation time (flash stroke time) enables time animation
+      pv.time(values.at(lon_idx).at(row).time.utc_time());
 
       pointvalues.push_back(pv);
     }
@@ -217,14 +237,10 @@ PointValues read_all_observations(const State& state,
       settings.parameters.push_back(paf.parameter);
     }
 
-    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
-    auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
-    auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
-
-    // Add fmisid, stationlon, stationlat into paramFuncs structure even if they dont have functions
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("fmisid"));
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlon"));
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlat"));
+    // Added to paramFuncs as well, but only when actually appended to settings.parameters
+    auto fmisid_idx = add_help_parameter(settings.parameters, paramFuncs, "fmisid");
+    auto lon_idx = add_help_parameter(settings.parameters, paramFuncs, "stationlon");
+    auto lat_idx = add_help_parameter(settings.parameters, paramFuncs, "stationlat");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -360,14 +376,10 @@ PointValues read_station_observations(const State& state,
       settings.parameters.push_back(paf.parameter);
     }
 
-    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
-    auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
-    auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
-
-    // Add fmisid, stationlon, stationlat into paramFuncs structure even if they dont have functions
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("fmisid"));
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlon"));
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlat"));
+    // Added to paramFuncs as well, but only when actually appended to settings.parameters
+    auto fmisid_idx = add_help_parameter(settings.parameters, paramFuncs, "fmisid");
+    auto lon_idx = add_help_parameter(settings.parameters, paramFuncs, "stationlon");
+    auto lat_idx = add_help_parameter(settings.parameters, paramFuncs, "stationlat");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -570,14 +582,10 @@ PointValues read_latlon_observations(const State& state,
       settings.parameters.push_back(paf.parameter);
     }
 
-    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
-    auto stationlon_idx = add_help_parameter(settings.parameters, "stationlon");
-    auto stationlat_idx = add_help_parameter(settings.parameters, "stationlat");
-
-    // Add fmisid, stationlon, stationlat into paramFuncs structure even if they dont have functions
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("fmisid"));
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlon"));
-    paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlat"));
+    // Added to paramFuncs as well, but only when actually appended to settings.parameters
+    auto fmisid_idx = add_help_parameter(settings.parameters, paramFuncs, "fmisid");
+    auto stationlon_idx = add_help_parameter(settings.parameters, paramFuncs, "stationlon");
+    auto stationlat_idx = add_help_parameter(settings.parameters, paramFuncs, "stationlat");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();

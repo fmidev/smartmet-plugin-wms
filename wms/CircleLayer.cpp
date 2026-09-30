@@ -12,6 +12,7 @@
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <ogr_geometry.h>
 
 namespace SmartMet
@@ -421,7 +422,7 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
               CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
               text_cdt["start"] = " <text";
               text_cdt["end"] = "</text>";
-              text_cdt["cdata"] = txt;
+              text_cdt["cdata"] = Fmi::safexmlescape(txt);
 
               text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
               text_cdt["attributes"]["y"] = Fmi::to_string(ypos);

@@ -93,6 +93,11 @@ class Properties
 
   std::optional<int> timestep;
 
+  // Override for the number of row-bands used in parallel contouring. Set at product top level
+  // or per layer (cascades to child layers); overrides the contour/grid engine default. The
+  // effective value is capped to the number of cores by the engine.
+  std::optional<int> contour_threads;
+
  private:
   // Wanted time T = time + time_offset. Making these private forces using getValidTime()
   std::optional<Fmi::DateTime> time;

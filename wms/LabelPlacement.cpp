@@ -364,7 +364,8 @@ std::pair<double, double> candidateSymbolHalf(const LabelCandidate& c)
 
 std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
                                         const std::vector<LabelCandidate>& candidates,
-                                        double /*map_w*/, double /*map_h*/)
+                                        double /*map_w*/, double /*map_h*/,
+                                        const FeasibilityFn& feasible)
 {
   const int pos_idx = fixedPositionIndex(config.fixed_position);
   const double pad = config.bbox_padding;
@@ -398,6 +399,15 @@ std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
   {
     const auto& bi = chosen[i];
     const LabelBBox test_i = (pad > 0.0) ? bi.inflated(pad) : bi;
+
+    // Country constraint: the single fixed position is all "fixed" offers,
+    // so if it falls in a foreign country there is nothing to fall back to —
+    // drop the label rather than place it across a border.
+    if (feasible && !feasible(candidates[i], bi))
+    {
+      kept[i] = false;
+      continue;
+    }
 
     bool conflict = false;
     for (size_t j = 0; j < i; j++)
@@ -444,7 +454,8 @@ std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
 // ------------------------------------------------------------------
 std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
                                     const std::vector<LabelCandidate>& candidates,
-                                    double map_w, double map_h)
+                                    double map_w, double map_h,
+                                    const FeasibilityFn& feasible)
 {
   const size_t n = candidates.size();
   std::vector<PlacedLabel> result;
@@ -526,6 +537,13 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
       if (!withinBounds(bbox, map_w, map_h))
         continue;
 
+      // Country constraint: skip positions that would render this label in a
+      // different country.  Tested on the natural bbox (geography ignores the
+      // collision padding).  If every position is rejected the label falls
+      // through to makeDropped below, exactly like an unplaceable label.
+      if (feasible && !feasible(cand, bbox))
+        continue;
+
       // Inflate for collision testing only — absorbs sub-pixel font-metric
       // variation between systems and gives a small visual breathing space.
       const LabelBBox test = (pad > 0.0) ? bbox.inflated(pad) : bbox;
@@ -589,9 +607,10 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
 // ------------------------------------------------------------------
 std::vector<PlacedLabel> greedyPlacement(const LabelConfig& config,
                                          const std::vector<LabelCandidate>& candidates,
-                                         double map_w, double map_h)
+                                         double map_w, double map_h,
+                                         const FeasibilityFn& feasible)
 {
-  return greedyCore(config, candidates, map_w, map_h);
+  return greedyCore(config, candidates, map_w, map_h, feasible);
 }
 
 // ------------------------------------------------------------------
@@ -601,7 +620,8 @@ std::vector<PlacedLabel> greedyPlacement(const LabelConfig& config,
 // ------------------------------------------------------------------
 std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
                                                   std::vector<LabelCandidate> candidates,
-                                                  double map_w, double map_h)
+                                                  double map_w, double map_h,
+                                                  const FeasibilityFn& feasible)
 {
   const size_t n = candidates.size();
   std::vector<size_t> order(n);
@@ -643,7 +663,9 @@ std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
   for (auto idx : order)
     sorted.push_back(candidates[idx]);
 
-  auto sorted_result = greedyCore(config, sorted, map_w, map_h);
+  // The predicate reads each candidate by reference (anchor + region_id),
+  // so the re-sort does not disturb it — no index remapping needed.
+  auto sorted_result = greedyCore(config, sorted, map_w, map_h, feasible);
 
   std::vector<PlacedLabel> result(n);
   for (size_t i = 0; i < n; i++)
@@ -669,7 +691,8 @@ std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
 // ------------------------------------------------------------------
 std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
                                                       const std::vector<LabelCandidate>& candidates,
-                                                      double map_w, double map_h)
+                                                      double map_w, double map_h,
+                                                      const FeasibilityFn& feasible)
 {
   const int n = static_cast<int>(candidates.size());
   if (n == 0)
@@ -707,6 +730,31 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
   for (int i = 0; i < n; i++)
     obstacles[static_cast<size_t>(i)] = candidates[static_cast<size_t>(i)].obstacle;
 
+  // Country constraint: precompute per-position feasibility once (the
+  // polygons are static for the whole anneal).  This turns the constraint
+  // into an O(1) lookup inside the hot loop and keeps it a *hard* rule —
+  // an infeasible position is simply never assigned, so SA cannot trade a
+  // border crossing for lower overlap energy.  When no predicate is given
+  // the matrix is empty and every lookup short-circuits to "feasible".
+  std::vector<std::vector<char>> feasible_pos;
+  if (feasible)
+  {
+    feasible_pos.resize(static_cast<size_t>(n));
+    for (int i = 0; i < n; i++)
+    {
+      const auto& bb = render_bboxes[static_cast<size_t>(i)];
+      auto& row = feasible_pos[static_cast<size_t>(i)];
+      row.resize(bb.size());
+      for (size_t k = 0; k < bb.size(); k++)
+        row[k] = feasible(candidates[static_cast<size_t>(i)], bb[k]) ? 1 : 0;
+    }
+  }
+  auto isFeasible = [&](int i, int k) -> bool {
+    if (feasible_pos.empty())
+      return true;
+    return feasible_pos[static_cast<size_t>(i)][static_cast<size_t>(k)] != 0;
+  };
+
   // assignment[i]: index into render_bboxes[i], or -1 if dropped
   std::vector<int> assignment(static_cast<size_t>(n), -1);
 
@@ -717,7 +765,8 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
   {
     for (int k = 0; k < static_cast<int>(render_bboxes[static_cast<size_t>(i)].size()); k++)
     {
-      if (withinBounds(render_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)], map_w, map_h))
+      const auto& rb = render_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
+      if (withinBounds(rb, map_w, map_h) && isFeasible(i, k))
       {
         assignment[static_cast<size_t>(i)] = k;
         break;
@@ -860,7 +909,11 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
     const bool drawn_is_drop = (drawn == static_cast<int>(bboxes_i.size()));
     const bool drawn_out_of_bounds =
         !drawn_is_drop && !withinBounds(bboxes_i[static_cast<size_t>(drawn)], map_w, map_h);
-    const int new_k = (drawn_is_drop || drawn_out_of_bounds) ? -1 : drawn;
+    // A position in a foreign country is rejected the same way as one out of
+    // bounds: the only alternative to a legal position is to drop the label.
+    const bool drawn_infeasible = !drawn_is_drop && !isFeasible(i, drawn);
+    const int new_k =
+        (drawn_is_drop || drawn_out_of_bounds || drawn_infeasible) ? -1 : drawn;
 
     const int old_k = assignment[static_cast<size_t>(i)];
     if (new_k == old_k)
@@ -905,7 +958,8 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
 std::vector<PlacedLabel> placeLabels(const LabelConfig& config,
                                      std::vector<LabelCandidate> candidates,
                                      double map_width,
-                                     double map_height)
+                                     double map_height,
+                                     const FeasibilityFn& feasible)
 {
   // Apply max_labels cap; geonames sort already puts highest-priority first
   if (static_cast<int>(candidates.size()) > config.max_labels)
@@ -916,13 +970,14 @@ std::vector<PlacedLabel> placeLabels(const LabelConfig& config,
     case PlacementAlgorithm::None:
       return {};
     case PlacementAlgorithm::Fixed:
-      return fixedPlacement(config, candidates, map_width, map_height);
+      return fixedPlacement(config, candidates, map_width, map_height, feasible);
     case PlacementAlgorithm::Greedy:
-      return greedyPlacement(config, candidates, map_width, map_height);
+      return greedyPlacement(config, candidates, map_width, map_height, feasible);
     case PlacementAlgorithm::PriorityGreedy:
-      return priorityGreedyPlacement(config, std::move(candidates), map_width, map_height);
+      return priorityGreedyPlacement(
+          config, std::move(candidates), map_width, map_height, feasible);
     case PlacementAlgorithm::SimulatedAnnealing:
-      return simulatedAnnealingPlacement(config, candidates, map_width, map_height);
+      return simulatedAnnealingPlacement(config, candidates, map_width, map_height, feasible);
   }
   return {};  // unreachable
 }

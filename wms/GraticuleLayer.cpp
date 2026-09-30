@@ -1386,7 +1386,7 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
           CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
           text_cdt["start"] = "   <text";
           text_cdt["end"] = "</text>";
-          text_cdt["cdata"] = label.text;
+          text_cdt["cdata"] = Fmi::safexmlescape(label.text);
 
           auto xpos = lround(label.x + graticule.labels.dx);
           auto ypos = lround(label.y + graticule.labels.dy);

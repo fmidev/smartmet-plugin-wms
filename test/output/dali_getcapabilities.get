@@ -1040,6 +1040,56 @@
             "height" : 500,
             "width" : 500
           },
+          "name" : "flash_symbols_webp_animation",
+          "path" : 
+          [
+            "test",
+            "flash_symbols_webp_animation"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Flash observations animated by stroke time",
+          "url_template" : "/dali?customer=test&product=flash_symbols_webp_animation&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "flash_symbols_webp_animation_accumulate",
+          "path" : 
+          [
+            "test",
+            "flash_symbols_webp_animation_accumulate"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Flash observations accumulating by stroke time",
+          "url_template" : "/dali?customer=test&product=flash_symbols_webp_animation_accumulate&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
           "name" : "forestfire",
           "path" : 
           [
@@ -2448,6 +2498,56 @@
         {
           "image" : 
           {
+            "height" : 850,
+            "width" : 750
+          },
+          "name" : "location_labels_country_off",
+          "path" : 
+          [
+            "test",
+            "location_labels_country_off"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 28.399999999999999,
+            "cy" : 60.950000000000003,
+            "resolution" : 0.10000000000000001,
+            "xsize" : 750,
+            "ysize" : 850
+          },
+          "title" : "LocationLayer \u2014 cross-border labels WITHOUT country constraint",
+          "url_template" : "/dali?customer=test&product=location_labels_country_off&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 850,
+            "width" : 750
+          },
+          "name" : "location_labels_country_on",
+          "path" : 
+          [
+            "test",
+            "location_labels_country_on"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 28.399999999999999,
+            "cy" : 60.950000000000003,
+            "resolution" : 0.10000000000000001,
+            "xsize" : 750,
+            "ysize" : 850
+          },
+          "title" : "LocationLayer \u2014 cross-border labels WITH country constraint",
+          "url_template" : "/dali?customer=test&product=location_labels_country_on&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 700,
             "width" : 400
           },
@@ -2717,8 +2817,58 @@
             "y2" : 65,
             "ysize" : 600
           },
-          "title" : "Archipelago amalgamation",
+          "title" : "Northern Baltic archipelago amalgamation",
           "url_template" : "/dali?customer=test&product=map_amalgamate&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_amalgamate_extreme",
+          "path" : 
+          [
+            "test",
+            "map_amalgamate_extreme"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Northern Baltic archipelago amalgamation, excessive gap distance",
+          "url_template" : "/dali?customer=test&product=map_amalgamate_extreme&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_amalgamate_pathological",
+          "path" : 
+          [
+            "test",
+            "map_amalgamate_pathological"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Northern Baltic archipelago amalgamation, pathological gap distance",
+          "url_template" : "/dali?customer=test&product=map_amalgamate_pathological&time={time}"
         },
         {
           "image" : 
@@ -2742,39 +2892,64 @@
             "y2" : 65,
             "ysize" : 600
           },
-          "title" : "Archipelago amalgamation + Visvalingam-Whyatt simplification",
+          "title" : "Northern Baltic archipelago amalgamation + Visvalingam-Whyatt simplification",
           "url_template" : "/dali?customer=test&product=map_amalgamate_simplified&time={time}"
         },
         {
           "image" : 
           {
-            "height" : 800,
-            "width" : 800
+            "height" : 600,
+            "width" : 900
           },
-          "name" : "map_simplifier_dp",
+          "name" : "map_amalgamate_wide",
           "path" : 
           [
             "test",
-            "map_simplifier_dp"
+            "map_amalgamate_wide"
           ],
           "projection" : 
           {
-            "bboxcrs" : "WGS84",
-            "crs" : "+proj=robin",
-            "cx" : 0,
-            "cy" : 0,
-            "resolution" : 50,
-            "xsize" : 800,
-            "ysize" : 800
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
           },
-          "title" : "Map with Douglas-Peucker simplification",
-          "url_template" : "/dali?customer=test&product=map_simplifier_dp&time={time}"
+          "title" : "Northern Baltic archipelago amalgamation, doubled gap distance",
+          "url_template" : "/dali?customer=test&product=map_amalgamate_wide&time={time}"
         },
         {
           "image" : 
           {
-            "height" : 800,
-            "width" : 800
+            "height" : 600,
+            "width" : 900
+          },
+          "name" : "map_baseline",
+          "path" : 
+          [
+            "test",
+            "map_baseline"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
+          },
+          "title" : "Northern Baltic baseline (no simplification)",
+          "url_template" : "/dali?customer=test&product=map_baseline&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 900
           },
           "name" : "map_simplifier_vw",
           "path" : 
@@ -2784,15 +2959,15 @@
           ],
           "projection" : 
           {
-            "bboxcrs" : "WGS84",
-            "crs" : "+proj=robin",
-            "cx" : 0,
-            "cy" : 0,
-            "resolution" : 50,
-            "xsize" : 800,
-            "ysize" : 800
+            "crs" : "EPSG:4326",
+            "x1" : 18,
+            "x2" : 27,
+            "xsize" : 900,
+            "y1" : 59,
+            "y2" : 65,
+            "ysize" : 600
           },
-          "title" : "Map with Visvalingam-Whyatt simplification",
+          "title" : "Northern Baltic with Visvalingam-Whyatt simplification",
           "url_template" : "/dali?customer=test&product=map_simplifier_vw&time={time}"
         },
         {
@@ -3393,6 +3568,31 @@
         {
           "image" : 
           {
+            "height" : 500,
+            "width" : 400
+          },
+          "name" : "satellite",
+          "path" : 
+          [
+            "test",
+            "satellite"
+          ],
+          "producer" : "meteosat",
+          "projection" : 
+          {
+            "crs" : "EPSG:3067",
+            "x1" : -118331,
+            "x2" : 875567,
+            "xsize" : 400,
+            "y1" : 6335621,
+            "y2" : 7907751,
+            "ysize" : 500
+          },
+          "url_template" : "/dali?customer=test&product=satellite&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 600,
             "width" : 600
           },
@@ -3477,6 +3677,62 @@
           },
           "title" : "SmartSymbol number test",
           "url_template" : "/dali?customer=test&product=smartsymbolnumber&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 350,
+            "width" : 1610
+          },
+          "name" : "smoother_compare",
+          "path" : 
+          [
+            "test",
+            "smoother_compare"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 310,
+            "ysize" : 310
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Grid smoothers at equal scale (matched to Savitzky-Golay 7x7)",
+          "url_template" : "/dali?customer=test&product=smoother_compare&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 350,
+            "width" : 1610
+          },
+          "name" : "smoother_compare_small",
+          "path" : 
+          [
+            "test",
+            "smoother_compare_small"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 310,
+            "ysize" : 310
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Grid smoothers at minimal cost (Savitzky-Golay 5x5 reference)",
+          "url_template" : "/dali?customer=test&product=smoother_compare_small&time={time}"
         },
         {
           "image" : 
@@ -4094,6 +4350,34 @@
           },
           "title" : "TimeLayer test",
           "url_template" : "/dali?customer=test&product=timelayer&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "tmax_box_smooth",
+          "path" : 
+          [
+            "test",
+            "tmax_box_smooth"
+          ],
+          "producer" : "climate_tmax",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20011231T120000",
+            "origintime" : "20011231T120000",
+            "values" : "20010101T120000/20011231T120000/PT24H"
+          },
+          "title" : "Trax box smoothing works inside missing data",
+          "url_template" : "/dali?customer=test&product=tmax_box_smooth&time={time}"
         },
         {
           "image" : 

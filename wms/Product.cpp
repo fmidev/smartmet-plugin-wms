@@ -1,14 +1,15 @@
 #include "Product.h"
 #include "Config.h"
 #include "Hash.h"
-#include "Layer.h"
 #include "JsonTools.h"
+#include "Layer.h"
 #include "MapboxVectorTile.h"
 #include "State.h"
 #include "Warnings.h"
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <spine/HTTP.h>
 
 namespace SmartMet
@@ -18,6 +19,31 @@ namespace Plugin
 namespace Dali
 {
 Product::~Product() = default;
+
+namespace
+{
+// Whether the JSON tree holds a layer of the given type, at any depth
+bool contains_layer_type(const Json::Value& theJson, const std::string& theType)
+{
+  if (theJson.isObject())
+  {
+    const auto& type = theJson["layer_type"];
+    if (type.isString() && type.asString() == theType)
+      return true;
+    for (const auto& name : theJson.getMemberNames())
+      if (contains_layer_type(theJson[name], theType))
+        return true;
+    return false;
+  }
+  if (theJson.isArray())
+  {
+    for (const auto& item : theJson)
+      if (contains_layer_type(item, theType))
+        return true;
+  }
+  return false;
+}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -57,12 +83,29 @@ void Product::init(Json::Value& theJson, const State& theState, const Config& th
       attributes.init(json, theConfig);
 
     json = JsonTools::remove(theJson, "views");
+    const bool has_satellite = contains_layer_type(json, "satellite");
     if (!json.isNull())
       views.init(json, theState, theConfig, *this);
 
     json = JsonTools::remove(theJson, "png");
+    const bool truecolor_given = (json.isObject() && json.isMember("truecolor"));
     if (!json.isNull())
       png.init(json, theConfig);
+
+    // Satellite imagery arrives coloured, and quantizing it to a palette
+    // costs more than the rest of the rendering while losing colours the
+    // producer chose. Such products are therefore true colour unless the
+    // product says otherwise with png.truecolor = false.
+    if (has_satellite && !truecolor_given)
+      png.options.truecolor = true;
+
+    json = JsonTools::remove(theJson, "webp");
+    if (!json.isNull())
+      webp.init(json, theConfig);
+
+    // Let time-animating layers (flash symbols) know the animation frame count
+    if (webp.frames)
+      theState.time_animation_frames = webp.frames;
 
     // refs is also allowed here
 
@@ -121,7 +164,8 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
     if (height)
       theGlobals["height"] = *height;
     if (title)
-      theGlobals["title"] = title->translate(language, theState.getConfig().defaultLanguage());
+      theGlobals["title"] =
+          Fmi::safexmlescape(title->translate(language, theState.getConfig().defaultLanguage()));
 
     // We must process the defs section before processing the
     // product attributes or views in case they refer to some
@@ -236,6 +280,7 @@ std::size_t Product::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     Fmi::hash_combine(hash, Dali::hash_value(views, theState));
     Fmi::hash_combine(hash, Dali::hash_value(png, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(webp, theState));
     Fmi::hash_combine(hash, animation.hash_value(theState));
     return hash;
   }

@@ -15,6 +15,51 @@ namespace Dali
 {
 // ----------------------------------------------------------------------
 /*!
+ * \brief Explain an empty map fetch
+ */
+// ----------------------------------------------------------------------
+
+std::string emptyMapMessage(const Engine::Gis::MapOptions& theMapOptions)
+{
+  try
+  {
+    auto msg = fmt::format(
+        "Requested map data is empty: '{}.{}'", theMapOptions.schema, theMapOptions.table);
+
+    std::string filters;
+    const auto add = [&filters](const std::string& setting)
+    {
+      if (!filters.empty())
+        filters += ", ";
+      filters += setting;
+    };
+
+    if (theMapOptions.where)
+      add(fmt::format("where='{}'", *theMapOptions.where));
+    if (theMapOptions.minarea)
+      add(fmt::format("minarea={}", *theMapOptions.minarea));
+    if (theMapOptions.mindistance)
+      add(fmt::format("mindistance={}", *theMapOptions.mindistance));
+    if (theMapOptions.simplifier.active())
+      add("simplifier");
+
+    if (filters.empty())
+      msg += " The query matched no rows.";
+    else
+      msg += fmt::format(
+          " Either the query matched no rows, or everything it returned was removed by: {}",
+          filters);
+
+    return msg;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialization
  */
 // ----------------------------------------------------------------------
@@ -128,14 +173,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
       geom = gis.getShape(&theSR, theMapOptions);
 
       if (!geom)
-      {
-        std::string msg = "Requested map data is empty: '" + theMapOptions.schema + '.' +
-                          theMapOptions.table + "'";
-        if (theMapOptions.minarea)
-          msg += " Is the minarea limit too large?";
-
-        throw Fmi::Exception(BCP, msg);
-      }
+        throw Fmi::Exception(BCP, emptyMapMessage(theMapOptions));
     }
 
     return geom;
@@ -165,14 +203,7 @@ Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
     for (const auto& result_item : result_set)
     {
       if (!result_item->geom || result_item->geom->IsEmpty() != 0)
-      {
-        std::string msg = "Requested map data is empty: '" + theMapOptions.schema + '.' +
-                          theMapOptions.table + "'";
-        if (theMapOptions.minarea)
-          msg += " Is the minarea limit too large?";
-
-        throw Fmi::Exception(BCP, msg);
-      }
+        throw Fmi::Exception(BCP, emptyMapMessage(theMapOptions));
     }
 
     return result_set;

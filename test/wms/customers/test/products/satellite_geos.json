@@ -1,0 +1,30 @@
+{
+  "title": "Meteosat infrared 10.8 um",
+  "abstract": "SEVIRI infrared imagery in the satellite projection",
+  "producer": "meteosat",
+  "parameter": "ir108",
+  "projection": {},
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "sat",
+          "layer_type": "satellite"
+        },
+        {
+          "qid": "borders",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3"
+          }
+        }
+      ]
+    }
+  ]
+}

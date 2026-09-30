@@ -73,6 +73,10 @@ namespace OSM
 class Engine;
 }
 #endif
+namespace Satellite
+{
+class Engine;
+}
 }  // namespace Engine
 
 namespace Plugin
@@ -100,6 +104,8 @@ class State
 #ifndef WITHOUT_OSM
   Engine::OSM::Engine* getOSMEngine() const;  // nullptr if engine not loaded
 #endif
+  // nullptr if engine not loaded
+  const Engine::Satellite::Engine* getSatelliteEngine() const;
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
 #endif
@@ -139,11 +145,17 @@ class State
   // If given ID has not been used, mark it used now
   bool addId(const std::string& theID) const;
 
+  // Throw if the ID contains characters which could break out of an SVG/XML
+  // attribute. IDs (qids and the IRIs derived from them) can be overridden from
+  // the query string and are emitted unescaped into id="..." attributes.
+  static void validateId(const std::string& theID);
+
   // Create unique ID for the given prefix
   std::string makeQid(const std::string& thePrefix) const;
 
   // Fetch CSS contents
   std::string getStyle(const std::string& theCSS) const;
+  std::size_t getStyleHash(const std::string& theCSS) const;
   std::map<std::string, std::string> getStyle(const std::string& theCSS,
                                               const std::string& theSelector) const;
 
@@ -226,6 +238,14 @@ class State
   bool isObservation(const std::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
 
+  // Hash value of the model getModel() would return, without constructing a Q.
+  // Used while calculating the ETag hash value of a product.
+  std::size_t getModelHashValue(const Engine::Querydata::Producer& theProducer) const;
+  std::size_t getModelHashValue(const Engine::Querydata::Producer& theProducer,
+                                const Fmi::DateTime& theOriginTime) const;
+  std::size_t getModelHashValue(const Engine::Querydata::Producer& theProducer,
+                                const Fmi::TimePeriod& theTimePeriod) const;
+
   // Set tile z/x/y when serving an OGC Tiles or WMTS request (for PMTiles passthrough)
   void setTileCoords(uint8_t z, uint32_t x, uint32_t y)
   {
@@ -255,9 +275,17 @@ class State
   mutable int animation_timesteps = 0;
   mutable int animation_loopsteps = 0;
 
+  // Animated WebP output: layers supporting time animation (flash symbols)
+  // bucket their elements by observation time into this many frames over the
+  // layer time interval (Product webp 'frames' setting)
+  mutable std::optional<int> time_animation_frames;
+
  private:
   Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;
+
+  // Model hash values of this request, keyed exactly as itsQCache
+  mutable std::map<Engine::Querydata::Producer, std::size_t> itsModelHashCache;
   mutable BezierCache itsBezierCache;
 
   // Names which have already been used for styling

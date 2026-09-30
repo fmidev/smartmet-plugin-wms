@@ -1638,6 +1638,8 @@ std::ostream& operator<<(std::ostream& ost, const Layer& layer)
 
 void Layer::initProjectedBBoxes()
 {
+  const Fmi::SpatialReference wgs84("WGS84");
+
   for (const auto& id_ref : refs)
   {
     const auto& id = id_ref.first;
@@ -1669,7 +1671,6 @@ void Layer::initProjectedBBoxes()
 
     if (x1 < x2 && y1 < y2)
     {
-      Fmi::SpatialReference wgs84("WGS84");
       Fmi::SpatialReference target(ref.proj);
       Fmi::CoordinateTransformation transformation(wgs84, target);
 
@@ -2147,6 +2148,25 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
       layer_dimension["value"] = dim_string;
 
       layer_dimension_list.PushBack(layer_dimension);
+
+      const std::vector<Fmi::DateTime>& origintimes = timeDimensions->getOrigintimes();
+      bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
+      if (showOrigintimes)
+      {
+        StepTimeDimension orgintimesDimension(origintimes);
+        CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
+        reference_time_dimension["name"] = "reference_time";
+        reference_time_dimension["units"] = "ISO8601";
+        reference_time_dimension["multiple_values"] = 0;
+        reference_time_dimension["nearest_value"] = 0;
+        reference_time_dimension["current"] = 1;
+        reference_time_dimension["default"] =
+            (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
+        std::optional<Fmi::DateTime> t;
+        reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
+        layer_dimension_list.PushBack(reference_time_dimension);
+      }
+
       layer["time_dimension"] = layer_dimension_list;
     }
 
@@ -2175,20 +2195,20 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
       layer["interval_dimension"] = interval_dimension_list;
     }
 
-    if (elevationDimension)
+    // isOK() is false for a single surface level "0", which is no dimension a
+    // client could select anything from; getElevationDimensionInfo() applies
+    // the same rule.
+    if (elevationDimension && elevationDimension->isOK())
     {
-      auto dim_string = elevationDimension->getCapabilities();
-      if (dim_string.empty())
-        return {};
-
       CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
 
       layer_dimension["name"] = "elevation";
       layer_dimension["units"] = elevationDimension->getUnitSymbol();
+      layer_dimension["level_name"] = elevationDimension->getLevelName();
       layer_dimension["multiple_values"] = "0";
       layer_dimension["nearest_value"] = "0";
       // layer_dimension["current"] = "0";
-      layer_dimension["value"] = dim_string;
+      layer_dimension["value"] = elevationDimension->getCapabilities();
 
       layer["elevation_dimension"] = layer_dimension;
     }

@@ -230,7 +230,38 @@ PNG output formatting can be tuned using the following settings inside a top lev
 | quality     | (double) | 10            | The PNG compression level. 10=good, 20=poor                                                                          |
 | errorfactor | (double) | 2.0           | Tuning parameter for color reduction. Must be greater than 1.0                                                       |
 | maxcolors   | (int)    | 0             | Desired maximum number of colors in the palette. Zero implies no maximum, and palette fitting will be fully adaptive |
-| truecolor   | (bool)   | false         | Set to avoid color reduction completely                                                                              |
+| truecolor   | (bool)   | false         | Set to avoid color reduction completely. A product with a satellite layer defaults to true, since its imagery is already coloured; set false to reduce anyway |
+
+WebP output uses the same color reduction settings from the "png" tag, and adds its
+own compression speed and animation controls in a top level "webp" tag:
+
+| Name           | Type   | Default value | Description                                                                                                                                                          |
+| -------------- | ------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| level          | (int)  | 1             | The WebP lossless compression preset level, 0...9. 0 = fastest encoding with the largest file, 9 = slowest encoding with the smallest file. The default 1 is roughly 2.5 times faster to encode than the libwebp default settings at the cost of a slightly larger file. |
+| frames         | (int)  | -             | Setting this enables animated WebP output with the given number of frames, 1...1000. See [WebP time animation](#webp-time-animation) below.                          |
+| frame_duration | (int)  | 100           | The display duration of each animation frame in milliseconds.                                                                                                        |
+| loop           | (int)  | 0             | The animation loop count. Zero loops forever.                                                                                                                        |
+| accumulate     | (bool) | false         | If true, the animated elements accumulate over the loop instead of each frame showing only its own time bucket.                                                      |
+
+#### WebP time animation
+
+When "frames" is set and the output type is `webp`, layers supporting time animation
+divide the layer time interval (see [Time intervals](#time-intervals)) into the given
+number of frames, and each rendered element is assigned to a frame based on its actual
+observation time. The frames are then encoded into a single looping animated WebP image.
+All other layers (backgrounds, maps etc.) render identically into every frame.
+
+Currently the symbol-layer observation rendering supports time animation, the main use
+case being lightning data: with for example `"interval_start": 30, "interval_end": 30`
+and `"frames": 6`, each frame replays ten minutes of flash strokes in stroke time order.
+Setting `"accumulate": true` makes the strokes pile up during the loop instead, which
+shows where lightning activity has moved during the interval. A typical flash layer
+interval is 5, 15, 30 or 60 minutes to match the available radar data time period.
+
+The SVG content is generated only once; each frame is rasterized from the same SVG with
+a different visibility selection, so rendering cost grows only with rasterization and
+encoding, not with data queries. Note that this product-level setting is separate from
+the WMS GetMap "animation" block, which animates over consecutive valid times.
 
 ### Product level attributes
 
@@ -518,6 +549,11 @@ The placement algorithms come from the cartographic literature. For most weather
 | free_space_weight  | double   | 0.0        | When `> 0`, each candidate's positions are reordered (greedy) or its position-penalty is reduced (SA) to prefer directions pointing into local empty space. Coastal cities push their labels into the sea instead of covering inland features. The "occupied" set includes both other markers and labels already placed earlier in the run. See [algorithms documentation](labeling_algorithms.md). |
 | free_space_radius  | double   | 0.0        | When `free_space_weight > 0`, neighbours beyond this image-pixel distance are ignored when computing each candidate's free direction. `0.0` means use all candidates regardless of distance. A value of `~3 × mindistance` (e.g. `120`) keeps the calculation local to each city's cluster. |
 | priority_bucket_ratio | double | 1.0       | Used only by `priority-greedy`. When `> 1`, populations falling within the same log-bucket compare as equal and the within-bucket tiebreak prefers shorter labels (smaller `label_w`). Eliminates strict-population sensitivity (e.g. 100,000 vs 100,010 census difference flipping placement). `1.5` ≈ 10 % buckets, `2.0` = power-of-two buckets, `100` = decade buckets. |
+| country_constraint | bool   | `false`    | When `true`, a candidate label position is rejected if it would render the label inside a *different* country than the location's own. Sea, no-man's-land, and the home country all stay allowed (a deliberately permissive "negative" rule, so coastal and small-country labels are not dropped). Prevents a label from appearing to belong to a neighbouring country across a border. Works with `greedy`, `priority-greedy` and `simulated-annealing`; `fixed` simply drops a label whose one position is foreign. Default `false` = no change. See [algorithms documentation](labeling_algorithms.md#country-constraint). |
+| country_schema  | string   | `"natural_earth"`     | PostGIS schema holding the country polygons used by `country_constraint`. |
+| country_table   | string   | `"admin_0_countries"` | PostGIS table of country polygons. Each row is one country. |
+| country_field   | string   | `"iso_a2"`            | Column holding the country code that is matched against each location's ISO-3166 alpha-2 code. |
+| country_pgname  | string   | -                     | PostGIS connection name for the country query. Empty uses the GIS engine default connection. |
 | classes         | array    | `[]`          | Population-based style overrides; see table below. First matching class wins.                                   |
 
 **`classes` array entries** (population-range style overrides):
@@ -550,6 +586,15 @@ The placement algorithms come from the cartographic literature. For most weather
   <td align="center"><b>priority-greedy + bucketing</b><br><small><code>priority_bucket_ratio: 2.0</code><br>Close-population cities tied; shorter label wins.</small><br><img src="images/location_labels_priority_greedy_bucketed.png" width="200"></td>
   <td align="center"><b>greedy + pan-invariant</b><br><small><code>pan_invariant: true</code><br>Centred on Jyväskylä.</small><br><img src="images/location_labels_pan_invariant.png" width="200"></td>
   <td align="center"><b>same, bbox shifted +0.5°</b><br><small>Cities visible in both panned views land at <i>identical</i> offsets from their markers (verified per-city).</small><br><img src="images/location_labels_pan_invariant_shifted.png" width="200"></td>
+</tr>
+</table>
+
+**`country_constraint`** — zoomed to the Finland (blue) – Russia (red) border. Same product, constraint off vs on. Without it, the border-hugging labels (Nuijamaa, Vainikkala, Hiivaniemi, Ahola) lean east across the border into Russia; with it they flip west to stay inside Finland. See [labeling_algorithms.md](labeling_algorithms.md#country-constraint).
+
+<table>
+<tr>
+  <td align="center"><b>country_constraint: off</b><br><small>Labels free to cross the border.</small><br><img src="images/location_labels_country_off.png" width="220"></td>
+  <td align="center"><b>country_constraint: on</b><br><small>Every label kept inside its own country.</small><br><img src="images/location_labels_country_on.png" width="220"></td>
 </tr>
 </table>
 
@@ -1151,6 +1196,10 @@ The table below contains a list of attributes that can be defined for the symbol
 | rendering_order | string                  | "normal"      | Rendering order of the symbol is normal or reverse with respect to priority                   |
 
 Note that assigning a proper scale for symbols with CSS or SVG attributes alone  is difficult. Using the scale-attribute eases the  scaling of the symbols.
+
+Observation symbols (in particular lightning data) can be replayed in observation time
+order as an animated WebP image by setting "frames" in the product level "webp" tag, see
+[WebP time animation](#webp-time-animation).
 
 ##### mindistance and priority
 
@@ -4058,15 +4107,48 @@ The table below contains a list of attributes used in this structure.
 
 #### Smoother structure
 
-Currently only the  2D Savitzky-Golay filters are supported. The filter is good at preserving local minima and maxima  if at least the degree 2 is used. Larger sizes with degree 2 tend to smooth data well while preserving extrema, higher degrees preserve original data better.
+Two independent smoothers are available; only one runs per layer.
+
+**Savitzky-Golay** (`size`/`degree`) is good at preserving local minima and maxima if at least degree 2 is used. Larger sizes with degree 2 tend to smooth data well while preserving extrema, higher degrees preserve original data better.
+
+**Trax grid smoother** (`method`) is selected by giving a `method`. It supersedes `size`/`degree` when both are present. The methods are:
+
+- `box` — separable box blur (normalized convolution). With `passes` >= 3 it approximates a Gaussian. Cheap and smooth, but it attenuates extrema like any low-pass filter. Cost is O(N) per pass *independent of radius* (running sums), so it is the cheapest way to smooth at any scale.
+- `median` — per-window median. Removes spikes of either sign, keeps step edges sharp, and never invents a value that was not in the data (no overshoot). Preserves the value of features broader than the window. Uses an exact 2D window, so unlike `box`/`morphology` its cost grows with radius.
+- `morphology` — grayscale opening/closing with a box element. Opening removes bright features smaller than the element while preserving the value of larger ones; closing does the same for dark features; `openclose` does both. Preserves the magnitude of broad extrema. Unlike `box` and Savitzky-Golay it never averages or interpolates: it takes the window minimum (erode) or maximum (dilate), so the output is the exact value of some input cell, and the structuring element is a flat, axis-aligned square (separable min/max along x then y, chosen because it runs in O(N) per pass independent of radius). The result is therefore terraced into square-cornered plateaus, which the contourer traces as visibly **blocky, axis-aligned boundaries** — a circular element would round them but would not be separable. Use `morphology` when you specifically want to delete small bright and/or dark speckles while preserving the exact magnitude of the larger features (e.g. cleaning isolated spurious pixels without flattening real peaks); prefer `box` or `median` when smooth-looking contours matter more than exact extremum values.
+
+The radius/passes are in grid cells (index space), not projected distance.
+
+**Method gallery** — the same temperature field and projection, smoothed by each method at a **matched scale**. The point of a smoother comparison is to judge how each method treats features of a given size, so the parameters here are deliberately tuned to remove roughly the same spatial scale rather than to a fixed `radius` value: at equal `radius` the rank/morphological filters remove much more than the polynomial Savitzky-Golay fit, which would make the comparison misleading. The Savitzky-Golay `size 3` window (7&times;7) sets the reference scale, and `box`/`median`/`morphology` are dialed to match it (`box radius 1, passes 3`; `median radius 2`; `morphology radius 2`). At this matched scale the differences are about *character*, not amount:
+
+- `Savitzky-Golay` keeps the most fine structure and the strongest extrema (a local polynomial fit), at the highest cost.
+- `box` removes the same scale of detail but, being a linear low-pass, attenuates the cold pockets the most.
+- `median` gives sharp, overshoot-free edges — every output value existed in the input — and preserves the value of features broader than the window.
+- `morphology` (openclose) keeps the magnitude of the broad extrema but leaves visibly blocky, axis-aligned boundaries from its flat box structuring element.
+
+<p><img src="images/smoother_compare.png" width="100%"></p>
+
+**Cost matters as much as character.** The gallery above is tuned to equal smoothing *quality*, which flatters Savitzky-Golay — but it is the slowest filter, while `box` and `morphology` are O(N) per pass independent of radius and `median` sits in between (its cost grows with radius). On a busy server the right question is usually not "which preserves extrema best?" but "which is the cheapest filter that smooths well enough?" — and for plain speckle removal that is almost always `box`. The gallery below repeats the comparison at each method's **minimal setting** (Savitzky-Golay reduced to a 5&times;5 window, the others to a single 3&times;3-class pass): a single cheap `box` pass already removes the grid speckle nearly as well as the much more expensive Savitzky-Golay fit. Reach for Savitzky-Golay only when you genuinely need its exact extremum-height preservation and can afford the CPU; otherwise prefer `box` (general smoothing), `median` (spike/edge preservation) or `morphology` (speckle removal with magnitude preservation).
+
+<p><img src="images/smoother_compare_small.png" width="100%"></p>
+
+`box` also smooths correctly inside a missing-data footprint: the smoothing stays within the valid region and the missing-data boundary is preserved (the `preserve_missing` default).
+
+<p><img src="images/smoother_missing.png" width="320"></p>
 
 The table below contains a list of attributes used in this structure.
 
 <pre><b>Smoother</b></pre>
-| Name   | Type | Default value | Description                                                                      |
-| ------ | ---- | ------------- | -------------------------------------------------------------------------------- |
-| size   | int  | -             | Size of the filter. Implies 2*N+1 adjacent points are used in the weighted mean. |
-| degree | int  | -             | Degree of the polynomial to fit to the data.                                     |
+| Name             | Type   | Default value | Description                                                                      |
+| ---------------- | ------ | ------------- | -------------------------------------------------------------------------------- |
+| size             | int    | -             | Savitzky-Golay: implies 2*N+1 adjacent points are used in the weighted mean.     |
+| degree           | int    | -             | Savitzky-Golay: degree of the polynomial to fit to the data.                     |
+| method           | string | -             | Trax smoother: `box`, `median` or `morphology`. Enables the Trax smoother path.  |
+| radius           | int    | -             | Trax smoother: window/element half-width in grid cells (2*radius+1 wide).        |
+| passes           | int    | 3             | Trax smoother: number of repeats (box: passes>=3 approximates a Gaussian).       |
+| boundary         | string | normalized    | Trax smoother: edge handling — `normalized`, `replicate` or `reflect`.           |
+| morphology       | string | openclose     | Morphology only: `open`, `close` or `openclose`.                                 |
+| preserve_missing | bool   | true          | Trax smoother: keep input NaN cells missing instead of filling from neighbours.  |
 
 
 ### Sampling structure
@@ -4149,11 +4231,28 @@ Isolines and isobands can be smoothened by postprocessing the calculated polygon
 <pre><b>Isofilter</b></pre>
 | Name       | Type    | Default value | Description                                                                                                |
 | ---------- | ------- | ------------- | ---------------------------------------------------------------------------------------------------------- |
-| type       | string  | none          | Smoother type: none, average, linear, gaussian, tukey. Gaussian filtering seems to work best.              |
+| type       | string  | none          | Smoother type: none, average, linear, gaussian, tukey, taubin. Gaussian filtering seems to work best for plain smoothing; taubin additionally preserves feature sizes (see below). |
 | radius     | double  | 0             | Filtering distance along the isoline in pixels. Zero disables filtering. Depending on the roughness of the data good values tend to be in the range 10-30 pixels. |
 | iterations | integer | 1             | Number of passes. Zero disables filtering. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
+| lambda     | double  | 0.5           | Taubin shrinking-pass factor, in the open interval (0,1). Only used when type=taubin. |
+| mu         | double  | -0.53         | Taubin inflating-pass factor. Must be negative with magnitude greater than `lambda`. Only used when type=taubin. |
+| validate   | bool or object | true     | Adaptive validity backoff (enabled by default; set to `false` to disable). With wide radii the smoother can pull a narrow isoband across itself, producing a self-intersecting polygon that is invalid for clipping. The whole set of geometries is re-smoothed at a halved radius until every polygon is valid; this keeps the shared edges between adjacent isobands coherent (gap-free), unlike repairing a single band. Only active when a smoothing filter is configured (`type`/`radius` set), so unsmoothed geometry is never validity-checked. See below. |
 
 Note that zooming into an image reduces the amount of smoothing since the set radius now covers a smaller area of the original data, and hence original details can be seen better.
+
+The plain moving-average smoothers (average, linear, gaussian, tukey) always shrink: they pull every vertex towards the local average, so feature sizes collapse and a narrow isoband can fold onto itself. The `taubin` type alternates a shrinking pass (factor `lambda`) with an inflating pass (factor `mu`), so the overall shape and feature sizes (areas) are preserved while small details are still removed. This keeps isoband areas truer and reduces — but does not eliminate — smoothing-induced self-intersections, so it combines well with the `validate` setting.
+
+The `validate` setting may be given as a boolean (`true` to enable with defaults) or as an object for finer control:
+
+<pre><b>Isofilter validate</b></pre>
+| Name    | Type | Default | Description |
+| ------- | ---- | ------- | ----------- |
+| enabled | bool | true    | Whether the backoff is active. The backoff is enabled by default; pass `"validate": false` (or `{"enabled": false}`) to turn it off. |
+| tries   | int  | 4       | Maximum number of radius halvings before giving up. After exhausting the budget the geometry is left unsmoothed (which is always valid) rather than emitted invalid. Allowed range 1–10. |
+| bisect  | bool | true    | After halving finds a valid radius, take one bisection step back towards the previous (larger, invalid) radius to retain as much smoothing as possible while staying valid. |
+| debug   | bool | false   | Log a line whenever a backoff fires, reporting the initial and final smoothing radius. |
+
+Validation only re-smooths when an actual radius/type is set, and for isolines it is effectively a no-op (a self-crossing line is still OGC-valid). It is most useful for isobands rendered with a wide gaussian radius.
 
 #### LegendLabels structure
 
@@ -4702,6 +4801,10 @@ The `<subdir>` is `markers/`, `patterns/`, `filters/`, or `gradients/` depending
 attribute type.  An absolute path (starting with `/`) skips the customer directory and
 searches from the Dali root directly.
 
+Filters are a special case: after steps 1–2 they are searched only in
+`<root>/resources/filters/<name>.svg` (they do not fall back through the
+`resources/layers/` and `resources/` locations used by the other resource types).
+
 
 # Dali querystring parameters
 
@@ -4727,6 +4830,8 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 | `interval_end` | int | – | End of observation time interval in minutes after `time + time_offset`. |
 | `timestep` | int | – | Timestep in minutes. |
 | `level` | double | – | Pressure level in hPa. |
+| `elevation` | double | – | Grid-data level value; takes precedence over `level` when both are given. |
+| `elevation_unit` | string | – | Unit of the `elevation` value. |
 | `levelId` / `levelid` | int | – | Level type ID. |
 | `forecastNumber` | int | – | Ensemble member number. |
 | `forecastType` | int | – | Forecast type. |
@@ -4745,6 +4850,7 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 | `xmargin` | int | 0 | X-margin for symbol clipping (pixels). |
 | `ymargin` | int | 0 | Y-margin for symbol clipping (pixels). |
 | `clip` | bool | false | Wrap each layer in a `<clipPath>`. |
+| `precision` | double | – | Number of decimals used when writing coordinates into the SVG output. |
 
 **Overriding JSON structure fields:**
 
@@ -4830,7 +4936,14 @@ Via WMS GetMap, use the MIME type `application/x-datatile+png` as the FORMAT:
 GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:datatile_temperature&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=64&height=64&format=application/x-datatile%2Bpng&time=200808050800
 ```
 
-Via WMTS and OGC API Tiles, use `datatile` as the format extension or `f=` parameter.
+Via WMTS and OGC API Tiles, use `datatile` as the format extension or `f=` parameter:
+
+```
+GET /wmts/1.0.0/grid:wind_speed_and_direction_1/default/EPSG:3857/5/9/18.datatile?TIME=20080805T080000
+GET /tiles/collections/grid:wind_speed_and_direction_1/tiles/EPSG:3857/5/9/18?f=datatile&datetime=2008-08-05T08:00:00Z
+```
+
+The WMTS capabilities advertise the format and a matching `.datatile` ResourceURL.
 
 ### Encoding schemes
 
@@ -4847,7 +4960,8 @@ output, so clients can self-discover the scale and offset.
 | A       | 255 = valid, 0 = missing/nodata |
 
 PNG tEXt chunks: `datatile:bands=1`, `datatile:min`, `datatile:max`,
-`datatile:encoding=uint16`.
+`datatile:encoding=uint16`, and `datatile:parameter` with the queried parameter
+name (as the producer names it, e.g. `Precipitation1h` or `PRECIP-MM`).
 
 Client-side decode:
 
@@ -4868,7 +4982,10 @@ Valid values are quantised to [1, 65535]; a pixel with all four bytes zero indic
 missing data.
 
 PNG tEXt chunks: `datatile:bands=2`, `datatile:min1`, `datatile:max1`,
-`datatile:min2`, `datatile:max2`, `datatile:encoding=uint16`.
+`datatile:min2`, `datatile:max2`, `datatile:encoding=uint16`, and
+`datatile:components` telling what the bands hold: `uv` (band 1 = U, band 2 = V,
+m/s) or `dirspeed` (band 1 = meteorological direction the wind blows from in
+degrees, band 2 = speed with the layer's multiplier/offset applied).
 
 Client-side decode:
 
@@ -4982,11 +5099,20 @@ or stripped by the allowed-parameter filter if not in the `allowed_keys` set.
 | `printparams=1` | Print the grid parameter list used by the product. |
 | `timer=1` | Print timing information per product generation stage. |
 | `stage=1`–`4` | Return the intermediate JSON at the given [pipeline stage](#processing-pipeline) instead of rendering. |
+| `debug=1` | Include exception/backtrace details in error responses instead of a terse message. |
+| `quiet=1` | Suppress server-side logging of the error when a request fails. |
 
 
 # WMS querystring parameters
 
-The WMS endpoint (default URL `/wms`) implements OGC WMS 1.3.0.
+The WMS endpoint (default URL `/wms`) implements OGC WMS 1.3.0.  The set of accepted
+versions is configured by the `supported_versions` setting (see the `wms` group in the
+[plugin configuration](#wms-group)); `1.3.0` is the standard version.  When an older
+version such as `1.1.1` is enabled, the axis-order rules and the `SRS` parameter name of
+that version apply.
+
+Parameter names are matched case-insensitively, so `REQUEST`, `request`, and `Request` are
+equivalent.
 
 ### GetCapabilities
 
@@ -4994,8 +5120,21 @@ The WMS endpoint (default URL `/wms`) implements OGC WMS 1.3.0.
 GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 ```
 
-Returns the capabilities XML document listing all available layers, CRS, and formats.
-The optional `FORMAT` parameter selects `text/xml` (default) or `application/json`.
+Returns the capabilities document listing all available layers, CRS, and formats.
+
+| Parameter | Description |
+|-----------|-------------|
+| `SERVICE=WMS` | Must be `WMS`. |
+| `VERSION` | WMS version. |
+| `REQUEST=GetCapabilities` | Request type. |
+| `FORMAT` | `text/xml` (default) or `application/json`. |
+| `LANGUAGE` | Language code for titles/abstracts; defaults to the configured default language. |
+| `NAMESPACE` | Restrict the listing to layers in the given namespace. A value of the form `/regex/` is matched case-insensitively against the layer names instead, for example `/fmi:ecmwf:pop:rain\|fmi:wwi:pop:snow/`. By default the regex may be long enough to list every available layer; `wms.get_capabilities.max_namespace_length` sets a fixed limit. |
+| `LAYOUT` | Layer hierarchy in the response: `flat` (default), `recursive`, or `recursivetimes`. Overrides the configured default. |
+| `STARTTIME` / `ENDTIME` | Limit the advertised time dimension to the given range (ISO 8601). |
+| `DIM_REFERENCE_TIME` | Advertise the time dimension for the given model run (origin time). |
+| `ENABLEINTERVALS` | `1` / `0`: force the multi-interval time dimension on or off, overriding the configured default. |
+| `SHOW_HIDDEN` | `1`: include layers flagged `hidden` in the response. |
 
 ### GetMap
 
@@ -5004,7 +5143,7 @@ Required parameters:
 | Parameter | Description |
 |-----------|-------------|
 | `SERVICE=WMS` | Must be `WMS`. |
-| `VERSION=1.3.0` | WMS version (also `1.1.1` / `1.1.0` are accepted for backward compatibility). |
+| `VERSION` | WMS version, e.g. `1.3.0`. Must be one of the configured `supported_versions`. |
 | `REQUEST=GetMap` | Request type. |
 | `LAYERS` | Comma-separated list of layer names. |
 | `STYLES` | Comma-separated list of styles (may be empty: `STYLES=`). |
@@ -5012,27 +5151,61 @@ Required parameters:
 | `BBOX` | Bounding box: `minx,miny,maxx,maxy`. Axis order follows the CRS definition in WMS 1.3. |
 | `WIDTH` | Image width in pixels. |
 | `HEIGHT` | Image height in pixels. |
-| `FORMAT` | MIME type: `image/png`, `image/svg+xml`, `application/pdf`, `application/geo+json`, `application/topo+json`. |
+| `FORMAT` | Output MIME type; must be one of the server's configured formats. Common values: `image/png`, `image/webp`, `image/svg+xml`, `application/pdf`, `application/geo+json`, `application/topo+json`, `image/tiff` (GeoTIFF), `application/vnd.mapbox-vector-tile` (MVT), `application/x-datatile+png` ([DataTile](#datatile-output)). |
 
 Optional parameters:
 
 | Parameter | Description |
 |-----------|-------------|
-| `TRANSPARENT=TRUE\|FALSE` | Whether the background is transparent. |
+| `TRANSPARENT=TRUE\|FALSE` | Whether the background is transparent (default `FALSE`). |
 | `BGCOLOR=0xRRGGBB` | Background colour (used only when `TRANSPARENT=FALSE`). |
-| `EXCEPTIONS=XML\|application/json` | Exception reporting format. |
-| `TIME` | ISO 8601 time value or comma-separated list of times. |
+| `EXCEPTIONS` | Exception reporting format: `XML` (default), `JSON`, `INIMAGE`, or `BLANK`. |
+| `TIME` | Time selection. Accepts `current`, a single ISO 8601 time, a comma-separated list (`t1,t2,…`), an interval `min/max/resolution`, or a comma-separated list of such intervals. |
 | `ELEVATION` | Elevation value (forwarded to the layer as the `level` parameter). |
-| `INTERVAL_START` | Extension: start of observation time interval in minutes before `TIME`. |
-| `INTERVAL_END` | Extension: end of observation time interval in minutes after `TIME`. |
+| `DIM_REFERENCE_TIME` / `ORIGINTIME` | Select the model run (origin time). `DIM_REFERENCE_TIME` is the standard WMS dimension name; `ORIGINTIME` is an equivalent alias. Both are forwarded to Dali as `origintime`. An invalid reference time for a grid producer is rejected. |
+| `DIM_INTERVAL_START` | Extension: start of observation time interval in minutes before `TIME` (integer). |
+| `DIM_INTERVAL_END` | Extension: end of observation time interval in minutes after `TIME` (integer). |
+
+### GetFeatureInfo
+
+```
+GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=<name>&QUERY_LAYERS=<name>
+        &CRS=EPSG:4326&BBOX=...&WIDTH=...&HEIGHT=...&STYLES=&I=<col>&J=<row>
+```
+
+`GetFeatureInfo` reuses the full GetMap parameter set (`LAYERS`, `STYLES`, `CRS`/`SRS`,
+`BBOX`, `WIDTH`, `HEIGHT`, `TIME`, …) to reconstruct the map, plus:
+
+| Parameter | Description |
+|-----------|-------------|
+| `QUERY_LAYERS` | Comma-separated list of layers to query (subset of `LAYERS`). Required. |
+| `I` / `J` | Pixel column / row of the query point (WMS 1.3 names). Required. |
+| `INFO_FORMAT` | Response MIME type; defaults to `application/json`. |
 
 ### GetLegendGraphic
 
 ```
-GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=<name>&FORMAT=image/png
+GET /wms?SERVICE=WMS&VERSION=1.3.0&SLD_VERSION=1.1.0&REQUEST=GetLegendGraphic&LAYER=<name>&FORMAT=image/png
 ```
 
 Returns a legend image for the named layer.
+
+Required parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `VERSION` | WMS version. |
+| `SLD_VERSION` | SLD specification version, e.g. `1.1.0`. |
+| `LAYER` | Layer name (singular, unlike GetMap's `LAYERS`). |
+| `FORMAT` | Output MIME type, e.g. `image/png`. |
+
+Optional parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `STYLE` | Style name; defaults to `default`. |
+| `WIDTH` / `HEIGHT` | Legend size in pixels; default `500` × `500`. |
+| `TIME` | Time used to resolve a time-dependent legend; defaults to `current`. |
 
 
 # WMS GetMap and GetCapabilities configuration
@@ -5126,6 +5299,8 @@ In such cases one use the same JSON file for the product settings, and define ho
 # Configuration 
 In order to use the Dali plugin you need to edit two configuration files. These files are the main configuration file of the SmartMet Server environment and the Dali plugin specific configuration file.
 
+Variant settings are applied in two phases, exactly like query string options. Settings whose value is an include or a reference (<code>"json:..."</code> or <code>"ref:..."</code>) are substituted before the includes are expanded, so a variant may select for example a different isobands file with <code>"l1.isobands": "json:isobands/hires.json"</code>. All other settings are applied after the includes have been expanded, when the <code>qid</code>s inside the included files are visible. The same two phases are used for WMS GetMap, WMTS and OGC API Tiles requests and when building GetCapabilities.
+
 ## Main configuration file
 
 The main configuration file is named as "smartmet.conf". The main purpose of this configuration file is to define which plugins and engines need to be loaded when the server is started. In addition, it defines which configuration files these plugins and engines are using.
@@ -5206,8 +5381,12 @@ Controls the image cache used for binary formats (PNG, WebP, PDF).
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `cache.directory` | – | Filesystem cache directory path. |
-| `cache.memory_bytes` | – | Maximum memory cache size in bytes (also accepts strings like `"100M"`). |
+| `cache.memory_bytes` | – | Maximum memory cache size in bytes. |
 | `cache.filesystem_bytes` | – | Maximum filesystem cache size in bytes. |
+
+Both sizes may be given either as an integer (`104857600L`) or as a string with an optional
+unit (`"100M"`, `"100MB"`, `"100 MiB"`).  The unit is case insensitive and all units are
+binary multiples, so `"1KB"` and `"1KiB"` both mean 1024 bytes.
 
 ### `templates` group
 
@@ -5321,6 +5500,8 @@ wms:
         version         = "1.3.0";
         disable_updates = false;
         expiration_time = 60;
+        // Maximum length of a NAMESPACE=/regex/ value, 0 (default) = long enough to list all layers
+        max_namespace_length = 0;
 
         service:
         {

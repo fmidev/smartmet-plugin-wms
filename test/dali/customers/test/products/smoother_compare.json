@@ -1,0 +1,239 @@
+{
+  "width": 1610,
+  "height": 350,
+  "title": "Grid smoothers at equal scale (matched to Savitzky-Golay 7x7)",
+  "producer": "pal_skandinavia",
+  "projection": {
+    "crs": "data",
+    "xsize": 310,
+    "ysize": 310
+  },
+  "views": [
+    {
+      "qid": "v_orig",
+      "attributes": {
+        "transform": "translate(10,30)"
+      },
+      "layers": [
+        {
+          "qid": "b_orig",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature"
+        },
+        {
+          "qid": "l_orig",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/temperature.json",
+          "css": "isolines/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Temperature"
+          }
+        },
+        {
+          "qid": "t_orig",
+          "tag": "text",
+          "cdata": "original",
+          "attributes": {
+            "x": 0,
+            "y": -8,
+            "font-family": "Roboto",
+            "font-weight": "bold",
+            "font-size": 14,
+            "fill": "black"
+          }
+        }
+      ]
+    },
+    {
+      "qid": "v_sg",
+      "attributes": {
+        "transform": "translate(330,30)"
+      },
+      "layers": [
+        {
+          "qid": "b_sg",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "smoother": {
+            "size": 3,
+            "degree": 2
+          }
+        },
+        {
+          "qid": "l_sg",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/temperature.json",
+          "css": "isolines/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Temperature"
+          },
+          "smoother": {
+            "size": 3,
+            "degree": 2
+          }
+        },
+        {
+          "qid": "t_sg",
+          "tag": "text",
+          "cdata": "Savitzky-Golay 7x7",
+          "attributes": {
+            "x": 0,
+            "y": -8,
+            "font-family": "Roboto",
+            "font-weight": "bold",
+            "font-size": 14,
+            "fill": "black"
+          }
+        }
+      ]
+    },
+    {
+      "qid": "v_box",
+      "attributes": {
+        "transform": "translate(650,30)"
+      },
+      "layers": [
+        {
+          "qid": "b_box",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "smoother": {
+            "method": "box",
+            "radius": 1,
+            "passes": 3
+          }
+        },
+        {
+          "qid": "l_box",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/temperature.json",
+          "css": "isolines/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Temperature"
+          },
+          "smoother": {
+            "method": "box",
+            "radius": 1,
+            "passes": 3
+          }
+        },
+        {
+          "qid": "t_box",
+          "tag": "text",
+          "cdata": "box r1 p3",
+          "attributes": {
+            "x": 0,
+            "y": -8,
+            "font-family": "Roboto",
+            "font-weight": "bold",
+            "font-size": 14,
+            "fill": "black"
+          }
+        }
+      ]
+    },
+    {
+      "qid": "v_median",
+      "attributes": {
+        "transform": "translate(970,30)"
+      },
+      "layers": [
+        {
+          "qid": "b_median",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "smoother": {
+            "method": "median",
+            "radius": 2
+          }
+        },
+        {
+          "qid": "l_median",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/temperature.json",
+          "css": "isolines/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Temperature"
+          },
+          "smoother": {
+            "method": "median",
+            "radius": 2
+          }
+        },
+        {
+          "qid": "t_median",
+          "tag": "text",
+          "cdata": "median r2",
+          "attributes": {
+            "x": 0,
+            "y": -8,
+            "font-family": "Roboto",
+            "font-weight": "bold",
+            "font-size": 14,
+            "fill": "black"
+          }
+        }
+      ]
+    },
+    {
+      "qid": "v_morph",
+      "attributes": {
+        "transform": "translate(1290,30)"
+      },
+      "layers": [
+        {
+          "qid": "b_morph",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "smoother": {
+            "method": "morphology",
+            "radius": 2,
+            "morphology": "openclose"
+          }
+        },
+        {
+          "qid": "l_morph",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/temperature.json",
+          "css": "isolines/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Temperature"
+          },
+          "smoother": {
+            "method": "morphology",
+            "radius": 2,
+            "morphology": "openclose"
+          }
+        },
+        {
+          "qid": "t_morph",
+          "tag": "text",
+          "cdata": "morphology r2",
+          "attributes": {
+            "x": 0,
+            "y": -8,
+            "font-family": "Roboto",
+            "font-weight": "bold",
+            "font-size": 14,
+            "fill": "black"
+          }
+        }
+      ]
+    }
+  ]
+}

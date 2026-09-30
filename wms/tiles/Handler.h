@@ -13,6 +13,21 @@
  *   GET /tiles/collections/{collId}/tiles                       → Available tile sets
  *   GET /tiles/collections/{collId}/tiles/{tmsId}               → Tileset metadata
  *   GET /tiles/collections/{collId}/tiles/{tmsId}/{tm}/{row}/{col} → Tile image
+ *   GET /tiles/collections/{collId}/tiles/{tmsId}/{tm}/{row}/{col}/{j}/{i}
+ *                                                                 → Feature info
+ *
+ * The feature-info resource is a non-standard extension (OGC API - Tiles has
+ * no GetFeatureInfo equivalent): it mirrors the WMTS RESTful FeatureInfo
+ * resource shape and is delegated to the shared WMS pipeline. Info format
+ * negotiated via 'f' (json default, html); dimension query parameters
+ * (datetime, elevation, reference_time, style) apply like the tile route.
+ *
+ * OGC API - Styles (Mapbox style encoding), for styling the MVT output with the
+ * real wms-conf colours:
+ *
+ *   GET /tiles/styles                                            → Style set list
+ *   GET /tiles/collections/{collId}/styles                       → Styles for a collection
+ *   GET /tiles/collections/{collId}/styles/{styleId}?f=mapbox    → Mapbox GL style document
  *
  * Tile format negotiated via 'f' query parameter or Accept header.
  * GeoTIFF and Protobuf/MVT formats are intentionally not implemented here.
@@ -21,10 +36,12 @@
 
 #pragma once
 
-#include "Config.h"
+#include "../MapboxStyle.h"
 #include "../ogc/QueryStatus.h"
-#include <spine/HTTP.h>
+#include "Config.h"
+#include <json/json.h>
 #include <macgyver/Exception.h>
+#include <spine/HTTP.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -42,6 +59,10 @@ namespace Dali
 class Config;
 class Product;
 class State;
+}  // namespace Dali
+namespace WMS
+{
+class Handler;
 }
 namespace Tiles
 {
@@ -61,6 +82,11 @@ class Handler
   void init(std::unique_ptr<Config> tilesConfig);
   void shutdown();
 
+  // Feature info is delegated to the WMS handler (the request is translated
+  // into WMS GetFeatureInfo vocabulary); the pointer is wired by the Plugin
+  // after both handlers exist. Not owned.
+  void setWMSHandler(WMS::Handler* wmsHandler) { itsWMSHandler = wmsHandler; }
+
   QueryStatus query(Spine::Reactor& theReactor,
                     Dali::State& theState,
                     const Spine::HTTP::Request& theRequest,
@@ -78,40 +104,76 @@ class Handler
   QueryStatus handleConformance(const std::string& base, Spine::HTTP::Response& resp);
   QueryStatus handleTileMatrixSets(const std::string& base, Spine::HTTP::Response& resp);
   QueryStatus handleTileMatrixSet(const std::string& base,
-                                   const std::string& tmsId,
-                                   Spine::HTTP::Response& resp);
+                                  const std::string& tmsId,
+                                  Spine::HTTP::Response& resp);
   QueryStatus handleCollections(const std::string& base,
-                                 Dali::State& theState,
-                                 const Spine::HTTP::Request& theRequest,
-                                 Spine::HTTP::Response& resp);
-  QueryStatus handleCollection(const std::string& base,
-                                const std::string& collId,
                                 Dali::State& theState,
                                 const Spine::HTTP::Request& theRequest,
                                 Spine::HTTP::Response& resp);
+  QueryStatus handleCollection(const std::string& base,
+                               const std::string& collId,
+                               Dali::State& theState,
+                               const Spine::HTTP::Request& theRequest,
+                               Spine::HTTP::Response& resp);
   QueryStatus handleCollectionTilesets(const std::string& base,
-                                        const std::string& collId,
-                                        Spine::HTTP::Response& resp);
+                                       const std::string& collId,
+                                       Spine::HTTP::Response& resp);
   QueryStatus handleTilesetMetadata(const std::string& base,
+                                    const std::string& collId,
+                                    const std::string& tmsId,
+                                    Spine::HTTP::Response& resp);
+
+  // OGC API - Styles endpoints (Mapbox style encoding)
+  QueryStatus handleStyles(const std::string& base,
+                           Dali::State& theState,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& resp);
+  QueryStatus handleCollectionStyles(const std::string& base,
                                      const std::string& collId,
-                                     const std::string& tmsId,
+                                     const Spine::HTTP::Request& theRequest,
                                      Spine::HTTP::Response& resp);
+  QueryStatus handleStyle(const std::string& base,
+                          const std::string& collId,
+                          const std::string& styleId,
+                          Dali::State& theState,
+                          const Spine::HTTP::Request& theRequest,
+                          Spine::HTTP::Response& resp);
+
+  // Resolve every styleable (isoband/isoline) MVT layer in a collection's
+  // product: source-layer (qid), level table and CSS — the join material for a
+  // Mapbox style. Returns the layers in product order (empty when none).
+  std::vector<Dali::MapboxStyleLayer> resolveStyleLayers(const std::string& collId,
+                                                         const std::string& styleId,
+                                                         Dali::State& theState,
+                                                         const Spine::HTTP::Request& theRequest);
 
   // Tile rendering endpoint
   QueryStatus handleGetTile(Dali::State& theState,
-                             const Spine::HTTP::Request& theRequest,
-                             Spine::HTTP::Response& theResponse,
-                             const std::string& collId,
-                             const std::string& tmsId,
-                             const std::string& tmId,
-                             unsigned row,
-                             unsigned col,
-                             const std::string& format);
-
-  QueryStatus generateTile(Dali::State& theState,
                             const Spine::HTTP::Request& theRequest,
                             Spine::HTTP::Response& theResponse,
-                            Dali::Product& product);
+                            const std::string& collId,
+                            const std::string& tmsId,
+                            const std::string& tmId,
+                            unsigned row,
+                            unsigned col,
+                            const std::string& format);
+
+  QueryStatus handleGetFeatureInfo(Spine::Reactor& theReactor,
+                                   Dali::State& theState,
+                                   const Spine::HTTP::Request& theRequest,
+                                   Spine::HTTP::Response& theResponse,
+                                   const std::string& collId,
+                                   const std::string& tmsId,
+                                   const std::string& tmId,
+                                   unsigned row,
+                                   unsigned col,
+                                   unsigned pixel_j,
+                                   unsigned pixel_i);
+
+  QueryStatus generateTile(Dali::State& theState,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& theResponse,
+                           Dali::Product& product);
 
   // Send application/problem+json error response (RFC 7807)
   void sendError(int status,
@@ -123,6 +185,7 @@ class Handler
 
   const Dali::Config& itsDaliConfig;
   std::unique_ptr<Config> itsTilesConfig;
+  WMS::Handler* itsWMSHandler = nullptr;  // not owned; see setWMSHandler()
 };
 
 }  // namespace Tiles

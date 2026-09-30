@@ -233,6 +233,16 @@
 						"nearestValue": 0,
 						"current": 1
 					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
 					
 				],
 				"Style":
@@ -341,6 +351,16 @@
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1
+					}
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T06:31:00Z",
+						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1

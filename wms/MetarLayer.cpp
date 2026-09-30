@@ -988,7 +988,7 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
         CTPP::CDT tc(CTPP::CDT::HASH_VAL);
         tc["start"] = "<text";
         tc["end"] = "</text>";
-        tc["cdata"] = text_val;
+        tc["cdata"] = Fmi::safexmlescape(text_val);
         tc["attributes"]["x"] = Fmi::to_string(x);
         tc["attributes"]["y"] = Fmi::to_string(y);
         tc["attributes"]["text-anchor"] = anchor;

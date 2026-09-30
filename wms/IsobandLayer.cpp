@@ -3,17 +3,17 @@
 #include "IsobandLayer.h"
 #include "AggregationUtility.h"
 #include "Config.h"
-#include "Geometry.h"
 #include "DataTile.h"
+#include "Geometry.h"
 #include "GridDataGeoTiff.h"
-#include "SubdivideGate.h"
-#include "MapboxVectorTile.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "State.h"
 #include "StyleSheet.h"
+#include "SubdivideGate.h"
 #include "ValueTools.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -250,14 +250,21 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
       dataheight /= 1000;
     }
 
-    unsigned int width = lround(datawidth / *heatmap.resolution);
-    unsigned int height = lround(dataheight / *heatmap.resolution);
+    // Compute the grid size in floating point first so that a very small resolution
+    // cannot overflow the unsigned int width/height (which would both truncate the
+    // dimensions and wrap the width*height product, bypassing the max_points cap).
+    const double dwidth = lround(datawidth / *heatmap.resolution);
+    const double dheight = lround(dataheight / *heatmap.resolution);
 
-    if (width * height > heatmap.max_points)
+    if (dwidth < 1 || dheight < 1 ||
+        dwidth * dheight > static_cast<double>(heatmap.max_points))
       throw Fmi::Exception(
           BCP,
-          (std::string("Heatmap too big (") + Fmi::to_string(width * height) + " points, max " +
+          (std::string("Heatmap too big (") + Fmi::to_string(dwidth * dheight) + " points, max " +
            Fmi::to_string(heatmap.max_points) + "), increase resolution"));
+
+    unsigned int width = static_cast<unsigned int>(dwidth);
+    unsigned int height = static_cast<unsigned int>(dheight);
 
     // Must use at least two grid points, value 1 would cause a segmentation fault in here
 
@@ -632,6 +639,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("contour.subdivide",
                                                      Fmi::to_string(subdivide));
 
+    if (contour_threads)
+      originalGridQuery->mAttributeList.addAttribute("contour.threads",
+                                                     Fmi::to_string(*contour_threads));
+
     if (interpolation == "linear")
       originalGridQuery->mAttributeList.addAttribute(
           "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
@@ -895,7 +906,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           if (filter.bezierEnabled() && theState.getType() != "topojson" &&
               theState.getType() != "geojson" && theState.getType() != "kml")
           {
-            pointCoordinates = filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
+            pointCoordinates =
+                filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
           }
 
           if (pointCoordinates.empty())
@@ -1125,6 +1137,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
+    options.smoother = smoother.trax_options;
 
     options.extrapolation = extrapolation;
 
@@ -1143,6 +1156,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     options.validate = validate;
     options.desliver = desliver;
     options.subdivide = subdivide;
+    options.threads = contour_threads;
 
     // Do the actual contouring, either full grid or just
     // a sampled section
@@ -1277,7 +1291,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           if (filter.bezierEnabled() && theState.getType() != "topojson" &&
               theState.getType() != "geojson" && theState.getType() != "kml")
           {
-            pointCoordinates = filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
+            pointCoordinates =
+                filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
           }
 
           if (pointCoordinates.empty())
@@ -1419,7 +1434,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
 
     if (!theState.isObservation(paraminfo.producer) && !(paraminfo.source == std::string("grid")))
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isobands, theState));
@@ -1586,6 +1601,7 @@ void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
+    options.smoother = smoother.trax_options;
     options.extrapolation = extrapolation;
 
     if (interpolation == "linear")
@@ -1603,6 +1619,7 @@ void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     options.validate = validate;
     options.desliver = desliver;
     options.subdivide = subdivide;
+    options.threads = contour_threads;
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;

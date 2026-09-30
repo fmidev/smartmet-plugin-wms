@@ -56,7 +56,8 @@ class Config
   const WMS::Config& itsWMSConfig;
 
   std::vector<TileMatrixSet> itsTileMatrixSets;
-  std::set<std::string> itsSupportedFormats{"image/png", "image/webp", "image/svg+xml", "image/tiff"};
+  std::set<std::string> itsSupportedFormats{
+      "image/png", "image/webp", "image/svg+xml", "image/tiff", "application/x-datatile+png"};
 };
 
 }  // namespace WMTS

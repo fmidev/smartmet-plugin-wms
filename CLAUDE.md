@@ -10,7 +10,7 @@ The WMS/Dali plugin for SmartMet Server. It implements OGC Web Map Service (WMS 
 
 ```bash
 make                    # Build wms.so plugin
-make test               # Run all ~488 integration tests (needs Redis + test databases)
+make test               # Run all ~520 integration tests (needs Redis + test databases)
 make test-dali          # Run only Dali tests (non-WMS/WMTS/tiles)
 make test-wms           # Run only WMS tests
 make test-wmts          # Run only WMTS tests
@@ -20,15 +20,20 @@ make format             # clang-format all source files
 
 ### Running specific tests
 
-Override the test variable for the relevant group:
+Override the test variable for the relevant group, and use that group's target. The plain
+`test` target runs `TestRunner.sh` with no arguments, so it ignores these variables and
+silently runs the whole suite -- only `test-dali`, `test-wms`, `test-wmts` and `test-tiles`
+consume them.
 
 ```bash
 cd test
-make test DALI_TESTS="input/autoclass.get"
-make test WMS_TESTS="input/wms_getcapabilities.get"
-make test WMTS_TESTS="input/wmts_getcapabilities.get"
-make test TILES_TESTS="input/tiles_landing.get"
+make test-dali  DALI_TESTS="input/autoclass.get"
+make test-wms   WMS_TESTS="input/wms_getcapabilities.get"
+make test-wmts  WMTS_TESTS="input/wmts_getcapabilities.get"
+make test-tiles TILES_TESTS="input/tiles_landing.get"
 ```
+
+All targets also work from the plugin root, which delegates to `test/`.
 
 ### Accepting changed test output
 
@@ -45,6 +50,20 @@ Individual acceptance: `cp test/failures/foo.get test/output/foo.get`
 Tests are integration tests: `PluginTest.cpp` starts a SmartMet Reactor with the plugin loaded, `TestRunner.sh` feeds HTTP requests from `test/input/*.get` (and `.post`) via named pipes, and `CompareImages.pl` compares actual output against `test/output/` expected files. Comparison is format-aware: images are compared via ImageMagick, SVG is rasterized then compared, XML uses xmllint, JSON uses jq, MVT uses protoc decode.
 
 Tests to skip are listed in `test/input/.testignore`.
+
+WMS and WMTS GetCapabilities are validated offline against the OGC XML schemas vendored in
+`test/schemas/xsd/` (an XML catalog maps the schemaLocation URLs to the local copies), by the
+`validate-xml-schemas` Makefile target that runs after `test`, `test-wms` and `test-wmts`.
+OGC API Tiles JSON responses are additionally validated against the OGC API Common Part 2 schemas vendored in
+`test/schemas/ogcapi/` by `test/ValidateJsonSchema.py` (needs python3-jsonschema and
+python3-pyyaml). The `validate-tiles-schemas` Makefile target runs after `test` and `test-tiles`
+and checks both `test/output/` and `test/failures/`; a schema violation fails the target. See
+`test/schemas/ogcapi/README.md` for provenance and the one local wrapper schema.
+
+`make update-schemas` re-downloads both schema sets (needs network; the JSON schemas are pinned to
+a commit in `test/schemas/update-schemas.sh`). The test targets end with `make check-schemas`, which
+prints a WARNING if upstream has changed since the vendored copies were taken. It never fails and is
+silent offline; `SMARTMET_SCHEMA_CHECK=0` skips it.
 
 Unit tests exist in `test/unit/` (Boost.Test, currently label placement algorithms only).
 
@@ -67,7 +86,7 @@ test/             # Integration test suite
 
 Protobuf: `wms/vector_tile.proto` is compiled during build to `vector_tile.pb.{h,cc}` for MVT encoding.
 
-DataTile: `wms/DataTile.{h,cpp}` provides RGBA-encoded PNG output for client-side weather animations. Uses libpng directly, embeds scale/offset in PNG tEXt chunks. The `test/canvas/` directory contains standalone browser demos (rain, snow, wind particle systems) that consume this kind of data. The particle system libraries (`WeatherParticles.js`, `WeatherTimeline.js`) are also used by `~/hub/leaflet-fmi` for Leaflet map integration.
+DataTile: `wms/DataTile.{h,cpp}` provides RGBA-encoded PNG output for client-side weather animations. Uses libpng directly, embeds scale/offset in PNG tEXt chunks. The `test/canvas/` directory contains standalone browser demos (rain, snow, wind particle systems) that consume this kind of data. The particle system libraries (`WeatherParticles.js`, `WeatherTimeline.js`) are written to be reusable from map frameworks such as Leaflet.
 
 ## Architecture
 

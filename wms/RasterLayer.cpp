@@ -1,12 +1,7 @@
 //======================================================================
 
 #include "RasterLayer.h"
-#include "DataTile.h"
-#include "GridDataGeoTiff.h"
-#include <cpl_vsi.h>
-#include <gdal_priv.h>
-#include <ogr_spatialref.h>
-#include <atomic>
+#include "Base64.h"
 #include "ColorPainter_ARGB.h"
 #include "ColorPainter_border.h"
 #include "ColorPainter_rain.h"
@@ -14,7 +9,9 @@
 #include "ColorPainter_shading.h"
 #include "ColorPainter_stream.h"
 #include "Config.h"
+#include "DataTile.h"
 #include "Geometry.h"
+#include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
@@ -33,6 +30,7 @@
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <giza/Giza.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImagePaint.h>
@@ -48,7 +46,11 @@
 #include <timeseries/ParameterFactory.h>
 #include <timeseries/ParameterTools.h>
 #include <trax/InterpolationType.h>
+#include <atomic>
+#include <cpl_vsi.h>
+#include <gdal_priv.h>
 #include <limits>
+#include <ogr_spatialref.h>
 #include <unistd.h>
 
 namespace SmartMet
@@ -465,15 +467,11 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
       if (theState.animation_enabled)
         comp = 1;
 
-      int sz = cimage.width * cimage.height;
-      int bsz = sz * 4 + 10000;
-      char *buffer = new char[bsz];
-      int nsz = png_saveMem(buffer, bsz, cimage.pixel, cimage.width, cimage.height, comp);
-      svgImage << "<image id=\"" << qid << "\" href=\"data:image/png;base64,";
-      svgImage << base64_encode((unsigned char *)buffer, nsz);
+      const auto png = Giza::topng_argb(cimage.pixel, cimage.width, cimage.height, comp);
+      svgImage << "<image id=\"" << Fmi::safexmlescape(qid) << "\" href=\"data:image/png;base64,";
+      svgImage << Dali::base64_encode(png);
       svgImage << "\" x=\"0\" y=\"0\" width=\"" << cimage.width << "\" height=\"" << cimage.height
                << "\" />\n\n";
-      delete[] buffer;
 
       svg_image = svgImage.str();
     }
@@ -496,7 +494,7 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
     group_cdt["end"] = "</g>";
 
     std::ostringstream useOut;
-    useOut << "<use xlink:href=\"#" << qid << "\"/>\n";
+    useOut << "<use xlink:href=\"#" << Fmi::safexmlescape(qid) << "\"/>\n";
 
     if (visible && !svg_image.empty())
       theGlobals["includes"][qid] = svg_image;
@@ -898,7 +896,7 @@ std::size_t RasterLayer::hash_value(const State &theState) const
     auto hash = Layer::hash_value(theState);
 
     if (!theState.isObservation(paraminfo.producer) && (paraminfo.source != std::string("grid")))
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
