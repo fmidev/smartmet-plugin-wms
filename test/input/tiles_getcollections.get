@@ -1,1 +1,3 @@
 GET /tiles/collections HTTP/1.0
+fmi-apikey: foobar
+omit-fmi-apikey: true

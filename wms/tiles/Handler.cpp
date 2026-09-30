@@ -996,9 +996,13 @@ std::string Handler::computeBaseUrl(const Spine::HTTP::Request& req) const
   auto host_header = req.getHeader("Host");
   std::string host = host_header ? *host_header : "localhost";
 
+  std::string apikey_path;
   const bool check_token = true;
   auto apikey = Spine::FmiApiKey::getFmiApiKey(req, check_token);
-  std::string apikey_path = apikey ? ("/fmi-apikey/" + *apikey) : "";
+  if (apikey && Spine::FmiApiKey::shouldReturnApiKey(req))
+  {
+    apikey_path = "/fmi-apikey/" + *apikey;
+  }
 
   return protocol + host + apikey_path + itsDaliConfig.tilesUrl();
 }
