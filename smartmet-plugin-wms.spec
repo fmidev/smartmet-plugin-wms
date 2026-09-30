@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.28
+Version: 26.9.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.9.26
 BuildRequires: smartmet-library-grid-content-devel >= 26.9.26
 BuildRequires: smartmet-library-grid-files-devel >= 26.9.26
 BuildRequires: smartmet-library-macgyver-devel >= 26.9.26-2
-BuildRequires: smartmet-library-spine-devel >= 26.9.26
+BuildRequires: smartmet-library-spine-devel >= 26.9.30
 BuildRequires: smartmet-library-timeseries-devel >= 26.9.16
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
@@ -85,7 +85,7 @@ Requires: smartmet-library-grid-files >= 26.9.26
 Requires: smartmet-library-gis >= 26.9.26
 Requires: smartmet-library-trax >= 26.6.26
 Requires: smartmet-library-macgyver >= 26.9.26-2
-Requires: smartmet-library-spine >= 26.9.26
+Requires: smartmet-library-spine >= 26.9.30
 Requires: smartmet-library-timeseries >= 26.9.16
 Requires: smartmet-library-giza >= 26.9.26
 %if %{with authentication}
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Sep 30 2026 Petteri Hintsanen <petteri.hintsanen@fmi.fi> - 26.9.30-1.fmi
+- Security: Optionally hide fmi-apikey from responses.
+
 * Mon Sep 28 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.28-1.fmi
 - GetCapabilities NAMESPACE=/regex/ values are no longer limited to 100 characters: by default the regex may be long enough to list every available layer, and the new setting wms.get_capabilities.max_namespace_length sets a fixed limit
 
