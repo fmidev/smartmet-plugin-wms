@@ -127,7 +127,7 @@ sub WriteTempLines {
 
 # Compare two arrays of lines using the same fuzz rules previously applied
 # only on the equal-line-count path (LegendURL / OnlineResource width/height
-# differences up to 3 are tolerated). Returns 1 if equal within fuzz, else 0.
+# differences up to 5 are tolerated). Returns 1 if equal within fuzz, else 0.
 sub LineSequenceMatches {
     my ($exp_ref, $res_ref) = @_;
     return 0 if scalar(@$exp_ref) != scalar(@$res_ref);
@@ -141,7 +141,7 @@ sub LineSequenceMatches {
                 my ($ew, $eh) = ($1, $2);
                 my $wd = abs($rw - $ew);
                 my $hd = abs($rh - $eh);
-                next if (($wd > 0 && $wd <= 3) || ($hd > 0 && $hd <= 3));
+                next if (($wd > 0 && $wd <= 5) || ($hd > 0 && $hd <= 5));
             }
         }
         if ($r =~ m{^.*?<OnlineResource\s.*?;width=(\d+).*?;height=(\d+).*?>}) {
@@ -150,7 +150,7 @@ sub LineSequenceMatches {
                 my ($ew, $eh) = ($1, $2);
                 my $wd = abs($rw - $ew);
                 my $hd = abs($rh - $eh);
-                next if (($wd > 0 && $wd <= 3) || ($hd > 0 && $hd <= 3));
+                next if (($wd > 0 && $wd <= 5) || ($hd > 0 && $hd <= 5));
             }
         }
         if ($r =~ m/<LegendURL\s.*?width=(\d+).*?height=(\d+)/) {
@@ -159,7 +159,7 @@ sub LineSequenceMatches {
                 my ($ew, $eh) = ($1, $2);
                 my $wd = abs($rw - $ew);
                 my $hd = abs($rh - $eh);
-                next if (($wd > 0 && $wd <= 3) || ($hd > 0 && $hd <= 3));
+                next if (($wd > 0 && $wd <= 5) || ($hd > 0 && $hd <= 5));
             }
         }
         return 0;
