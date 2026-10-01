@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.30
+Version: 26.10.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Oct  1 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.1-1.fmi
+- Layer "timestep" settings no longer prune the querydata engine's shared valid time list: a 15-minute layer could make every other layer of the same producer advertise 15-minute steps in GetCapabilities
+
 * Wed Sep 30 2026 Petteri Hintsanen <petteri.hintsanen@fmi.fi> - 26.9.30-1.fmi
 - Security: Optionally hide fmi-apikey from responses.
 
