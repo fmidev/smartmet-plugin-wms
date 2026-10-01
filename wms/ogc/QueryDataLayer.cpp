@@ -9,19 +9,26 @@ namespace OGC
 {
 namespace
 {
-  void apply_timestep(Engine::Querydata::ValidTimeList& timelist, std::optional<int> timestep)
+  // Return the valid times which are multiples of the timestep counted from UTC midnight.
+  // The input list must not be modified: for a single model it is the engine's shared
+  // Model::validTimes() list, and pruning it in place would change the time dimension of
+  // every other layer using the same producer (and race with concurrent readers).
+  std::shared_ptr<Engine::Querydata::ValidTimeList> apply_timestep(
+      const std::shared_ptr<Engine::Querydata::ValidTimeList>& timelist,
+      std::optional<int> timestep)
   {
-    if(!timestep || timestep <= 0)
-      return;
+    if (!timelist || !timestep || *timestep <= 0)
+      return timelist;
 
-    timelist.remove_if([&](const Fmi::DateTime& t) {
-        // Anchor to UTC midnight of that day
-	// auto midnight = floor<Fmi::Days>(t);
-	auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
-
-        auto since_midnight = (t - midnight).total_minutes();
-        return (since_midnight % *timestep) != 0;
-    });
+    auto ret = std::make_shared<Engine::Querydata::ValidTimeList>();
+    for (const auto& t : *timelist)
+    {
+      auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
+      auto since_midnight = (t - midnight).total_minutes();
+      if (since_midnight % *timestep == 0)
+        ret->push_back(t);
+    }
+    return ret;
   }
 }
   
@@ -47,13 +54,13 @@ bool QueryDataLayer::updateLayerMetaData()
         geographicBoundingBox.yMax = md.north;
 
         std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
-        apply_timestep(*md.validtimes, timestep);
-        time_intervals intervals = get_intervals(*md.validtimes);
+        auto validtimes = apply_timestep(md.validtimes, timestep);
+        time_intervals intervals = get_intervals(*validtimes);
         std::shared_ptr<TimeDimension> timeDimension;
         if (!intervals.empty())
           timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
         else
-          timeDimension = std::make_shared<StepTimeDimension>(*md.validtimes);
+          timeDimension = std::make_shared<StepTimeDimension>(*validtimes);
         newTimeDimensions.insert(std::make_pair(Fmi::DateTime::NOT_A_DATE_TIME, timeDimension));
         timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
         timeDimensions->useLatestTimeAsDefault(!queryDataConf.isforecast);
@@ -93,11 +100,10 @@ bool QueryDataLayer::updateLayerMetaData()
     // We do not want a reference time for multifiles
     if (queryDataConf.ismultifile)
     {
-      std::shared_ptr<Engine::Querydata::ValidTimeList> validtimes = q->validTimes();
+      auto validtimes = apply_timestep(q->validTimes(), timestep);
 
-      if (!validtimes->empty())
+      if (validtimes && !validtimes->empty())
       {
-	apply_timestep(*validtimes, timestep);
         std::shared_ptr<TimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*validtimes);
         if (!intervals.empty())
@@ -114,9 +120,9 @@ bool QueryDataLayer::updateLayerMetaData()
       for (const auto& t : origintimes)
       {
         q = itsQEngine->get(itsProducer, t);
-        std::shared_ptr<Engine::Querydata::ValidTimeList> vt = q->validTimes();
-	if(vt)
-	  apply_timestep(*vt, timestep);
+        auto vt = apply_timestep(q->validTimes(), timestep);
+        if (!vt)
+          continue;
 
         std::shared_ptr<TimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*vt);
