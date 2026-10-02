@@ -12,6 +12,7 @@
 #include <boost/range/algorithm.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <ogr_spatialref.h>
 #include <spine/Convenience.h>
 
 namespace SmartMet
@@ -59,6 +60,44 @@ std::string get_crs(const Spine::HTTP::Request& request)
   throw Fmi::Exception(BCP, "CRS-option has not been defined")
       .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
       .disableLogging();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Reorder a CRS:84/83/27 bounding box for the projection code
+ *
+ * WMS 1.3.0 Annex B defines the CRS:84, CRS:83 and CRS:27 references to use
+ * longitude,latitude axis order. The projection code decides the BBOX axis
+ * order from the GDAL definition of the reference, for which for example
+ * EPSG:4326 means latitude,longitude. In that case the coordinates are swapped
+ * so that they are interpreted correctly.
+ */
+// ----------------------------------------------------------------------
+
+std::string bbox_in_definition_axis_order(const std::string& theBBox,
+                                          const std::string& theCRS,
+                                          const std::string& theDefinition)
+{
+  if (!boost::algorithm::iequals(theCRS, "CRS:84") &&
+      !boost::algorithm::iequals(theCRS, "CRS:83") && !boost::algorithm::iequals(theCRS, "CRS:27"))
+    return theBBox;
+
+  // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
+  std::string definition = theDefinition;
+  if (boost::algorithm::starts_with(definition, "EPSG:"))
+    boost::algorithm::replace_first(definition, "EPSG:", "EPSGA:");
+
+  OGRSpatialReference spatref;
+  if (spatref.SetFromUserInput(definition.c_str()) != OGRERR_NONE ||
+      spatref.EPSGTreatsAsLatLong() == 0)
+    return theBBox;
+
+  std::vector<std::string> parts;
+  boost::algorithm::split(parts, theBBox, boost::algorithm::is_any_of(","));
+  if (parts.size() != 4)
+    return theBBox;
+
+  return parts[1] + "," + parts[0] + "," + parts[3] + "," + parts[2];
 }
 
 void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
@@ -612,7 +651,11 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     // Convert WMS width & height to projection xsize & ysize
     theRequest.removeParameter("width");
     theRequest.removeParameter("height");
-    theRequest.addParameter("projection.bbox", bbox);
+    // This must be done after the validate_options call or we will not get the
+    // correct exception as output
+
+    std::string crs_decl = itsConfig.getCRSDefinition(crs);  // Pass GDAL string to renderer
+    theRequest.addParameter("projection.bbox", bbox_in_definition_axis_order(bbox, crs, crs_decl));
     theRequest.addParameter("projection.xsize", Fmi::to_string(itsParameters.width));
     theRequest.addParameter("projection.ysize", Fmi::to_string(itsParameters.height));
 
@@ -644,10 +687,6 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       }
     }
 
-    // This must be done after the validate_options call or we will not get the
-    // correct exception as output
-
-    std::string crs_decl = itsConfig.getCRSDefinition(crs);  // Pass GDAL string to renderer
     theRequest.addParameter("projection.crs", crs_decl);
 
     // Bounding box should always be defined using the main crs
