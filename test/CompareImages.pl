@@ -125,6 +125,30 @@ sub WriteTempLines {
     return $path;
 }
 
+# Floating point fuzz: two lines match if they are identical once every
+# number is masked out, and each pair of corresponding numbers agrees within
+# a relative tolerance.
+my $FLOAT_REL_TOL = 1e-9;
+my $NUMBER_RE = qr/[-+]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][-+]?\d+)?/;
+
+sub NumbersMatch {
+    my ($e, $r) = @_;
+    (my $es = $e) =~ s/$NUMBER_RE/#/g;
+    (my $rs = $r) =~ s/$NUMBER_RE/#/g;
+    return 0 if $es ne $rs;
+    my @en = ($e =~ m/($NUMBER_RE)/g);
+    my @rn = ($r =~ m/($NUMBER_RE)/g);
+    return 0 if scalar(@en) != scalar(@rn);
+    for my $k (0..$#en) {
+        next if $en[$k] eq $rn[$k];
+        return 0 if $en[$k] !~ m/[.eE]/ && $rn[$k] !~ m/[.eE]/;
+        my $scale = abs($en[$k]) > abs($rn[$k]) ? abs($en[$k]) : abs($rn[$k]);
+        $scale = 1 if $scale < 1;
+        return 0 if abs($en[$k] - $rn[$k]) > $FLOAT_REL_TOL * $scale;
+    }
+    return 1;
+}
+
 # Compare two arrays of lines using the same fuzz rules previously applied
 # only on the equal-line-count path (LegendURL / OnlineResource width/height
 # differences up to 3 are tolerated). Returns 1 if equal within fuzz, else 0.
@@ -135,6 +159,7 @@ sub LineSequenceMatches {
         my $e = $exp_ref->[$i];
         my $r = $res_ref->[$i];
         next if $e eq $r;
+        next if NumbersMatch($e, $r);
         if ($r =~ m/.*?<LegendURL\s+width="(\d+)"\s+height="(\d+)".*?>/) {
             my ($rw, $rh) = ($1, $2);
             if ($e =~ m/.*?<LegendURL\s+width="(\d+)"\s*height="(\d+)".*?>/) {
@@ -253,6 +278,7 @@ sub LineSequenceMatchesJson {
         my $et = $e; $et =~ s/^\s+//; $et =~ s/\s+$//;
         my $rt = $r; $rt =~ s/^\s+//; $rt =~ s/\s+$//;
         next if $et eq $rt;
+        next if NumbersMatch($et, $rt);
         if ($rt =~ m/"width"\s*:\s*(\d+)/) {
             my $rw = $1;
             if ($et =~ m/"width"\s*:\s*(\d+)/) {
