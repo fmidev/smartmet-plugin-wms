@@ -1,1 +1,3 @@
 GET /wmts/1.0.0/WMTSCapabilities.xml HTTP/1.0
+fmi-apikey: foobar
+omit-fmi-apikey: 1
