@@ -1,0 +1,2 @@
+GET /wms?service=wms&request=GetMap&layers=ely:wmsmap&styles=&width=300&height=500&format=image/svg%2Bxml&time=2008-08-20T00:00:00Z&version=1.3.0&crs=EPSG:4326&bbox=59,17,71,34 HTTP/1.0
+
