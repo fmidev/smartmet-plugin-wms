@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.9.30
+Version: 26.10.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -31,9 +31,9 @@ BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.9.26
 BuildRequires: smartmet-library-grid-content-devel >= 26.9.26
 BuildRequires: smartmet-library-grid-files-devel >= 26.9.26
-BuildRequires: smartmet-library-macgyver-devel >= 26.9.26-2
-BuildRequires: smartmet-library-spine-devel >= 26.9.30
-BuildRequires: smartmet-library-timeseries-devel >= 26.9.16
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.2
+BuildRequires: smartmet-library-spine-devel >= 26.10.2
+BuildRequires: smartmet-library-timeseries-devel >= 26.10.2
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
@@ -84,9 +84,9 @@ Requires: smartmet-library-grid-content >= 26.9.26
 Requires: smartmet-library-grid-files >= 26.9.26
 Requires: smartmet-library-gis >= 26.9.26
 Requires: smartmet-library-trax >= 26.6.26
-Requires: smartmet-library-macgyver >= 26.9.26-2
-Requires: smartmet-library-spine >= 26.9.30
-Requires: smartmet-library-timeseries >= 26.9.16
+Requires: smartmet-library-macgyver >= 26.10.2
+Requires: smartmet-library-spine >= 26.10.2
+Requires: smartmet-library-timeseries >= 26.10.2
 Requires: smartmet-library-giza >= 26.9.26
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.6.26
@@ -100,7 +100,7 @@ Requires: smartmet-engine-grid >= 26.9.26
 Requires: smartmet-engine-geonames >= 26.9.26
 Requires: smartmet-engine-satellite >= 26.9.23
 Requires: smartmet-server >= 26.9.2
-Requires: smartmet-library-spine >= 26.9.26
+Requires: smartmet-library-spine >= 26.10.2
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -181,6 +181,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 02 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.2-1.fmi
+- Rebuilt against macgyver 26.10.2 where Fmi::Cache::Cache uses CLOCK eviction instead of LRU.
+  CLOCK is faster than LRU since a cache hit only takes a shared lock (ABI change)
+
+* Thu Oct  1 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.1-1.fmi
+- Layer "timestep" settings no longer prune the querydata engine's shared valid time list: a 15-minute layer could make every other layer of the same producer advertise 15-minute steps in GetCapabilities
+
 * Wed Sep 30 2026 Petteri Hintsanen <petteri.hintsanen@fmi.fi> - 26.9.30-1.fmi
 - Security: Optionally hide fmi-apikey from responses.
 
