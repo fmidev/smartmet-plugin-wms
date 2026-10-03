@@ -1028,7 +1028,7 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
         entry.etag = etag;
         entry.config_version = current_version;
         entry.built_at = now;
-        itsCapabilitiesCache->insert(cache_key, std::move(entry));
+        itsCapabilitiesCache->insert(cache_key, entry);
       }
     }
 
@@ -1369,7 +1369,7 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
       throw Fmi::Exception(BCP, "Failed to open '" + std::string(fname) + "' for reading!");
 
     content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
-    theResponse.setContent(content);
+    theResponse.setContent(std::move(content));
 
     // Removing the animation file
     remove(fname);

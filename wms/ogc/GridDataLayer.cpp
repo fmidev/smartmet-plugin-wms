@@ -2,6 +2,7 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/identification/GridDef.h>
 #include <macgyver/Exception.h>
+#include <vector>
 
 namespace SmartMet
 {
@@ -21,7 +22,7 @@ namespace
 	// auto midnight = floor<Fmi::Days>(t);
 	auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
 
-        auto since_midnight = (t - midnight).minutes();
+        auto since_midnight = (t - midnight).total_minutes();
         return (since_midnight % *timestep) != 0;
     });
   }
@@ -75,8 +76,10 @@ bool GridDataLayer::updateLayerMetaData()
     {
       // Finding parameter information (it might be inside a function)
 
-      char buf[2000];
-      strcpy(buf, itsParameter.c_str());
+      // The parameter may be overridden in the request, hence no fixed size buffer
+      std::vector<char> bufVec(itsParameter.begin(), itsParameter.end());
+      bufVec.push_back('\0');
+      char* buf = bufVec.data();
       char* startpoint = buf;
       char* pp = buf;
       while (*pp != '\0' && *pp != '}')

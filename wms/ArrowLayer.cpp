@@ -1227,7 +1227,7 @@ void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
 
     std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
-    auto mylocale = std::locale::classic();
+    const auto& mylocale = std::locale::classic();
     NFmiPoint dummy;
     Spine::Location loc(lon, lat);
 

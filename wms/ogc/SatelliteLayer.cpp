@@ -24,7 +24,7 @@ void apply_timestep(std::vector<Fmi::DateTime>& timelist, std::optional<int> tim
                             {
                               // Anchor to UTC midnight of that day
                               auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
-                              auto since_midnight = (t - midnight).minutes();
+                              auto since_midnight = (t - midnight).total_minutes();
                               return (since_midnight % *timestep) != 0;
                             });
 

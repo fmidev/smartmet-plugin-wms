@@ -6,6 +6,8 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
+#include <cstring>
+#include <vector>
 
 namespace SmartMet
 {
@@ -21,8 +23,9 @@ void getProducersFromParameter(const char* param, std::set<std::string>& produce
 {
   try
   {
-    char st[2000];
-    strcpy(st, param);
+    // The parameter may be overridden in the request, hence no fixed size buffer
+    std::vector<char> stVec(param, param + strlen(param) + 1);
+    char* st = stVec.data();
 
     char* field[100];
     uint c = 1;

@@ -1127,10 +1127,10 @@ std::shared_ptr<std::string> Plugin::findInImageCache(std::size_t hash) const
   return itsImageCache->find(hash);
 }
 
-void Plugin::insertInImageCache(std::size_t hash, std::shared_ptr<std::string> data)
+void Plugin::insertInImageCache(std::size_t hash, const std::shared_ptr<std::string>& data)
 {
   if (itsImageCache && hash != Fmi::bad_hash)
-    itsImageCache->insert(hash, std::move(data));
+    itsImageCache->insert(hash, data);
 }
 
 // ----------------------------------------------------------------------

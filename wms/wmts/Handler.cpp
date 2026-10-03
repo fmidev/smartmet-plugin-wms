@@ -548,7 +548,7 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
     }
 
     theResponse.setHeader("Content-Type", "application/xml; charset=UTF-8");
-    theResponse.setContent(output);
+    theResponse.setContent(std::move(output));
     return QueryStatus::OK;
   }
   catch (...)
@@ -1101,7 +1101,7 @@ void Handler::sendException(const std::string& code,
 
     theResponse.setHeader("Content-Type", "application/xml; charset=UTF-8");
     theResponse.setStatus(Spine::HTTP::Status::bad_request);
-    theResponse.setContent(output);
+    theResponse.setContent(std::move(output));
   }
   catch (...)
   {
