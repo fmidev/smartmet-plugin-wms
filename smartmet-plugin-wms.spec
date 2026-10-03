@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.2
-Release: 2%{?dist}.fmi
+Version: 26.10.3
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -27,29 +27,29 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
-BuildRequires: smartmet-library-giza-devel >= 26.9.26
+BuildRequires: smartmet-library-dynlib-devel >= 26.10.3
+BuildRequires: smartmet-library-giza-devel >= 26.10.3
 BuildRequires: smartmet-library-grid-content-devel >= 26.9.26
 BuildRequires: smartmet-library-grid-files-devel >= 26.9.26
-BuildRequires: smartmet-library-macgyver-devel >= 26.10.2
-BuildRequires: smartmet-library-spine-devel >= 26.10.2
-BuildRequires: smartmet-library-timeseries-devel >= 26.10.2
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.3
+BuildRequires: smartmet-library-spine-devel >= 26.10.3
+BuildRequires: smartmet-library-timeseries-devel >= 26.10.3
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.9.23
+BuildRequires: smartmet-engine-observation-devel >= 26.10.3
 %endif
-BuildRequires: smartmet-engine-avi-devel >= 26.9.19
+BuildRequires: smartmet-engine-avi-devel >= 26.10.3
 BuildRequires: smartmet-engine-gis-devel >= 26.9.23
 BuildRequires: smartmet-engine-grid-devel >= 26.9.26
-BuildRequires: smartmet-engine-geonames-devel >= 26.9.26
-BuildRequires: smartmet-engine-querydata-devel >= 26.9.16
-BuildRequires: smartmet-engine-satellite-devel >= 26.9.23
+BuildRequires: smartmet-engine-geonames-devel >= 26.10.3
+BuildRequires: smartmet-engine-querydata-devel >= 26.10.3
+BuildRequires: smartmet-engine-satellite-devel >= 26.10.3
 BuildRequires: smartmet-engine-contour-devel >= 26.9.23
-BuildRequires: smartmet-engine-satellite-devel >= 26.9.23
-BuildRequires: smartmet-library-gis-devel >= 26.9.26
-BuildRequires: smartmet-library-trax-devel >= 26.6.26
+BuildRequires: smartmet-engine-satellite-devel >= 26.10.3
+BuildRequires: smartmet-library-gis-devel >= 26.10.3
+BuildRequires: smartmet-library-trax-devel >= 26.10.3
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -79,28 +79,28 @@ Requires: libwebp13
 Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-dynlib >= 26.4.17
+Requires: smartmet-library-dynlib >= 26.10.3
 Requires: smartmet-library-grid-content >= 26.9.26
 Requires: smartmet-library-grid-files >= 26.9.26
-Requires: smartmet-library-gis >= 26.9.26
-Requires: smartmet-library-trax >= 26.6.26
-Requires: smartmet-library-macgyver >= 26.10.2
-Requires: smartmet-library-spine >= 26.10.2
-Requires: smartmet-library-timeseries >= 26.10.2
-Requires: smartmet-library-giza >= 26.9.26
+Requires: smartmet-library-gis >= 26.10.3
+Requires: smartmet-library-trax >= 26.10.3
+Requires: smartmet-library-macgyver >= 26.10.3
+Requires: smartmet-library-spine >= 26.10.3
+Requires: smartmet-library-timeseries >= 26.10.3
+Requires: smartmet-library-giza >= 26.10.3
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.6.26
 %endif
-Requires: smartmet-engine-avi >= 26.9.19
-Requires: smartmet-engine-querydata >= 26.9.16
-Requires: smartmet-engine-satellite >= 26.9.23
+Requires: smartmet-engine-avi >= 26.10.3
+Requires: smartmet-engine-querydata >= 26.10.3
+Requires: smartmet-engine-satellite >= 26.10.3
 Requires: smartmet-engine-contour >= 26.9.23
 Requires: smartmet-engine-gis >= 26.9.23
 Requires: smartmet-engine-grid >= 26.9.26
-Requires: smartmet-engine-geonames >= 26.9.26
-Requires: smartmet-engine-satellite >= 26.9.23
+Requires: smartmet-engine-geonames >= 26.10.3
+Requires: smartmet-engine-satellite >= 26.10.3
 Requires: smartmet-server >= 26.9.2
-Requires: smartmet-library-spine >= 26.10.2
+Requires: smartmet-library-spine >= 26.10.3
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -123,27 +123,27 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
-#TestRequires: smartmet-engine-avi-devel >= 26.9.19
+#TestRequires: smartmet-engine-avi-devel >= 26.10.3
 #TestRequires: smartmet-engine-contour-devel >= 26.9.23
-#TestRequires: smartmet-engine-geonames-devel >= 26.9.26
+#TestRequires: smartmet-engine-geonames-devel >= 26.10.3
 #TestRequires: smartmet-engine-gis-devel >= 26.9.23
-#TestRequires: smartmet-engine-satellite >= 26.9.23
-#TestRequires: smartmet-engine-querydata-devel >= 26.9.16
+#TestRequires: smartmet-engine-satellite >= 26.10.3
+#TestRequires: smartmet-engine-querydata-devel >= 26.10.3
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
-#TestRequires: smartmet-engine-satellite-devel >= 26.9.23
-#TestRequires: smartmet-library-giza-devel >= 26.9.26
-#TestRequires: smartmet-library-trax-devel >= 26.6.26
-#TestRequires: smartmet-library-newbase-devel >= 26.9.23
-#TestRequires: smartmet-library-macgyver-devel >= 26.9.26-2
-#TestRequires: smartmet-library-spine-devel >= 26.9.26
-#TestRequires: smartmet-library-timeseries-devel >= 26.9.16
+#TestRequires: smartmet-engine-satellite-devel >= 26.10.3
+#TestRequires: smartmet-library-giza-devel >= 26.10.3
+#TestRequires: smartmet-library-trax-devel >= 26.10.3
+#TestRequires: smartmet-library-newbase-devel >= 26.10.3
+#TestRequires: smartmet-library-macgyver-devel >= 26.10.3
+#TestRequires: smartmet-library-spine-devel >= 26.10.3
+#TestRequires: smartmet-library-timeseries-devel >= 26.10.3
 #TestRequires: smartmet-engine-grid-devel >= 26.9.26
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.9.3
 #TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
-#TestRequires: smartmet-library-regression >= 26.9.3
+#TestRequires: smartmet-library-regression >= 26.10.3
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: protobuf-compiler
@@ -152,7 +152,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.9.23
+#TestRequires: smartmet-engine-observation-devel >= 26.10.3
 %endif
 
 %description
@@ -181,6 +181,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Oct 03 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.3-1.fmi
+- Do not prune the engine's shared valid time list when applying layer timesteps
+- Move WMTS capabilities, exception, WebP and style bodies into responses
+- Parse grid parameter strings without fixed size buffers
+- Fix OGC timestep filtering for steps longer than an hour
+
 * Fri Oct 02 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.2-2.fmi
 - Fixed GetMap BBOX axis order for CRS:84, CRS:83 and CRS:27, which use longitude,latitude order
   even when configured as EPSG:4326
