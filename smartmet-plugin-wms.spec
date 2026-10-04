@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.3
+Version: 26.10.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Oct 04 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.4-1.fmi
+- Raster layers now support querydata sources: RasterLayer::generate_qEngine samples the querydata onto the output projection grid and paints it through the same pipeline as the grid path, so radar served by the querydata engine (GeoTIFF/ODIM) can drive raster layers. Supports a single "parameter" or a "direction"+"speed" pair.
+
 * Sat Oct 03 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.3-1.fmi
 - Do not prune the engine's shared valid time list when applying layer timesteps
 - Move WMTS capabilities, exception, WebP and style bodies into responses
