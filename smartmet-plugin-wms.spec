@@ -138,7 +138,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-spine-devel >= 26.10.3
 #TestRequires: smartmet-library-timeseries-devel >= 26.10.3
 #TestRequires: smartmet-engine-grid-devel >= 26.9.26
-#TestRequires: smartmet-engine-grid-test
+#TestRequires: smartmet-library-grid-files-test >= 26.10.6
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.9.3
 #TestRequires: smartmet-test-db >= 26.5.8
