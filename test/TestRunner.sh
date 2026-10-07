@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Delete old results
+# Delete old results, unless running as one of several parallel test processes
 
-rm -f failures/*
+[ -n "$KEEP_FAILURES" ] || rm -f failures/*
 
 # Start the test handler with named pipes
 

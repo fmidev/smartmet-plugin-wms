@@ -21,7 +21,7 @@ make format             # clang-format all source files
 ### Running specific tests
 
 Override the test variable for the relevant group, and use that group's target. The plain
-`test` target runs `TestRunner.sh` with no arguments, so it ignores these variables and
+`test` target runs the runner with no test files, so it ignores these variables and
 silently runs the whole suite -- only `test-dali`, `test-wms`, `test-wmts` and `test-tiles`
 consume them.
 
@@ -47,7 +47,7 @@ Individual acceptance: `cp test/failures/foo.get test/output/foo.get`
 
 ### Test infrastructure
 
-Tests are integration tests: `PluginTest.cpp` starts a SmartMet Reactor with the plugin loaded, `TestRunner.sh` feeds HTTP requests from `test/input/*.get` (and `.post`) via named pipes, and `CompareImages.pl` compares actual output against `test/output/` expected files. Comparison is format-aware: images are compared via ImageMagick, SVG is rasterized then compared, XML uses xmllint, JSON uses jq, MVT uses protoc decode.
+Tests are integration tests: `PluginTest.cpp` starts a SmartMet Reactor with the plugin loaded, `TestRunner.sh` feeds HTTP requests from `test/input/*.get` (and `.post`) via named pipes, and `CompareImages.pl` compares actual output against `test/output/` expected files. The make targets run `ParallelTestRunner.sh`, which deals the tests to `WMS_TEST_SHARDS` (default 3) `TestRunner.sh` processes running in parallel and prints the results in the original order once all are done; each process starts its own PluginTest of about 3 GB, and `WMS_TEST_SHARDS=1` runs the tests serially. Comparison is format-aware: images are compared via ImageMagick, SVG is rasterized then compared, XML uses xmllint, JSON uses jq, MVT uses protoc decode.
 
 Tests to skip are listed in `test/input/.testignore`.
 

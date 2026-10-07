@@ -33,6 +33,11 @@ LIBS += $(PREFIX_LDFLAGS) \
 SATELLITE_TEST_DATA ?= /usr/share/smartmet/test/data/satellite
 export SATELLITE_TEST_DATA
 
+# The tests are run in this many parallel PluginTest processes. Each one takes
+# about 3 GB of memory and starts its own server, 3 fits the 16 GB of the
+# CircleCI xlarge resource class with a margin. Use 1 to run them serially.
+WMS_TEST_SHARDS ?= 3
+
 # Test input groups (resolved at parse time so filter-out works correctly)
 ALL_TESTS   := $(wildcard input/*.get)
 WMS_TESTS   := $(wildcard input/wms_*.get)
@@ -78,7 +83,7 @@ clean:	clean-redis
 
 test: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
-	@if ./TestRunner.sh; then \
+	@if ./ParallelTestRunner.sh $(WMS_TEST_SHARDS); then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
@@ -90,7 +95,7 @@ test-dali: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
 	@if [ -z "$(DALI_TESTS)" ]; then \
 		echo "No Dali tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
-	elif ./TestRunner.sh $(DALI_TESTS); then \
+	elif ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(DALI_TESTS); then \
 		$(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		$(MAKE) $(TEST_FINISH_TARGETS); false; \
@@ -100,7 +105,7 @@ test-wms: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
 	@if [ -z "$(WMS_TESTS)" ]; then \
 		echo "No WMS tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
-	elif ./TestRunner.sh $(WMS_TESTS); then \
+	elif ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(WMS_TESTS); then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
@@ -112,7 +117,7 @@ test-wmts: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
 	@if [ -z "$(WMTS_TESTS)" ]; then \
 		echo "No WMTS tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
-	elif ./TestRunner.sh $(WMTS_TESTS); then \
+	elif ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(WMTS_TESTS); then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
@@ -123,7 +128,7 @@ test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
 	@if [ -z "$(TILES_TESTS)" ]; then \
 		echo "No OGC Tiles tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
-	elif ./TestRunner.sh $(TILES_TESTS); then \
+	elif ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(TILES_TESTS); then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
