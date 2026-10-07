@@ -325,7 +325,7 @@ void SatelliteLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
       const auto png = Giza::topng_argb(warped.pixels.data(), warped.width, warped.height, comp);
 
       svg_image = fmt::format(
-          "<image id=\"{}\" href=\"data:image/png;base64,{}\" x=\"0\" y=\"0\" width=\"{}\" "
+          "<image id=\"{}\" xlink:href=\"data:image/png;base64,{}\" x=\"0\" y=\"0\" width=\"{}\" "
           "height=\"{}\" />\n\n",
           Fmi::safexmlescape(qid),
           Dali::base64_encode(png),
