@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.4
+Version: 26.10.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -181,6 +181,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Oct 07 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.7-1.fmi
+- Embed raster and satellite images with xlink:href, librsvg on RHEL8 ignores plain href
+- Fixed invalid self-closing rect and path tags in metar layer SVG output
+
 * Sun Oct 04 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.4-1.fmi
 - Raster layers now support querydata sources: RasterLayer::generate_qEngine samples the querydata onto the output projection grid and paints it through the same pipeline as the grid path, so radar served by the querydata engine (GeoTIFF/ODIM) can drive raster layers. Supports a single "parameter" or a "direction"+"speed" pair.
 
