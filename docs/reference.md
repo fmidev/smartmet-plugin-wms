@@ -5369,7 +5369,7 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | `wmts.tile_width` | 1024 | Default WMTS tile width. |
 | `wmts.tile_height` | 1024 | Default WMTS tile height. |
 | `tiles.url` | `/tiles` | URL path of the native tile endpoint. |
-| `authenticate` | `false` | Enable API-key authentication (requires the authentication engine). |
+| `authenticate` | `true` | Enable API-key authentication (requires the authentication engine). |
 | `observation_disabled` | `false` | Disable the observation engine (for deployments without ObsEngine). |
 | `gridengine_disabled` | `false` | Disable the grid engine (for deployments without GridEngine). |
 | `heatmap.max_points` | – | Maximum number of points in a heatmap layer. |

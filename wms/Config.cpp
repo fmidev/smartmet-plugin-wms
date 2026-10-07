@@ -139,7 +139,7 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("tiles.url", itsTilesUrl);
     itsConfig.lookupValue("wms.quiet", itsQuiet);
 
-#ifndef WITHOUT_AUHTENTICATION
+#ifndef WITHOUT_AUTHENTICATION
     itsConfig.lookupValue("authenticate", itsAuthenticate);
 #endif
 
@@ -423,7 +423,7 @@ unsigned Config::maxHeatmapPoints() const
   return itsMaxHeatmapPoints;
 }
 
-#ifndef WITHOUT_AUHTENTICATION
+#ifndef WITHOUT_AUTHENTICATION
 bool Config::authenticate() const
 {
   return itsAuthenticate;

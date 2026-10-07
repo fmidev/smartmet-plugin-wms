@@ -197,6 +197,27 @@ easier to read. The unit is optional and case insensitive, `B`, `K`, `M`, `G`, `
 are accepted both alone and followed by `B` or `iB`, and all units are binary multiples,
 so `"4G"`, `"4GB"` and `"4 GiB"` all mean the same thing.
 
+### Engines
+
+The plugin looks up the following engines when it starts. An engine that is required but
+not loaded stops the server, so a server that does not need some data source must either
+load that engine in a disabled (dummy) mode or tell the plugin not to use it:
+
+| Engine | When required | How to do without it |
+|--------|---------------|----------------------|
+| Contour, Gis | Always | Must be configured normally. |
+| Geonames | Always | `database.disable = true` in the engine configuration runs it without a database. |
+| Querydata | Always | Dummy mode: give the engine no configuration file name (or `configfile = "";`), or set `disabled = true` in its configuration. It then has no producers, so no querydata layers may be configured, and `primaryForecastSource = "grid";` should be set. |
+| Avi | Always | Dummy mode, as for querydata. METAR layers then fail. |
+| Observation | Unless `observation_disabled = true` | Set `observation_disabled = true` in the plugin configuration, or use the engine's dummy mode, as for querydata. |
+| grid | Unless `gridengine_disabled = true` | Set `gridengine_disabled = true` in the plugin configuration. Alternatively, load the engine with `smartmet.engine.grid.enabled = false` in its configuration file. An empty configuration file name is not supported. |
+| Authentication | When `authenticate = true` (the default) | Set `authenticate = false` in the plugin configuration. |
+| Satellite, OSM | Never | Leave the engine out of the server configuration. Satellite layers and OSM map layers are then unavailable. |
+
+Do not use `disabled = true` in the server's `engines` section for an engine the plugin
+requires. That setting stops the server from loading the engine at all, unlike the
+dummy modes above. Each engine's README describes its dummy mode.
+
 ### Layer configuration and directory structure
 
 The layer configuration uses JSON and CSS to define the appearance and properties of the layer. See the [full reference manual](https://github.com/fmidev/smartmet-plugin-wms/wiki/Smartmet-plugin-WMS-(Dali-&-WMS)) for all supported configuration options.

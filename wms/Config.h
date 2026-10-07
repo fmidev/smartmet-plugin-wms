@@ -88,7 +88,7 @@ class Config
 
   UnitConversion unitConversion(const std::string& theUnitConversion) const;
 
-#ifndef WITHOUT_AUHTENTICATION
+#ifndef WITHOUT_AUTHENTICATION
   bool authenticate() const;
 #endif
 
@@ -139,7 +139,7 @@ class Config
 
   bool itsQuiet = false;
 
-#ifndef WITHOUT_AUHTENTICATION
+#ifndef WITHOUT_AUTHENTICATION
   bool itsAuthenticate = true;
 #endif
 
