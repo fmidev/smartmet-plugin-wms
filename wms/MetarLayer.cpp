@@ -936,6 +936,11 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       auto ox = [&](double rel) { return sx + static_cast<int>(std::lround(rel * B)); };
       auto oy = [&](double rel) { return sy + static_cast<int>(std::lround(rel * B)); };
 
+      // Container for the self-closing status box and wind barb tags
+      CTPP::CDT symbols_cdt(CTPP::CDT::HASH_VAL);
+      symbols_cdt["start"] = "";
+      symbols_cdt["end"] = "";
+
       // -- Status colour box (centred on station) --
       if (show_status)
       {
@@ -952,7 +957,7 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
           r["attributes"]["fill"] = (color.empty() ? sc : color);
           r["attributes"]["stroke"] = "black";
           r["attributes"]["stroke-width"] = "0.5";
-          theLayersCdt.PushBack(r);
+          symbols_cdt["tags"].PushBack(r);
         }
       }
 
@@ -975,9 +980,14 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
           pc["attributes"]["stroke-width"] = "1.5";
           pc["attributes"]["fill"] = txt_color;
           pc["attributes"]["stroke-linecap"] = "round";
-          theLayersCdt.PushBack(pc);
+          symbols_cdt["tags"].PushBack(pc);
         }
       }
+
+      // Self-closing tags must be output as tags of a layer, layer-level
+      // elements are always terminated with '>' by the template
+      if (symbols_cdt.Exists("tags"))
+        theLayersCdt.PushBack(symbols_cdt);
 
       // Helper: push a single <text> CDT
       auto push_text = [&](const std::string& text_val,
