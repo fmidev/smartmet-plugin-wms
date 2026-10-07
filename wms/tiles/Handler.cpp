@@ -18,6 +18,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <algorithm>
+#include <cmath>
 #include <optional>
 #include <fmt/format.h>
 #include <fmt/printf.h>
@@ -125,6 +126,28 @@ std::string extensionOrParamToMime(const std::string& f)
 
 // -----------------------------------------------------------------------
 /*!
+ * \brief Round a bounding box corner outwards to 0.00001 degrees
+ *
+ * The extents of projected data are computed with GDAL/PROJ, whose last
+ * bits differ between versions, and they would be printed with 17
+ * significant digits. The data and the station coordinates are accurate
+ * to about one meter, hence the corners are rounded outwards to about a
+ * meter. The tolerance keeps a value within rounding noise of a step on
+ * that step, so that the result does not depend on the platform.
+ */
+// -----------------------------------------------------------------------
+
+double roundCorner(double value, bool up, double limit)
+{
+  const double steps = 1e5;  // per degree
+  const double tolerance = 1e-6;  // steps
+  if (up)
+    return std::min(limit, std::ceil(value * steps - tolerance) / steps);
+  return std::max(limit, std::floor(value * steps + tolerance) / steps);
+}
+
+// -----------------------------------------------------------------------
+/*!
  * \brief Add the OGC API - Common Part 2 extent (spatial, temporal, vertical)
  *        of a capabilities layer entry to a collection description.
  *
@@ -145,10 +168,10 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
     auto corner = [&](const char* key, double dflt)
     { return bb.Exists(key) ? bb.At(key).GetFloat() : dflt; };
     Json::Value corners(Json::arrayValue);
-    corners.append(corner("west_bound_longitude", -180));
-    corners.append(corner("south_bound_latitude", -90));
-    corners.append(corner("east_bound_longitude", 180));
-    corners.append(corner("north_bound_latitude", 90));
+    corners.append(roundCorner(corner("west_bound_longitude", -180), false, -180));
+    corners.append(roundCorner(corner("south_bound_latitude", -90), false, -90));
+    corners.append(roundCorner(corner("east_bound_longitude", 180), true, 180));
+    corners.append(roundCorner(corner("north_bound_latitude", 90), true, 90));
     bboxArr.append(corners);
     spatial["bbox"] = bboxArr;
     spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
