@@ -15,4 +15,6 @@ database:
 
 }
 
-default_access_is_allow = false;
+# The test database has no access rules for WMS, and since the engine fails closed
+# for unknown services an apikey would otherwise hide every layer
+default_access_is_allow = true;
