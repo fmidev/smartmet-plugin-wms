@@ -5361,6 +5361,8 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | `template` | `svg` | Default CTPP2 template base name (deprecated in favour of `templates.default`). |
 | `templatedir` | `/usr/share/smartmet/wms` | Directory containing CTPP2 `.c2t` template files. |
 | `css_cache_size` | 1000 | Maximum number of cached CSS stylesheets. |
+| `flash_expiration_seconds` | 30 | Expiration time of images whose flash (lightning) observation window may still receive strokes. |
+| `flash_data_latency_seconds` | 120 | A flash observation window ending this long ago or earlier is considered closed. |
 | `max_image_size` | – | Maximum allowed image area in pixels (width × height). |
 | `wms.url` | `/wms` | URL path of the WMS endpoint. |
 | `wms.max_layers` | 10 | Maximum number of WMS layers per GetMap request (DDoS protection). |

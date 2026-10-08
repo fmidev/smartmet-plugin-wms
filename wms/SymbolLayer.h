@@ -40,6 +40,13 @@ class SymbolLayer : public Layer
 
   std::size_t hash_value(const State& theState) const override;
 
+ private:
+#ifndef WITHOUT_OBSERVATION
+  std::optional<std::uint64_t> flashGeneration(const State& theState) const;
+#endif
+
+ public:
+
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   std::optional<TS::ParameterAndFunctions> param_funcs;

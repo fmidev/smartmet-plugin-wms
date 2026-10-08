@@ -115,6 +115,8 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("customer", itsDefaultCustomer);
 
     itsConfig.lookupValue("css_cache_size", itsStyleSheetCacheSize);
+    itsConfig.lookupValue("flash_expiration_seconds", itsFlashExpirationSeconds);
+    itsConfig.lookupValue("flash_data_latency_seconds", itsFlashDataLatencySeconds);
 
     itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
 
@@ -386,6 +388,16 @@ unsigned long long Config::maxFilesystemCacheSize() const
 unsigned int Config::styleSheetCacheSize() const
 {
   return itsStyleSheetCacheSize;
+}
+
+unsigned int Config::flashExpirationSeconds() const
+{
+  return itsFlashExpirationSeconds;
+}
+
+unsigned int Config::flashDataLatencySeconds() const
+{
+  return itsFlashDataLatencySeconds;
 }
 
 bool Config::quiet() const

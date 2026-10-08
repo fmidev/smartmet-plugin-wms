@@ -58,6 +58,8 @@ class Config
   unsigned long long maxMemoryCacheSize() const;
   unsigned long long maxFilesystemCacheSize() const;
   unsigned int styleSheetCacheSize() const;
+  unsigned int flashExpirationSeconds() const;
+  unsigned int flashDataLatencySeconds() const;
 
   unsigned int maxImageSize() const;
   unsigned int maxWMSLayers() const;
@@ -115,6 +117,8 @@ class Config
   unsigned long long itsMaxMemoryCacheSize = 104857600;      // 100 MB
   unsigned long long itsMaxFilesystemCacheSize = 209715200;  // 200 MB
   unsigned int itsStyleSheetCacheSize = 1000;                // 1000 objects
+  unsigned int itsFlashExpirationSeconds = 30;   // Expires for frames with open flash windows
+  unsigned int itsFlashDataLatencySeconds = 120;  // flash windows ending earlier are closed
 
   unsigned int itsMaxImageSize = 20 * 1024 * 1024;  // 20M pixels
   unsigned int itsMaxWMSLayers = 10;                // no more than 10 layers, ddos protection

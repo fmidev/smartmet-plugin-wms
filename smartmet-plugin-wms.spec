@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.7
-Release: 2%{?dist}.fmi
+Version: 26.10.9
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -38,7 +38,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 26.10.3
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.10.3
+BuildRequires: smartmet-engine-observation-devel >= 26.10.8
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.10.3
 BuildRequires: smartmet-engine-gis-devel >= 26.9.23
@@ -90,6 +90,9 @@ Requires: smartmet-library-timeseries >= 26.10.3
 Requires: smartmet-library-giza >= 26.10.3
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.6.26
+%endif
+%if %{with observation}
+Requires: smartmet-engine-observation >= 26.10.8
 %endif
 Requires: smartmet-engine-avi >= 26.10.3
 Requires: smartmet-engine-querydata >= 26.10.3
@@ -152,7 +155,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.10.3
+#TestRequires: smartmet-engine-observation-devel >= 26.10.8
 %endif
 
 %description
@@ -181,6 +184,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-1.fmi
+- Flash symbol layers get their ETag from the flash memory cache fingerprint instead of being uncacheable for 5 minutes (BRAINSTORM-3501)
+- New settings flash_expiration_seconds and flash_data_latency_seconds
+- Requires smartmet-engine-observation >= 26.10.8 for Engine::getFlashGeneration
+
 * Wed Oct 07 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.7-2.fmi
 - Round OGC API Tiles collection extents outwards to 0.00001 degrees so that they do not depend on the GDAL/PROJ version
 

@@ -167,6 +167,47 @@ Engine::Observation::Engine& State::getObsEngine() const
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Flash data fingerprint for a time window and lon/lat box
+ *
+ * The flash layers of one product, and one layer hashed twice, ask the engine
+ * only once per request.
+ */
+// ----------------------------------------------------------------------
+
+std::optional<std::uint64_t> State::getFlashGeneration(
+    const Fmi::TimePeriod& thePeriod, const std::map<std::string, double>& theBBox) const
+{
+  try
+  {
+    const double minlon = theBBox.at("minx");
+    const double minlat = theBBox.at("miny");
+    const double maxlon = theBBox.at("maxx");
+    const double maxlat = theBBox.at("maxy");
+
+    auto key = Fmi::hash_value(thePeriod.begin());
+    Fmi::hash_combine(key, Fmi::hash_value(thePeriod.end()));
+    Fmi::hash_combine(key, Fmi::hash_value(minlon));
+    Fmi::hash_combine(key, Fmi::hash_value(minlat));
+    Fmi::hash_combine(key, Fmi::hash_value(maxlon));
+    Fmi::hash_combine(key, Fmi::hash_value(maxlat));
+
+    auto pos = itsFlashGenerations.find(key);
+    if (pos != itsFlashGenerations.end())
+      return pos->second;
+
+    auto generation = getObsEngine().getFlashGeneration(
+        thePeriod.begin(), thePeriod.end(), minlon, minlat, maxlon, maxlat);
+    itsFlashGenerations.emplace(key, generation);
+    return generation;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 #endif
 
 #ifndef WITHOUT_AVI

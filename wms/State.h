@@ -108,6 +108,10 @@ class State
   const Engine::Satellite::Engine* getSatelliteEngine() const;
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
+
+  // Flash data fingerprint for a time window and lon/lat box, memoized for the request
+  std::optional<std::uint64_t> getFlashGeneration(const Fmi::TimePeriod& thePeriod,
+                                                  const std::map<std::string, double>& theBBox) const;
 #endif
 #ifndef WITHOUT_AVI
   Engine::Avi::Engine& getAviEngine() const;
@@ -286,6 +290,7 @@ class State
 
   // Model hash values of this request, keyed exactly as itsQCache
   mutable std::map<Engine::Querydata::Producer, std::size_t> itsModelHashCache;
+  mutable std::map<std::size_t, std::optional<std::uint64_t>> itsFlashGenerations;
   mutable BezierCache itsBezierCache;
 
   // Names which have already been used for styling
