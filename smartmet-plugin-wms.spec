@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.7
-Release: 2%{?dist}.fmi
+Version: 26.10.9
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -181,6 +181,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-1.fmi
+- Icemap layers report missing PostGIS columns and settings by name instead of map::at (BRAINSTORM-3371)
+
 * Wed Oct 07 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.7-2.fmi
 - Round OGC API Tiles collection extents outwards to 0.00001 degrees so that they do not depend on the GDAL/PROJ version
 

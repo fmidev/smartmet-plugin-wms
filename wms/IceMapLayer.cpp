@@ -32,6 +32,33 @@ namespace Dali
 {
 namespace
 {
+// The column names come from the layer configuration or are derived from the date, a
+// mismatch with the database table must be reported clearly instead of as map::at
+
+const Fmi::Attribute& get_attribute(const Fmi::Feature& theFeature, const std::string& theColumn)
+{
+  auto pos = theFeature.attributes.find(theColumn);
+  if (pos != theFeature.attributes.end())
+    return pos->second;
+
+  std::string columns;
+  for (const auto& item : theFeature.attributes)
+    columns += (columns.empty() ? "" : ",") + item.first;
+
+  throw Fmi::Exception(BCP, "Column not found in the PostGIS query result")
+      .addParameter("Column", theColumn)
+      .addParameter("Available columns", columns);
+}
+
+const std::string& get_setting(const std::map<std::string, std::string>& theParameters,
+                               const std::string& theName)
+{
+  auto pos = theParameters.find(theName);
+  if (pos != theParameters.end())
+    return pos->second;
+  throw Fmi::Exception(BCP, "Icemap layer setting missing").addParameter("Setting", theName);
+}
+
 Json::CharReaderBuilder charreaderbuilder;
 
 const std::array<std::string, 10> attribute_columns = {"firstname_column",
@@ -425,7 +452,7 @@ std::string IceMapLayer::getParameterValue(const std::string& theKey) const
     if (itsParameters.find(theKey) == itsParameters.end())
       return "";
 
-    return itsParameters.at(theKey);
+    return get_setting(itsParameters, theKey);
   }
   catch (...)
   {
@@ -508,10 +535,10 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
 
     if (itsParameters.find("text_column") != itsParameters.end())
     {
-      std::string text_column = itsParameters.at("text_column");
+      std::string text_column = get_setting(itsParameters, "text_column");
 
       if (theResultItem.attributes.find(text_column) != theResultItem.attributes.end())
-        text = std::visit(PostGISAttributeToString(), theResultItem.attributes.at(text_column));
+        text = std::visit(PostGISAttributeToString(), get_attribute(theResultItem, text_column));
     }
     else
     {
@@ -521,8 +548,8 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
     std::vector<std::string> rows;
     boost::algorithm::split(rows, text, boost::algorithm::is_any_of("#"));
 
-    double xpos = Fmi::stod(itsParameters.at("longitude"));
-    double ypos = Fmi::stod(itsParameters.at("latitude"));
+    double xpos = Fmi::stod(get_setting(itsParameters, "longitude"));
+    double ypos = Fmi::stod(get_setting(itsParameters, "latitude"));
     auto transformation = LonLatToXYTransformation(projection);
     if (!transformation.transform(xpos, ypos))
       return;
@@ -577,17 +604,17 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
       std::string name_position = "label_location";
       if (itsParameters.find("firstname_column") != itsParameters.end())
         first_name = std::visit(PostGISAttributeToString(),
-                                theResultItem.attributes.at(itsParameters.at("firstname_column")));
+                                get_attribute(theResultItem, get_setting(itsParameters, "firstname_column")));
 
       if (itsParameters.find("secondname_column") != itsParameters.end())
         second_name =
             std::visit(PostGISAttributeToString(),
-                       theResultItem.attributes.at(itsParameters.at("secondname_column")));
+                       get_attribute(theResultItem, get_setting(itsParameters, "secondname_column")));
 
       if (itsParameters.find("nameposition_column") != itsParameters.end())
         name_position =
             std::visit(PostGISAttributeToString(),
-                       theResultItem.attributes.at(itsParameters.at("nameposition_column")));
+                       get_attribute(theResultItem, get_setting(itsParameters, "nameposition_column")));
 
       if (name_position.empty() ||
           !(std::all_of(name_position.begin(), name_position.end(), ::isdigit)))
@@ -597,11 +624,11 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
       std::string arrow_angle;
       if (itsParameters.find("angle_column") != itsParameters.end())
       {
-        std::string angle_column = itsParameters.at("angle_column");
+        std::string angle_column = get_setting(itsParameters, "angle_column");
         if (theResultItem.attributes.find(angle_column) != theResultItem.attributes.end())
         {
           arrow_angle = std::visit(PostGISAttributeToString(),
-                                   theResultItem.attributes.at(itsParameters.at("angle_column")));
+                                   get_attribute(theResultItem, get_setting(itsParameters, "angle_column")));
         }
       }
 
@@ -650,25 +677,25 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
     std::string fontname_column = "fontname";
     std::string fontsize_column = "fontsize";
     if (itsParameters.find("labeltext_column") != itsParameters.end())
-      labeltext_column = itsParameters.at("labeltext_column");
+      labeltext_column = get_setting(itsParameters, "labeltext_column");
     if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
       label_text =
-          std::visit(PostGISAttributeToString(), theResultItem.attributes.at(labeltext_column));
+          std::visit(PostGISAttributeToString(), get_attribute(theResultItem, labeltext_column));
 
     boost::replace_all(label_text, "<", "&#60;");
     boost::replace_all(label_text, ">", "&#62;");
 
     if (itsParameters.find("fontname_column") != itsParameters.end())
-      fontname_column = itsParameters.at("fontname_column");
+      fontname_column = get_setting(itsParameters, "fontname_column");
     if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
       text_style.fontfamily =
-          std::visit(PostGISAttributeToString(), theResultItem.attributes.at(fontname_column));
+          std::visit(PostGISAttributeToString(), get_attribute(theResultItem, fontname_column));
 
     if (itsParameters.find("fontsize_column") != itsParameters.end())
-      fontsize_column = itsParameters.at("fontsize_column");
+      fontsize_column = get_setting(itsParameters, "fontsize_column");
     if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
       text_style.fontsize =
-          std::visit(PostGISAttributeToString(), theResultItem.attributes.at(fontsize_column));
+          std::visit(PostGISAttributeToString(), get_attribute(theResultItem, fontsize_column));
 
     // erase decimal part from fontsize
     if (text_style.fontsize.find('.') != std::string::npos)
@@ -746,7 +773,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
 
     // mean temperature
     std::string mean_temperature =
-        std::visit(PostGISAttributeToString(), theResultItem.attributes.at(col_name));
+        std::visit(PostGISAttributeToString(), get_attribute(theResultItem, col_name));
 
     if (mean_temperature.empty())
       return;
@@ -811,8 +838,8 @@ void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& /* theResultItem
 {
   try
   {
-    double xpos = Fmi::stod(itsParameters.at("longitude"));
-    double ypos = Fmi::stod(itsParameters.at("latitude"));
+    double xpos = Fmi::stod(get_setting(itsParameters, "longitude"));
+    double ypos = Fmi::stod(get_setting(itsParameters, "latitude"));
     auto transformation = LonLatToXYTransformation(projection);
 
     if (!transformation.transform(xpos, ypos))
@@ -929,7 +956,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
     // Then add the content to the egg
     std::string egg_text;
     if (theResultItem.attributes.find("textstring") != theResultItem.attributes.end())
-      egg_text = std::visit(PostGISAttributeToString(), theResultItem.attributes.at("textstring"));
+      egg_text = std::visit(PostGISAttributeToString(), get_attribute(theResultItem, "textstring"));
 
     std::vector<std::string> rows;
     boost::algorithm::split(rows, egg_text, boost::algorithm::is_any_of("\n"));
@@ -1210,7 +1237,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
     // add pattern on geometry
     if (itsParameters.find("pattern") != itsParameters.end())
     {
-      std::string pattern_iri = itsParameters.at("pattern");
+      std::string pattern_iri = get_setting(itsParameters, "pattern");
       if (theState.addId(pattern_iri))
         theGlobals["includes"][pattern_iri] = theState.getPattern(pattern_iri);
     }
@@ -1303,7 +1330,7 @@ std::vector<std::string> IceMapLayer::getAttributeColumns() const
       if (itsParameters.find(col) == itsParameters.end())
         continue;
 
-      std::string column_name = itsParameters.at(col);
+      std::string column_name = get_setting(itsParameters, col);
       boost::algorithm::trim(column_name);
 
       // mean temperature column name is determined by given date
