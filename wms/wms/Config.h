@@ -309,6 +309,7 @@ class Config
   };
   UpdateStats itsUpdateStats;
   bool itsFirstUpdateReported = false;
+  bool itsReportMetadataUpdates = true;  // wms.report_metadata_updates
   void reportUpdateStats();
 
   Fmi::DateTime itsCapabilitiesModificationTime = Fmi::date_time::from_time_t(0);

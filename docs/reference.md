@@ -5364,7 +5364,8 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | `max_image_size` | – | Maximum allowed image area in pixels (width × height). |
 | `wms.url` | `/wms` | URL path of the WMS endpoint. |
 | `wms.max_layers` | 10 | Maximum number of WMS layers per GetMap request (DDoS protection). |
-| `wms.quiet` | `false` | If true, suppress WMS error stack traces in the log. |
+| `wms.quiet` | `false` | If true, suppress WMS error stack traces in the log. Also suppresses the layer metadata update reports. |
+| `wms.report_metadata_updates` | `true` | If false, do not log the layer metadata update statistics (the first update, and later updates taking over 5 seconds with the slowest product files). |
 | `wmts.url` | `/wmts` | URL path of the WMTS endpoint. |
 | `wmts.tile_width` | 1024 | Default WMTS tile width. |
 | `wmts.tile_height` | 1024 | Default WMTS tile height. |
