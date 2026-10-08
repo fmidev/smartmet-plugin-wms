@@ -798,6 +798,7 @@ Config::Config(const Dali::Config& daliConfig,
     parse_references();
 
     config.lookupValue("wms.margin", itsMargin);
+    config.lookupValue("wms.report_metadata_updates", itsReportMetadataUpdates);
     // Default layout is flat
     std::string layout = "flat";
     // Layout can be defined in configuration file
@@ -1168,7 +1169,7 @@ void Config::updateLayerMetaData()
 
 void Config::reportUpdateStats()
 {
-  if (itsDaliConfig.quiet())
+  if (itsDaliConfig.quiet() || !itsReportMetadataUpdates)
     return;
 
   auto& stats = itsUpdateStats;
