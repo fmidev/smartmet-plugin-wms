@@ -19,6 +19,10 @@ namespace Plugin
 {
 namespace Dali
 {
+// Hash value of a layer which draws nothing, for example a flash layer without strokes. The
+// containers skip it, so the product gets the same hash (ETag) as without the layer.
+constexpr std::size_t empty_hash = 0x5d1a7e3c9b46f218ULL;
+
 // Objects with a member hash_value implementation
 template <typename T>
 inline std::size_t hash_value(const T& obj, const State& theState)
@@ -46,6 +50,8 @@ inline std::size_t hash_value(const std::shared_ptr<T>& obj, const State& theSta
     return Fmi::hash_value(false);
 
   std::size_t hash = Dali::hash_value(*obj, theState);
+  if (hash == empty_hash)
+    return hash;
   Fmi::hash_combine(hash, Fmi::hash_value(true));
   return hash;
 }
@@ -58,6 +64,8 @@ inline std::size_t hash_value(const std::vector<T>& objs, const State& theState)
   for (const auto& obj : objs)
   {
     std::size_t subhash = Dali::hash_value(obj, theState);
+    if (subhash == empty_hash)
+      continue;
     Fmi::hash_combine(hash, subhash);
     if (hash == Fmi::bad_hash)
       break;
@@ -74,6 +82,8 @@ inline std::size_t hash_value(const std::list<T>& objs, const State& theState)
   for (const auto& obj : objs)
   {
     std::size_t subhash = Dali::hash_value(obj, theState);
+    if (subhash == empty_hash)
+      continue;
     Fmi::hash_combine(hash, subhash);
     if (hash == Fmi::bad_hash)
       break;

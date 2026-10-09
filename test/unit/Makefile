@@ -1,5 +1,6 @@
 PROGS = test_label_placement test_subdivide_gate test_isoline_filter_validation \
-        test_smoother_options test_mvt_geometry test_mapboxstyle
+        test_smoother_options test_mvt_geometry test_mapboxstyle \
+        test_empty_layer_hash
 
 CXX      = g++
 CXXFLAGS = -std=c++17 -O0 -g -Wall -Wextra \
@@ -88,6 +89,12 @@ $(MAPBOXSTYLE_OBJS):
 test_mapboxstyle: test_mapboxstyle.cpp $(MAPBOXSTYLE_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $< $(MAPBOXSTYLE_OBJS) -ljsoncpp -lboost_regex $(LIBS)
 
+# Only the hash helpers of Hash.h are used; State.h needs the plugin's include paths
+test_empty_layer_hash: test_empty_layer_hash.cpp
+	$(CXX) $(CXXFLAGS) $(GDAL_CFLAGS) $(if $(LIBCONFIG_INC),-I$(LIBCONFIG_INC)) -o $@ $< \
+	  -lsmartmet-spine -lsmartmet-newbase -lsmartmet-gis -lsmartmet-timeseries \
+	  -lsmartmet-macgyver -lpqxx $(GDAL_LIBS) -Wl,-rpath,$(GDAL_PREFIX)/lib $(LIBS)
+
 test: $(PROGS)
 	./test_label_placement --log_level=message
 	./test_subdivide_gate --log_level=message
@@ -95,6 +102,7 @@ test: $(PROGS)
 	./test_smoother_options --log_level=message
 	./test_mvt_geometry --log_level=message
 	./test_mapboxstyle --log_level=message
+	./test_empty_layer_hash --log_level=message
 
 clean:
 	rm -f $(PROGS)

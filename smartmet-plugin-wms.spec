@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.8
+Version: 26.10.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -184,6 +184,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-1.fmi
+- Flash symbol layers get their ETag from the flash memory cache fingerprint instead of being uncacheable for 5 minutes (BRAINSTORM-3501)
+- A flash layer without strokes in its time window and area does not affect the ETag, so the product shares cached images with the same product without the flash layer (BRAINSTORM-3501)
+- New settings flash_expiration_seconds and flash_data_latency_seconds
+- Requires smartmet-engine-observation >= 26.10.9-2 for Engine::getFlashGeneration
+
 * Thu Oct 08 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.8-1.fmi
 - New setting wms.report_metadata_updates to disable the layer metadata update reports (BRAINSTORM-3511)
 

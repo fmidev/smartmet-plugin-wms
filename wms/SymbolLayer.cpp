@@ -1134,6 +1134,12 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
       }
     }
 
+    // No strokes in the time window and area: the layer draws nothing, so the product must
+    // get the same hash as without the layer, which keeps the cached images of the layers
+    // below it valid, for example radar images during the non-lightning season.
+    if (flash_generation && *flash_generation == 0)
+      return empty_hash;
+
     auto hash = Layer::hash_value(theState);
 
     if (flash_generation)
