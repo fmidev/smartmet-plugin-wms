@@ -54,6 +54,14 @@ namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
 
+// True if the resource is the URL or below it, e.g. /tiles or /tiles/collections
+bool is_below(const std::string &resource, const std::string &url)
+{
+  return resource == url ||
+         (resource.size() > url.size() && resource.compare(0, url.size(), url) == 0 &&
+          resource[url.size()] == '/');
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Hash value of a file: its path, modification time and size
@@ -605,7 +613,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       const std::string &resource = theRequest.getResource();
 
-      if (resource == "/wms")
+      if (resource == itsConfig.wmsUrl())
       {
         state.useWms(true);
 
@@ -668,14 +676,14 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
           }
         }
       }
-      else if (resource.size() >= 5 && resource.substr(0, 5) == "/wmts")
+      else if (is_below(resource, itsConfig.wmtsUrl()))
       {
         // WMTS REST interface — uses same product file tree as WMS
         state.useWms(true);
         theResponse.setStatus(Spine::HTTP::Status::ok);
         itsWMTSHandler->query(theReactor, state, theRequest, theResponse);
       }
-      else if (resource.size() >= 6 && resource.substr(0, 6) == "/tiles")
+      else if (is_below(resource, itsConfig.tilesUrl()))
       {
         // OGC API - Tiles interface — uses same product file tree as WMS
         state.useWms(true);
@@ -1090,8 +1098,8 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
   {
     // WMS/WMTS/Tiles requests should be handled ASAP, others, not so much
     const std::string &res = theRequest.getResource();
-    return (res == "/wms" || (res.size() >= 5 && res.substr(0, 5) == "/wmts") ||
-            (res.size() >= 6 && res.substr(0, 6) == "/tiles"));
+    return (res == itsConfig.wmsUrl() || is_below(res, itsConfig.wmtsUrl()) ||
+            is_below(res, itsConfig.tilesUrl()));
   }
   catch (...)
   {

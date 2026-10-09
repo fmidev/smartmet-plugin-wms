@@ -6,6 +6,8 @@
  *
  *   GET /tiles                                                   → Landing page
  *   GET /tiles/conformance                                       → Conformance classes
+ *   GET /tiles/api                                               → OpenAPI definition
+ *   GET /tiles/api/docs                                          → API documentation
  *   GET /tiles/tileMatrixSets                                    → TileMatrixSet list
  *   GET /tiles/tileMatrixSets/{tmsId}                           → TileMatrixSet definition
  *   GET /tiles/collections                                       → Collection list
@@ -29,8 +31,8 @@
  *   GET /tiles/collections/{collId}/styles                       → Styles for a collection
  *   GET /tiles/collections/{collId}/styles/{styleId}?f=mapbox    → Mapbox GL style document
  *
- * Tile format negotiated via 'f' query parameter or Accept header.
- * GeoTIFF and Protobuf/MVT formats are intentionally not implemented here.
+ * Tile format negotiated via 'f' query parameter or Accept header: PNG, WebP,
+ * SVG, GeoTIFF, MVT and DataTile.
  */
 // ======================================================================
 
@@ -41,8 +43,11 @@
 #include "Config.h"
 #include <json/json.h>
 #include <macgyver/Exception.h>
+#include <macgyver/DateTime.h>
 #include <spine/HTTP.h>
+#include <spine/OpenApi.h>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -102,6 +107,7 @@ class Handler
   // Metadata endpoints — all return JSON
   QueryStatus handleLandingPage(const std::string& base, Spine::HTTP::Response& resp);
   QueryStatus handleConformance(const std::string& base, Spine::HTTP::Response& resp);
+  QueryStatus handleApi(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse);
   QueryStatus handleTileMatrixSets(const std::string& base, Spine::HTTP::Response& resp);
   QueryStatus handleTileMatrixSet(const std::string& base,
                                   const std::string& tmsId,
@@ -186,6 +192,11 @@ class Handler
   const Dali::Config& itsDaliConfig;
   std::unique_ptr<Config> itsTilesConfig;
   WMS::Handler* itsWMSHandler = nullptr;  // not owned; see setWMSHandler()
+
+  // The generated OpenAPI definition, null if disabled
+  std::unique_ptr<Spine::OpenAPI::Publisher> itsApi;
+  std::mutex itsApiMutex;                  // serializes regeneration
+  Fmi::DateTime itsApiModificationTime;    // capabilities time of the published definition
 };
 
 }  // namespace Tiles

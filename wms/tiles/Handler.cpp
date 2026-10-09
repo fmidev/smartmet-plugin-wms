@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Handler.h"
+#include "ApiDefinition.h"
 #include "../Hash.h"
 #include "../JsonTools.h"
 #include "../MapboxStyle.h"
@@ -323,6 +324,58 @@ Handler::Handler(const Dali::Config& daliConfig) : itsDaliConfig(daliConfig) {}
 void Handler::init(std::unique_ptr<Config> tilesConfig)
 {
   itsTilesConfig = std::move(tilesConfig);
+
+  auto settings = Spine::OpenAPI::Settings::parse(itsDaliConfig.getConfig());
+  if (settings.enabled)
+    itsApi = std::make_unique<Spine::OpenAPI::Publisher>(std::move(settings));
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /tiles/api, /tiles/api/docs and the documentation files
+ *
+ * The definition lists the layers, styles and levels of the anonymous
+ * capabilities. It is regenerated on demand when the capabilities have
+ * changed since it was generated.
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleApi(const Spine::HTTP::Request& theRequest,
+                               Spine::HTTP::Response& theResponse)
+{
+  try
+  {
+    const auto& root = itsDaliConfig.tilesUrl();
+    if (!itsApi || !Spine::OpenAPI::Publisher::isApiResource(theRequest.getResource(), root))
+    {
+      sendError(404, "Not Found", "Resource not found: " + theRequest.getResource(), theResponse);
+      return QueryStatus::OK;
+    }
+
+    // The documentation files do not need the definition
+    const bool needs_definition =
+        (theRequest.getResource().find("/api/docs/") == std::string::npos);
+
+    if (needs_definition)
+    {
+      const auto& wmsConfig = itsTilesConfig->wmsConfig();
+      const auto modified = wmsConfig.getCapabilitiesModificationTime();
+
+      std::lock_guard<std::mutex> lock(itsApiMutex);
+      if (!itsApi->definition() || modified != itsApiModificationTime)
+      {
+        auto layers = OGC::openApiLayers(wmsConfig, itsDaliConfig);
+        itsApi->publish(apiDefinition(*itsTilesConfig, layers, itsApi->settings()));
+        itsApiModificationTime = modified;
+      }
+    }
+
+    itsApi->handle(theRequest, theResponse, root, Spine::OpenAPI::serverUrl(theRequest, root));
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "OGC Tiles API definition failed!");
+  }
 }
 
 void Handler::shutdown()
@@ -354,6 +407,10 @@ QueryStatus Handler::query(Spine::Reactor& theReactor,
     // --- /conformance ---
     if (parts.size() == 1 && parts[0] == "conformance")
       return handleConformance(base, theResponse);
+
+    // --- /api, /api/docs and the documentation files ---
+    if (parts[0] == "api")
+      return handleApi(theRequest, theResponse);
 
     // --- /tileMatrixSets ---
     if (parts[0] == "tileMatrixSets")
@@ -495,6 +552,12 @@ QueryStatus Handler::handleLandingPage(const std::string& base, Spine::HTTP::Res
                           "http://www.opengis.net/def/rel/ogc/1.0/styles",
                           "application/json",
                           "Styles"));
+    if (itsApi)
+    {
+      links.append(Spine::OpenAPI::serviceDescLink(base));
+      if (itsApi->settings().ui)
+        links.append(Spine::OpenAPI::serviceDocLink(base));
+    }
     doc["links"] = links;
 
     setJsonResponse(resp, toJson(doc));
@@ -517,18 +580,8 @@ QueryStatus Handler::handleConformance(const std::string& /* base */, Spine::HTT
   {
     Json::Value doc;
     Json::Value uris(Json::arrayValue);
-    uris.append("http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core");
-    uris.append("http://www.opengis.net/spec/ogcapi-common-2/0.1/conf/collections");
-    uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core");
-    uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tileset");
-    uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list");
-    uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/geodata-tilesets");
-    uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/png");
-    uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/jpeg");
-    uris.append("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/webp");
-    // OGC API - Styles (Part 1: Core) with the Mapbox style encoding
-    uris.append("http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/core");
-    uris.append("http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/mapbox-styles");
+    for (const auto& uri : conformanceClasses(itsApi != nullptr))
+      uris.append(uri);
     doc["conformsTo"] = uris;
 
     setJsonResponse(resp, toJson(doc));

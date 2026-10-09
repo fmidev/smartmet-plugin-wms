@@ -4,6 +4,7 @@
  *
  * Handles:
  *   GET /wmts/1.0.0/WMTSCapabilities.xml          → GetCapabilities
+ *   GET /wmts/api, /wmts/api/docs                  → OpenAPI definition and documentation
  *   GET /wmts/1.0.0/{layer}/{style}/{tms}/{tm}/{row}/{col}.{ext}  → GetTile
  *   GET /wmts/1.0.0/{layer}/{style}/{tms}/{tm}/{row}/{col}/{j}/{i}.{ext}
  *                                                 → GetFeatureInfo
@@ -15,6 +16,8 @@
 #include "Config.h"
 #include "../ogc/QueryStatus.h"
 #include <spine/HTTP.h>
+#include <spine/OpenApi.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <map>
 #include <memory>
@@ -68,6 +71,8 @@ class Handler
                     Spine::HTTP::Response& theResponse);
 
  private:
+  QueryStatus handleApi(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse);
+
   QueryStatus handleGetCapabilities(Dali::State& theState,
                                     const Spine::HTTP::Request& theRequest,
                                     Spine::HTTP::Response& theResponse);
@@ -120,6 +125,11 @@ class Handler
   const Dali::Config& itsDaliConfig;
   std::unique_ptr<Config> itsWMTSConfig;
   WMS::Handler* itsWMSHandler = nullptr;  // not owned; see setWMSHandler()
+
+  // The generated OpenAPI definition, null if disabled
+  std::unique_ptr<Spine::OpenAPI::Publisher> itsApi;
+  std::mutex itsApiMutex;                // serializes regeneration
+  Fmi::DateTime itsApiModificationTime;  // capabilities time of the published definition
 
   mutable std::mutex itsDimNamesMutex;
   mutable std::map<std::string, std::vector<std::string>> itsDimNamesCache;

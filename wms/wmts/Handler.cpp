@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Handler.h"
+#include "ApiDefinition.h"
 #include "../Hash.h"
 #include "../JsonTools.h"
 #include "../Mime.h"
@@ -49,10 +50,10 @@ namespace
 //   1.0.0/{layer}/{style}/{tileMatrixSet}/{tileMatrix}/{tileRow}/{tileCol}.{ext}
 //
 // Returns path segments after stripping the leading '/wmts/' prefix.
-std::vector<std::string> splitWmtsPath(const std::string& resource)
+std::vector<std::string> splitWmtsPath(const std::string& resource, const std::string& root)
 {
-  const std::string prefix = "/wmts/";
-  if (resource.size() <= prefix.size())
+  const std::string prefix = root + "/";
+  if (resource.size() <= prefix.size() || resource.compare(0, prefix.size(), prefix) != 0)
     return {};
 
   std::string path = resource.substr(prefix.size());
@@ -118,6 +119,53 @@ Handler::Handler(const Dali::Config& daliConfig) : itsDaliConfig(daliConfig) {}
 void Handler::init(std::unique_ptr<Config> wmtsConfig)
 {
   itsWMTSConfig = std::move(wmtsConfig);
+
+  auto settings = Spine::OpenAPI::Settings::parse(itsDaliConfig.getConfig());
+  if (settings.enabled)
+    itsApi = std::make_unique<Spine::OpenAPI::Publisher>(std::move(settings));
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief GET /wmts/api, /wmts/api/docs and the documentation files
+ *
+ * The definition lists the layers, styles and dimensions of the anonymous
+ * capabilities. It is regenerated on demand when the capabilities have
+ * changed since it was generated.
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::handleApi(const Spine::HTTP::Request& theRequest,
+                               Spine::HTTP::Response& theResponse)
+{
+  try
+  {
+    const auto& root = itsDaliConfig.wmtsUrl();
+
+    // The documentation files do not need the definition
+    const bool needs_definition =
+        (theRequest.getResource().find("/api/docs/") == std::string::npos);
+
+    if (needs_definition)
+    {
+      const auto& wmsConfig = itsWMTSConfig->wmsConfig();
+      const auto modified = wmsConfig.getCapabilitiesModificationTime();
+
+      std::lock_guard<std::mutex> lock(itsApiMutex);
+      if (!itsApi->definition() || modified != itsApiModificationTime)
+      {
+        auto layers = OGC::openApiLayers(wmsConfig, itsDaliConfig);
+        itsApi->publish(apiDefinition(*itsWMTSConfig, layers, itsApi->settings()));
+        itsApiModificationTime = modified;
+      }
+    }
+
+    itsApi->handle(theRequest, theResponse, root, Spine::OpenAPI::serverUrl(theRequest, root));
+    return QueryStatus::OK;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "WMTS API definition failed!");
+  }
 }
 
 void Handler::shutdown()
@@ -138,7 +186,12 @@ QueryStatus Handler::query(Spine::Reactor& theReactor,
   try
   {
     const std::string& resource = theRequest.getResource();
-    auto parts = splitWmtsPath(resource);
+
+    // The OpenAPI definition and its documentation
+    if (itsApi && Spine::OpenAPI::Publisher::isApiResource(resource, itsDaliConfig.wmtsUrl()))
+      return handleApi(theRequest, theResponse);
+
+    auto parts = splitWmtsPath(resource, itsDaliConfig.wmtsUrl());
 
     // Expect at least: version + (WMTSCapabilities.xml OR 6 more segments)
     if (parts.empty())

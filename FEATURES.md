@@ -47,12 +47,16 @@ OGC WMS 1.3.0 compliance via `wms/wms/Handler.cpp`:
 - **GetTile** — tiled image requests.
 - **GetCapabilities** — service description.
 - **Configurable tile matrix sets** (`TileMatrix.cpp`).
+- **OpenAPI definition** of the RESTful resources at `/wmts/api`, documentation
+  page at `/wmts/api/docs`.
 
 ## 4. OGC API – Tiles surface (`/tiles`)
 
 - **Landing page**, **conformance**, **collections**, **tilesets**,
   **tile** endpoints per OGC API – Tiles 1.0.
 - Same rendering pipeline as WMS GetMap.
+- **OpenAPI definition** at `/tiles/api` (linked from the landing page as
+  `service-desc`), documentation page at `/tiles/api/docs` (`service-doc`).
 
 ## 5. Dali interface (`/dali`)
 
