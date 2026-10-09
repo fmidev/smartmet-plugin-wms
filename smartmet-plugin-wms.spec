@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.9
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -184,6 +184,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-2.fmi
+- Icemap layers report missing PostGIS columns and settings by name instead of map::at (BRAINSTORM-3371)
+
 * Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-1.fmi
 - Flash symbol layers get their ETag from the flash memory cache fingerprint instead of being uncacheable for 5 minutes (BRAINSTORM-3501)
 - A flash layer without strokes in its time window and area does not affect the ETag, so the product shares cached images with the same product without the flash layer (BRAINSTORM-3501)
