@@ -1062,6 +1062,48 @@ void SymbolLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
   }
 }
 
+#ifndef WITHOUT_OBSERVATION
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fingerprint of the flash data drawn by the layer
+ *
+ * Also shortens the expiration time of frames whose flash window may still
+ * receive strokes. Returns nullopt if no fingerprint is available, in which
+ * case the layer must not be cached.
+ */
+// ----------------------------------------------------------------------
+
+std::optional<std::uint64_t> SymbolLayer::flashGeneration(const State& theState) const
+{
+  try
+  {
+    const auto period = getValidTimePeriod();
+
+    // The same area read_flash_observations reads the strokes from
+    const auto bbox = getClipBoundingBox(projection.getBox(), projection.getCRS());
+    if (bbox.empty())
+      return std::nullopt;
+
+    auto generation = theState.getFlashGeneration(period, bbox);
+    if (!generation)
+      return generation;
+
+    const auto& config = theState.getConfig();
+    const auto now = Fmi::SecondClock::universal_time();
+    if (period.end() + Fmi::Seconds(config.flashDataLatencySeconds()) > now)
+      theState.updateExpirationTime(now + Fmi::Seconds(config.flashExpirationSeconds()));
+
+    return generation;
+  }
+  catch (...)
+  {
+    // For example the image size is to be taken from the data, so the area is not
+    // known before the data has been read. Not cacheable then, as before.
+    return std::nullopt;
+  }
+}
+#endif
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Hash value for the layer
@@ -1072,15 +1114,30 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
 {
   try
   {
-    // Disable caching of very new observation layers
+    std::optional<std::uint64_t> flash_generation;
+
     if (theState.isObservation(paraminfo.producer))
     {
-      const auto age = Fmi::SecondClock::universal_time() - getValidTime();
-      if (age < Fmi::Minutes(5))
-        return Fmi::bad_hash;
+#ifndef WITHOUT_OBSERVATION
+      // The flash data fingerprint changes exactly when strokes are added to the time
+      // window and the area of the image, so also the newest frames can be cached.
+      if (*paraminfo.producer == "flash")
+        flash_generation = flashGeneration(theState);
+#endif
+
+      // Without a fingerprint disable caching of very new observation layers
+      if (!flash_generation)
+      {
+        const auto age = Fmi::SecondClock::universal_time() - getValidTime();
+        if (age < Fmi::Minutes(5))
+          return Fmi::bad_hash;
+      }
     }
 
     auto hash = Layer::hash_value(theState);
+
+    if (flash_generation)
+      Fmi::hash_combine(hash, Fmi::hash_value(*flash_generation));
 
     if (!(paraminfo.source == std::string("grid")))
     {

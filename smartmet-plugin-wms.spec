@@ -38,7 +38,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 26.10.3
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.10.3
+BuildRequires: smartmet-engine-observation-devel >= 26.10.9-2
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.10.3
 BuildRequires: smartmet-engine-gis-devel >= 26.9.23
@@ -90,6 +90,9 @@ Requires: smartmet-library-timeseries >= 26.10.3
 Requires: smartmet-library-giza >= 26.10.3
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.6.26
+%endif
+%if %{with observation}
+Requires: smartmet-engine-observation >= 26.10.9-2
 %endif
 Requires: smartmet-engine-avi >= 26.10.3
 Requires: smartmet-engine-querydata >= 26.10.3
@@ -152,7 +155,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.10.3
+#TestRequires: smartmet-engine-observation-devel >= 26.10.9-2
 %endif
 
 %description
