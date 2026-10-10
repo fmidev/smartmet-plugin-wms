@@ -577,7 +577,7 @@ QueryStatus Handler::handleConformance(const std::string& /* base */, Spine::HTT
   {
     Json::Value doc;
     Json::Value uris(Json::arrayValue);
-    for (const auto& uri : conformanceClasses(itsApi != nullptr))
+    for (const auto& uri : conformanceClasses())
       uris.append(uri);
     doc["conformsTo"] = uris;
 

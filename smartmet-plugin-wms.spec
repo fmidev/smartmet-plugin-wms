@@ -186,13 +186,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Oct  9 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-3.fmi
-- Generated OpenAPI 3.0 definitions of OGC API - Tiles (/tiles/api) and the WMTS RESTful
+- Generated OpenAPI 3.1 definitions of OGC API - Tiles (/tiles/api) and the WMTS RESTful
   interface (/wmts/api), with Swagger UI documentation pages at .../api/docs served from
   smartmet-swagger-ui. Like the capabilities, the definitions list the layers, styles,
   levels and dimensions the apikey of the client has access to, and follow capability
   changes. Definitions with an apikey are sent with Cache-Control: private
 - The Tiles landing page links the definition and the documentation, /tiles/conformance
-  declares oas30 and the mvt and geotiff tile formats instead of the unsupported jpeg
+  declares the mvt and geotiff tile formats instead of the unsupported jpeg
 - WMS, WMTS and Tiles requests are routed by the configured wms.url, wmts.url and
   tiles.url instead of hard-coded prefixes
 

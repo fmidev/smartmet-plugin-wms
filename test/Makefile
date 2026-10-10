@@ -192,7 +192,7 @@ validate-tiles-schemas:
 	fi; \
 	exit $$status
 
-# The generated OpenAPI definitions are validated against the OpenAPI 3.0 schema in
+# The generated OpenAPI definitions are validated against the OpenAPI 3.1 schema in
 # schemas/openapi, and every successful test request must be described by them: an operation
 # matches the path, the values are in the enums and all the parameters are declared.
 validate-openapi:

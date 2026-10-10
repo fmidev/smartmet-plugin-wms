@@ -24,7 +24,7 @@ Spine::OpenAPI::Document apiDefinition(const Config& config,
                                        const Spine::OpenAPI::Settings& settings);
 
 // Conformance classes of /tiles/conformance
-std::vector<std::string> conformanceClasses(bool openapi);
+std::vector<std::string> conformanceClasses();
 
 }  // namespace Tiles
 }  // namespace Plugin

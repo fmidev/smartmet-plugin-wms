@@ -498,7 +498,7 @@ void add_collection_operations(OA::Document& doc,
 
 }  // namespace
 
-std::vector<std::string> conformanceClasses(bool openapi)
+std::vector<std::string> conformanceClasses()
 {
   std::vector<std::string> ret{
       "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core",
@@ -514,11 +514,6 @@ std::vector<std::string> conformanceClasses(bool openapi)
       // OGC API - Styles (Part 1: Core) with the Mapbox style encoding
       "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/core",
       "http://www.opengis.net/spec/ogcapi-styles-1/1.0/conf/mapbox-styles"};
-  if (openapi)
-  {
-    ret.emplace_back(OA::CONF_COMMON_OAS30);
-    ret.emplace_back("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/oas30");
-  }
   return ret;
 }
 

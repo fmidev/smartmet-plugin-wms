@@ -67,7 +67,7 @@ silent offline; `SMARTMET_SCHEMA_CHECK=0` skips it.
 
 The generated OpenAPI definitions (`/tiles/api`, `/wmts/api`; `wms/tiles/ApiDefinition.cpp`,
 `wms/wmts/ApiDefinition.cpp`, layer listing in `wms/ogc/OpenApiLayers.cpp`) are validated by
-`validate-openapi` against the OpenAPI 3.0 schema, and every successful `tiles_*`/`wmts_*` test
+`validate-openapi` against the OpenAPI 3.1 schema, and every successful `tiles_*`/`wmts_*` test
 request must match an operation with its enums and declared parameters, so new request
 parameters must be added to the definitions.
 

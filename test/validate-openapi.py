@@ -11,7 +11,7 @@ outputs are in <output-dir>, by default <input-dir> with "input" replaced by "ou
 
 Each <definition> is the expected output of a /api test (an optional "Status:" header block
 produced with the X-Test-Headers request header is skipped). The definition is validated
-against the OpenAPI 3.0 schema in schemas/oas30-schema.json, if the jsonschema module is
+against the OpenAPI 3.1 schema in schemas/oas31-schema.json, if the jsonschema module is
 available.
 
 Every request in <input-dir> whose expected output is a success (no error status in the
@@ -38,7 +38,7 @@ import urllib.parse
 
 errors = []
 HERE = os.path.dirname(os.path.abspath(__file__))
-OAS_SCHEMA = os.path.join("openapi", "oas30-schema.json")
+OAS_SCHEMA = os.path.join("openapi", "oas31-schema.json")
 
 
 def error(where, msg):
@@ -70,9 +70,13 @@ def validate_schema(fname, doc):
     except ImportError:
         print("jsonschema not available, skipping OpenAPI schema validation")
         return
+    # The OpenAPI 3.1 schema is a JSON Schema 2020-12 document (jsonschema 4.0 or newer)
+    if not hasattr(jsonschema, "Draft202012Validator"):
+        print("jsonschema too old for JSON Schema 2020-12, skipping OpenAPI schema validation")
+        return
     with open(os.path.join(HERE, "schemas", OAS_SCHEMA), encoding="utf-8") as f:
         schema = json.load(f)
-    validator = jsonschema.Draft4Validator(schema)
+    validator = jsonschema.Draft202012Validator(schema)
     for e in sorted(validator.iter_errors(doc), key=lambda e: list(e.path))[:20]:
         error(fname, "/".join(map(str, e.path)) + ": " + e.message[:200])
 
