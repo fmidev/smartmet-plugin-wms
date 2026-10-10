@@ -18,7 +18,7 @@ ColorPainter_rain::ColorPainter_rain()
   {
     colormap_hash = 0;
     line_length = 16;
-    streamImage = NULL;
+    streamImage = nullptr;
     streamImage_width = 0;
     streamImage_height = 0;
     smooth_colors = true;

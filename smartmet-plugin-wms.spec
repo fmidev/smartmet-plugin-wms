@@ -186,6 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sat Oct 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.10-1.fmi
 - Use auto and return {} where clang-tidy suggests it, no functional changes
+- Mark overriding methods override and use nullptr, no functional changes
 
 * Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-2.fmi
 - Icemap layers report missing PostGIS columns and settings by name instead of map::at (BRAINSTORM-3371)
