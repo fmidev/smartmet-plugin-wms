@@ -12,6 +12,7 @@
 <body>
 <div id="swagger-ui"></div>
 <script src="docs/swagger-ui-bundle.js"></script>
+<script src="docs/smartmet-snippets.js"></script>
 <script>
 window.onload = function () {
   window.ui = SwaggerUIBundle({
@@ -20,7 +21,11 @@ window.onload = function () {
     deepLinking: true,
     validatorUrl: null,
     queryConfigEnabled: false,
+    tryItOutEnabled: true,
+    requestSnippetsEnabled: true,
+    requestSnippets: SmartMetSnippets.snippetConfig,
     presets: [SwaggerUIBundle.presets.apis],
+    plugins: [SmartMetSnippets.plugin],
     layout: "BaseLayout"
   });
 };
