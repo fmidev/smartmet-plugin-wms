@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.9
-Release: 2%{?dist}.fmi
+Version: 26.10.10
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -184,6 +184,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Oct 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.10-1.fmi
+- Validate the Host header (hostname[:port]), X-Forwarded-Proto (http/https) and the apikey
+  (URL-safe characters) before writing them into the self-referential URLs of WMS and WMTS
+  GetCapabilities and OGC API Tiles responses; invalid values fall back to the defaults
+
 * Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-2.fmi
 - Icemap layers report missing PostGIS columns and settings by name instead of map::at (BRAINSTORM-3371)
 
