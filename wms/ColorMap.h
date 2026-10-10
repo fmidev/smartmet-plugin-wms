@@ -12,7 +12,7 @@ namespace Plugin
 namespace Dali
 {
 
-typedef std::map<float, unsigned int> Colors;
+using Colors = std::map<float, unsigned int>;
 
 class ColorMap
 {
@@ -141,8 +141,8 @@ class ColorMap
     }
 };
 
-typedef std::shared_ptr<ColorMap> ColorMap_sptr;
-typedef std::map<std::string, ColorMap_sptr> ColorMap_sptr_map;
+using ColorMap_sptr = std::shared_ptr<ColorMap>;
+using ColorMap_sptr_map = std::map<std::string, ColorMap_sptr>;
 
 }  // namespace Dali
 }  // namespace Plugin

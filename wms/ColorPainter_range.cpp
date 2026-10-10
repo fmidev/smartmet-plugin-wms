@@ -22,14 +22,7 @@ ColorPainter_range::ColorPainter_range()
   }
 }
 
-
-
-
-ColorPainter_range::~ColorPainter_range()
-{
-}
-
-
+ColorPainter_range::~ColorPainter_range() = default;
 
 void ColorPainter_range::init(Json::Value &theJson, const State &theState)
 {

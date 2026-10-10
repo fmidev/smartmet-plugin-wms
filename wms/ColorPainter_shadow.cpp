@@ -22,14 +22,7 @@ ColorPainter_shadow::ColorPainter_shadow()
   }
 }
 
-
-
-
-ColorPainter_shadow::~ColorPainter_shadow()
-{
-}
-
-
+ColorPainter_shadow::~ColorPainter_shadow() = default;
 
 void ColorPainter_shadow::init(Json::Value &theJson, const State &theState)
 {

@@ -22,16 +22,7 @@ ColorPainter::ColorPainter()
   }
 }
 
-
-
-
-ColorPainter::~ColorPainter()
-{
-}
-
-
-
-
+ColorPainter::~ColorPainter() = default;
 
 void ColorPainter::init(Json::Value &theJson, const State &/* theState */)
 {

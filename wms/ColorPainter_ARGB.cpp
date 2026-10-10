@@ -23,16 +23,7 @@ ColorPainter_ARGB::ColorPainter_ARGB()
   }
 }
 
-
-
-
-ColorPainter_ARGB::~ColorPainter_ARGB()
-{
-}
-
-
-
-
+ColorPainter_ARGB::~ColorPainter_ARGB() = default;
 
 void ColorPainter_ARGB::init(Json::Value &theJson, const State &theState)
 {

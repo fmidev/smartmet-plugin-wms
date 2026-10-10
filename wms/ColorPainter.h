@@ -17,8 +17,7 @@ namespace Plugin
 namespace Dali
 {
 
-typedef std::map<std::string,std::string> Parameters;
-
+using Parameters = std::map<std::string, std::string>;
 
 class ColorPainter
 {
@@ -41,10 +40,8 @@ class ColorPainter
     double opacity_sea;
 };
 
-
-typedef std::shared_ptr<ColorPainter> ColorPainter_sptr;
-typedef std::map<std::string,ColorPainter_sptr> ColorPainter_sptr_map;
-
+using ColorPainter_sptr = std::shared_ptr<ColorPainter>;
+using ColorPainter_sptr_map = std::map<std::string, ColorPainter_sptr>;
 
 }  // namespace Dali
 }  // namespace Plugin

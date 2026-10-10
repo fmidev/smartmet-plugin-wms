@@ -22,14 +22,7 @@ ColorPainter_border::ColorPainter_border()
   }
 }
 
-
-
-
-ColorPainter_border::~ColorPainter_border()
-{
-}
-
-
+ColorPainter_border::~ColorPainter_border() = default;
 
 void ColorPainter_border::init(Json::Value &theJson, const State &theState)
 {

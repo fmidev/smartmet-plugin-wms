@@ -32,14 +32,7 @@ ColorPainter_stream::ColorPainter_stream()
   }
 }
 
-
-
-
-ColorPainter_stream::~ColorPainter_stream()
-{
-}
-
-
+ColorPainter_stream::~ColorPainter_stream() = default;
 
 void ColorPainter_stream::init(Json::Value &theJson,const State& theState)
 {
