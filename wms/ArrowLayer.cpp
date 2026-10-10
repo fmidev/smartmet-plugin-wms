@@ -487,6 +487,8 @@ void ArrowLayer::init(Json::Value& theJson,
       JsonTools::extract_array("arrows", arrows, json, theConfig);
 
     point_value_options.init(theJson);
+    if (!point_value_options.conditional_priorities.empty())
+      throw Fmi::Exception(BCP, "Conditional priorities are not supported in arrow layers");
   }
   catch (...)
   {

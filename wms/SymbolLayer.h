@@ -8,6 +8,7 @@
 
 #include "AttributeSelection.h"
 #include "Layer.h"
+#include "ObservationSources.h"
 #include "ParameterInfo.h"
 #include "PointValueOptions.h"
 #include "Positions.h"
@@ -69,6 +70,9 @@ class SymbolLayer : public Layer
 
   // Minimum distance, priorities of symbols
   PointValueOptions point_value_options;
+
+  // Several observation parameters combined, used instead of paraminfo.parameter if set
+  ObservationSources sources;
 
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);

@@ -1,0 +1,205 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>WaWa where available, otherwise temperature offset by 1000</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+.Number	{ fill: black; font-family: Roboto; font-size: 8px; text-anchor: middle }
+
+ ]]>
+</style>
+
+
+</defs>
+
+<g>
+ <g id="view1">
+   <rect height="500" style="fill:white" width="500"/>
+  
+  <g class="Number">
+  
+  <text x="249" y="431">0</text>
+  <text x="249" y="428">23</text>
+  <text x="200" y="405">0</text>
+  <text x="82" y="429">0</text>
+  <text x="79" y="431">0</text>
+  <text x="165" y="367">0</text>
+  <text x="155" y="346">0</text>
+  <text x="184" y="320">0</text>
+  <text x="161" y="389">0</text>
+  <text x="187" y="293">0</text>
+  <text x="178" y="289">0</text>
+  <text x="187" y="297">0</text>
+  <text x="107" y="426">0</text>
+  <text x="117" y="409">0</text>
+  <text x="271" y="400">0</text>
+  <text x="80" y="437">0</text>
+  <text x="128" y="444">0</text>
+  <text x="215" y="184">0</text>
+  <text x="204" y="383">0</text>
+  <text x="142" y="381">0</text>
+  <text x="128" y="375">0</text>
+  <text x="202" y="442">0</text>
+  <text x="126" y="393">0</text>
+  <text x="205" y="418">0</text>
+  <text x="208" y="381">0</text>
+  <text x="155" y="418">0</text>
+  <text x="137" y="320">0</text>
+  <text x="249" y="423">0</text>
+  <text x="225" y="321">1023</text>
+  <text x="267" y="388">1020</text>
+  <text x="109" y="100">1015</text>
+  <text x="111" y="100">1011</text>
+  <text x="202" y="116">1019</text>
+  <text x="241" y="428">1024</text>
+  <text x="264" y="282">1025</text>
+  <text x="241" y="249">1020</text>
+  <text x="235" y="249">1020</text>
+  <text x="231" y="308">1024</text>
+  <text x="53" y="424">1019</text>
+  <text x="181" y="444">1021</text>
+  <text x="180" y="442">1020</text>
+  <text x="191" y="441">1024</text>
+  <text x="227" y="394">1026</text>
+  <text x="285" y="391">1022</text>
+  <text x="248" y="437">1020</text>
+  <text x="248" y="429">1022</text>
+  <text x="248" y="429">1022</text>
+  <text x="257" y="428">1021</text>
+  <text x="243" y="413">1023</text>
+  <text x="233" y="398">1024</text>
+  <text x="254" y="390">1023</text>
+  <text x="251" y="396">1022</text>
+  <text x="451" y="333">1026</text>
+  <text x="453" y="319">1025</text>
+  <text x="275" y="105">1021</text>
+  <text x="331" y="116">1021</text>
+  <text x="326" y="97">1021</text>
+  <text x="381" y="80">1019</text>
+  <text x="361" y="107">1019</text>
+  <text x="361" y="121">1019</text>
+  <text x="332" y="123">1019</text>
+  <text x="331" y="123">1020</text>
+  <text x="343" y="100">1018</text>
+  <text x="334" y="99">1020</text>
+  <text x="217" y="438">1022</text>
+  <text x="409" y="339">1023</text>
+  <text x="346" y="355">1021</text>
+  <text x="287" y="366">1020</text>
+  <text x="392" y="316">1024</text>
+  <text x="226" y="367">1024</text>
+  <text x="347" y="365">1022</text>
+  <text x="243" y="367">1025</text>
+  <text x="168" y="421">1024</text>
+  <text x="340" y="277">1022</text>
+  <text x="342" y="279">1022</text>
+  <text x="198" y="275">1018</text>
+  <text x="176" y="354">1022</text>
+  <text x="122" y="349">1017</text>
+  <text x="234" y="225">1019</text>
+  <text x="220" y="236">1018</text>
+  <text x="323" y="186">1023</text>
+  <text x="236" y="221">1019</text>
+  <text x="175" y="429">1024</text>
+  <text x="156" y="440">1020</text>
+  <text x="228" y="438">1022</text>
+  <text x="225" y="139">1021</text>
+  <text x="247" y="152">1022</text>
+  <text x="245" y="150">1023</text>
+  <text x="245" y="147">1020</text>
+  <text x="224" y="139">1021</text>
+  <text x="276" y="133">1020</text>
+  <text x="122" y="327">1019</text>
+  <text x="323" y="425">1021</text>
+  <text x="316" y="421">1022</text>
+  <text x="311" y="410">1023</text>
+  <text x="315" y="402">1024</text>
+  <text x="121" y="354">1016</text>
+  <text x="424" y="276">1018</text>
+  <text x="328" y="319">1021</text>
+  <text x="348" y="332">1022</text>
+  <text x="338" y="328">1021</text>
+  <text x="395" y="199">1022</text>
+  <text x="392" y="213">1020</text>
+  <text x="389" y="207">1018</text>
+  <text x="94" y="454">1019</text>
+  <text x="367" y="391">1023</text>
+  <text x="370" y="397">1024</text>
+  <text x="356" y="397">1023</text>
+  <text x="358" y="396">1023</text>
+  <text x="420" y="312">1024</text>
+  <text x="405" y="337">1024</text>
+  <text x="407" y="341">1023</text>
+  <text x="218" y="426">1025</text>
+  <text x="299" y="425">1021</text>
+  <text x="267" y="372">1020</text>
+  <text x="92" y="431">1021</text>
+  <text x="107" y="325">1016</text>
+  <text x="244" y="342">1023</text>
+  <text x="218" y="136">1016</text>
+  <text x="220" y="140">1019</text>
+  <text x="118" y="308">1018</text>
+  <text x="238" y="416">1024</text>
+  <text x="263" y="252">1022</text>
+  <text x="263" y="250">1021</text>
+  <text x="139" y="431">1021</text>
+  <text x="400" y="382">1024</text>
+  <text x="325" y="175">1020</text>
+  <text x="167" y="296">1018</text>
+  <text x="271" y="428">1021</text>
+  <text x="270" y="421">1024</text>
+  <text x="270" y="436">1019</text>
+  <text x="316" y="235">1023</text>
+  <text x="353" y="262">1020</text>
+  <text x="357" y="378">1023</text>
+  <text x="357" y="379">1023</text>
+  <text x="274" y="297">1023</text>
+  <text x="230" y="262">1019</text>
+  <text x="213" y="264">1018</text>
+  <text x="370" y="359">1024</text>
+  <text x="296" y="214">1022</text>
+  <text x="373" y="310">1022</text>
+  <text x="284" y="191">1023</text>
+  <text x="278" y="192">1022</text>
+  <text x="274" y="194">1023</text>
+  <text x="373" y="182">1022</text>
+  <text x="390" y="170">1020</text>
+  <text x="405" y="148">1019</text>
+  <text x="187" y="421">1025</text>
+  <text x="382" y="363">1025</text>
+  <text x="395" y="369">1022</text>
+  <text x="357" y="165">1022</text>
+  <text x="166" y="326">1023</text>
+  <text x="253" y="262">1023</text>
+  <text x="344" y="324">1022</text>
+  <text x="305" y="162">1023</text>
+  <text x="342" y="145">1021</text>
+  <text x="323" y="136">1021</text>
+  <text x="210" y="411">1024</text>
+  <text x="362" y="283">1022</text>
+  <text x="376" y="253">1022</text>
+  <text x="359" y="229">1022</text>
+  <text x="208" y="379">1023</text>
+  <text x="209" y="380">1024</text>
+  <text x="430" y="352">1026</text>
+  <text x="222" y="294">1024</text>
+  <text x="222" y="219">1019</text>
+  <text x="152" y="421">1022</text>
+  <text x="317" y="74">1021</text>
+  <text x="318" y="74">1021</text>
+  <text x="347" y="62">1016</text>
+  <text x="379" y="299">1023</text>
+  <text x="348" y="349">1022</text>
+  <text x="298" y="327">1022</text>
+  <text x="325" y="293">1021</text>
+  <text x="230" y="420">1026</text>
+  <text x="279" y="321">1022</text>
+  <text x="340" y="416">1024</text>
+  <text x="201" y="349">1023</text>
+  <text x="238" y="193">1023</text>
+  <text x="241" y="285">1023</text>
+  <text x="224" y="341">1024</text>
+  </g>
+ </g>
+</g>
+
+</svg>

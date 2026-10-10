@@ -1,0 +1,57 @@
+{
+    "title": "WaWa where available, otherwise temperature offset by 1000",
+    "producer": "opendata",
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"cx" : 25,
+	"cy" : 65,
+	"resolution" : 3,
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "number",
+		    "css": "numbers/integers.css",
+		    "parameter":
+		    [
+			"wawa",
+			{ "parameter": "Temperature", "offset": 1000 }
+		    ],
+		    "label":
+		    {
+			"missing": "-"
+		    },
+		    "attributes":
+		    {
+			"class": "Number"
+		    },
+		    "positions":
+		    {
+			"layout" : "keyword",
+			"keyword" : "synop_fi"
+		    }
+		}
+	    ]
+	}
+    ]
+}

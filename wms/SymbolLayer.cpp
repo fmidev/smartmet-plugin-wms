@@ -217,11 +217,16 @@ void SymbolLayer::init(Json::Value& theJson,
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Symbol-layer JSON is not a JSON object");
 
+    // Must be extracted before Layer::init which accepts only a single parameter name
+    sources.init(theJson);
+
     Layer::init(theJson, theState, theConfig, theProperties);
 
     // Extract member values
 
     JsonTools::remove_string(paraminfo.parameter, theJson, "parameter");
+    if (!sources.empty())
+      paraminfo.parameter = sources.sources.front().parameter;
     if (!paraminfo.parameter.empty() && paraminfo.producer &&
         !isFlashOrMobileProducer(*paraminfo.producer))
     {
@@ -271,6 +276,14 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   {
     if (!validLayer(theState))
       return;
+
+    if (!theState.isObservation(paraminfo.producer))
+    {
+      if (!sources.empty())
+        throw Fmi::Exception(BCP, "Parameter lists are supported only for observations");
+      if (!point_value_options.conditional_priorities.empty())
+        throw Fmi::Exception(BCP, "Conditional priorities are supported only for observations");
+    }
 
     if (paraminfo.source == std::string("grid"))
       generate_gridEngine(theGlobals, theLayersCdt, theState);
@@ -792,15 +805,37 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       pointvalues = read_forecasts(*this, q, crs, box, valid_time, theState);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = ObservationReader::read(theState,
-                                            {paraminfo.parameter},
-                                            *this,
-                                            *positions,
-                                            maxdistance_km,
-                                            crs,
-                                            box,
-                                            valid_time,
-                                            valid_time_period);
+    {
+      // Conditional priorities need extra parameters after the actual one
+      auto extra_parameters = point_value_options.extraParameters();
+      if (!sources.empty())
+      {
+        pointvalues = ObservationReader::read(theState,
+                                              sources,
+                                              extra_parameters,
+                                              *this,
+                                              *positions,
+                                              maxdistance_km,
+                                              crs,
+                                              box,
+                                              valid_time,
+                                              valid_time_period);
+      }
+      else
+      {
+        auto parameters = extra_parameters;
+        parameters.insert(parameters.begin(), paraminfo.parameter);
+        pointvalues = ObservationReader::read(theState,
+                                              parameters,
+                                              *this,
+                                              *positions,
+                                              maxdistance_km,
+                                              crs,
+                                              box,
+                                              valid_time,
+                                              valid_time_period);
+      }
+    }
 #endif
 
     pointvalues = prioritize(pointvalues, point_value_options);
@@ -1160,6 +1195,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(dy));
     Fmi::hash_combine(hash, Dali::hash_value(symbols, theState));
     Fmi::hash_combine(hash, point_value_options.hash_value());
+    Fmi::hash_combine(hash, sources.hash_value());
     return hash;
   }
   catch (...)
