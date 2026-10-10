@@ -474,7 +474,7 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
       const auto png = Giza::topng_argb(cimage.pixel, cimage.width, cimage.height, comp);
       svgImage << "<image id=\"" << Fmi::safexmlescape(qid) << "\" xlink:href=\"data:image/png;base64,";
       svgImage << Dali::base64_encode(png);
-      svgImage << "\" x=\"0\" y=\"0\" width=\"" << cimage.width << "\" height=\"" << cimage.height
+      svgImage << R"(" x="0" y="0" width=")" << cimage.width << "\" height=\"" << cimage.height
                << "\" />\n\n";
 
       svg_image = svgImage.str();

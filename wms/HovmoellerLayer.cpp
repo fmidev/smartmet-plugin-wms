@@ -65,9 +65,12 @@ void emit_rect(std::ostringstream& out,
                double cell_h,
                const std::string& css_class)
 {
-  out << fmt::format(
-      "<rect x=\"{:.2f}\" y=\"{:.2f}\" width=\"{:.2f}\" height=\"{:.2f}\" class=\"{}\"/>",
-      x, y, cell_w + 0.5, cell_h + 0.5, css_class);
+  out << fmt::format(R"(<rect x="{:.2f}" y="{:.2f}" width="{:.2f}" height="{:.2f}" class="{}"/>)",
+                     x,
+                     y,
+                     cell_w + 0.5,
+                     cell_h + 0.5,
+                     css_class);
 }
 
 }  // anonymous namespace

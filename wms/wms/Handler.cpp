@@ -1751,10 +1751,10 @@ Json::Value Handler::getExceptionJson(const std::string &description,
     jsonStr += "     \"attributes\":\n";
     jsonStr += "     {\n";
     jsonStr += "           \"x\": \"5\",\n";
-    jsonStr += "           \"y\": \"" + Fmi::to_string(textDimension.height) + "\",\n";
-    jsonStr += "           \"font-family\": \"" + textStyle.fontfamily + "\",\n";
-    jsonStr += "           \"font-weight\": \"" + textStyle.fontweight + "\",\n";
-    jsonStr += "           \"font-size\": \"" + textStyle.fontsize + "\",\n";
+    jsonStr += R"(           "y": ")" + Fmi::to_string(textDimension.height) + "\",\n";
+    jsonStr += R"(           "font-family": ")" + textStyle.fontfamily + "\",\n";
+    jsonStr += R"(           "font-weight": ")" + textStyle.fontweight + "\",\n";
+    jsonStr += R"(           "font-size": ")" + textStyle.fontsize + "\",\n";
     jsonStr += "           \"text-anchor\": \"start\"\n";
     jsonStr += "      }\n";
     jsonStr += "}\n";

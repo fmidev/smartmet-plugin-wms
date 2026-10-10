@@ -189,6 +189,7 @@ rm -rf $RPM_BUILD_ROOT
 - Mark overriding methods override and use nullptr, no functional changes
 - Use = default and using declarations where clang-tidy suggests it, no functional changes
 - Use emplace and C++ standard library headers where clang-tidy suggests it, no functional changes
+- Use raw string literals and std::make_shared where clang-tidy suggests it, no functional changes
 
 * Fri Oct 09 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.9-2.fmi
 - Icemap layers report missing PostGIS columns and settings by name instead of map::at (BRAINSTORM-3371)
