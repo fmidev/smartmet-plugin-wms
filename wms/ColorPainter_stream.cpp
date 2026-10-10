@@ -217,7 +217,7 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
 
     // Rotate
 
-    float *direction = new float[sz];
+    auto* direction = new float[sz];
     uint idx = 0;
     for (uint y=0; y<height; y++)
     {
@@ -352,8 +352,8 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
 
     // Rotate
 
-    float *direction = new float[sz];
-    float *speed = new float[sz];
+    auto* direction = new float[sz];
+    auto* speed = new float[sz];
     uint idx = 0;
     for (uint y=0; y<height; y++)
     {

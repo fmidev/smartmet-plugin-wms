@@ -206,7 +206,7 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
 
     // Rotate
 
-    float *speed = new float[sz];
+    auto* speed = new float[sz];
 
     if (!streamImage || streamImage_width != width || streamImage_height != height)
     {

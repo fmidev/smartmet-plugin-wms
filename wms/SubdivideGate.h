@@ -43,8 +43,8 @@ inline int effective_subdivide(int requested,
   if (nx < 2 || ny < 2)
     return 0;
 
-  const double pxw = static_cast<double>(box.width());
-  const double pxh = static_cast<double>(box.height());
+  const auto pxw = static_cast<double>(box.width());
+  const auto pxh = static_cast<double>(box.height());
   if (!(pxw > 0.0) || !(pxh > 0.0))
     return requested;
 

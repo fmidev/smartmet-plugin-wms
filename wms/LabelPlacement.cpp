@@ -870,7 +870,7 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
   auto posPenalty = [&](int i, int k) -> double {
     if (k < 0)
       return static_cast<double>(num_cands);
-    double penalty = static_cast<double>(k);
+    auto penalty = static_cast<double>(k);
     if (fw > 0.0)
     {
       const auto fd = computeFreeDir(i);

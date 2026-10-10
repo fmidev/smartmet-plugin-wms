@@ -161,11 +161,11 @@ void ColorPainter_range::setImageColors(uint width,uint height,uint /* loop_step
 
       if ((minCol & 0xFF000000) || (maxCol & 0xFF000000) || (lowCol & 0xFF000000) || (highCol & 0xFF000000))
       {
-        uchar *a = (uchar*)&minCol;
-        uchar *b = (uchar*)&maxCol;
+        auto* a = (uchar*)&minCol;
+        auto* b = (uchar*)&maxCol;
 
         uint newCol = 0;
-        uchar *n = (uchar*)&newCol;
+        auto* n = (uchar*)&newCol;
 
         uint c = 0;
         for (uint y = 0; y < height; y++)

@@ -84,11 +84,11 @@ class ColorMap
       uint lowerColor = 0;
       uint upperColor = 0;
 
-      unsigned char *a = (unsigned char*) &lowerColor;
-      unsigned char *b = (unsigned char*) &upperColor;
+      auto* a = (unsigned char*)&lowerColor;
+      auto* b = (unsigned char*)&upperColor;
 
       uint newColor = 0;
-      unsigned char *n = (unsigned char*) &newColor;
+      auto* n = (unsigned char*)&newColor;
 
       it = mColors.lower_bound(value);
       if (it != mColors.end())

@@ -1765,7 +1765,7 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
                            static_cast<int>(coordinates->size()) > 10 * width &&
                            (*coordinates)[0].y() < (*coordinates)[10 * width].y());
 
-    const float nodata = static_cast<float>(ParamValueMissing);
+    const auto nodata = static_cast<float>(ParamValueMissing);
 
     std::vector<float> band1(width * height);
     std::vector<float> band2(width * height);
@@ -2017,7 +2017,7 @@ std::string ArrowLayer::generateDataTile(State& theState)
                            static_cast<int>(coordinates->size()) > 10 * width &&
                            (*coordinates)[0].y() < (*coordinates)[10 * width].y());
 
-    const float nd = static_cast<float>(ParamValueMissing);
+    const auto nd = static_cast<float>(ParamValueMissing);
 
     std::vector<float> band1(width * height);
     std::vector<float> band2(width * height);

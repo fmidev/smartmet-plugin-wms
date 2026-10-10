@@ -812,7 +812,7 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       const auto& msg_val = *vals.at("message").cbegin();
       if (!std::holds_alternative<std::string>(msg_val))
         continue;
-      const std::string& raw_message = std::get<std::string>(msg_val);
+      const auto& raw_message = std::get<std::string>(msg_val);
 
       std::string icao_str;
       if (vals.count("icao") && !vals.at("icao").empty())

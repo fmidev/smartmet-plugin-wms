@@ -333,8 +333,8 @@ PolylineData extractPolylineData(const OGRLineString* geom,
   // sub-segment and the cache misses despite the contour itself being
   // bit-identical.
   std::vector<bool> onBoundary(n, false);
-  const double bx_max = static_cast<double>(box.width());
-  const double by_max = static_cast<double>(box.height());
+  const auto bx_max = static_cast<double>(box.width());
+  const auto by_max = static_cast<double>(box.height());
 
   for (int i = 0; i < n; i++)
   {
@@ -506,8 +506,8 @@ void IsolineFilter::writeBezierLinearRingSvg(std::string& out,
     //    ghostline tail diverges from the shared contour.
     int ringSize = n - 1;  // number of unique vertices
     std::vector<int> breaks;
-    const double bx_max = static_cast<double>(box.width());
-    const double by_max = static_cast<double>(box.height());
+    const auto bx_max = static_cast<double>(box.width());
+    const auto by_max = static_cast<double>(box.height());
     for (int i = 0; i < ringSize; i++)
     {
       OGRPoint pt;

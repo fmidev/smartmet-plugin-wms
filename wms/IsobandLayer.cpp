@@ -263,8 +263,8 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
           (std::string("Heatmap too big (") + Fmi::to_string(dwidth * dheight) + " points, max " +
            Fmi::to_string(heatmap.max_points) + "), increase resolution"));
 
-    unsigned int width = static_cast<unsigned int>(dwidth);
-    unsigned int height = static_cast<unsigned int>(dheight);
+    auto width = static_cast<unsigned int>(dwidth);
+    auto height = static_cast<unsigned int>(dheight);
 
     // Must use at least two grid points, value 1 would cause a segmentation fault in here
 
@@ -1197,7 +1197,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
         auto tfp_field = ComputedFields::computeTFP(smoothed, *coords_wgs84, tfp->min_gradient);
         if (tfp->scale != 1.0)
         {
-          const float s = static_cast<float>(tfp->scale);
+          const auto s = static_cast<float>(tfp->scale);
           for (std::size_t j = 0; j < tfp_field.NY(); ++j)
             for (std::size_t i = 0; i < tfp_field.NX(); ++i)
               if (tfp_field[i][j] != kFloatMissing)

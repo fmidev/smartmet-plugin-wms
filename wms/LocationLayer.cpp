@@ -795,7 +795,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       //   - SIDE (E/W): body centred on the anchor (baseline = ay + ascent/2)
       // ascent is recovered from y_bearing (= -ascent in cairo).
       const double ay = accepted[i].y;
-      const double y_bearing = static_cast<double>(pl.y_bearing);
+      const auto y_bearing = static_cast<double>(pl.y_bearing);
       const double text_y = (pl.bbox.y2 <= ay)   ? pl.bbox.y2
                             : (pl.bbox.y1 >= ay) ? pl.bbox.y1 - y_bearing
                                                  : ay - y_bearing / 2.0;
