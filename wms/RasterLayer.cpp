@@ -1003,22 +1003,22 @@ std::size_t RasterLayer::hash_value(const State &theState) const
 
     Fmi::hash_combine(hash, Fmi::hash_value(compression));
 
-    for (auto it = painterParameters.begin(); it != painterParameters.end(); ++it)
+    for (const auto& painterParameter : painterParameters)
     {
-      Fmi::hash_combine(hash, Fmi::hash_value(it->first));
-      Fmi::hash_combine(hash, Fmi::hash_value(it->second));
+      Fmi::hash_combine(hash, Fmi::hash_value(painterParameter.first));
+      Fmi::hash_combine(hash, Fmi::hash_value(painterParameter.second));
     }
 
-    for (auto it = land_shading_parameters.begin(); it != land_shading_parameters.end(); ++it)
+    for (const auto& land_shading_parameter : land_shading_parameters)
     {
-      Fmi::hash_combine(hash, Fmi::hash_value(it->first));
-      Fmi::hash_combine(hash, Fmi::hash_value(it->second));
+      Fmi::hash_combine(hash, Fmi::hash_value(land_shading_parameter.first));
+      Fmi::hash_combine(hash, Fmi::hash_value(land_shading_parameter.second));
     }
 
-    for (auto it = sea_shading_parameters.begin(); it != sea_shading_parameters.end(); ++it)
+    for (const auto& sea_shading_parameter : sea_shading_parameters)
     {
-      Fmi::hash_combine(hash, Fmi::hash_value(it->first));
-      Fmi::hash_combine(hash, Fmi::hash_value(it->second));
+      Fmi::hash_combine(hash, Fmi::hash_value(sea_shading_parameter.first));
+      Fmi::hash_combine(hash, Fmi::hash_value(sea_shading_parameter.second));
     }
     return hash;
   }

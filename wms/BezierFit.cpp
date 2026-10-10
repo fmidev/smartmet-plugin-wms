@@ -19,6 +19,7 @@
 #include <cstring>
 #include <limits>
 #include <optional>
+#include <ranges>
 #include <utility>
 
 namespace Fmi
@@ -1428,9 +1429,9 @@ std::vector<CubicBez> reverseCubics(const std::vector<CubicBez>& cubics)
 {
   std::vector<CubicBez> result;
   result.reserve(cubics.size());
-  for (auto it = cubics.rbegin(); it != cubics.rend(); ++it)
+  for (const auto& cubic : std::ranges::reverse_view(cubics))
   {
-    result.emplace_back(it->p3, it->p2, it->p1, it->p0);
+    result.emplace_back(cubic.p3, cubic.p2, cubic.p1, cubic.p0);
   }
   return result;
 }

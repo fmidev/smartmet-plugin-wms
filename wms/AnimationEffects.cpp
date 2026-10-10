@@ -110,12 +110,12 @@ std::size_t AnimationEffects::hash_value() const
   try
   {
     std::size_t hash = 0;
-    for (auto it = effects.begin(); it != effects.end(); ++it)
+    for (const auto& effect : effects)
     {
-      auto hash = Fmi::hash_value(it->enabled);
-      Fmi::hash_combine(hash, Fmi::hash_value(it->effect));
-      Fmi::hash_combine(hash, Fmi::hash_value(it->start_step));
-      Fmi::hash_combine(hash, Fmi::hash_value(it->end_step));
+      auto hash = Fmi::hash_value(effect.enabled);
+      Fmi::hash_combine(hash, Fmi::hash_value(effect.effect));
+      Fmi::hash_combine(hash, Fmi::hash_value(effect.start_step));
+      Fmi::hash_combine(hash, Fmi::hash_value(effect.end_step));
     }
 
     return hash;

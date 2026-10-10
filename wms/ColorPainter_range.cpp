@@ -143,14 +143,14 @@ void ColorPainter_range::setImageColors(uint width,uint height,uint /* loop_step
       throw exception;
     }
 
-    for (auto range = ranges.begin(); range != ranges.end(); ++range)
+    for (auto& range : ranges)
     {
-      double dv = range->value_max - range->value_min;
+      double dv = range.value_max - range.value_min;
 
-      uint minCol = range->color_min;
-      uint maxCol = range->color_max;
-      uint lowCol = range->color_low;
-      uint highCol = range->color_high;
+      uint minCol = range.color_min;
+      uint maxCol = range.color_max;
+      uint lowCol = range.color_low;
+      uint highCol = range.color_high;
 
       if ((minCol & 0xFF000000) || (maxCol & 0xFF000000) || (lowCol & 0xFF000000) || (highCol & 0xFF000000))
       {
@@ -174,14 +174,13 @@ void ColorPainter_range::setImageColors(uint width,uint height,uint /* loop_step
             float landval = land[cc];
             if (val != ParamValueMissing)
             {
-              if (val < range->value_min)
+              if (val < range.value_min)
                 valcol = lowCol;
-              else
-              if (val > range->value_max)
+              else if (val > range.value_max)
                 valcol = highCol;
               else
               {
-                double vv = (val - range->value_min) / dv;
+                double vv = (val - range.value_min) / dv;
                 for (uint t=0; t<4; t++)
                 {
                   int d = ((int)b[t] - (int)a[t]) * vv;
@@ -247,14 +246,14 @@ std::size_t ColorPainter_range::hash_value(const State &theState) const
   {
     std::size_t hash = ColorPainter::hash_value(theState);
 
-    for (auto range = ranges.begin(); range != ranges.end(); ++range)
+    for (const auto& range : ranges)
     {
-      Fmi::hash_combine(hash,range->value_min);
-      Fmi::hash_combine(hash,range->value_max);
-      Fmi::hash_combine(hash,Fmi::hash(range->color_min));
-      Fmi::hash_combine(hash,Fmi::hash(range->color_max));
-      Fmi::hash_combine(hash,Fmi::hash(range->color_low));
-      Fmi::hash_combine(hash,Fmi::hash(range->color_high));
+      Fmi::hash_combine(hash, range.value_min);
+      Fmi::hash_combine(hash, range.value_max);
+      Fmi::hash_combine(hash, Fmi::hash(range.color_min));
+      Fmi::hash_combine(hash, Fmi::hash(range.color_max));
+      Fmi::hash_combine(hash, Fmi::hash(range.color_low));
+      Fmi::hash_combine(hash, Fmi::hash(range.color_high));
     }
 
     return hash;

@@ -136,10 +136,10 @@ void ColorMap::getValuesAndColors(std::vector<float>& values,std::vector<unsigne
 {
   try
   {
-    for (auto it = mColors.begin(); it != mColors.end(); ++it)
+    for (auto& mColor : mColors)
     {
-      values.emplace_back(it->first);
-      colors.emplace_back(it->second);
+      values.emplace_back(mColor.first);
+      colors.emplace_back(mColor.second);
     }
   }
   catch (...)

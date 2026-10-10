@@ -98,12 +98,12 @@ bool GridDataLayer::updateLayerMetaData()
       std::vector<std::string> fp;
       splitString(startpoint, ';', fp);
 
-      for (auto it = fp.begin(); it != fp.end(); ++it)
+      for (auto& it : fp)
       {
-        const char* ps = it->c_str();
+        const char* ps = it.c_str();
 
         if (ps[0] >= 'A')
-          lastParam = *it;
+          lastParam = it;
 
         if (!producer.empty())
         {
@@ -121,7 +121,7 @@ bool GridDataLayer::updateLayerMetaData()
           {
             if (strcasecmp(p[1].c_str(), producer.c_str()) == 0)
             {
-              fparam = *it;
+              fparam = it;
             }
             else
             {
@@ -186,10 +186,10 @@ bool GridDataLayer::updateLayerMetaData()
       // reference time.
 
       T::GenerationInfo *newGen = nullptr;
-      for (auto prod = producers.begin(); prod != producers.end(); ++prod)
+      for (const auto& producer : producers)
       {
         T::ProducerInfo prodInfo;
-        if (contentServer->getProducerInfoByName(0, *prod, prodInfo) == 0)
+        if (contentServer->getProducerInfoByName(0, producer, prodInfo) == 0)
         {
           T::GenerationInfoList genInfoList;
           if (contentServer->getGenerationInfoListByProducerId(
@@ -245,11 +245,9 @@ bool GridDataLayer::updateLayerMetaData()
     if (Identification::gridDef.getFmiGeometryGroupDef(
             producerInfo.mName.c_str(), 1, geometryGroupDef))
     {
-      for (auto aIt = geometryGroupDef.mGeometryIdList.begin();
-           aIt != geometryGroupDef.mGeometryIdList.end();
-           ++aIt)
+      for (int& aIt : geometryGroupDef.mGeometryIdList)
       {
-        validGeometries.insert(*aIt);
+        validGeometries.insert(aIt);
       }
       itsGeometryId = -1;
     }

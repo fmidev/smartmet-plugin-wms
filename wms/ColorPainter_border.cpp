@@ -136,13 +136,13 @@ void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_ste
       throw exception;
     }
 
-    for (auto border = borders.begin(); border != borders.end(); ++border)
+    for (auto& border : borders)
     {
-      double minVal = border->inside_value_min;
-      double stepIncrease = border->step_increase;
-      uint insideCol = border->inside_color;
-      uint outsideCol = border->outside_color;
-      uint steps = border->steps;
+      double minVal = border.inside_value_min;
+      double stepIncrease = border.step_increase;
+      uint insideCol = border.inside_color;
+      uint outsideCol = border.outside_color;
+      uint steps = border.steps;
 
       uint insideCol_land = insideCol;
       uint insideCol_sea = insideCol;
@@ -301,11 +301,11 @@ std::size_t ColorPainter_border::hash_value(const State &theState) const
   {
     std::size_t hash = ColorPainter::hash_value(theState);
 
-    for (auto border = borders.begin(); border != borders.end(); ++border)
+    for (const auto& border : borders)
     {
-      Fmi::hash_combine(hash,border->inside_value_min);
-      Fmi::hash_combine(hash,Fmi::hash(border->inside_color));
-      Fmi::hash_combine(hash,Fmi::hash(border->outside_color));
+      Fmi::hash_combine(hash, border.inside_value_min);
+      Fmi::hash_combine(hash, Fmi::hash(border.inside_color));
+      Fmi::hash_combine(hash, Fmi::hash(border.outside_color));
     }
 
     return hash;

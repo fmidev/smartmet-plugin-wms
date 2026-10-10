@@ -394,9 +394,9 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
       alpha_sea[t] = cc;
     }
 
-    for (auto streamSpeed = streamSpeeds.begin(); streamSpeed != streamSpeeds.end(); ++streamSpeed)
+    for (auto& streamSpeed : streamSpeeds)
     {
-      int step = (int)(vm * loop_step * streamSpeed->speed);
+      int step = (int)(vm * loop_step * streamSpeed.speed);
 
       uint c = 0;
       for (uint y = 0; y < height; y++)
@@ -411,7 +411,7 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
           float landval = land[cc];
           if (val != 0)
           {
-            if (speed[c] >= streamSpeed->value_min  &&  speed[c] <= streamSpeed->value_max)
+            if (speed[c] >= streamSpeed.value_min && speed[c] <= streamSpeed.value_max)
             {
               uint speedcol = colormap->getColor(speed[c],smooth_colors);
               uint speedAlpha = (speedcol >> 24);
@@ -471,11 +471,11 @@ std::size_t ColorPainter_stream::hash_value(const State &theState) const
     Fmi::hash_combine(hash,colormap_hash);
     Fmi::hash_combine(hash,smooth_colors);
 
-    for (auto streamSpeed = streamSpeeds.begin(); streamSpeed != streamSpeeds.end(); ++streamSpeed)
+    for (const auto& streamSpeed : streamSpeeds)
     {
-      Fmi::hash_combine(hash,streamSpeed->speed);
-      Fmi::hash_combine(hash,streamSpeed->value_min);
-      Fmi::hash_combine(hash,streamSpeed->value_max);
+      Fmi::hash_combine(hash, streamSpeed.speed);
+      Fmi::hash_combine(hash, streamSpeed.value_min);
+      Fmi::hash_combine(hash, streamSpeed.value_max);
     }
     return hash;
   }

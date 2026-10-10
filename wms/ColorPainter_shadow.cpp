@@ -138,14 +138,14 @@ void ColorPainter_shadow::setImageColors(uint width,uint height,uint /* loop_ste
       throw exception;
     }
 
-    for (auto shadow = shadows.begin(); shadow != shadows.end(); ++shadow)
+    for (auto& shadow : shadows)
     {
-      double minVal = shadow->value_min;
-      double maxVal = shadow->value_max;
-      uint minCol = shadow->color_min;
-      uint maxCol = shadow->color_max;
-      int dx = shadow->dx;
-      int dy = shadow->dy;
+      double minVal = shadow.value_min;
+      double maxVal = shadow.value_max;
+      uint minCol = shadow.color_min;
+      uint maxCol = shadow.color_max;
+      int dx = shadow.dx;
+      int dy = shadow.dy;
 
       double dv = maxVal - minVal;
 
@@ -214,14 +214,14 @@ std::size_t ColorPainter_shadow::hash_value(const State &theState) const
   {
     std::size_t hash = ColorPainter::hash_value(theState);
 
-    for (auto shadow = shadows.begin(); shadow != shadows.end(); ++shadow)
+    for (const auto& shadow : shadows)
     {
-      Fmi::hash_combine(hash,shadow->value_min);
-      Fmi::hash_combine(hash,shadow->value_max);
-      Fmi::hash_combine(hash,Fmi::hash(shadow->color_min));
-      Fmi::hash_combine(hash,Fmi::hash(shadow->color_max));
-      Fmi::hash_combine(hash,Fmi::hash(shadow->dx));
-      Fmi::hash_combine(hash,Fmi::hash(shadow->dy));
+      Fmi::hash_combine(hash, shadow.value_min);
+      Fmi::hash_combine(hash, shadow.value_max);
+      Fmi::hash_combine(hash, Fmi::hash(shadow.color_min));
+      Fmi::hash_combine(hash, Fmi::hash(shadow.color_max));
+      Fmi::hash_combine(hash, Fmi::hash(shadow.dx));
+      Fmi::hash_combine(hash, Fmi::hash(shadow.dy));
     }
 
     return hash;
