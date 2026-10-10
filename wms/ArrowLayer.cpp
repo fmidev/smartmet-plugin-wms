@@ -312,7 +312,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
       if (wdir == kFloatMissing || wspd == kFloatMissing)
         continue;
 
-      pointvalues.push_back(PointData{point, wspd, wdir});
+      pointvalues.emplace_back(point, wspd, wdir);
     }
 
     return pointvalues;
@@ -395,7 +395,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
           wspeed = 10;
 
         if (wspeed != ParamValueMissing)
-          pointvalues.push_back(PointData{point, wspeed, wdir});
+          pointvalues.emplace_back(point, wspeed, wdir);
       }
       return pointvalues;
     }
@@ -425,7 +425,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
             urec->mValue, vrec->mValue, uvtransformation, point.latlon.X(), point.latlon.Y());
 
         if (result)
-          pointvalues.push_back(PointData{point, result->speed, result->direction});
+          pointvalues.emplace_back(point, result->speed, result->direction);
       }
       return pointvalues;
     }

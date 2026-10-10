@@ -344,7 +344,7 @@ PolylineData extractPolylineData(const OGRLineString* geom,
     onBoundary[i] = (x <= 0.0 || x >= bx_max || y <= 0.0 || y >= by_max);
     x = std::round(x * rfactor) / rfactor;
     y = std::round(y * rfactor) / rfactor;
-    data.points.push_back({x, y});
+    data.points.emplace_back(x, y);
   }
 
   // Break points fall into two categories:

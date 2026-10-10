@@ -1344,7 +1344,7 @@ std::vector<CubicBez> BezPath::toCubics() const
         current = el.p1;
         break;
       case PathElType::CubicTo:
-        result.push_back({current, el.p1, el.p2, el.p3});
+        result.emplace_back(current, el.p1, el.p2, el.p3);
         current = el.p3;
         break;
       case PathElType::ClosePath:
@@ -1430,7 +1430,7 @@ std::vector<CubicBez> reverseCubics(const std::vector<CubicBez>& cubics)
   result.reserve(cubics.size());
   for (auto it = cubics.rbegin(); it != cubics.rend(); ++it)
   {
-    result.push_back({it->p3, it->p2, it->p1, it->p0});
+    result.emplace_back(it->p3, it->p2, it->p1, it->p0);
   }
   return result;
 }

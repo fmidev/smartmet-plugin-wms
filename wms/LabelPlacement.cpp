@@ -587,8 +587,7 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
         result.push_back(makePlaced(cand, bbox));
         placed_bboxes.push_back(test);
         if (fs_on)
-          placed_centroids.push_back(
-              {(bbox.x1 + bbox.x2) / 2.0, (bbox.y1 + bbox.y2) / 2.0});
+          placed_centroids.emplace_back((bbox.x1 + bbox.x2) / 2.0, (bbox.y1 + bbox.y2) / 2.0);
         placed = true;
         break;
       }

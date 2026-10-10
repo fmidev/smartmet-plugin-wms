@@ -60,7 +60,7 @@ ColorMap::ColorMap(std::string& colorMap)
       {
         buf[c] = '\0';
         if (c > 5  &&  ok)
-          lines.push_back(std::string(buf));
+          lines.emplace_back(buf);
 
         c = 0;
         ok = false;
