@@ -39,6 +39,7 @@
 #pragma once
 
 #include "../MapboxStyle.h"
+#include "../ogc/OpenApiLayers.h"
 #include "../ogc/QueryStatus.h"
 #include "Config.h"
 #include <json/json.h>
@@ -195,8 +196,7 @@ class Handler
 
   // The generated OpenAPI definition, null if disabled
   std::unique_ptr<Spine::OpenAPI::Publisher> itsApi;
-  std::mutex itsApiMutex;                  // serializes regeneration
-  Fmi::DateTime itsApiModificationTime;    // capabilities time of the published definition
+  OGC::OpenApiCache itsApiCache;  // definitions for each apikey
 };
 
 }  // namespace Tiles

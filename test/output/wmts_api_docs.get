@@ -19,6 +19,7 @@ window.onload = function () {
     dom_id: "#swagger-ui",
     deepLinking: true,
     validatorUrl: null,
+    queryConfigEnabled: false,
     presets: [SwaggerUIBundle.presets.apis],
     layout: "BaseLayout"
   });

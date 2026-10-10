@@ -14,6 +14,7 @@
 #pragma once
 
 #include "Config.h"
+#include "../ogc/OpenApiLayers.h"
 #include "../ogc/QueryStatus.h"
 #include <spine/HTTP.h>
 #include <spine/OpenApi.h>
@@ -128,8 +129,7 @@ class Handler
 
   // The generated OpenAPI definition, null if disabled
   std::unique_ptr<Spine::OpenAPI::Publisher> itsApi;
-  std::mutex itsApiMutex;                // serializes regeneration
-  Fmi::DateTime itsApiModificationTime;  // capabilities time of the published definition
+  OGC::OpenApiCache itsApiCache;  // definitions for each apikey
 
   mutable std::mutex itsDimNamesMutex;
   mutable std::map<std::string, std::vector<std::string>> itsDimNamesCache;

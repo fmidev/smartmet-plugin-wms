@@ -66,15 +66,16 @@ void add_dimensions(CTPP::CDT& node, std::vector<std::string>& dimensions)
 }  // namespace
 
 std::vector<OpenApiLayer> openApiLayers(const WMS::Config& wmsConfig,
-                                        const Dali::Config& daliConfig)
+                                        const Dali::Config& daliConfig,
+                                        const std::optional<std::string>& apikey)
 {
   try
   {
     const auto& language = daliConfig.defaultLanguage();
 
-    // Anonymous capabilities: restricted layers are not listed
+    // The layers the apikey has access to, as in the capabilities
     CTPP::CDT layers = wmsConfig.getCapabilities(
-        std::nullopt, language, {}, {}, {}, {}, LayerHierarchy::HierarchyType::flat, false, false);
+        apikey, language, {}, {}, {}, {}, LayerHierarchy::HierarchyType::flat, false, false);
 
     std::vector<OpenApiLayer> ret;
     for (std::size_t i = 0; i < layers.Size(); ++i)
@@ -130,6 +131,68 @@ std::vector<OpenApiLayer> openApiLayers(const WMS::Config& wmsConfig,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to list the layers for the OpenAPI definition");
+  }
+}
+
+std::shared_ptr<const Spine::OpenAPI::Definition> OpenApiCache::get(
+    const WMS::Config& wmsConfig,
+    const Dali::Config& daliConfig,
+    const std::optional<std::string>& apikey,
+    const Builder& builder)
+{
+  try
+  {
+    const std::string key = apikey ? *apikey : std::string();
+    const auto modified = wmsConfig.getCapabilitiesModificationTime();
+
+    {
+      std::lock_guard<std::mutex> lock(itsMutex);
+      auto& entry = itsEntries[key];
+      entry.used = ++itsCounter;
+      if (entry.definition && (entry.modified == modified || entry.building))
+        return entry.definition;
+      entry.building = true;
+    }
+
+    std::shared_ptr<const Spine::OpenAPI::Definition> definition;
+    try
+    {
+      definition = std::make_shared<const Spine::OpenAPI::Definition>(
+          builder(openApiLayers(wmsConfig, daliConfig, apikey)));
+    }
+    catch (...)
+    {
+      std::lock_guard<std::mutex> lock(itsMutex);
+      auto it = itsEntries.find(key);
+      if (it != itsEntries.end())
+        it->second.building = false;
+      throw;
+    }
+
+    std::lock_guard<std::mutex> lock(itsMutex);
+    auto& entry = itsEntries[key];
+    entry.definition = definition;
+    entry.modified = modified;
+    entry.building = false;
+
+    // Drop the least recently used definitions, never one being regenerated
+    while (itsEntries.size() > itsMaxEntries)
+    {
+      auto oldest = itsEntries.end();
+      for (auto it = itsEntries.begin(); it != itsEntries.end(); ++it)
+        if (!it->second.building &&
+            (oldest == itsEntries.end() || it->second.used < oldest->second.used))
+          oldest = it;
+      if (oldest == itsEntries.end())
+        break;
+      itsEntries.erase(oldest);
+    }
+
+    return definition;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to get the OpenAPI definition");
   }
 }
 

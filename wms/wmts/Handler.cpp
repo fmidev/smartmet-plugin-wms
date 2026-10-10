@@ -52,7 +52,10 @@ namespace
 // Returns path segments after stripping the leading '/wmts/' prefix.
 std::vector<std::string> splitWmtsPath(const std::string& resource, const std::string& root)
 {
-  const std::string prefix = root + "/";
+  std::string prefix = root;
+  while (!prefix.empty() && prefix.back() == '/')
+    prefix.pop_back();
+  prefix += "/";
   if (resource.size() <= prefix.size() || resource.compare(0, prefix.size(), prefix) != 0)
     return {};
 
@@ -129,9 +132,9 @@ void Handler::init(std::unique_ptr<Config> wmtsConfig)
 /*!
  * \brief GET /wmts/api, /wmts/api/docs and the documentation files
  *
- * The definition lists the layers, styles and dimensions of the anonymous
- * capabilities. It is regenerated on demand when the capabilities have
- * changed since it was generated.
+ * The definition lists the layers, styles and dimensions the apikey of the
+ * client has access to. It is regenerated on demand when the capabilities
+ * have changed since it was generated.
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleApi(const Spine::HTTP::Request& theRequest,
@@ -141,25 +144,22 @@ QueryStatus Handler::handleApi(const Spine::HTTP::Request& theRequest,
   {
     const auto& root = itsDaliConfig.wmtsUrl();
 
-    // The documentation files do not need the definition
-    const bool needs_definition =
-        (theRequest.getResource().find("/api/docs/") == std::string::npos);
-
-    if (needs_definition)
+    // The documentation files do not need the definition. The definition lists the layers
+    // the apikey of the client has access to, like the capabilities.
+    std::shared_ptr<const Spine::OpenAPI::Definition> definition;
+    if (theRequest.getResource().find("/api/docs/") == std::string::npos)
     {
-      const auto& wmsConfig = itsWMTSConfig->wmsConfig();
-      const auto modified = wmsConfig.getCapabilitiesModificationTime();
-
-      std::lock_guard<std::mutex> lock(itsApiMutex);
-      if (!itsApi->definition() || modified != itsApiModificationTime)
-      {
-        auto layers = OGC::openApiLayers(wmsConfig, itsDaliConfig);
-        itsApi->publish(apiDefinition(*itsWMTSConfig, layers, itsApi->settings()));
-        itsApiModificationTime = modified;
-      }
+      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, false);
+      definition = itsApiCache.get(
+          itsWMTSConfig->wmsConfig(),
+          itsDaliConfig,
+          apikey,
+          [this](const std::vector<OGC::OpenApiLayer>& layers)
+          { return apiDefinition(*itsWMTSConfig, layers, itsApi->settings()); });
     }
 
-    itsApi->handle(theRequest, theResponse, root, Spine::OpenAPI::serverUrl(theRequest, root));
+    itsApi->handle(
+        theRequest, theResponse, root, Spine::OpenAPI::serverUrl(theRequest, root), definition);
     return QueryStatus::OK;
   }
   catch (...)

@@ -334,9 +334,9 @@ void Handler::init(std::unique_ptr<Config> tilesConfig)
 /*!
  * \brief GET /tiles/api, /tiles/api/docs and the documentation files
  *
- * The definition lists the layers, styles and levels of the anonymous
- * capabilities. It is regenerated on demand when the capabilities have
- * changed since it was generated.
+ * The definition lists the layers, styles and levels the apikey of the
+ * client has access to. It is regenerated on demand when the capabilities
+ * have changed since it was generated.
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleApi(const Spine::HTTP::Request& theRequest,
@@ -351,25 +351,22 @@ QueryStatus Handler::handleApi(const Spine::HTTP::Request& theRequest,
       return QueryStatus::OK;
     }
 
-    // The documentation files do not need the definition
-    const bool needs_definition =
-        (theRequest.getResource().find("/api/docs/") == std::string::npos);
-
-    if (needs_definition)
+    // The documentation files do not need the definition. The definition lists the layers
+    // the apikey of the client has access to, like the capabilities.
+    std::shared_ptr<const Spine::OpenAPI::Definition> definition;
+    if (theRequest.getResource().find("/api/docs/") == std::string::npos)
     {
-      const auto& wmsConfig = itsTilesConfig->wmsConfig();
-      const auto modified = wmsConfig.getCapabilitiesModificationTime();
-
-      std::lock_guard<std::mutex> lock(itsApiMutex);
-      if (!itsApi->definition() || modified != itsApiModificationTime)
-      {
-        auto layers = OGC::openApiLayers(wmsConfig, itsDaliConfig);
-        itsApi->publish(apiDefinition(*itsTilesConfig, layers, itsApi->settings()));
-        itsApiModificationTime = modified;
-      }
+      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, true);
+      definition = itsApiCache.get(
+          itsTilesConfig->wmsConfig(),
+          itsDaliConfig,
+          apikey,
+          [this](const std::vector<OGC::OpenApiLayer>& layers)
+          { return apiDefinition(*itsTilesConfig, layers, itsApi->settings()); });
     }
 
-    itsApi->handle(theRequest, theResponse, root, Spine::OpenAPI::serverUrl(theRequest, root));
+    itsApi->handle(
+        theRequest, theResponse, root, Spine::OpenAPI::serverUrl(theRequest, root), definition);
     return QueryStatus::OK;
   }
   catch (...)
