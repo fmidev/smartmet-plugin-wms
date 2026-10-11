@@ -1372,7 +1372,7 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
     theResponse.setContent(std::move(content));
 
     // Removing the animation file
-    remove(fname);
+    (void)remove(fname);
   }
 
   return QueryStatus::OK;
