@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.11
-Release: 3%{?dist}.fmi
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -28,27 +28,27 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.10.3
-BuildRequires: smartmet-library-giza-devel >= 26.10.3
-BuildRequires: smartmet-library-grid-content-devel >= 26.9.26
-BuildRequires: smartmet-library-grid-files-devel >= 26.9.26
-BuildRequires: smartmet-library-macgyver-devel >= 26.10.3
-BuildRequires: smartmet-library-spine-devel >= 26.10.11-3
-BuildRequires: smartmet-library-timeseries-devel >= 26.10.3
+BuildRequires: smartmet-library-giza-devel >= 26.10.11
+BuildRequires: smartmet-library-grid-content-devel >= 26.10.11
+BuildRequires: smartmet-library-grid-files-devel >= 26.10.11
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.11
+BuildRequires: smartmet-library-spine-devel >= 26.10.11
+BuildRequires: smartmet-library-timeseries-devel >= 26.10.11
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.10.9-2
+BuildRequires: smartmet-engine-observation-devel >= 26.10.11
 %endif
-BuildRequires: smartmet-engine-avi-devel >= 26.10.3
+BuildRequires: smartmet-engine-avi-devel >= 26.10.11
 BuildRequires: smartmet-engine-gis-devel >= 26.9.23
-BuildRequires: smartmet-engine-grid-devel >= 26.9.26
-BuildRequires: smartmet-engine-geonames-devel >= 26.10.3
-BuildRequires: smartmet-engine-querydata-devel >= 26.10.3
+BuildRequires: smartmet-engine-grid-devel >= 26.10.11
+BuildRequires: smartmet-engine-geonames-devel >= 26.10.11
+BuildRequires: smartmet-engine-querydata-devel >= 26.10.11
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.3
-BuildRequires: smartmet-engine-contour-devel >= 26.9.23
+BuildRequires: smartmet-engine-contour-devel >= 26.10.11
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.3
-BuildRequires: smartmet-library-gis-devel >= 26.10.3
+BuildRequires: smartmet-library-gis-devel >= 26.10.11
 BuildRequires: smartmet-library-trax-devel >= 26.10.3
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -80,31 +80,31 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.3
-Requires: smartmet-library-grid-content >= 26.9.26
-Requires: smartmet-library-grid-files >= 26.9.26
-Requires: smartmet-library-gis >= 26.10.3
+Requires: smartmet-library-grid-content >= 26.10.11
+Requires: smartmet-library-grid-files >= 26.10.11
+Requires: smartmet-library-gis >= 26.10.11
 Requires: smartmet-library-trax >= 26.10.3
-Requires: smartmet-library-macgyver >= 26.10.3
-Requires: smartmet-library-spine >= 26.10.11-3
+Requires: smartmet-library-macgyver >= 26.10.11
+Requires: smartmet-library-spine >= 26.10.11
 Requires: smartmet-swagger-ui
-Requires: smartmet-library-timeseries >= 26.10.3
-Requires: smartmet-library-giza >= 26.10.3
+Requires: smartmet-library-timeseries >= 26.10.11
+Requires: smartmet-library-giza >= 26.10.11
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 %if %{with observation}
-Requires: smartmet-engine-observation >= 26.10.9-2
+Requires: smartmet-engine-observation >= 26.10.11
 %endif
-Requires: smartmet-engine-avi >= 26.10.3
-Requires: smartmet-engine-querydata >= 26.10.3
+Requires: smartmet-engine-avi >= 26.10.11
+Requires: smartmet-engine-querydata >= 26.10.11
 Requires: smartmet-engine-satellite >= 26.10.3
-Requires: smartmet-engine-contour >= 26.9.23
+Requires: smartmet-engine-contour >= 26.10.11
 Requires: smartmet-engine-gis >= 26.9.23
-Requires: smartmet-engine-grid >= 26.9.26
-Requires: smartmet-engine-geonames >= 26.10.3
+Requires: smartmet-engine-grid >= 26.10.11
+Requires: smartmet-engine-geonames >= 26.10.11
 Requires: smartmet-engine-satellite >= 26.10.3
-Requires: smartmet-server >= 26.9.2
-Requires: smartmet-library-spine >= 26.10.11-3
+Requires: smartmet-server >= 26.10.11
+Requires: smartmet-library-spine >= 26.10.11
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -127,22 +127,22 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
-#TestRequires: smartmet-engine-avi-devel >= 26.10.3
-#TestRequires: smartmet-engine-contour-devel >= 26.9.23
-#TestRequires: smartmet-engine-geonames-devel >= 26.10.3
+#TestRequires: smartmet-engine-avi-devel >= 26.10.11
+#TestRequires: smartmet-engine-contour-devel >= 26.10.11
+#TestRequires: smartmet-engine-geonames-devel >= 26.10.11
 #TestRequires: smartmet-engine-gis-devel >= 26.9.23
 #TestRequires: smartmet-engine-satellite >= 26.10.3
-#TestRequires: smartmet-engine-querydata-devel >= 26.10.3
+#TestRequires: smartmet-engine-querydata-devel >= 26.10.11
 #TestRequires: smartmet-engine-authentication-devel >= 26.6.26
 #TestRequires: smartmet-engine-satellite-devel >= 26.10.3
-#TestRequires: smartmet-library-giza-devel >= 26.10.3
+#TestRequires: smartmet-library-giza-devel >= 26.10.11
 #TestRequires: smartmet-library-trax-devel >= 26.10.3
-#TestRequires: smartmet-library-newbase-devel >= 26.10.3
-#TestRequires: smartmet-library-macgyver-devel >= 26.10.3
-#TestRequires: smartmet-library-spine-devel >= 26.10.11-3
-#TestRequires: smartmet-library-timeseries-devel >= 26.10.3
-#TestRequires: smartmet-engine-grid-devel >= 26.9.26
-#TestRequires: smartmet-library-grid-files-test >= 26.10.6
+#TestRequires: smartmet-library-newbase-devel >= 26.10.11
+#TestRequires: smartmet-library-macgyver-devel >= 26.10.11
+#TestRequires: smartmet-library-spine-devel >= 26.10.11
+#TestRequires: smartmet-library-timeseries-devel >= 26.10.11
+#TestRequires: smartmet-engine-grid-devel >= 26.10.11
+#TestRequires: smartmet-library-grid-files-test >= 26.10.11
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.9.3
 #TestRequires: smartmet-test-db >= 26.5.8
@@ -156,7 +156,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.10.9-2
+#TestRequires: smartmet-engine-observation-devel >= 26.10.11
 %endif
 
 %description
@@ -185,7 +185,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
-* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-3.fmi
+* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
 - Generated OpenAPI 3.1 definitions of OGC API - Tiles (/tiles/api) and the WMTS RESTful
   interface (/wmts/api), with Swagger UI documentation pages at .../api/docs served from
   smartmet-swagger-ui. Like the capabilities, the definitions list the layers, styles,
@@ -195,18 +195,12 @@ rm -rf $RPM_BUILD_ROOT
   declares the mvt and geotiff tile formats instead of the unsupported jpeg
 - WMS, WMTS and Tiles requests are routed by the configured wms.url, wmts.url and
   tiles.url instead of hard-coded prefixes
-- Requires smartmet-library-spine >= 26.10.11-3 for Spine::OpenAPI
-
-* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-2.fmi
+- Requires smartmet-library-spine >= 26.10.11 for Spine::OpenAPI
 - Symbol and number layers accept a list of observation parameters with optional producer, keyword, multiplier and offset for each (BRAINSTORM-2722)
 - Symbol and number layer priorities may depend on the value of another observation parameter, for example temperature (BRAINSTORM-2786)
-
-* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
 - Validate the Host header (hostname[:port]), X-Forwarded-Proto (http/https) and the apikey
   (URL-safe characters) before writing them into the self-referential URLs of WMS and WMTS
   GetCapabilities and OGC API Tiles responses; invalid values fall back to the defaults
-
-* Sat Oct 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.10-1.fmi
 - Use auto and return {} where clang-tidy suggests it, no functional changes
 - Mark overriding methods override and use nullptr, no functional changes
 - Use = default and using declarations where clang-tidy suggests it, no functional changes
