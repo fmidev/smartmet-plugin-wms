@@ -89,7 +89,7 @@ test: $(PROG) $(TEST_PREPARE_TARGETS)
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
 	rm -f wms-access-log; \
-	$(MAKE) validate-xml-schemas validate-tiles-schemas check-schemas && $$ok
+	$(MAKE) validate-xml-schemas validate-tiles-schemas validate-openapi check-schemas && $$ok
 
 test-dali: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -122,7 +122,7 @@ test-wmts: $(PROG) $(TEST_PREPARE_TARGETS)
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
-	$(MAKE) validate-xml-schemas check-schemas && $$ok
+	$(MAKE) validate-xml-schemas validate-openapi check-schemas && $$ok
 
 test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -133,7 +133,7 @@ test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
 	fi; \
-	$(MAKE) validate-tiles-schemas check-schemas && $$ok
+	$(MAKE) validate-tiles-schemas validate-openapi check-schemas && $$ok
 
 # The vendored schemas are refreshed with update-schemas (developer command,
 # needs network; the JSON schemas are pinned to a commit in the script).
@@ -191,6 +191,18 @@ validate-tiles-schemas:
 	   ./ValidateJsonSchema.py $(OGC_SCHEMAS)/common-geodata/collectionDesc-UAD.yaml $$files || status=1; \
 	fi; \
 	exit $$status
+
+# The generated OpenAPI definitions are validated against the OpenAPI 3.1 schema in
+# schemas/openapi, and every successful test request must be described by them: an operation
+# matches the path, the values are in the enums and all the parameters are declared.
+validate-openapi:
+	@if command -v python3 >/dev/null; then \
+	   python3 validate-openapi.py --ignore input/.testignore \
+	     output/tiles_api.get:input:tiles_ \
+	     output/wmts_api.get:input:wmts_; \
+	 else \
+	   echo "python3 not available, skipping OpenAPI validation"; \
+	 fi
 
 # Copy actual test outputs from failures/ to output/ to accept them as new expected outputs.
 # Workflow: run the tests, inspect failures/, then run this target to accept correct results.
@@ -258,7 +270,7 @@ obj/%.o: %.cpp objdir
 objdir:
 	mkdir -p $(objdir)
 
-.PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/avi.conf cnf/observation.conf dummy \
+.PHONY: validate-openapi cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/avi.conf cnf/observation.conf dummy \
         test test-dali test-wms test-wmts test-tiles update-outputs
 
 -include $(wildcard obj/*.d)

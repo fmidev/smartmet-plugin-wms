@@ -1,0 +1,3 @@
+GET /tiles/api/docs/swagger-ui.css HTTP/1.0
+fmi-apikey: foobar
+omit-fmi-apikey: true

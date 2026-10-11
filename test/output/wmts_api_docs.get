@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartMet WMTS - API documentation</title>
+<link rel="icon" type="image/png" href="docs/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="docs/favicon-16x16.png" sizes="16x16">
+<link rel="stylesheet" href="docs/swagger-ui.css">
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="swagger-ui"></div>
+<script src="docs/swagger-ui-bundle.js"></script>
+<script src="docs/smartmet-swagger-ui.js"></script>
+<script>
+window.onload = function () {
+  window.ui = SwaggerUIBundle({
+    url: new URL("../api", window.location.href).href,
+    dom_id: "#swagger-ui",
+    deepLinking: true,
+    validatorUrl: null,
+    queryConfigEnabled: false,
+    tryItOutEnabled: true,
+    requestSnippetsEnabled: true,
+    requestSnippets: SmartMetSwaggerUI.snippetConfig,
+    presets: [SwaggerUIBundle.presets.apis],
+    plugins: [SmartMetSwaggerUI.plugin],
+    layout: "BaseLayout"
+  });
+};
+</script>
+</body>
+</html>

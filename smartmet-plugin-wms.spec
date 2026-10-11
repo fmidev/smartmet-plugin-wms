@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.11
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.10.3
 BuildRequires: smartmet-library-grid-content-devel >= 26.9.26
 BuildRequires: smartmet-library-grid-files-devel >= 26.9.26
 BuildRequires: smartmet-library-macgyver-devel >= 26.10.3
-BuildRequires: smartmet-library-spine-devel >= 26.10.3
+BuildRequires: smartmet-library-spine-devel >= 26.10.11-3
 BuildRequires: smartmet-library-timeseries-devel >= 26.10.3
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
@@ -85,7 +85,8 @@ Requires: smartmet-library-grid-files >= 26.9.26
 Requires: smartmet-library-gis >= 26.10.3
 Requires: smartmet-library-trax >= 26.10.3
 Requires: smartmet-library-macgyver >= 26.10.3
-Requires: smartmet-library-spine >= 26.10.3
+Requires: smartmet-library-spine >= 26.10.11-3
+Requires: smartmet-swagger-ui
 Requires: smartmet-library-timeseries >= 26.10.3
 Requires: smartmet-library-giza >= 26.10.3
 %if %{with authentication}
@@ -103,7 +104,7 @@ Requires: smartmet-engine-grid >= 26.9.26
 Requires: smartmet-engine-geonames >= 26.10.3
 Requires: smartmet-engine-satellite >= 26.10.3
 Requires: smartmet-server >= 26.9.2
-Requires: smartmet-library-spine >= 26.10.3
+Requires: smartmet-library-spine >= 26.10.11-3
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -138,7 +139,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 26.10.3
 #TestRequires: smartmet-library-newbase-devel >= 26.10.3
 #TestRequires: smartmet-library-macgyver-devel >= 26.10.3
-#TestRequires: smartmet-library-spine-devel >= 26.10.3
+#TestRequires: smartmet-library-spine-devel >= 26.10.11-3
 #TestRequires: smartmet-library-timeseries-devel >= 26.10.3
 #TestRequires: smartmet-engine-grid-devel >= 26.9.26
 #TestRequires: smartmet-library-grid-files-test >= 26.10.6
@@ -184,6 +185,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-3.fmi
+- Generated OpenAPI 3.1 definitions of OGC API - Tiles (/tiles/api) and the WMTS RESTful
+  interface (/wmts/api), with Swagger UI documentation pages at .../api/docs served from
+  smartmet-swagger-ui. Like the capabilities, the definitions list the layers, styles,
+  levels and dimensions the apikey of the client has access to, and follow capability
+  changes. Definitions with an apikey are sent with Cache-Control: private
+- The Tiles landing page links the definition and the documentation, /tiles/conformance
+  declares the mvt and geotiff tile formats instead of the unsupported jpeg
+- WMS, WMTS and Tiles requests are routed by the configured wms.url, wmts.url and
+  tiles.url instead of hard-coded prefixes
+- Requires smartmet-library-spine >= 26.10.11-3 for Spine::OpenAPI
+
 * Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-2.fmi
 - Symbol and number layers accept a list of observation parameters with optional producer, keyword, multiplier and offset for each (BRAINSTORM-2722)
 - Symbol and number layer priorities may depend on the value of another observation parameter, for example temperature (BRAINSTORM-2786)

@@ -356,7 +356,7 @@ if ($MIME eq 'text/html' || $MIME eq 'text/x-asm') {
     open my $fh, '<', $RESULT or die "Cannot open '$RESULT': $!";
     my $first_line = <$fh>;
     close $fh;
-    $is_plain_html = 1 if defined $first_line && $first_line =~ /^<html/i;
+    $is_plain_html = 1 if defined $first_line && $first_line =~ /^(<!DOCTYPE html|<html)/i;
 }
 
 my $EXPECTED_PNG = "failures/${NAME}_expected.png";

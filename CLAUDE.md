@@ -65,6 +65,12 @@ a commit in `test/schemas/update-schemas.sh`). The test targets end with `make c
 prints a WARNING if upstream has changed since the vendored copies were taken. It never fails and is
 silent offline; `SMARTMET_SCHEMA_CHECK=0` skips it.
 
+The generated OpenAPI definitions (`/tiles/api`, `/wmts/api`; `wms/tiles/ApiDefinition.cpp`,
+`wms/wmts/ApiDefinition.cpp`, layer listing in `wms/ogc/OpenApiLayers.cpp`) are validated by
+`validate-openapi` against the OpenAPI 3.1 schema, and every successful `tiles_*`/`wmts_*` test
+request must match an operation with its enums and declared parameters, so new request
+parameters must be added to the definitions.
+
 Unit tests exist in `test/unit/` (Boost.Test, currently label placement algorithms only).
 
 ## Source layout
