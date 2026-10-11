@@ -222,6 +222,7 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
 
       for (uint x=0; x<width; x=x+step_x)
       {
+        // NOLINTNEXTLINE(cert-msc50-cpp): rand() is not used for security here
         uint v = abs(rand());
         for (uint y=0; y<height; y++)
         {

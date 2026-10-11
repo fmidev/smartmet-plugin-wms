@@ -885,7 +885,7 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
 
   // Fixed seed for reproducibility: identical map requests must produce
   // identical output so that the layer cache (hash_value) works correctly.
-  // NOLINTNEXTLINE(cert-msc51-cpp)
+  // NOLINTNEXTLINE(cert-msc32-c,cert-msc51-cpp): fixed seed for reproducible label placement
   std::mt19937 rng(42U);
   std::uniform_int_distribution<int> label_dist(0, n - 1);
   std::uniform_real_distribution<double> prob_dist(0.0, 1.0);
