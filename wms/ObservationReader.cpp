@@ -72,6 +72,7 @@ struct DxDy
 PointValues read_flash_observations(const State& state,
                                     const std::vector<std::string>& parameters,
                                     const Layer& layer,
+                                    const std::string& producer,
                                     const Positions& positions,
                                     const Fmi::SpatialReference& crs,
                                     const Fmi::Box& box,
@@ -82,7 +83,7 @@ PointValues read_flash_observations(const State& state,
   {
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *layer.paraminfo.producer;
+    settings.stationtype = producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
 
@@ -199,6 +200,7 @@ PointValues read_flash_observations(const State& state,
 PointValues read_all_observations(const State& state,
                                   const std::vector<std::string>& parameters,
                                   const Layer& layer,
+                                  const std::string& producer,
                                   const Positions& positions,
                                   double maxdistance,
                                   const Fmi::SpatialReference& crs,
@@ -211,7 +213,7 @@ PointValues read_all_observations(const State& state,
   {
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *layer.paraminfo.producer;
+    settings.stationtype = producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
@@ -338,6 +340,7 @@ PointValues read_all_observations(const State& state,
 PointValues read_station_observations(const State& state,
                                       const std::vector<std::string>& parameters,
                                       const Layer& layer,
+                                      const std::string& producer,
                                       const Positions& positions,
                                       double maxdistance,
                                       const Fmi::SpatialReference& crs,
@@ -350,7 +353,7 @@ PointValues read_station_observations(const State& state,
   {
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *layer.paraminfo.producer;
+    settings.stationtype = producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
@@ -543,6 +546,7 @@ PointValues read_station_observations(const State& state,
 PointValues read_latlon_observations(const State& state,
                                      const std::vector<std::string>& parameters,
                                      const Layer& layer,
+                                     const std::string& producer,
                                      const Positions& positions,
                                      double maxdistance,
                                      const Fmi::SpatialReference& crs,
@@ -556,7 +560,7 @@ PointValues read_latlon_observations(const State& state,
   try
   {
     settings.allplaces = false;
-    settings.stationtype = *layer.paraminfo.producer;
+    settings.stationtype = producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;              // we need only the nearest station
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
@@ -715,6 +719,7 @@ PointValues read_latlon_observations(const State& state,
 PointValues read(const State& state,
                  const std::vector<std::string>& parameters,
                  const Layer& layer,
+                 const std::string& producer,
                  const Positions& positions,
                  double maxdistance,
                  const Fmi::SpatialReference& crs,
@@ -733,6 +738,7 @@ PointValues read(const State& state,
       return read_station_observations(state,
                                        parameters,
                                        layer,
+                                       producer,
                                        positions,
                                        maxdistance,
                                        crs,
@@ -744,10 +750,17 @@ PointValues read(const State& state,
 
     // We assume that for example ArrowLayer has already checked that the selected producer is valid
     // and does not provide just flash observations
-    if (Layer::isFlashOrMobileProducer(*layer.paraminfo.producer))
+    if (Layer::isFlashOrMobileProducer(producer))
     {
-      return read_flash_observations(
-          state, parameters, layer, positions, crs, box, valid_time_period, transformation);
+      return read_flash_observations(state,
+                                     parameters,
+                                     layer,
+                                     producer,
+                                     positions,
+                                     crs,
+                                     box,
+                                     valid_time_period,
+                                     transformation);
     }
 
     Engine::Querydata::Q q;  // dummy for
@@ -760,6 +773,7 @@ PointValues read(const State& state,
       return read_latlon_observations(state,
                                       parameters,
                                       layer,
+                                      producer,
                                       positions,
                                       maxdistance,
                                       crs,
@@ -773,6 +787,7 @@ PointValues read(const State& state,
     return read_all_observations(state,
                                  parameters,
                                  layer,
+                                 producer,
                                  positions,
                                  maxdistance,
                                  crs,
@@ -784,6 +799,116 @@ PointValues read(const State& state,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "ObservationReader failed to read data from the database");
+  }
+}
+
+PointValues read(const State& state,
+                 const std::vector<std::string>& parameters,
+                 const Layer& layer,
+                 const Positions& positions,
+                 double maxdistance,
+                 const Fmi::SpatialReference& crs,
+                 const Fmi::Box& box,
+                 const Fmi::DateTime& valid_time,
+                 const Fmi::TimePeriod& valid_time_period)
+{
+  if (!layer.paraminfo.producer)
+    throw Fmi::Exception(BCP, "Producer not set for observation layer");
+
+  return read(state,
+              parameters,
+              layer,
+              *layer.paraminfo.producer,
+              positions,
+              maxdistance,
+              crs,
+              box,
+              valid_time,
+              valid_time_period);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Read and merge observations from several sources
+ *
+ * The first column of the result is the source parameter after applying the source specific
+ * multiplier and offset. The remaining columns are the extra parameters. For each station
+ * the first source with a valid value wins.
+ */
+// ----------------------------------------------------------------------
+
+PointValues read(const State& state,
+                 const ObservationSources& sources,
+                 const std::vector<std::string>& extra_parameters,
+                 const Layer& layer,
+                 const Positions& positions,
+                 double maxdistance,
+                 const Fmi::SpatialReference& crs,
+                 const Fmi::Box& box,
+                 const Fmi::DateTime& valid_time,
+                 const Fmi::TimePeriod& valid_time_period)
+{
+  try
+  {
+    PointValues result;
+
+    // Index of each station in the result. Stations reported by several sources have
+    // identical coordinates, since station coordinates are used.
+    std::map<std::pair<double, double>, std::size_t> station_index;
+
+    for (const auto& source : sources.sources)
+    {
+      const auto producer = (source.producer ? source.producer : layer.paraminfo.producer);
+      if (!producer)
+        throw Fmi::Exception(BCP, "Producer not set for observation source")
+            .addParameter("parameter", source.parameter);
+
+      auto parameters = extra_parameters;
+      parameters.insert(parameters.begin(), source.parameter);
+
+      // Use the source specific keyword if there is one
+      std::optional<Positions> keyword_positions;
+      if (source.keyword)
+      {
+        keyword_positions = positions;
+        keyword_positions->layout = Positions::Layout::Keyword;
+        keyword_positions->keyword = *source.keyword;
+      }
+
+      auto values = read(state,
+                         parameters,
+                         layer,
+                         *producer,
+                         (keyword_positions ? *keyword_positions : positions),
+                         maxdistance,
+                         crs,
+                         box,
+                         valid_time,
+                         valid_time_period);
+
+      for (auto& pv : values)
+      {
+        if (pv[0] != kFloatMissing)
+          pv[0] = source.multiplier * pv[0] + source.offset;
+
+        const auto& latlon = pv.point().latlon;
+        const auto key = std::make_pair(latlon.X(), latlon.Y());
+        auto pos = station_index.find(key);
+        if (pos == station_index.end())
+        {
+          station_index.insert({key, result.size()});
+          result.push_back(pv);
+        }
+        else if (result[pos->second][0] == kFloatMissing && pv[0] != kFloatMissing)
+          result[pos->second] = pv;
+      }
+    }
+
+    return result;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to read observations from several sources");
   }
 }
 

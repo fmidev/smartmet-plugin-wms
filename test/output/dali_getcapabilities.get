@@ -3141,6 +3141,31 @@
             "height" : 500,
             "width" : 500
           },
+          "name" : "opendata_multiple_parameters_numbers",
+          "path" : 
+          [
+            "test",
+            "opendata_multiple_parameters_numbers"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "WaWa where available, otherwise temperature offset by 1000",
+          "url_template" : "/dali?customer=test&product=opendata_multiple_parameters_numbers&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
           "name" : "opendata_temperature_fmisid",
           "path" : 
           [
@@ -3593,6 +3618,31 @@
           },
           "title" : "Two views side by side with different resolutions",
           "url_template" : "/dali?customer=test&product=resolution&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "road_ww_symbols",
+          "path" : 
+          [
+            "test",
+            "road_ww_symbols"
+          ],
+          "producer" : "road",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Road weather station precipitation as ww symbols, priority depends on temperature",
+          "url_template" : "/dali?customer=test&product=road_ww_symbols&time={time}"
         },
         {
           "image" : 

@@ -1178,7 +1178,7 @@ The table below contains a list of attributes that can be defined for the symbol
 <pre><b>SymbolLayer </b></pre>
 | Name            | Type                    | Default value | Description                                                                                   |
 | --------------- | ----------------------- | ------------- | --------------------------------------------------------------------------------------------- |
-| parameter       | (string)                | -             | The parameter for the symbols.                                                                |
+| parameter       | (string) or array       | -             | The parameter for the symbols, or a list of observation sources, see [Parameter lists](#parameter-lists). |
 | unit_conversion | (string)                | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file.       |
 | multiplier      | (double)                | 1.0           | A multiplier for valid data values for unit conversion purposes.                              |
 | offset          | (double)                | 0.0           | An offset for valid data for unit conversion purposes.                                        |
@@ -1192,7 +1192,7 @@ The table below contains a list of attributes that can be defined for the symbol
 | symbol          | (string)                | -             | The default symbol. This is mostly useful for marking all the positions with a single symbol. |
 | symbols         | _[AttributeSelection]_  | -             | The symbols for different data values.                                                        |
 | mindistance     | int                     | -             | Minimum distance in pixels between symbols.                                                   |
-| priority        | string or integer array | -             | Priority order of symbols.                                                                    |
+| priority        | string or array         | -             | Priority order of symbols, see below.                                                         |
 | rendering_order | string                  | "normal"      | Rendering order of the symbol is normal or reverse with respect to priority                   |
 
 Note that assigning a proper scale for symbols with CSS or SVG attributes alone  is difficult. Using the scale-attribute eases the  scaling of the symbols.
@@ -1213,6 +1213,52 @@ order as an animated WebP image by setting "frames" in the product level "webp" 
 | [83,82,81] | Symbols with values 83,82,81 are drawn first in the order given, the rest have no priority order. |
 
 Symbols are drawn on the map starting from the highest priority. If there already is a symbol nearby on the map (mindistance parameter), the symbol is not shown. Regarding mindistance and priority parameters the same logic is applied in Arrow-, Number- and CloudCeilingLayers.
+
+For observations in symbol and number layers the priority list may depend on the value of another
+parameter. The setting is then a list of conditional priority lists, and for each station the first
+list whose limits accept the value of the parameter is used. The limits are inclusive, and a list
+without a parameter is used unconditionally. If the value is missing, only unconditional lists apply.
+For example, rain is prioritized over snow in winter and the other way around in summer:
+
+```
+"priority":
+[
+    { "parameter": "t2m", "hilimit": 0, "priority": [ 65, 63, 61, 75, 73, 71 ] },
+    { "parameter": "t2m", "lolimit": 0, "hilimit": 10, "priority": [ 75, 65, 73, 63, 71, 61 ] },
+    { "priority": [ 75, 73, 71, 65, 63, 61 ] }
+]
+```
+
+Since all the stations are prioritized together, mindistance works normally across the
+temperature limits.
+
+##### Parameter lists
+
+The parameter of an observation symbol or number layer may be a list of sources instead of a single
+parameter name. Each element is either a parameter name or an object with the following settings:
+
+| Name       | Type     | Default value      | Description                                                    |
+| ---------- | -------- | ------------------ | -------------------------------------------------------------- |
+| parameter  | string   | -                  | The parameter name.                                            |
+| producer   | (string) | the layer producer | The producer to read the parameter from.                       |
+| keyword    | (string) | -                  | Read the stations of the keyword instead of the layer positions. |
+| multiplier | double   | 1.0                | A multiplier for valid values of this source.                  |
+| offset     | double   | 0.0                | An offset for valid values of this source.                     |
+
+The sources are read in the listed order, and for each station the first valid value wins.
+The layer level multiplier and offset are applied after the source specific ones. For example,
+the following combines ww codes of foreign stations with WaWa codes of Finnish stations, which
+are shifted to the range 100-199 so that the same symbol table can be used for both:
+
+```
+"parameter":
+[
+    { "parameter": "WW", "producer": "foreign", "keyword": "synop_foreign" },
+    { "parameter": "WaWa", "producer": "observations_fmi", "keyword": "synop_fi", "offset": 100 }
+]
+```
+
+The time dimension of the layer is still defined by the producer of the layer.
 
 #### ArrowLayer
 
@@ -1378,7 +1424,7 @@ The table below contains a list of attributes that can be defined for the number
 <pre><b>NumberLayer </b></pre>
 | Name            | Type                    | Default value | Description                                                                             |
 | --------------- | ----------------------- | ------------- | --------------------------------------------------------------------------------------- |
-| parameter       | (string)                | -             | The parameter name for the numbers.                                                     |
+| parameter       | (string) or array       | -             | The parameter name for the numbers, or a list of observation sources, see [Parameter lists](#parameter-lists). |
 | level           | (double)                | -             | The querydata level value. By default the first level is used.                          |
 | positions       | _Positions_             | -             | The positions for the numbers.                                                          |
 | minvalues       | int                     | 0             | Minimum required number of valid values (or return error response)                      |

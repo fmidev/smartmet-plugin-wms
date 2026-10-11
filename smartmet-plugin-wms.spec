@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.11
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -184,6 +184,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-2.fmi
+- Symbol and number layers accept a list of observation parameters with optional producer, keyword, multiplier and offset for each (BRAINSTORM-2722)
+- Symbol and number layer priorities may depend on the value of another observation parameter, for example temperature (BRAINSTORM-2786)
+
 * Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
 - Validate the Host header (hostname[:port]), X-Forwarded-Proto (http/https) and the apikey
   (URL-safe characters) before writing them into the self-referential URLs of WMS and WMTS

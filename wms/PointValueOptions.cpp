@@ -4,6 +4,10 @@
 #include "PointData.h"
 #include <macgyver/Exception.h>
 #include <macgyver/NearTree.h>
+#include <newbase/NFmiGlobals.h>
+#include <algorithm>
+#include <map>
+#include <unordered_map>
 
 namespace SmartMet
 {
@@ -122,7 +126,126 @@ void sort_by_priorities(std::vector<PointValueWrapper>& points, const std::vecto
     points.push_back(priority_item.second);
 }
 
+// Like sort_by_priorities, but the priority list is selected separately for each point
+void sort_by_conditional_priorities(std::vector<PointValueWrapper>& points,
+                                    const std::vector<ConditionalPriorities>& tables,
+                                    const std::vector<std::string>& extra_parameters,
+                                    std::size_t first_extra_column)
+{
+  // symbol --> priority number for each table, zero for most important
+  std::vector<std::unordered_map<int, int>> table_priorities;
+  std::vector<std::optional<std::size_t>> table_columns;
+  for (const auto& table : tables)
+  {
+    std::unordered_map<int, int> symbol_priorities;
+    for (auto i = 0UL; i < table.priorities.size(); i++)
+      symbol_priorities.insert({table.priorities[i], i});
+    table_priorities.push_back(std::move(symbol_priorities));
+
+    std::optional<std::size_t> column;
+    if (table.parameter)
+    {
+      auto pos = std::find(extra_parameters.begin(), extra_parameters.end(), *table.parameter);
+      column = first_extra_column + (pos - extra_parameters.begin());
+    }
+    table_columns.push_back(column);
+  }
+
+  auto no_priority = std::numeric_limits<int>::max();
+  std::multimap<int, PointValueWrapper> prioritized_points;
+  for (const auto& item : points)
+  {
+    auto priority = no_priority;
+    const auto& data = item.data();
+
+    // The first table accepting the point decides the priority
+    for (auto i = 0UL; i < tables.size(); i++)
+    {
+      if (table_columns[i])
+      {
+        if (*table_columns[i] >= data.size())
+          throw Fmi::Exception(BCP, "Priority parameter value not available")
+              .addParameter("parameter", *tables[i].parameter);
+        if (!tables[i].accepts(data[*table_columns[i]]))
+          continue;
+      }
+      auto symbol = item.priorityValue();
+      auto pos = table_priorities[i].find(symbol);
+      if (pos != table_priorities[i].end())
+        priority = pos->second;
+      break;
+    }
+    prioritized_points.insert({priority, item});
+  }
+
+  points.clear();
+  for (const auto& priority_item : prioritized_points)
+    points.push_back(priority_item.second);
+}
+
+std::vector<int> parse_priority_list(const Json::Value& theJson)
+{
+  if (!theJson.isArray())
+    throw Fmi::Exception(BCP, "Priority list must be an array of values");
+  std::vector<int> ret;
+  for (const auto& prio : theJson)
+    ret.push_back(prio.asInt());
+  return ret;
+}
+
+ConditionalPriorities parse_conditional_priorities(Json::Value& theJson)
+{
+  ConditionalPriorities ret;
+  JsonTools::remove_string(ret.parameter, theJson, "parameter");
+  JsonTools::remove_double(ret.lolimit, theJson, "lolimit");
+  JsonTools::remove_double(ret.hilimit, theJson, "hilimit");
+  auto json = JsonTools::remove(theJson, "priority");
+  if (json.isNull())
+    throw Fmi::Exception(BCP, "Conditional priority setting is missing the priority list");
+  ret.priorities = parse_priority_list(json);
+
+  if (!ret.parameter && (ret.lolimit || ret.hilimit))
+    throw Fmi::Exception(BCP, "Priority limits given without a parameter");
+
+  if (!theJson.empty())
+    throw Fmi::Exception(BCP, "Unknown settings in conditional priority")
+        .addParameter("settings", theJson.toStyledString());
+  return ret;
+}
+
 }  // namespace
+
+bool ConditionalPriorities::accepts(double theValue) const
+{
+  if (!parameter)
+    return true;
+  if (theValue == kFloatMissing || std::isnan(theValue))
+    return false;
+  if (lolimit && *lolimit > theValue)
+    return false;
+  if (hilimit && *hilimit < theValue)
+    return false;
+  return true;
+}
+
+std::size_t ConditionalPriorities::hash_value() const
+{
+  auto hash = Fmi::hash_value(parameter);
+  Fmi::hash_combine(hash, Fmi::hash_value(lolimit));
+  Fmi::hash_combine(hash, Fmi::hash_value(hilimit));
+  for (auto symbol : priorities)
+    Fmi::hash_combine(hash, Fmi::hash_value(symbol));
+  return hash;
+}
+
+std::vector<std::string> PointValueOptions::extraParameters() const
+{
+  std::vector<std::string> ret;
+  for (const auto& table : conditional_priorities)
+    if (table.parameter && std::find(ret.begin(), ret.end(), *table.parameter) == ret.end())
+      ret.push_back(*table.parameter);
+  return ret;
+}
 
 void PointValueOptions::init(Json::Value& theJson)
 {
@@ -134,12 +257,18 @@ void PointValueOptions::init(Json::Value& theJson)
     auto json = JsonTools::remove(theJson, "priority");
     if (!json.isNull())
     {
-      if (json.isArray())
+      if (json.isArray() && !json.empty() && json[0].isObject())
       {
-        priorities = std::vector<int>();
-        for (const auto& prio : json)
-          priorities->push_back(prio.asInt());
+        // Conditional priority lists
+        for (auto& item : json)
+        {
+          if (!item.isObject())
+            throw Fmi::Exception(BCP, "Conditional priority lists cannot be mixed with values");
+          conditional_priorities.push_back(parse_conditional_priorities(item));
+        }
       }
+      else if (json.isArray())
+        priorities = parse_priority_list(json);
       else
         priority = json.asString();
     }
@@ -150,7 +279,9 @@ void PointValueOptions::init(Json::Value& theJson)
   }
 }
 
-std::vector<PointData> prioritize(const std::vector<PointData>& pv, const PointValueOptions& opts)
+std::vector<PointData> prioritize(const std::vector<PointData>& pv,
+                                  const PointValueOptions& opts,
+                                  std::size_t first_extra_column)
 {
   try
   {
@@ -163,6 +294,9 @@ std::vector<PointData> prioritize(const std::vector<PointData>& pv, const PointV
       sort_by_priority(points, *opts.priority);
     else if (opts.priorities)
       sort_by_priorities(points, *opts.priorities);
+    else if (!opts.conditional_priorities.empty())
+      sort_by_conditional_priorities(
+          points, opts.conditional_priorities, opts.extraParameters(), first_extra_column);
 
     std::vector<PointData> ret;
 
@@ -212,6 +346,8 @@ std::size_t PointValueOptions::hash_value() const
       for (auto symbol : *priorities)
         Fmi::hash_combine(hash, Fmi::hash_value(symbol));
     }
+    for (const auto& table : conditional_priorities)
+      Fmi::hash_combine(hash, table.hash_value());
     Fmi::hash_combine(hash, Fmi::hash_value(rendering_order));
 
     return hash;

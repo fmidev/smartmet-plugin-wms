@@ -9,6 +9,7 @@
 #include "AttributeSelection.h"
 #include "Label.h"
 #include "Layer.h"
+#include "ObservationSources.h"
 #include "ParameterInfo.h"
 #include "PointValueOptions.h"
 #include "Positions.h"
@@ -53,6 +54,9 @@ class NumberLayer : public Layer
 
   // Minimum distance, priorities of numbers
   PointValueOptions point_value_options;
+
+  // Several observation parameters combined, used instead of paraminfo.parameter if set
+  ObservationSources sources;
 
   // Label settings
   Label label;

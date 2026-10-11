@@ -1,0 +1,71 @@
+{
+    "title": "Road weather station precipitation as ww symbols, priority depends on temperature",
+    "producer": "road",
+    "time": "2013-01-09 06:00",
+    "interval_start": 10,
+    "interval_end": 0,
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"cx" : 25,
+	"cy" : 65,
+	"resolution" : 3,
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+		    "qid": "l1",
+		    "layer_type": "symbol",
+		    "parameter": "roadww",
+		    "mindistance": 15,
+		    "priority":
+		    [
+			{
+			    "parameter": "t2m",
+			    "hilimit": 0,
+			    "priority": [ 65, 63, 61, 55, 53, 51, 75, 73, 71 ]
+			},
+			{
+			    "parameter": "t2m",
+			    "lolimit": 0,
+			    "hilimit": 10,
+			    "priority": [ 75, 65, 55, 73, 63, 53, 71, 61, 51 ]
+			},
+			{
+			    "priority": [ 75, 73, 71, 65, 63, 61, 55, 53, 51 ]
+			}
+		    ],
+		    "symbols":
+		    [
+			{ "value": 0, "symbol": "dot" },
+			{ "lolimit": 50, "hilimit": 59.5, "symbol": "drizzle" },
+			{ "lolimit": 60, "hilimit": 69.5, "symbol": "rain" },
+			{ "lolimit": 70, "hilimit": 79.5, "symbol": "snow" }
+		    ],
+		    "attributes":
+		    {
+			"class": "RoadWW"
+		    }
+		}
+	    ]
+	}
+    ]
+}
