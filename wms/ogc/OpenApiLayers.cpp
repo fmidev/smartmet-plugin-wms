@@ -21,8 +21,10 @@ void add_elevations(CTPP::CDT& dim, std::vector<std::string>& elevations)
 {
   if (!dim.Exists("value"))
     return;
+  // boost 1.69 (RHEL8) split does not accept a temporary
+  const std::string value_list = dim.At("value").GetString();
   std::vector<std::string> values;
-  boost::algorithm::split(values, dim.At("value").GetString(), boost::is_any_of(","));
+  boost::algorithm::split(values, value_list, boost::is_any_of(","));
   values.erase(std::remove(values.begin(), values.end(), ""), values.end());
   if (values.size() == 1)
   {
