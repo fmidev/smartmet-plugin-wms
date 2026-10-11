@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.10
+Version: 26.10.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -184,6 +184,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
+- Validate the Host header (hostname[:port]), X-Forwarded-Proto (http/https) and the apikey
+  (URL-safe characters) before writing them into the self-referential URLs of WMS and WMTS
+  GetCapabilities and OGC API Tiles responses; invalid values fall back to the defaults
+
 * Sat Oct 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.10-1.fmi
 - Use auto and return {} where clang-tidy suggests it, no functional changes
 - Mark overriding methods override and use nullptr, no functional changes
@@ -315,7 +320,6 @@ o- WMTS dimensions list one Value element per value instead of a WMS-style comma
 * Tue Sep  1 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.9.1-1.fmi
 - Repackage due to smartmet-engine-satellite ABI changes
 
->>>>>>> master
 * Thu Aug 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.27-1.fmi
 - Added a satellite layer for serving precoloured satellite imagery via the new satellite engine
 - Satellite layers can colour products which hold values instead of colours

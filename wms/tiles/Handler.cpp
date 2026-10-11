@@ -12,6 +12,7 @@
 #include "../Plugin.h"
 #include "../Product.h"
 #include "../State.h"
+#include "../ogc/BaseURL.h"
 #include "../ogc/LayerHierarchy.h"
 #include "../ogc/StyleSelection.h"
 #include "../wms/Handler.h"
@@ -1733,20 +1734,11 @@ void Handler::setJsonResponse(Spine::HTTP::Response& resp, const std::string& bo
 
 std::string Handler::computeBaseUrl(const Spine::HTTP::Request& req) const
 {
-  auto host_protocol = req.getProtocol();
-  std::string protocol = host_protocol ? (*host_protocol + "://") : "http://";
-  auto host_header = req.getHeader("Host");
-  std::string host = host_header ? *host_header : "localhost";
-
-  std::string apikey_path;
+  // Host, X-Forwarded-Proto and the apikey are client-controlled, so they are validated
+  // before being written into the links of the JSON responses
   const bool check_token = true;
-  auto apikey = Spine::FmiApiKey::getFmiApiKey(req, check_token);
-  if (apikey && Spine::FmiApiKey::shouldReturnApiKey(req))
-  {
-    apikey_path = "/fmi-apikey/" + *apikey;
-  }
-
-  return protocol + host + apikey_path + itsDaliConfig.tilesUrl();
+  return OGC::requestProtocol(req) + OGC::requestHost(req, "localhost") +
+         OGC::requestApiKeyPath(req, check_token) + itsDaliConfig.tilesUrl();
 }
 
 std::string Handler::negotiateFormat(const Spine::HTTP::Request& req) const

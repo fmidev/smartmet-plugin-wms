@@ -1,0 +1,4 @@
+GET /wms?service=wms&request=GetCapabilities HTTP/1.0
+Host: evil.example"><x y="
+X-Forwarded-Proto: javascript
+fmi-apikey: key"/><x a="

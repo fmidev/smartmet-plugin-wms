@@ -11,6 +11,7 @@
 #include "../Plugin.h"
 #include "../Product.h"
 #include "../State.h"
+#include "../ogc/BaseURL.h"
 #include "../ogc/LayerHierarchy.h"
 #include "../ogc/StyleSelection.h"
 #include "../wms/Handler.h"
@@ -309,17 +310,12 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
     hash["service"]["abstract"] = "";
 
     // Build WMTS base URL for ResourceURL elements
-    auto host_protocol = theRequest.getProtocol();
-    std::string protocol = host_protocol ? (*host_protocol + "://") : "http://";
-    auto host_header = theRequest.getHeader("Host");
-    std::string host = host_header ? *host_header : "localhost";
-    if (host.size() >= 4 && host.substr(host.size() - 4) == "/wms")
-      host = host.substr(0, host.size() - 4);
-
+    // Host, X-Forwarded-Proto and the apikey are client-controlled, so they are validated
+    // before being written into the rendered document
+    const std::string protocol = OGC::requestProtocol(theRequest);
+    const std::string host = OGC::requestHost(theRequest, "localhost");
+    const std::string apikey_path = OGC::requestApiKeyPath(theRequest);
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
-    std::string apikey_path;
-    if (apikey && Spine::FmiApiKey::shouldReturnApiKey(theRequest))
-      apikey_path = "/fmi-apikey/" + *apikey;
 
     hash["wmts_url"] = protocol + host + apikey_path + "/wmts";
 
@@ -538,14 +534,7 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
 
     // Replace __hostname__ and __apikey__ placeholders that come from WMS layer LegendURL values
     boost::replace_all(output, "__hostname__", protocol + host);
-    {
-      std::string apirepl;
-      if (apikey && Spine::FmiApiKey::shouldReturnApiKey(theRequest))
-      {
-        apirepl = "/fmi-apikey/" + *apikey;
-      }
-      boost::replace_all(output, "__apikey__", apirepl);
-    }
+    boost::replace_all(output, "__apikey__", apikey_path);
 
     theResponse.setHeader("Content-Type", "application/xml; charset=UTF-8");
     theResponse.setContent(std::move(output));

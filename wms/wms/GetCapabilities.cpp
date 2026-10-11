@@ -1,5 +1,6 @@
 #include "GetCapabilities.h"
 #include "Exception.h"
+#include "../ogc/BaseURL.h"
 #include <boost/algorithm/string/join.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -221,27 +222,21 @@ std::string GetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
     }
 
     // http/https scheme selection based on 'X-Forwarded-Proto' header
-    auto host_protocol = theRequest.getProtocol();
-    std::string protocol(host_protocol ? *host_protocol : "http");
-    if (!protocol.empty())
-      protocol += "://";
+    const std::string protocol = OGC::requestProtocol(theRequest);
 
-    if (!protocol.empty())
+    try
     {
-      try
-      {
-        patch_protocols(hash.At("capability").At("request").At("getcapabilities").At("dcptype"),
+      patch_protocols(hash.At("capability").At("request").At("getcapabilities").At("dcptype"),
+                      protocol);
+      patch_protocols(hash.At("capability").At("request").At("getmap").At("dcptype"), protocol);
+      if (hash.At("capability").At("request").Exists("getfeatureinfo"))
+        patch_protocols(hash.At("capability").At("request").At("getfeatureinfo").At("dcptype"),
                         protocol);
-        patch_protocols(hash.At("capability").At("request").At("getmap").At("dcptype"), protocol);
-        if (hash.At("capability").At("request").Exists("getfeatureinfo"))
-          patch_protocols(hash.At("capability").At("request").At("getfeatureinfo").At("dcptype"),
-                          protocol);
-      }
-      catch (...)
-      {
-        throw Fmi::Exception::Trace(BCP, "Patching protocol failed")
-            .addParameter("protocol", protocol);
-      }
+    }
+    catch (...)
+    {
+      throw Fmi::Exception::Trace(BCP, "Patching protocol failed")
+          .addParameter("protocol", protocol);
     }
 
     const bool print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
@@ -270,41 +265,14 @@ std::string GetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
           .addParameter("log enabled by debug=1", log);
     }
 
-    // Finish up with host name replacements
+    // Finish up with host name replacements. The values are spliced into the rendered
+    // document after the template has escaped everything else, so they are validated.
 
-    auto host_header = theRequest.getHeader("Host");
-    try
-    {
-      if (!host_header)
-      {
-        // This should never happen, host header is mandatory in HTTP 1.1
-        host_header = "smartmet.fmi.fi/wms";
-      }
+    const std::string host = OGC::requestHost(theRequest, "smartmet.fmi.fi");
+    boost::replace_all(ret, "__hostname__", protocol + host);
+    boost::replace_all(ret, "__apikey__", OGC::requestApiKeyPath(theRequest));
 
-      auto hostString = *host_header;
-      if (hostString.length() >= 4)
-      {
-        std::string hostEnd = hostString.substr(hostString.length() - 4);
-        if (hostEnd == "/wms")
-          hostString = hostString.substr(0, hostString.length() - 4);
-      }
-
-      boost::replace_all(ret, "__hostname__", protocol + hostString);
-
-      std::string apirepl;
-      if (apikey && Spine::FmiApiKey::shouldReturnApiKey(theRequest))
-      {
-        apirepl = "/fmi-apikey/" + *apikey;
-      }
-      boost::replace_all(ret, "__apikey__", apirepl);
-
-      return ret;
-    }
-    catch (...)
-    {
-      throw Fmi::Exception::Trace(BCP, "Fixing host name failed")
-          .addParameter("host", *host_header);
-    }
+    return ret;
   }
 
   catch (...)
