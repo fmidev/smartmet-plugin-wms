@@ -76,8 +76,8 @@ class ArrowLayer : public Layer
   PointValueOptions point_value_options;
 
  private:
-  void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
-  void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
+  void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
 
   void getObservationValue(CTPP::CDT& theInfo, const State& theState);
   void getQuerydataValue(CTPP::CDT& theInfo, const State& theState);
@@ -88,7 +88,7 @@ class ArrowLayer : public Layer
                      CTPP::CDT& group_cdt,
                      const std::vector<PointData>& pointvalues,
                      const Fmi::CoordinateTransformation& transformation,
-                     State& theState,
+                     const State& theState,
                      int& valid_count);
 
   std::shared_ptr<QueryServer::Query> build_grid_query(const std::vector<std::string>& paramNames,

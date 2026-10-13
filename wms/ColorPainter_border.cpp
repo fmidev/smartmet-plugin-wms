@@ -100,10 +100,7 @@ void ColorPainter_border::initBorder(Json::Value &theJson, const State & /* theS
   }
 }
 
-
-
-
-void ColorPainter_border::addBorder(Border& border)
+void ColorPainter_border::addBorder(const Border& border)
 {
   try
   {

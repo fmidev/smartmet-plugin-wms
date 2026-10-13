@@ -60,11 +60,11 @@ class PostGISLayerBase : public Layer
 
   static OGRGeometryPtr getShape(const State& theState,
                                  const Fmi::SpatialReference& theSR,
-                                 Engine::Gis::MapOptions& theMapOptions);
+                                 const Engine::Gis::MapOptions& theMapOptions);
 
   static Fmi::Features getFeatures(const State& theState,
                                    const Fmi::SpatialReference& theSR,
-                                   Engine::Gis::MapOptions& theMapOptions);
+                                   const Engine::Gis::MapOptions& theMapOptions);
 
 };  // class PostGISLayer
 

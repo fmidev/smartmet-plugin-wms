@@ -68,7 +68,7 @@ class ObservationLayer : public Layer
   // SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
  private:
-  StationSymbolPriorities getProcessedData(State& theState) const;
+  StationSymbolPriorities getProcessedData(const State& theState) const;
 
 };  // class ObservationLayer
 

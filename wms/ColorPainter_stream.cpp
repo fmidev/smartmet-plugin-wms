@@ -172,10 +172,7 @@ void ColorPainter_stream::initStreamSpeed(Json::Value &theJson, const State & /*
   }
 }
 
-
-
-
-void ColorPainter_stream::addStreamSpeed(StreamSpeed& speed)
+void ColorPainter_stream::addStreamSpeed(const StreamSpeed& speed)
 {
   try
   {

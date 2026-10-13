@@ -494,7 +494,7 @@ std::string Handler::getCapabilityFormat(const std::string &theFormat) const
   return "xml";
 }
 
-void Handler::formatWmsExceptionResponse(Fmi::Exception &wmsException,
+void Handler::formatWmsExceptionResponse(const Fmi::Exception& wmsException,
                                          const std::string &theFormat,
                                          bool isdebug,
                                          Dali::State &theState,
@@ -566,7 +566,7 @@ bool Handler::authenticate(const Spine::HTTP::Request &theRequest) const
  * \brief Perform a WMS query (main entry point)
  */
 // ----------------------------------------------------------------------
-QueryStatus Handler::query(Spine::Reactor & /* theReactor */,
+QueryStatus Handler::query(const Spine::Reactor & /* theReactor */,
                            Dali::State &theState,
                            const Spine::HTTP::Request &theRequest,
                            Spine::HTTP::Response &theResponse)

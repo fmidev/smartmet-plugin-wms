@@ -264,7 +264,7 @@ void IsolineLayer::init(Json::Value& theJson,
 // ----------------------------------------------------------------------
 
 std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>& isovalues,
-                                                      State& theState)
+                                                      const State& theState)
 {
   std::vector<OGRGeometryPtr> geoms;
 
@@ -339,7 +339,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
 // ----------------------------------------------------------------------
 
 std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<double>& isovalues,
-                                                          State& theState)
+                                                          const State& theState)
 {
   const auto* gridEngine = theState.getGridEngine();
   if (!gridEngine || !gridEngine->isEnabled())

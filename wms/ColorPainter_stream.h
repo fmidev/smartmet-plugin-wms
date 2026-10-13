@@ -40,7 +40,7 @@ class ColorPainter_stream : public ColorPainter
     void          initStreamSpeeds(Json::Value &theJson,const State& theState);
     void          initStreamSpeed(Json::Value &theJson,const State& theState);
 
-    void          addStreamSpeed(StreamSpeed& speed);
+    void addStreamSpeed(const StreamSpeed& speed);
     bool          isAnimator() override {return true;}
     void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters) override;
     void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters) override;

@@ -39,11 +39,7 @@ ColorMap::ColorMap(const ColorMap& colorMap)
   }
 }
 
-
-
-
-
-ColorMap::ColorMap(std::string& colorMap)
+ColorMap::ColorMap(const std::string& colorMap)
 {
   try
   {

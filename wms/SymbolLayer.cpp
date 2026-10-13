@@ -144,7 +144,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 
 PointValues read_gridForecasts(const SymbolLayer& layer,
                                const Engine::Grid::Engine* /* gridEngine */,
-                               QueryServer::Query& query,
+                               const QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
                                const Fmi::DateTime& /* valid_time */,

@@ -24,7 +24,7 @@ class Intersections
   // parameter name --> value
   using IntersectValues = std::map<std::string, double>;
 
-  void init(Json::Value& theJson, const Config& theConfig);
+  void init(const Json::Value& theJson, const Config& theConfig);
 
   void init(const std::optional<std::string>& theProducer,
             const Projection& theProjection,

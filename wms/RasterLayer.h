@@ -83,11 +83,11 @@ class RasterLayer : public Layer
   std::string svg_image;
 
  private:
-  void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
-  void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
+  void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
   void generate_output(CTPP::CDT& theGlobals,
                        CTPP::CDT& theLayersCdt,
-                       State& theState,
+                       const State& theState,
                        const T::Coordinate_vec* coordinates,
                        std::vector<float>& values1,
                        std::vector<float>& values2);
@@ -97,7 +97,7 @@ class RasterLayer : public Layer
                       std::vector<float>& values1,
                       std::vector<float>& values2,
                       CImage& cimage);
-  bool isNewImageRequired(State& theState);
+  bool isNewImageRequired(const State& theState);
 
 };  // class RasterLayer
 

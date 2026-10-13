@@ -331,7 +331,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
 PointValues read_gridForecasts(const ArrowLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
-                               QueryServer::Query& query,
+                               const QueryServer::Query& query,
                                std::optional<std::string> dirParam,
                                std::optional<std::string> speedParam,
                                std::optional<std::string> uParam,
@@ -651,7 +651,7 @@ void ArrowLayer::render_arrows(CTPP::CDT& theGlobals,
                                CTPP::CDT& group_cdt,
                                const PointValues& pointvalues,
                                const Fmi::CoordinateTransformation& transformation,
-                               State& theState,
+                               const State& theState,
                                int& valid_count)
 {
   for (const auto& pointvalue : pointvalues)
@@ -790,7 +790,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
 void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
                                      CTPP::CDT& theLayersCdt,
-                                     State& theState)
+                                     const State& theState)
 {
   try
   {
@@ -944,7 +944,9 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
  */
 // ----------------------------------------------------------------------
 
-void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals,
+                                  CTPP::CDT& theLayersCdt,
+                                  const State& theState)
 {
   try
   {

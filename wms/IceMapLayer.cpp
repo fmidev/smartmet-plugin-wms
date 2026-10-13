@@ -567,7 +567,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
                                       CTPP::CDT& theGlobals,
                                       CTPP::CDT& theLayersCdt,
                                       CTPP::CDT& theGroupCdt,
-                                      State& theState) const
+                                      const State& theState) const
 {
   try
   {
@@ -765,7 +765,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
                                         const PostGISLayerFilter& theFilter,
                                         CTPP::CDT& theGlobals,
                                         CTPP::CDT& theLayersCdt,
-                                        State& theState) const
+                                        const State& theState) const
 {
   try
   {
@@ -1267,7 +1267,7 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
                                    CTPP::CDT& theGlobals,
                                    CTPP::CDT& theLayersCdt,
                                    CTPP::CDT& theGroupCdt,
-                                   State& theState) const
+                                   const State& theState) const
 {
   std::string layer_subtype = getParameterValue("layer_subtype");
 

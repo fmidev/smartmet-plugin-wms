@@ -59,7 +59,7 @@ using PointValues = std::vector<PointData>;
 
 PointValues read_gridForecasts(const Positions::Point& point,
                                const Engine::Grid::Engine* /* gridEngine */,
-                               QueryServer::Query& query,
+                               const QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
                                const Fmi::DateTime& valid_time,

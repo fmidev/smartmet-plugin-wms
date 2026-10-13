@@ -315,7 +315,7 @@ Json::Value product_entry(const std::filesystem::path& theFile,
 DaliCapabilities::DaliCapabilities(const Plugin& thePlugin) : itsPlugin(thePlugin) {}
 
 std::string DaliCapabilities::generate(const Spine::HTTP::Request& theRequest,
-                                       State& theState) const
+                                       const State& theState) const
 {
   try
   {

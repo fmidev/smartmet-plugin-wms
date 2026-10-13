@@ -284,7 +284,7 @@ std::string writeDualBandDataTile(int width,
 std::string gridDataTile(Layer& layer,
                           const std::string& parameterName,
                           const std::string& interpolation,
-                          State& state)
+                         const State& state)
 {
   try
   {

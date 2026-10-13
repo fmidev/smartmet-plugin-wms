@@ -46,7 +46,7 @@ class ColorPainter_range : public ColorPainter
     void          initRanges(Json::Value &theJson,const State& theState);
     void          initRange(Json::Value &theJson,const State& theState);
 
-    void          addRange(Range& range);
+    void addRange(const Range& range);
     int           getRangeCount() {return ranges.size();}
     void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters) override;
     std::size_t   hash_value(const State &theState) const override;

@@ -32,7 +32,7 @@ class DaliCapabilities
 
   // Produce the JSON catalog response. The 'customer' query parameter,
   // if present, restricts the walk to that customer's products.
-  std::string generate(const Spine::HTTP::Request& theRequest, State& theState) const;
+  std::string generate(const Spine::HTTP::Request& theRequest, const State& theState) const;
 
  private:
   const Plugin& itsPlugin;

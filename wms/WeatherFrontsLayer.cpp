@@ -290,7 +290,7 @@ void WeatherFrontsLayer::renderFrontLine(const std::vector<std::pair<double, dou
                                          FrontType type,
                                          CTPP::CDT& theGlobals,
                                          CTPP::CDT& theLayersCdt,
-                                         State& theState) const
+                                         const State& theState) const
 {
   if (screenPts.size() < 2)
     return;

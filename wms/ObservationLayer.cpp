@@ -74,7 +74,7 @@ void ObservationLayer::init(Json::Value& theJson,
   }
 }
 
-StationSymbolPriorities ObservationLayer::getProcessedData(State& theState) const
+StationSymbolPriorities ObservationLayer::getProcessedData(const State& theState) const
 {
   try
   {

@@ -77,7 +77,7 @@ void StreamLayer::init(Json::Value& theJson,
  */
 // ----------------------------------------------------------------------
 
-std::vector<OGRGeometryPtr> StreamLayer::getStreams(State& theState)
+std::vector<OGRGeometryPtr> StreamLayer::getStreams(const State& theState)
 {
   try
   {
@@ -101,7 +101,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreams(State& theState)
  */
 // ----------------------------------------------------------------------
 
-std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
+std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
 {
   try
   {

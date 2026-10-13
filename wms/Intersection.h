@@ -27,7 +27,7 @@ class State;
 class Intersection
 {
  public:
-  void init(Json::Value& theJson, const Config& theConfig);
+  void init(const Json::Value& theJson, const Config& theConfig);
 
   void init(const std::optional<std::string>& theProducer,
             const Projection& theProjection,

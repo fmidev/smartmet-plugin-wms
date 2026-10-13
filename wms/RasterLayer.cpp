@@ -410,7 +410,7 @@ void RasterLayer::generate_image(int loopstep,
   }
 }
 
-bool RasterLayer::isNewImageRequired(State &theState)
+bool RasterLayer::isNewImageRequired(const State& theState)
 {
   try
   {
@@ -438,7 +438,7 @@ bool RasterLayer::isNewImageRequired(State &theState)
 
 void RasterLayer::generate_output(CTPP::CDT &theGlobals,
                                   CTPP::CDT &theLayersCdt,
-                                  State &theState,
+                                  const State& theState,
                                   const T::Coordinate_vec *coordinates,
                                   std::vector<float> &values1,
                                   std::vector<float> &values2)
@@ -519,7 +519,7 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
 
 void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
                                       CTPP::CDT &theLayersCdt,
-                                      State &theState)
+                                      const State& theState)
 {
   try
   {
@@ -834,7 +834,9 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
   }
 }
 
-void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals,
+                                   CTPP::CDT& theLayersCdt,
+                                   const State& theState)
 {
   try
   {

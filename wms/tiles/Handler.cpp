@@ -386,7 +386,7 @@ void Handler::shutdown()
  * \brief Main OGC API - Tiles entry point
  */
 // -----------------------------------------------------------------------
-QueryStatus Handler::query(Spine::Reactor& theReactor,
+QueryStatus Handler::query(const Spine::Reactor& theReactor,
                            Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse)
@@ -1502,7 +1502,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
  * implementation, output templates and the geonames place naming.
  */
 // -----------------------------------------------------------------------
-QueryStatus Handler::handleGetFeatureInfo(Spine::Reactor& theReactor,
+QueryStatus Handler::handleGetFeatureInfo(const Spine::Reactor& theReactor,
                                           Dali::State& theState,
                                           const Spine::HTTP::Request& theRequest,
                                           Spine::HTTP::Response& theResponse,

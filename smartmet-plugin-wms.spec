@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.11
+Version: 26.10.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,20 +29,20 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.10.3
 BuildRequires: smartmet-library-giza-devel >= 26.10.11
-BuildRequires: smartmet-library-grid-content-devel >= 26.10.11
-BuildRequires: smartmet-library-grid-files-devel >= 26.10.11
+BuildRequires: smartmet-library-grid-content-devel >= 26.10.13
+BuildRequires: smartmet-library-grid-files-devel >= 26.10.13
 BuildRequires: smartmet-library-macgyver-devel >= 26.10.11
-BuildRequires: smartmet-library-spine-devel >= 26.10.11
+BuildRequires: smartmet-library-spine-devel >= 26.10.13
 BuildRequires: smartmet-library-timeseries-devel >= 26.10.11
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.6.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.10.11
+BuildRequires: smartmet-engine-observation-devel >= 26.10.13
 %endif
 BuildRequires: smartmet-engine-avi-devel >= 26.10.11
 BuildRequires: smartmet-engine-gis-devel >= 26.9.23
-BuildRequires: smartmet-engine-grid-devel >= 26.10.11
+BuildRequires: smartmet-engine-grid-devel >= 26.10.13
 BuildRequires: smartmet-engine-geonames-devel >= 26.10.11
 BuildRequires: smartmet-engine-querydata-devel >= 26.10.11
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.3
@@ -80,12 +80,12 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.3
-Requires: smartmet-library-grid-content >= 26.10.11
-Requires: smartmet-library-grid-files >= 26.10.11
+Requires: smartmet-library-grid-content >= 26.10.13
+Requires: smartmet-library-grid-files >= 26.10.13
 Requires: smartmet-library-gis >= 26.10.11
 Requires: smartmet-library-trax >= 26.10.3
 Requires: smartmet-library-macgyver >= 26.10.11
-Requires: smartmet-library-spine >= 26.10.11
+Requires: smartmet-library-spine >= 26.10.13
 Requires: smartmet-swagger-ui
 Requires: smartmet-library-timeseries >= 26.10.11
 Requires: smartmet-library-giza >= 26.10.11
@@ -93,18 +93,18 @@ Requires: smartmet-library-giza >= 26.10.11
 Requires: smartmet-engine-authentication >= 26.6.26
 %endif
 %if %{with observation}
-Requires: smartmet-engine-observation >= 26.10.11
+Requires: smartmet-engine-observation >= 26.10.13
 %endif
 Requires: smartmet-engine-avi >= 26.10.11
 Requires: smartmet-engine-querydata >= 26.10.11
 Requires: smartmet-engine-satellite >= 26.10.3
 Requires: smartmet-engine-contour >= 26.10.11
 Requires: smartmet-engine-gis >= 26.9.23
-Requires: smartmet-engine-grid >= 26.10.11
+Requires: smartmet-engine-grid >= 26.10.13
 Requires: smartmet-engine-geonames >= 26.10.11
 Requires: smartmet-engine-satellite >= 26.10.3
 Requires: smartmet-server >= 26.10.11
-Requires: smartmet-library-spine >= 26.10.11
+Requires: smartmet-library-spine >= 26.10.13
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -137,11 +137,11 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-satellite-devel >= 26.10.3
 #TestRequires: smartmet-library-giza-devel >= 26.10.11
 #TestRequires: smartmet-library-trax-devel >= 26.10.3
-#TestRequires: smartmet-library-newbase-devel >= 26.10.11
+#TestRequires: smartmet-library-newbase-devel >= 26.10.13
 #TestRequires: smartmet-library-macgyver-devel >= 26.10.11
-#TestRequires: smartmet-library-spine-devel >= 26.10.11
+#TestRequires: smartmet-library-spine-devel >= 26.10.13
 #TestRequires: smartmet-library-timeseries-devel >= 26.10.11
-#TestRequires: smartmet-engine-grid-devel >= 26.10.11
+#TestRequires: smartmet-engine-grid-devel >= 26.10.13
 #TestRequires: smartmet-library-grid-files-test >= 26.10.11
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.9.3
@@ -156,7 +156,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.10.11
+#TestRequires: smartmet-engine-observation-devel >= 26.10.13
 %endif
 
 %description
@@ -185,6 +185,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Oct 13 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.13-1.fmi
+- Declare member functions and parameters const where nothing is modified (const correctness), no functional changes
+- Requires 26.10.13 versions of newbase, spine, grid-files, grid-content, engine-observation, engine-grid due to their ABI changes
+
 * Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
 - Generated OpenAPI 3.1 definitions of OGC API - Tiles (/tiles/api) and the WMTS RESTful
   interface (/wmts/api), with Swagger UI documentation pages at .../api/docs served from

@@ -107,10 +107,7 @@ void ColorPainter_range::initRange(Json::Value &theJson, const State & /* theSta
   }
 }
 
-
-
-
-void ColorPainter_range::addRange(Range& range)
+void ColorPainter_range::addRange(const Range& range)
 {
   try
   {

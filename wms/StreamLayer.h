@@ -47,13 +47,13 @@ class StreamLayer : public Layer
   double precision = 1.0;
 
  protected:
-  std::vector<OGRGeometryPtr> getStreams(State& theState);
+  std::vector<OGRGeometryPtr> getStreams(const State& theState);
   Engine::Querydata::Q q;  // Make used data available to derived IsolabelLayer
   T::FileId fileId = 0;
   T::MessageIndex messageIndex = 0;
 
  private:
-  std::vector<OGRGeometryPtr> getStreamsGrid(State& theState);
+  std::vector<OGRGeometryPtr> getStreamsGrid(const State& theState);
   std::vector<OGRGeometryPtr> getStreamsQuerydata(const State& theState);
 
 };  // class StreamLayer

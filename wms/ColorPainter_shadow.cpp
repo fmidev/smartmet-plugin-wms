@@ -102,10 +102,7 @@ void ColorPainter_shadow::initShadow(Json::Value &theJson, const State & /* theS
   }
 }
 
-
-
-
-void ColorPainter_shadow::addShadow(Shadow& shadow)
+void ColorPainter_shadow::addShadow(const Shadow& shadow)
 {
   try
   {

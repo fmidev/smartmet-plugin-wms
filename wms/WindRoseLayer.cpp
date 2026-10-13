@@ -685,7 +685,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
  */
 // ----------------------------------------------------------------------
 
-std::map<int, WindRoseData> WindRoseLayer::getObservations(State& theState,
+std::map<int, WindRoseData> WindRoseLayer::getObservations(const State& theState,
                                                            const Fmi::DateTime& theStartTime,
                                                            const Fmi::DateTime& theEndTime) const
 {

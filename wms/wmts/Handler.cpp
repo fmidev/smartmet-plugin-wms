@@ -179,7 +179,7 @@ void Handler::shutdown()
  * \brief Main WMTS query entry point — parses REST path and routes request
  */
 // -----------------------------------------------------------------------
-QueryStatus Handler::query(Spine::Reactor& theReactor,
+QueryStatus Handler::query(const Spine::Reactor& theReactor,
                            Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse)
@@ -893,7 +893,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
  * both services share one feature-info implementation and output templates.
  */
 // -----------------------------------------------------------------------
-QueryStatus Handler::handleGetFeatureInfo(Spine::Reactor& theReactor,
+QueryStatus Handler::handleGetFeatureInfo(const Spine::Reactor& theReactor,
                                           Dali::State& theState,
                                           const Spine::HTTP::Request& theRequest,
                                           Spine::HTTP::Response& theResponse,

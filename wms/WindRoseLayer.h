@@ -47,7 +47,7 @@ class WindRoseLayer : public Layer
   Observations observations;  // which observations to render
   Stations stations;          // which stations to use
 
-  std::map<int, WindRoseData> getObservations(State& theState,
+  std::map<int, WindRoseData> getObservations(const State& theState,
                                               const Fmi::DateTime& theStartTime,
                                               const Fmi::DateTime& theEndTime) const;
 

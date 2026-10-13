@@ -46,7 +46,7 @@ class ColorPainter_shadow : public ColorPainter
     void          initShadows(Json::Value &theJson,const State& theState);
     void          initShadow(Json::Value &theJson,const State& theState);
 
-    void          addShadow(Shadow& shadow);
+    void addShadow(const Shadow& shadow);
     int           getShadowCount() {return shadows.size();}
     void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters) override;
     std::size_t   hash_value(const State &theState) const override;

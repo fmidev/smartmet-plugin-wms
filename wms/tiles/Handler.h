@@ -93,7 +93,7 @@ class Handler
   // after both handlers exist. Not owned.
   void setWMSHandler(WMS::Handler* wmsHandler) { itsWMSHandler = wmsHandler; }
 
-  QueryStatus query(Spine::Reactor& theReactor,
+  QueryStatus query(const Spine::Reactor& theReactor,
                     Dali::State& theState,
                     const Spine::HTTP::Request& theRequest,
                     Spine::HTTP::Response& theResponse);
@@ -165,7 +165,7 @@ class Handler
                             unsigned col,
                             const std::string& format);
 
-  QueryStatus handleGetFeatureInfo(Spine::Reactor& theReactor,
+  QueryStatus handleGetFeatureInfo(const Spine::Reactor& theReactor,
                                    Dali::State& theState,
                                    const Spine::HTTP::Request& theRequest,
                                    Spine::HTTP::Response& theResponse,

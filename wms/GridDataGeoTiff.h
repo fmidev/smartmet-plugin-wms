@@ -37,7 +37,7 @@ class State;
 std::string gridDataGeoTiff(Layer& layer,
                              const std::string& parameterName,
                              const std::string& interpolation,
-                             State& state);
+                            const State& state);
 
 /**
  * Write pre-computed float arrays as a deflate-compressed multi-band Float32 GeoTiff.

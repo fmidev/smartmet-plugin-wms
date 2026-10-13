@@ -74,14 +74,15 @@ class IsolineLayer : public Layer
   double subdivide_min_cell_pixels = 2.0;
 
  protected:
-  std::vector<OGRGeometryPtr> getIsolines(const std::vector<double>& isovalues, State& theState);
+  std::vector<OGRGeometryPtr> getIsolines(const std::vector<double>& isovalues,
+                                          const State& theState);
   Engine::Querydata::Q q;  // Make used data available to derived IsolabelLayer
   T::FileId fileId = 0;
   T::MessageIndex messageIndex = 0;
 
  private:
   std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double>& isovalues,
-                                              State& theState);
+                                              const State& theState);
   std::vector<OGRGeometryPtr> getIsolinesQuerydata(const std::vector<double>& isovalues,
                                                    const State& theState);
 

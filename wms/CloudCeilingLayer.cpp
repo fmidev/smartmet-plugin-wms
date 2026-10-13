@@ -24,7 +24,7 @@ namespace Dali
 {
 using PointValues = std::vector<PointData>;
 
-PointValues CloudCeilingLayer::readObservations(State& state,
+PointValues CloudCeilingLayer::readObservations(const State& state,
                                                 const Fmi::SpatialReference& crs,
                                                 const Fmi::Box& box,
                                                 const Fmi::DateTime& valid_time,

@@ -62,7 +62,7 @@ class WeatherFrontsLayer : public Layer
                        FrontType type,
                        CTPP::CDT& theGlobals,
                        CTPP::CDT& theLayersCdt,
-                       State& theState) const;
+                       const State& theState) const;
 
   const FrontStyle& styleFor(FrontType type) const;
 

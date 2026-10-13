@@ -50,7 +50,7 @@ class Handler
   void init(std::unique_ptr<Config> wmsConfig);
   void shutdown();
 
-  QueryStatus query(Spine::Reactor& theReactor,
+  QueryStatus query(const Spine::Reactor& theReactor,
                     Dali::State& theState,
                     const Spine::HTTP::Request& theRequest,
                     Spine::HTTP::Response& theResponse);
@@ -132,7 +132,7 @@ class Handler
                          Json::Value& theJson,
                          bool isCnfRequest,
                          int theStage);
-  void formatWmsExceptionResponse(Fmi::Exception& wmsException,
+  void formatWmsExceptionResponse(const Fmi::Exception& wmsException,
                                   const std::string& theFormat,
                                   bool isdebug,
                                   Dali::State& theState,

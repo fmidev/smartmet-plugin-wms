@@ -19,7 +19,7 @@ class ColorMap
   public:
     ColorMap();
     ColorMap(const ColorMap &colorMap);
-    ColorMap(std::string &colorMap);
+    ColorMap(const std::string& colorMap);
     virtual ~ColorMap();
 
     virtual void addColor(float value, unsigned int color);

@@ -55,7 +55,7 @@ class IceMapLayer : public PostGISLayerBase
                            CTPP::CDT& theGlobals,
                            CTPP::CDT& theLayersCdt,
                            CTPP::CDT& theGroupCdt,
-                           State& theState) const;
+                           const State& theState) const;
 
   void handleLabel(const Fmi::Feature& theResultItem,
                    const PostGISLayerFilter& theFilter,
@@ -67,7 +67,7 @@ class IceMapLayer : public PostGISLayerBase
                              const PostGISLayerFilter& theFilter,
                              CTPP::CDT& theGlobals,
                              CTPP::CDT& theLayersCdt,
-                             State& theState) const;
+                             const State& theState) const;
 
   void handleTrafficRestrictions(const Fmi::Feature& theResultItem,
                                  const PostGISLayerFilter& theFilter,
@@ -107,7 +107,7 @@ class IceMapLayer : public PostGISLayerBase
                         CTPP::CDT& theGlobals,
                         CTPP::CDT& theLayersCdt,
                         CTPP::CDT& theGroupCdt,
-                        State& theState) const;
+                        const State& theState) const;
 
   std::vector<std::string> getAttributeColumns() const;
 

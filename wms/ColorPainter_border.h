@@ -44,7 +44,7 @@ class ColorPainter_border : public ColorPainter
     void          initBorders(Json::Value &theJson,const State& theState);
     void          initBorder(Json::Value &theJson,const State& theState);
 
-    void          addBorder(Border& border);
+    void addBorder(const Border& border);
     int           getBorderCount() {return borders.size();}
     void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters) override;
     std::size_t   hash_value(const State &theState) const override;
