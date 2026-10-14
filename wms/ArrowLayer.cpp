@@ -1531,7 +1531,7 @@ void ArrowLayer::getObservationValue(CTPP::CDT& theInfo, const State& theState)
 
     Spine::Stations stations;
     theState.getObsEngine().getStations(stations, settings);
-    if (stations.size() >= 1 && stations.front().fmisid == fmisid)
+    if (!stations.empty() && stations.front().fmisid == fmisid)
       theInfo["features"]["StationName"] = stations.front().formal_name_fi;
   }
   catch (...)
@@ -1630,7 +1630,7 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
 
-    const bool uv_mode = static_cast<bool>(u && v);
+    const bool uv_mode = (u && v);
     const std::string& p1name = uv_mode ? *u : *direction;
     const std::string& p2name = uv_mode ? *v : *speed;
 
@@ -1882,7 +1882,7 @@ std::string ArrowLayer::generateDataTile(State& theState)
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
 
-    const bool uv_mode = static_cast<bool>(u && v);
+    const bool uv_mode = (u && v);
     const std::string& p1name = uv_mode ? *u : *direction;
     const std::string& p2name = uv_mode ? *v : *speed;
 

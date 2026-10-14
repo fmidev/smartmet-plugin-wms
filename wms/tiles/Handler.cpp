@@ -721,7 +721,7 @@ QueryStatus Handler::handleTileMatrixSet(const std::string& base,
  */
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollections(const std::string& base,
-                                       Dali::State& theState,
+                                       Dali::State& /*theState*/,
                                        const Spine::HTTP::Request& theRequest,
                                        Spine::HTTP::Response& resp)
 {
@@ -796,7 +796,7 @@ QueryStatus Handler::handleCollections(const std::string& base,
 // -----------------------------------------------------------------------
 QueryStatus Handler::handleCollection(const std::string& base,
                                       const std::string& collId,
-                                      Dali::State& theState,
+                                      Dali::State& /*theState*/,
                                       const Spine::HTTP::Request& theRequest,
                                       Spine::HTTP::Response& resp)
 {

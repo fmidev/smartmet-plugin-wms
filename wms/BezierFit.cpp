@@ -13,6 +13,7 @@
 
 #include "BezierFit.h"
 
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -88,7 +89,7 @@ Roots solve_quadratic(double c0, double c1, double c2)
     return result;
   }
   double arg = sc1 * sc1 - 4.0 * sc0;
-  double root1;
+  double root1 = NAN;
   if (!std::isfinite(arg))
   {
     root1 = -sc1;
@@ -182,7 +183,7 @@ double depressed_cubic_dominant(double g, double h)
 {
   double q = (-1.0 / 3.0) * g;
   double r = 0.5 * h;
-  double phi_0;
+  double phi_0 = NAN;
 
   bool use_k = (std::abs(q) >= 1e102 || std::abs(r) >= 1e154);
   double k = 0;
@@ -202,7 +203,7 @@ double depressed_cubic_dominant(double g, double h)
   }
   else if ((use_k && k_neg) || (!use_k && r * r < q * q * q))
   {
-    double t;
+    double t = NAN;
     if (use_k)
       t = r / q / std::sqrt(q);
     else
@@ -211,7 +212,7 @@ double depressed_cubic_dominant(double g, double h)
   }
   else
   {
-    double a_val;
+    double a_val = NAN;
     if (use_k)
     {
       if (std::abs(q) < std::abs(r))
@@ -273,7 +274,7 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
   { return calc_eps_q(a1, b1, a2, b2) + eps_rel(b1 * b2, d); };
 
   double disc = 9.0 * a * a - 24.0 * b;
-  double s;
+  double s = NAN;
   if (disc >= 0.0)
     s = -2.0 * b / (3.0 * a + std::copysign(std::sqrt(disc), a));
   else
@@ -284,7 +285,7 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
   double c_prime = c + s * (2.0 * b + s * (3.0 * a + 4.0 * s));
   double d_prime = d + s * (c + s * (b + s * (a + s)));
 
-  double g_prime, h_prime;
+  double g_prime = NAN, h_prime = NAN;
   constexpr double K_C = 3.49e102;
   if (rescale)
   {
@@ -347,7 +348,7 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
   double d_2 = d_2_best;
   double l_2 = l_2_best;
 
-  double alpha_1, beta_1, alpha_2, beta_2;
+  double alpha_1 = NAN, beta_1 = NAN, alpha_2 = NAN, beta_2 = NAN;
 
   if (d_2 < 0.0)
   {
@@ -507,12 +508,12 @@ ItpResult solve_itp(const std::function<std::pair<double, bool>(double)>& f,
     double xf = (yb * a - ya * b) / (yb - ya);
     double sigma = x1_2 - xf;
     double delta = k1 * (b - a) * (b - a);
-    double xt;
+    double xt = NAN;
     if (delta <= std::abs(x1_2 - xf))
       xt = xf + std::copysign(delta, sigma);
     else
       xt = x1_2;
-    double xitp;
+    double xitp = NAN;
     if (std::abs(xt - x1_2) <= r)
       xitp = xt;
     else
@@ -850,7 +851,7 @@ std::vector<CubicCandidate> cubic_fit(double th0, double th1, double area, doubl
   for (int i = 0; i < roots.count; i++)
   {
     double d0_val = roots.vals[i];
-    double d1_val;
+    double d1_val = NAN;
     if (d0_val > 0.0)
     {
       double denom = 0.5 * d0_val * s01 - s1;
@@ -1028,7 +1029,7 @@ void fit_to_bezpath_rec(const SourceCurve& source,
     }
   }
 
-  double t_split;
+  double t_split = NAN;
   auto cusp = source.break_cusp(t0, t1);
   if (cusp)
   {
@@ -1255,7 +1256,7 @@ Vec2 CubicBez::deriv_at(double t) const
   return {x, y};
 }
 
-double CubicBez::arclen(double accuracy) const
+double CubicBez::arclen(double /*accuracy*/) const
 {
   // Gauss-Legendre 16-point quadrature of |B'(t)| over [0,1]
   double total = 0;

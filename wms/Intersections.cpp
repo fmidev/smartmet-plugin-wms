@@ -24,7 +24,7 @@ void Intersections::init(const Json::Value& theJson, const Config& theConfig)
 
     if (theJson.isArray())
     {
-      for (auto& json : theJson)
+      for (const auto& json : theJson)
       {
         Intersection intersection;
         intersection.init(json, theConfig);

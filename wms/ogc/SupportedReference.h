@@ -18,7 +18,7 @@ struct SupportedReference
   }
 
   std::string proj;
-  Fmi::BBox bbox{};
+  Fmi::BBox bbox;
   bool enabled = true;
   bool geographic = false;
 };

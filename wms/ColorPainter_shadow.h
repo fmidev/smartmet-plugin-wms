@@ -38,7 +38,6 @@ class ColorPainter_shadow : public ColorPainter
         int dy;
     };
 
-  public:
                   ColorPainter_shadow();
                   ~ColorPainter_shadow() override;
 

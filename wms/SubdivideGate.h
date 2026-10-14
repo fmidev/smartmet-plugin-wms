@@ -85,7 +85,7 @@ inline int effective_subdivide(int requested,
   if (idx == 0)
     return 0;
 
-  const auto mid = samples.begin() + idx / 2;
+  auto* const mid = samples.begin() + idx / 2;
   std::nth_element(samples.begin(), mid, samples.begin() + idx);
   const double median_cell = *mid;
 

@@ -36,7 +36,6 @@ class ColorPainter_border : public ColorPainter
         int steps;
     };
 
-  public:
                   ColorPainter_border();
                   ~ColorPainter_border() override;
 

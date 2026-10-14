@@ -170,7 +170,7 @@ NFmiDataMatrix<float> computeTFP(const NFmiDataMatrix<float>& field,
   {
     for (std::size_t i = 0; i < W; ++i)
     {
-      double gx, gy;
+      double gx = NAN, gy = NAN;
       if (!gradientAt(field, coords, i, j, gx, gy))
         continue;
       dFdx[i][j] = static_cast<float>(gx);
@@ -193,7 +193,7 @@ NFmiDataMatrix<float> computeTFP(const NFmiDataMatrix<float>& field,
       if (min_gradient > 0.0 && m < static_cast<float>(min_gradient))
         continue;
 
-      double dMdx, dMdy;
+      double dMdx = NAN, dMdy = NAN;
       if (!gradientAt(M, coords, i, j, dMdx, dMdy))
         continue;
 

@@ -257,8 +257,7 @@ void TextTable::addData(const std::vector<std::string>& theData)
     rowHeightMax = std::max(cellInfo.dimension.height, rowHeightMax);
     if (row == 0 && column >= itsColumnWidths.size())  // first row
       itsColumnWidths.push_back(cellInfo.dimension.width);
-    if (cellInfo.dimension.width > itsColumnWidths[column])
-      itsColumnWidths[column] = cellInfo.dimension.width;
+    itsColumnWidths[column] = std::max(cellInfo.dimension.width, itsColumnWidths[column]);
   }
   itsDataAreaHeight += rowHeightMax;
   itsRowHeights.push_back(rowHeightMax);

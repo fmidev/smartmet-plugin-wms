@@ -1127,7 +1127,7 @@ QueryStatus Handler::generateTile(Dali::State& theState,
 void Handler::sendException(const std::string& code,
                             const std::string& text,
                             Dali::State& theState,
-                            const Spine::HTTP::Request& theRequest,
+                            const Spine::HTTP::Request& /*theRequest*/,
                             Spine::HTTP::Response& theResponse)
 {
   try

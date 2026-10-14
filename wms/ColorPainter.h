@@ -33,8 +33,6 @@ class ColorPainter
 
     virtual std::size_t hash_value(const State &theState) const;
 
-  public:
-
     // Data opacity
     double opacity_land;
     double opacity_sea;

@@ -178,7 +178,7 @@ void ColorPainter_shadow::setImageColors(uint width,uint height,uint /* loop_ste
 
             if (val != ParamValueMissing)
             {
-              if (val >= minVal && val <= maxVal  &&  !(valx >= minVal &&  valx <= maxVal))
+              if (val >= minVal && val <= maxVal && (valx < minVal || valx > maxVal))
               {
                 double vv = (val - minVal) / dv;
                 for (uint t=0; t<4; t++)

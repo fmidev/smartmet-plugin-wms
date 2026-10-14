@@ -215,7 +215,7 @@ std::vector<uint32_t> MVTLayerBuilder::encodeGeometry(const OGRGeometry& geom) c
       // All points in one MoveTo command sequence (separate MoveTo per point)
       for (int i = 0; i < mp.getNumGeometries(); ++i)
       {
-        const auto* pt = static_cast<const OGRPoint*>(mp.getGeometryRef(i));
+        const auto* pt = mp.getGeometryRef(i);
         if (!pt || pt->IsEmpty())
           continue;
         auto [tx, ty] = project(pt->getX(), pt->getY());
@@ -240,7 +240,7 @@ std::vector<uint32_t> MVTLayerBuilder::encodeGeometry(const OGRGeometry& geom) c
       const auto& mls = static_cast<const OGRMultiLineString&>(geom);
       for (int i = 0; i < mls.getNumGeometries(); ++i)
       {
-        const auto* ls = static_cast<const OGRLineString*>(mls.getGeometryRef(i));
+        const auto* ls = mls.getGeometryRef(i);
         if (!ls || ls->IsEmpty())
           continue;
         encodeLineString(ls, false, cx, cy, out);
@@ -262,7 +262,7 @@ std::vector<uint32_t> MVTLayerBuilder::encodeGeometry(const OGRGeometry& geom) c
       const auto& mp = static_cast<const OGRMultiPolygon&>(geom);
       for (int i = 0; i < mp.getNumGeometries(); ++i)
       {
-        const auto* poly = static_cast<const OGRPolygon*>(mp.getGeometryRef(i));
+        const auto* poly = mp.getGeometryRef(i);
         if (!poly || poly->IsEmpty())
           continue;
         encodeRing(poly->getExteriorRing(), true, cx, cy, out);

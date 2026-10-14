@@ -892,7 +892,7 @@ void add_layer_info(bool multiple_intervals,
 // CONSTRUCTORS
 // ----------------------------------------------------------------------
 
-LayerHierarchy::LayerHierarchy(std::string n) : name(std::move(n)), parent(nullptr) {}
+LayerHierarchy::LayerHierarchy(std::string n) : name(std::move(n)) {}
 
 #ifndef WITHOUT_AUTHENTICATION
 LayerHierarchy::LayerHierarchy(const std::map<std::string, LayerProxy>& layerMap,

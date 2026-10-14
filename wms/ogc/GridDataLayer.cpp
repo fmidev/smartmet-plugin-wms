@@ -179,7 +179,7 @@ bool GridDataLayer::updateLayerMetaData()
       return true;
 
     T::GenerationInfoList newGenerationInfoList;
-    if (producers.size() > 0)
+    if (!producers.empty())
     {
       // A parameter (=> function) contains more than one producer. If producers
       // do not have same reference_times then we should accept only the latest
@@ -227,7 +227,7 @@ bool GridDataLayer::updateLayerMetaData()
                   newGenerationInfoList.addGenerationInfo(newGen);
                 }
 
-                auto lastGen2 = genInfoList.getLastGenerationInfoByAnalysisTime(1);
+                auto* lastGen2 = genInfoList.getLastGenerationInfoByAnalysisTime(1);
                 if (lastGen2  &&  newGen->mAnalysisTime < lastGen2->mAnalysisTime)
                   newGen->mAnalysisTime = lastGen2->mAnalysisTime;
               }

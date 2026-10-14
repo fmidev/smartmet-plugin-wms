@@ -296,7 +296,7 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
     const auto &views = layer["views"];
     if (!views.isNull() && views.isArray())
     {
-      for (auto &view : views)
+      for (const auto& view : views)
       {
         std::string suffixString = "_" + Fmi::to_string(suffix);
 
@@ -306,7 +306,7 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
         const auto &viewlayers = view["layers"];
         if (!viewlayers.isNull() && viewlayers.isArray())
         {
-          for (auto &viewlayer : viewlayers)
+          for (const auto& viewlayer : viewlayers)
           {
             rename_json_element(viewlayer, "qid", suffixString);
             rename_json_element(viewlayer, "attributes.id", suffixString);
@@ -314,7 +314,7 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
             const auto &viewsublayers = viewlayer["layers"];
             if (!viewsublayers.isNull() && viewsublayers.isArray())
             {
-              for (auto &viewsublayer : viewsublayers)
+              for (const auto& viewsublayer : viewsublayers)
               {
                 rename_json_element(viewsublayer, "qid", suffixString);
                 rename_json_element(viewsublayer, "attributes.id", suffixString);

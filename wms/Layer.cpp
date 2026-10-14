@@ -60,8 +60,6 @@ using PointValues = std::vector<PointData>;
 PointValues read_gridForecasts(const Positions::Point& point,
                                const Engine::Grid::Engine* /* gridEngine */,
                                const QueryServer::Query& query,
-                               const Fmi::SpatialReference& crs,
-                               const Fmi::Box& box,
                                const Fmi::DateTime& valid_time,
                                const State& state)
 {
@@ -630,7 +628,7 @@ void Layer::enrich_with_station_info(CTPP::CDT& theInfo, const State& theState, 
 
   Spine::Stations stations;
   theState.getObsEngine().getStations(stations, settings);
-  if (stations.size() >= 1 && stations.front().fmisid == fmisid)
+  if (!stations.empty() && stations.front().fmisid == fmisid)
     theInfo["features"]["StationName"] = stations.front().formal_name_fi;
 }
 
@@ -1060,7 +1058,7 @@ void Layer::getGridValue(CTPP::CDT& theInfo, const State& theState)
     Positions::Point point(theInfo["x"].GetFloat(), theInfo["y"].GetFloat(), {lon, lat});
 
     auto pointvalues =
-        read_gridForecasts(point, gridEngine, *originalGridQuery, crs, box, valid_time, theState);
+        read_gridForecasts(point, gridEngine, *originalGridQuery, valid_time, theState);
 
     if (pointvalues.empty())
       return;

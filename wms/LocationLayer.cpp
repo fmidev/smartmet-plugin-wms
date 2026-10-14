@@ -20,6 +20,7 @@
 #include <macgyver/NearTree.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Json.h>
+#include <algorithm>
 #include <ogr_spatialref.h>
 
 namespace SmartMet
@@ -431,8 +432,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // is off, margin = 0 and this collapses to the existing strict bbox.
     auto autoMargin = [&]() -> double {
       double m = mindistance;
-      if (label_config.free_space_radius > m)
-        m = label_config.free_space_radius;
+      m = std::max(label_config.free_space_radius, m);
       // Allow space for a wide label and the symbol obstacle.
       // 256 px is a generous bound on label width; safety = 32 px.
       m += 256.0;
@@ -481,10 +481,10 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       lat_min = lat_max = sy[0];
       for (size_t i = 1; i < sx.size(); i++)
       {
-        if (sx[i] < lon_min) lon_min = sx[i];
-        if (sx[i] > lon_max) lon_max = sx[i];
-        if (sy[i] < lat_min) lat_min = sy[i];
-        if (sy[i] > lat_max) lat_max = sy[i];
+        lon_min = std::min(sx[i], lon_min);
+        lon_max = std::max(sx[i], lon_max);
+        lat_min = std::min(sy[i], lat_min);
+        lat_max = std::max(sy[i], lat_max);
       }
       // If the buffered region spans more than ~180° of longitude we
       // are most likely viewing a hemispheric / world projection where

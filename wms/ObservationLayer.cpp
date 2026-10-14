@@ -236,7 +236,7 @@ void ObservationLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 
     auto results = processResultSet(pointvalues);
 
-    if (results.size() >= 1)
+    if (!results.empty())
     {
       const auto& result = results.front();
       const auto fmisid = result.fmisid;
@@ -256,7 +256,7 @@ void ObservationLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 
       Spine::Stations stations;
       theState.getObsEngine().getStations(stations, settings);
-      if (stations.size() >= 1 && stations.front().fmisid == fmisid)
+      if (!stations.empty() && stations.front().fmisid == fmisid)
       {
         const auto& s = stations.front();
         theInfo["features"]["StationName"] = s.formal_name_fi;

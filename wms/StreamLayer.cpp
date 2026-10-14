@@ -447,8 +447,8 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
 
     T::AttributeList attributeList;
     T::Coordinate_svec latlonCoordinates;
-    uint gwidth;
-    uint gheight;
+    uint gwidth = 0;
+    uint gheight = 0;
 
     std::string wkt = *projection.crs;
     if (strstr(wkt.c_str(), "+proj") != wkt.c_str())

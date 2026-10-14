@@ -40,8 +40,6 @@ class AnimationEffects
         int  end_step;
     };
 
-
- public:
   void init(Json::Value& theJson);
   void initEffect(Json::Value& theJson);
   void initEffects(Json::Value& theJson);

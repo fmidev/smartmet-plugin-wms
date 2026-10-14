@@ -4,6 +4,8 @@
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/GraphFunctions.h>
 
+#include <algorithm>
+
 namespace SmartMet
 {
 namespace Plugin
@@ -35,7 +37,6 @@ ColorPainter_rain::ColorPainter_rain()
 
 ColorPainter_rain::~ColorPainter_rain()
 {
-  if (streamImage)
     delete [] streamImage;
 }
 
@@ -207,15 +208,13 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
 
     if (!streamImage || streamImage_width != width || streamImage_height != height)
     {
-      if (streamImage)
         delete [] streamImage;
 
       streamImage = new uint[sz];
       memset(streamImage,0,sz*4);
       streamImage_width = width;
       streamImage_height = height;
-      if (step_x < 1)
-        step_x = 1;
+      step_x = std::max(step_x, 1);
 
       for (uint x=0; x<width; x=x+step_x)
       {
@@ -260,14 +259,12 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
     for (int t=0; t<line_length; t++)
     {
       double cc = (alphamax - (t*mp))*opacity_land;
-      if (cc > alphamax)
-        cc = alphamax;
+      cc = std::min(cc, alphamax);
 
       alpha_land[t] = cc;
 
       cc = (alphamax - (t*mp))*opacity_sea;
-      if (cc > alphamax)
-        cc = alphamax;
+      cc = std::min(cc, alphamax);
 
       alpha_sea[t] = cc;
     }
@@ -305,8 +302,7 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
                 newAlpha = (uint)(alpha_sea[stp] * speedAlpha);
               }
 
-              if (newAlpha > 0xFF)
-                newAlpha = 0xFF;
+              newAlpha = std::min<SmartMet::uint>(newAlpha, 0xFF);
 
               uint valcol = (newAlpha << 24) + (speedcol & 0x00FFFFFF);
               image[c] = merge_ARGB(valcol,oldcol);

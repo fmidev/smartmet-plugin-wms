@@ -260,7 +260,7 @@ std::vector<DetectedLine> runLineDetector(
   if (!q)
     return {};
 
-  auto& qe = s.getQEngine();
+  const auto& qe = s.getQEngine();
   std::size_t vhash = Engine::Querydata::hash_value(q);
   auto u_m = qe.getValues(q, TS::ParameterFactory::instance().parse(spec.u), vhash, validTime);
   auto v_m = qe.getValues(q, TS::ParameterFactory::instance().parse(spec.v), vhash, validTime);

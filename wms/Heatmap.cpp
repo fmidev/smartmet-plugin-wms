@@ -97,7 +97,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
 {
   try
   {
-    heatmap_stamp_t* hms;
+    heatmap_stamp_t* hms = nullptr;
 
     if (*kernel == "linear")
       hms = heatmap_stamp_gen_nonlinear(r, &linearKernel);

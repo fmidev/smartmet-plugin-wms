@@ -4,6 +4,8 @@
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/Typedefs.h>
 
+#include <algorithm>
+
 namespace SmartMet
 {
 namespace Plugin
@@ -77,9 +79,8 @@ void ColorPainter_shading::setImageColors(uint width,uint height,uint /* loop_st
         {
           if (m < 0)
           {
-            uint pp = (uint)(-(double)shadow*m);
-            if (pp > 255)
-              pp = 255;
+            uint pp = (uint)(-shadow * m);
+            pp = std::min<SmartMet::uint>(pp, 255);
 
             uint scol = pp << 24;
             uint newcol = merge_ARGB(scol,oldcol);
@@ -87,9 +88,8 @@ void ColorPainter_shading::setImageColors(uint width,uint height,uint /* loop_st
           }
           else
           {
-            uint pp = (uint)((double)light*m);
-            if (pp > 255)
-              pp = 255;
+            uint pp = (uint)(light * m);
+            pp = std::min<SmartMet::uint>(pp, 255);
 
             uint scol = (pp << 24) + 0xFFFFFF;
             uint newcol = merge_ARGB(scol,oldcol);

@@ -38,7 +38,6 @@ class ColorPainter_range : public ColorPainter
         uint color_high;
     };
 
-  public:
                   ColorPainter_range();
                   ~ColorPainter_range() override;
 
