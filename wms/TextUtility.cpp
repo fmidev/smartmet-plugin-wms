@@ -40,9 +40,11 @@ std::mutex g_cairoMutex;
 
 text_dimension_t measureWithCairo(const std::string& text, const text_style_t& textStyle)
 {
-  cairo_font_slant_t slant = (textStyle.fontstyle == "italic"    ? CAIRO_FONT_SLANT_ITALIC
-                              : textStyle.fontstyle == "oblique" ? CAIRO_FONT_SLANT_OBLIQUE
-                                                                 : CAIRO_FONT_SLANT_NORMAL);
+  cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
+  if (textStyle.fontstyle == "italic")
+    slant = CAIRO_FONT_SLANT_ITALIC;
+  else if (textStyle.fontstyle == "oblique")
+    slant = CAIRO_FONT_SLANT_OBLIQUE;
 
   cairo_font_weight_t weight =
       (textStyle.fontweight == "bold" ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL);

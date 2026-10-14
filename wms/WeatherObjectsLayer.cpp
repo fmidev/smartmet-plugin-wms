@@ -339,7 +339,8 @@ void WeatherObjectsLayer::generate(CTPP::CDT& theGlobals,
 
       for (auto& dl : lines)
       {
-        std::vector<double> lons, lats;
+        std::vector<double> lons;
+        std::vector<double> lats;
         lons.reserve(dl.lonlat.size());
         lats.reserve(dl.lonlat.size());
         for (const auto& [lon, lat] : dl.lonlat)

@@ -61,7 +61,8 @@ inline Point lerp(const Point& a, const Point& b, double t) {
 }
 
 inline double distance_sq(const Point& a, const Point& b) {
-  double dx = a.x - b.x, dy = a.y - b.y;
+  double dx = a.x - b.x;
+  double dy = a.y - b.y;
   return dx * dx + dy * dy;
 }
 

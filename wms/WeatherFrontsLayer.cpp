@@ -255,7 +255,8 @@ void WeatherFrontsLayer::generate(CTPP::CDT& theGlobals,
 
     for (const auto& curve : curves)
     {
-      std::vector<double> lons, lats;
+      std::vector<double> lons;
+      std::vector<double> lats;
       lons.reserve(curve.points.size());
       lats.reserve(curve.points.size());
       for (const auto& [lon, lat] : curve.points)
@@ -269,7 +270,8 @@ void WeatherFrontsLayer::generate(CTPP::CDT& theGlobals,
       screenPts.reserve(lons.size());
       for (std::size_t i = 0; i < lons.size(); ++i)
       {
-        double x = lons[i], y = lats[i];
+        double x = lons[i];
+        double y = lats[i];
         box.transform(x, y);
         screenPts.emplace_back(x, y);
       }

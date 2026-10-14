@@ -1731,7 +1731,8 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
     const int height = *projection.ysize;
 
     // Extract value vectors for both parameters
-    std::shared_ptr<QueryServer::ParameterValues> pval1, pval2;
+    std::shared_ptr<QueryServer::ParameterValues> pval1;
+    std::shared_ptr<QueryServer::ParameterValues> pval2;
     const T::Coordinate_vec* coordinates = nullptr;
 
     for (const auto& qp : query->mQueryParameterList)
@@ -1983,7 +1984,8 @@ std::string ArrowLayer::generateDataTile(State& theState)
     const int height = *projection.ysize;
 
     // Extract value vectors for both parameters
-    std::shared_ptr<QueryServer::ParameterValues> pval1, pval2;
+    std::shared_ptr<QueryServer::ParameterValues> pval1;
+    std::shared_ptr<QueryServer::ParameterValues> pval2;
     const T::Coordinate_vec* coordinates = nullptr;
 
     for (const auto& qp : query->mQueryParameterList)
@@ -2127,9 +2129,16 @@ void ArrowLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     Fmi::CoordinateTransformation xform("WGS84", crs);
 
-    const std::string layerName = qid.empty()
-                                      ? (speed ? *speed : direction ? *direction : std::string("arrows"))
-                                      : qid;
+    std::string layerName = qid;
+    if (layerName.empty())
+    {
+      if (speed)
+        layerName = *speed;
+      else if (direction)
+        layerName = *direction;
+      else
+        layerName = "arrows";
+    }
     auto& mvtLayer = theBuilder.layer(layerName);
 
     for (const auto& pointvalue : pointvalues)

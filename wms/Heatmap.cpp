@@ -3,6 +3,7 @@
 #include "Hash.h"
 
 #include <macgyver/Exception.h>
+#include <algorithm>
 #include <stdexcept>
 
 namespace
@@ -129,8 +130,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
           const auto dist =
               static_cast<float>(sqrt(((x - r) * (x - r) + (y - r) * (y - r))) / (r + 1));
           const float ds = expKernel(dist, *deviation);
-          /* This doesn't generate optimal assembly, but meh, it's readable. */
-          const float clamped_ds = ds > 1.0F ? 1.0F : ds < 0.0F ? 0.0F : ds;
+          const float clamped_ds = std::clamp(ds, 0.0F, 1.0F);
           *line = 1.0F - clamped_ds;
         }
       }

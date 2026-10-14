@@ -902,10 +902,13 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
       // Compute geographic-north direction in screen coordinates for
       // true-north correction of the wind barb.
-      double north_dx = 0.0, north_dy = -1.0;
+      double north_dx = 0.0;
+      double north_dy = -1.0;
       {
-        double x1 = d.longitude, y1 = d.latitude;
-        double x2 = d.longitude, y2 = d.latitude + 0.1;
+        double x1 = d.longitude;
+        double y1 = d.latitude;
+        double x2 = d.longitude;
+        double y2 = d.latitude + 0.1;
         bool ok = true;
         if (!crs.isGeographic())
           ok = trans.transform(x1, y1) && trans.transform(x2, y2);
@@ -913,7 +916,8 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
         {
           box.transform(x1, y1);
           box.transform(x2, y2);
-          double dx = x2 - x1, dy = y2 - y1;
+          double dx = x2 - x1;
+          double dy = y2 - y1;
           double len = std::sqrt(dx * dx + dy * dy);
           if (len > 1e-6)
           {

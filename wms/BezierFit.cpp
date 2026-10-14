@@ -285,7 +285,8 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
   double c_prime = c + s * (2.0 * b + s * (3.0 * a + 4.0 * s));
   double d_prime = d + s * (c + s * (b + s * (a + s)));
 
-  double g_prime = NAN, h_prime = NAN;
+  double g_prime = NAN;
+  double h_prime = NAN;
   constexpr double K_C = 3.49e102;
   if (rescale)
   {
@@ -348,7 +349,10 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
   double d_2 = d_2_best;
   double l_2 = l_2_best;
 
-  double alpha_1 = NAN, beta_1 = NAN, alpha_2 = NAN, beta_2 = NAN;
+  double alpha_1 = NAN;
+  double beta_1 = NAN;
+  double alpha_2 = NAN;
+  double beta_2 = NAN;
 
   if (d_2 < 0.0)
   {
@@ -486,61 +490,6 @@ struct ItpResult
   double b;
   bool cusp_found = false;
 };
-
-ItpResult solve_itp(const std::function<std::pair<double, bool>(double)>& f,
-                    double a,
-                    double b,
-                    double epsilon,
-                    int n0,
-                    double k1,
-                    double ya,
-                    double yb)
-{
-  double n1_2_raw = std::log2((b - a) / epsilon);
-  int n1_2 = static_cast<int>(std::max(0.0, std::ceil(n1_2_raw - 1.0)));
-  int nmax = n0 + n1_2;
-  double scaled_epsilon = epsilon * static_cast<double>(1ULL << std::min(nmax, 62));
-
-  while (b - a > 2.0 * epsilon)
-  {
-    double x1_2 = 0.5 * (a + b);
-    double r = scaled_epsilon - 0.5 * (b - a);
-    double xf = (yb * a - ya * b) / (yb - ya);
-    double sigma = x1_2 - xf;
-    double delta = k1 * (b - a) * (b - a);
-    double xt = NAN;
-    if (delta <= std::abs(x1_2 - xf))
-      xt = xf + std::copysign(delta, sigma);
-    else
-      xt = x1_2;
-    double xitp = NAN;
-    if (std::abs(xt - x1_2) <= r)
-      xitp = xt;
-    else
-      xitp = x1_2 - std::copysign(r, sigma);
-
-    auto [yitp, is_cusp] = f(xitp);
-    if (is_cusp)
-      return {xitp, xitp, true};
-
-    if (yitp > 0.0)
-    {
-      b = xitp;
-      yb = yitp;
-    }
-    else if (yitp < 0.0)
-    {
-      a = xitp;
-      ya = yitp;
-    }
-    else
-    {
-      return {xitp, xitp, false};
-    }
-    scaled_epsilon *= 0.5;
-  }
-  return {a, b, false};
-}
 
 // ======================================================================
 // CubicBez operations

@@ -193,7 +193,8 @@ void MVTLayerBuilder::encodeLineString(const OGRLineString* ls,
 std::vector<uint32_t> MVTLayerBuilder::encodeGeometry(const OGRGeometry& geom) const
 {
   std::vector<uint32_t> out;
-  int32_t cx = 0, cy = 0;
+  int32_t cx = 0;
+  int32_t cy = 0;
 
   const auto type = wkbFlatten(geom.getGeometryType());
 

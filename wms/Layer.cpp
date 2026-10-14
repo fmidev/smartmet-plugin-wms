@@ -542,8 +542,10 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
     if (!transformation.transform(x, y))
       return {};
 
-  double minlon = 0, maxlon = 0;
-  double minlat = 0, maxlat = 0;
+  double minlon = 0;
+  double maxlon = 0;
+  double minlat = 0;
+  double maxlat = 0;
 
   bool lon_missing = true;
   for (auto lon : x)

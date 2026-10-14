@@ -294,15 +294,19 @@ void Intersection::init(const std::optional<std::string>& theProducer,
         attrs.addAttribute("contour.smooth.method", method);
         attrs.addAttribute("contour.smooth.radius", Fmi::to_string(so.radius));
         attrs.addAttribute("contour.smooth.passes", Fmi::to_string(so.passes));
-        const char* boundary = (so.boundary == Trax::SmoothBoundary::Replicate) ? "replicate"
-                               : (so.boundary == Trax::SmoothBoundary::Reflect) ? "reflect"
-                                                                                : "normalized";
+        const char* boundary = "normalized";
+        if (so.boundary == Trax::SmoothBoundary::Replicate)
+          boundary = "replicate";
+        else if (so.boundary == Trax::SmoothBoundary::Reflect)
+          boundary = "reflect";
         attrs.addAttribute("contour.smooth.boundary", boundary);
         if (so.method == Trax::SmoothMethod::Morphology)
         {
-          const char* op = (so.morphology == Trax::MorphologyOp::Open)    ? "open"
-                           : (so.morphology == Trax::MorphologyOp::Close) ? "close"
-                                                                          : "openclose";
+          const char* op = "openclose";
+          if (so.morphology == Trax::MorphologyOp::Open)
+            op = "open";
+          else if (so.morphology == Trax::MorphologyOp::Close)
+            op = "close";
           attrs.addAttribute("contour.smooth.morphology", op);
         }
         attrs.addAttribute("contour.smooth.preserve_missing", so.preserve_missing ? "1" : "0");

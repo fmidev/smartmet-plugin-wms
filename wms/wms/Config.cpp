@@ -115,7 +115,7 @@ std::string make_layer_namespace(const std::string& customer,
 
     std::string currentPath;
 
-    do
+    for (bool more = true; more; more = currentPath != productRoot)
     {
       // Safety check needed for some incorrect specifications
       if (tokens.empty())
@@ -128,7 +128,7 @@ std::string make_layer_namespace(const std::string& customer,
       tokens.pop_back();
       currentPath = boost::algorithm::join(tokens, "/");
 
-    } while (currentPath != productRoot);
+    }
 
     namespace_tokens.push_back(customer);
 

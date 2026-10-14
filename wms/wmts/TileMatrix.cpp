@@ -176,13 +176,13 @@ std::vector<TileMatrixSet> buildTileMatrixSets(const std::vector<int>& epsg_ids,
         // Choose base_w/base_h to cover the full extent with the fewest zoom-0 tiles.
         if (is_geographic)
         {
-          base_w = std::max(1u, static_cast<unsigned>(std::round(width / height)));
-          base_h = 1u;
+          base_w = std::max(1U, static_cast<unsigned>(std::round(width / height)));
+          base_h = 1U;
         }
         else
         {
-          base_w = 1u;
-          base_h = std::max(1u, static_cast<unsigned>(std::round(height / width)));
+          base_w = 1U;
+          base_h = std::max(1U, static_cast<unsigned>(std::round(height / width)));
         }
 
         // Scale denominator at zoom 0 for 256×256 tiles so that base_w tiles span the full width.
@@ -225,8 +225,8 @@ std::vector<TileMatrixSet> buildTileMatrixSets(const std::vector<int>& epsg_ids,
         tm.top_left_corner_y = top_y;
         tm.tile_width = tile_width;
         tm.tile_height = tile_height;
-        tm.matrix_width = base_w * static_cast<unsigned>(1u << zoom);
-        tm.matrix_height = base_h * static_cast<unsigned>(1u << zoom);
+        tm.matrix_width = base_w * static_cast<unsigned>(1U << zoom);
+        tm.matrix_height = base_h * static_cast<unsigned>(1U << zoom);
         tms.tile_matrices.push_back(tm);
       }
 

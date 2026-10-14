@@ -440,9 +440,9 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       m += 32.0;
       return m;
     };
-    const double margin =
-        pan_invariant ? (placement_margin ? *placement_margin : autoMargin())
-                      : 0.0;
+    double margin = 0.0;
+    if (pan_invariant)
+      margin = (placement_margin ? *placement_margin : autoMargin());
     const double bx1 = -margin;
     const double by1 = -margin;
     const double bx2 = static_cast<double>(box.width()) + margin;
@@ -455,7 +455,10 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // Disabled when pan_invariant is off (the existing strict-bbox
     // filter happens after projection like before).
     bool wgs84_prefilter_active = false;
-    double lon_min = 0, lon_max = 0, lat_min = 0, lat_max = 0;
+    double lon_min = 0;
+    double lon_max = 0;
+    double lat_min = 0;
+    double lat_max = 0;
     bool lon_wraps = false;
     if (pan_invariant)
     {
@@ -796,9 +799,11 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       // ascent is recovered from y_bearing (= -ascent in cairo).
       const double ay = accepted[i].y;
       const auto y_bearing = static_cast<double>(pl.y_bearing);
-      const double text_y = (pl.bbox.y2 <= ay)   ? pl.bbox.y2
-                            : (pl.bbox.y1 >= ay) ? pl.bbox.y1 - y_bearing
-                                                 : ay - y_bearing / 2.0;
+      double text_y = ay - y_bearing / 2.0;
+      if (pl.bbox.y2 <= ay)
+        text_y = pl.bbox.y2;
+      else if (pl.bbox.y1 >= ay)
+        text_y = pl.bbox.y1 - y_bearing;
 
       const double text_x = pl.bbox.x1;
       emitText(theLayersCdt, pl, label_config, text_x, text_y);
