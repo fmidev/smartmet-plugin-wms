@@ -153,7 +153,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: zlib-devel
 #TestRequires: libcurl-devel
 #TestRequires: cairo-devel
-#TestRequires: redis
+#TestRequires: valkey
 %if %{with observation}
 #TestRequires: smartmet-engine-observation-devel >= 26.10.9-2
 %endif

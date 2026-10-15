@@ -52,12 +52,12 @@ TEST_PREPARE_TARGETS := \
 	cnf/gis.conf \
 	cnf/avi.conf \
 	cnf/observation.conf \
-	start-redis-db
+	start-valkey-db
 
 PLUGIN_TEST_SRC := PluginTest.cpp
 PLUGIN_TEST_OBJS := $(patsubst %.cpp,obj/%.o,$(PLUGIN_TEST_SRC))
 
-TEST_FINISH_TARGETS := stop-redis-db
+TEST_FINISH_TARGETS := stop-valkey-db
 
 TEST_DB_DIR := $(shell pwd)/tmp-geonames-db
 
@@ -75,7 +75,7 @@ endif
 
 all: $(PROG)
 
-clean:	clean-redis
+clean:	clean-valkey
 	rm -f $(PROG) *~
 	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
 	-if [ -f tmp-geonames-db/postmaster.pid ] ; then $(MAKE) stop-geonames-db; fi
@@ -218,21 +218,21 @@ start-geonames-db: geonames-database
 stop-geonames-db:
 	-/usr/share/smartmet/test/db/test-db-ctl.sh $(TEST_DB_DIR) stop
 
-start-redis-db:
+start-valkey-db:
 	@rm -rf cnf/grid
 	@cp -pr $(datadir)/smartmet/test/grid cnf/
 	@echo "*** Creating the Redis configuration file."
-	@smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
+	@smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/valkey/valkey-template.conf cnf/grid/valkey/valkey.conf
 	@echo "*** Starting the Redis database."
-	@redis-server cnf/grid/redis/redis.conf
+	@valkey-server cnf/grid/valkey/valkey.conf
 
-stop-redis-db:
-	@if [ -f cnf/grid/redis/redis-server.pid ] ; then \
-		cat cnf/grid/redis/redis-server.pid | xargs kill -9; \
-		rm -f cnf/grid/redis/redis-server.pid; \
+stop-valkey-db:
+	@if [ -f cnf/grid/valkey/valkey-server.pid ] ; then \
+		cat cnf/grid/valkey/valkey-server.pid | xargs kill -9; \
+		rm -f cnf/grid/valkey/valkey-server.pid; \
 	fi
 
-clean-redis:
+clean-valkey:
 	rm -rf cnf/grid
 
 dummy:
