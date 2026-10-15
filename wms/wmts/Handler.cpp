@@ -618,7 +618,7 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
 const std::vector<std::string>& Handler::orderedDimensionNames(const std::string& layer) const
 {
   {
-    std::lock_guard<std::mutex> lock(itsDimNamesMutex);
+    std::scoped_lock lock(itsDimNamesMutex);
     auto it = itsDimNamesCache.find(layer);
     if (it != itsDimNamesCache.end())
       return it->second;
@@ -662,7 +662,7 @@ const std::vector<std::string>& Handler::orderedDimensionNames(const std::string
     // Leave empty; caller falls back to query-parameter / default handling.
   }
 
-  std::lock_guard<std::mutex> lock(itsDimNamesMutex);
+  std::scoped_lock lock(itsDimNamesMutex);
   // try_emplace does not move `names` if another thread already cached this
   // layer, so the two-phase locking stays correct.
   return itsDimNamesCache.try_emplace(layer, std::move(names)).first->second;

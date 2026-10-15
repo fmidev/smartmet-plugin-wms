@@ -148,7 +148,7 @@ std::shared_ptr<const Spine::OpenAPI::Definition> OpenApiCache::get(
     const auto modified = wmsConfig.getCapabilitiesModificationTime();
 
     {
-      std::lock_guard<std::mutex> lock(itsMutex);
+      std::scoped_lock lock(itsMutex);
       auto& entry = itsEntries[key];
       entry.used = ++itsCounter;
       if (entry.definition && (entry.modified == modified || entry.building))
@@ -164,14 +164,14 @@ std::shared_ptr<const Spine::OpenAPI::Definition> OpenApiCache::get(
     }
     catch (...)
     {
-      std::lock_guard<std::mutex> lock(itsMutex);
+      std::scoped_lock lock(itsMutex);
       auto it = itsEntries.find(key);
       if (it != itsEntries.end())
         it->second.building = false;
       throw;
     }
 
-    std::lock_guard<std::mutex> lock(itsMutex);
+    std::scoped_lock lock(itsMutex);
     auto& entry = itsEntries[key];
     entry.definition = definition;
     entry.modified = modified;

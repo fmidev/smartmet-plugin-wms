@@ -83,7 +83,7 @@ text_dimension_t getTextDimension(const std::string& text, const text_style_t& t
   // Lock cairo, then re-check the cache in case another thread already
   // inserted while we were waiting — avoids a redundant cairo call and
   // a harmless but wasteful duplicate put().
-  std::lock_guard<std::mutex> lock(g_cairoMutex);
+  std::scoped_lock lock(g_cairoMutex);
 
   if (auto hit = g_dimCache.get(key))
     return **hit;

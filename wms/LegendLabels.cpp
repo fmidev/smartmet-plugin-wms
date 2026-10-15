@@ -109,7 +109,7 @@ std::string LegendLabels::findConversion(double theValue,
     else
     {
       // Format and strip trailing zeros (mirrors LegendLayer::pretty())
-      std::string ret = fmt::sprintf(format->c_str(), theValue);
+      std::string ret = fmt::sprintf(*format, theValue);
       std::size_t pos = ret.size();
       while (pos > 0 && ret[--pos] == '0')
       {
