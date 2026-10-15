@@ -127,7 +127,7 @@ jobs:
           name: Sync artifacts to S3
           command: |
             export PATH=$PATH:~/.local/bin
-            aws s3 cp /dist s3://fmi-smartmet-cicd-beta/centos8/ --recursive
+            aws s3 cp /dist s3://fmi-smartmet-cicd-beta/rhel10/ --recursive
 workflows:
   version: 2.1
   build-test:
