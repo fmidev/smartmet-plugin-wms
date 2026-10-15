@@ -19,23 +19,14 @@ class ColorPainter_shadow : public ColorPainter
     class Shadow
     {
       public:
+       Shadow() { dy = 10; }
 
-        Shadow()
-        {
-          value_min = 0;
-          value_max = 0;
-          color_min = 0x00000000;
-          color_max = 0x40000000;
-          dx = 10;
-          dy = 10;
-        }
-
-        double value_min;
-        double value_max;
-        uint color_min;
-        uint color_max;
-        int dx;
-        int dy;
+       double value_min{0};
+       double value_max{0};
+       uint color_min{0x00000000};
+       uint color_max{0x40000000};
+       int dx{10};
+       int dy;
     };
 
                   ColorPainter_shadow();

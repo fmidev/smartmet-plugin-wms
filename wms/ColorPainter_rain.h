@@ -19,17 +19,11 @@ class ColorPainter_rain : public ColorPainter
     class StreamSpeed
     {
       public:
+       StreamSpeed() {}
 
-        StreamSpeed()
-        {
-          speed = 1.0;
-          value_min = -1000000000;
-          value_max = 1000000000;
-        }
-
-        double speed;
-        double value_min;
-        double value_max;
+       double speed{1.0};
+       double value_min{-1000000000};
+       double value_max{1000000000};
     };
 
                   ColorPainter_rain();

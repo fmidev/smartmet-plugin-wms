@@ -513,7 +513,6 @@ TableCell::TableCell(const std::string& theData, const text_style_t& theTextStyl
 {
   boost::algorithm::split(rows, theData, boost::algorithm::is_any_of("\n"));
   dimension = get_cell_dimension(rows, theTextStyle);
-  yoffset = 0;
 }
 
 TableAttributes::TableAttributes()

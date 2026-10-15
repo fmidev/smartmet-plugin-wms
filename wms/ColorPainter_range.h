@@ -19,23 +19,14 @@ class ColorPainter_range : public ColorPainter
     class Range
     {
       public:
+       Range() { color_high = 0x00000000; }
 
-        Range()
-        {
-          value_min = 0;
-          value_max = 0;
-          color_min = 0x00000000;
-          color_max = 0x00000000;
-          color_low = 0x00000000;
-          color_high = 0x00000000;
-        }
-
-        double value_min;
-        double value_max;
-        uint color_min;
-        uint color_max;
-        uint color_low;
-        uint color_high;
+       double value_min{0};
+       double value_max{0};
+       uint color_min{0x00000000};
+       uint color_max{0x00000000};
+       uint color_low{0x00000000};
+       uint color_high;
     };
 
                   ColorPainter_range();

@@ -66,9 +66,9 @@ LegendGraphicSettings::LegendGraphicSettings(bool initDefaults /*= false*/)
   expires = -1;  // No caching
 }
 
-LegendGraphicSettings::LegendGraphicSettings(const libconfig::Config& config)
+LegendGraphicSettings::LegendGraphicSettings(const libconfig::Config& config) : expires(-1)
 {
-  expires = -1;  // No caching
+  // No caching
 
   if (config.exists("wms.get_legend_graphic"))
   {

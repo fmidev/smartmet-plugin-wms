@@ -26,18 +26,12 @@ class AnimationEffects
     class Effect
     {
       public:
+       Effect() {}
 
-        Effect()
-        {
-          enabled = false;
-          start_step = 0;
-          end_step = 10000;
-        }
-
-        bool enabled;
-        std::string effect;
-        int  start_step;
-        int  end_step;
+       bool enabled{false};
+       std::string effect;
+       int start_step{0};
+       int end_step{10000};
     };
 
   void init(Json::Value& theJson);

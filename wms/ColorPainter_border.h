@@ -19,21 +19,13 @@ class ColorPainter_border : public ColorPainter
     class Border
     {
       public:
+       Border() {}
 
-        Border()
-        {
-          inside_value_min = 0;
-          inside_color = 0x00000000;
-          outside_color = 0x00000000;
-          step_increase = 0;
-          steps = 1;
-        }
-
-        double inside_value_min;
-        double step_increase;
-        uint inside_color;
-        uint outside_color;
-        int steps;
+       double inside_value_min{0};
+       double step_increase{0};
+       uint inside_color{0x00000000};
+       uint outside_color{0x00000000};
+       int steps{1};
     };
 
                   ColorPainter_border();
