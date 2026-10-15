@@ -126,7 +126,6 @@ std::list<const LayerHierarchy*> get_leaf_layers(const LayerHierarchy& lh)
 // tree (InheritedState) to decide whether to suppress output.
 // ----------------------------------------------------------------------
 
-constexpr double EPS = 1e-9;
 
 std::string geo_key(const LayerHierarchy& lh)
 {
