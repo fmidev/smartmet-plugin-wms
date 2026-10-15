@@ -59,7 +59,7 @@ class RasterLayer : public Layer
 
   std::string interpolation{"linear"};
 
-  int compression;
+  int compression = 0;
   std::string painter;
   Parameters painterParameters;
 

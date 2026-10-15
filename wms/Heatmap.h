@@ -35,7 +35,7 @@ class Heatmap
   std::optional<std::string> kernel;
   std::optional<double> deviation;
 
-  unsigned max_points;                          // Configured or default max heatmap size
+  unsigned max_points = 0;                          // Configured or default max heatmap size
   const unsigned max_max_points = 2000 * 2000;  // Max allowed heatmap size
 
  private:

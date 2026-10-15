@@ -59,7 +59,7 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
           rain == kFloatMissing || rform == kFloatMissing)
         continue;
 
-      StationSymbolPriority ssp;
+      StationSymbolPriority ssp{};
       ssp.fmisid = fmisid;
 
       // Transform to screen coordinates

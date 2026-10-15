@@ -35,6 +35,7 @@ class LayerProxy
 
   LayerProxy(const LayerProxy& other) = default;
   LayerProxy& operator=(const LayerProxy& other) = default;
+  ~LayerProxy() = default;
 
   SharedLayer getLayer() const { return itsLayer; }
 

@@ -92,7 +92,7 @@ class Handler
   struct CachedCapabilities
   {
     std::shared_ptr<std::string> body;  // shared so 304/204 paths can drop the body cheaply
-    std::size_t product_hash;           // == Fmi::hash_value(*body); passed to formatResponse
+    std::size_t product_hash = 0;           // == Fmi::hash_value(*body); passed to formatResponse
     std::string etag;                   // == fmt::sprintf("\"%x\"", product_hash)
     Fmi::DateTime config_version;       // == Config::getCapabilitiesModificationTime() at render
     Fmi::DateTime built_at;             // wall-clock at render; used for TTL

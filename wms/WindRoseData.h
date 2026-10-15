@@ -21,14 +21,14 @@ struct WindRoseData
   std::vector<double> percentages;
   std::vector<double> max_winds;
 
-  double mean_wind;
-  double max_wind;
-  double mean_temperature;
+  double mean_wind = 0.0;
+  double max_wind = 0.0;
+  double mean_temperature = 0.0;
 
-  double longitude;
-  double latitude;
+  double longitude = 0.0;
+  double latitude = 0.0;
 
-  bool valid;
+  bool valid = false;
 };
 
 }  // namespace Dali

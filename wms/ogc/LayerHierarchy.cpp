@@ -713,10 +713,6 @@ void emit_group(bool multiple_intervals,
       // Children go into the virtual node's sublayers
       target = &(ctpp[ctpp.Size() - 1]["sublayers"]);
     }
-    else
-    {
-      need_virtual_node = false;
-    }
   }
 
   // Recurse into members

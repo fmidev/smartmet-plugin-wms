@@ -54,6 +54,8 @@ class MVTLayerBuilder
   MVTLayerBuilder(const MVTLayerBuilder&) = delete;
   MVTLayerBuilder& operator=(const MVTLayerBuilder&) = delete;
   MVTLayerBuilder(MVTLayerBuilder&&) = default;
+  MVTLayerBuilder& operator=(MVTLayerBuilder&&) = default;
+  ~MVTLayerBuilder() = default;
 
   /**
    * Add one feature from an OGR geometry with optional attributes.
@@ -112,6 +114,7 @@ class MVTTileBuilder
 
   MVTTileBuilder(const MVTTileBuilder&) = delete;
   MVTTileBuilder& operator=(const MVTTileBuilder&) = delete;
+  ~MVTTileBuilder() = default;
 
   /**
    * Return a layer builder for the given name, creating the layer if needed.

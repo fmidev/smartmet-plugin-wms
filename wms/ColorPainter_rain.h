@@ -34,6 +34,8 @@ class ColorPainter_rain : public ColorPainter
 
                   ColorPainter_rain();
                   ~ColorPainter_rain() override;
+                  ColorPainter_rain(const ColorPainter_rain&) = delete;
+                  ColorPainter_rain& operator=(const ColorPainter_rain&) = delete;
 
     void          init(Json::Value &theJson,const State& theState) override;
     void          initStream(Json::Value &theJson,const State& theState);

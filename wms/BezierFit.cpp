@@ -486,8 +486,8 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
 // Returns (a, b) interval bracketing the root, or (cusp, cusp) if cusp detected.
 struct ItpResult
 {
-  double a;
-  double b;
+  double a = 0.0;
+  double b = 0.0;
   bool cusp_found = false;
 };
 

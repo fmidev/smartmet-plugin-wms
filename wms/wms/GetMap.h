@@ -46,7 +46,7 @@ struct tag_get_map_request_options
   std::optional<int> interval_start;
   std::optional<int> interval_end;
 
-  bool debug;
+  bool debug = false;
 };
 
 class GetMap

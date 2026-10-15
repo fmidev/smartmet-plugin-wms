@@ -33,7 +33,7 @@ class GroupLayer : public Layer
 
   std::size_t hash_value(const State& theState) const override;
 
-  int compression;
+  int compression = 0;
 
  private:
 };  // class GroupLayer

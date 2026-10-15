@@ -22,8 +22,8 @@ class Connector
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  int startoffset;
-  int endoffset;
+  int startoffset = 0;
+  int endoffset = 0;
   Attributes attributes;
 
  private:

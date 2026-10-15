@@ -72,7 +72,7 @@ StationSymbolPriorities PresentWeatherObservationLayer::processResultSet(
         continue;
 
       // Symbol
-      StationSymbolPriority ssp;
+      StationSymbolPriority ssp{};
       ssp.fmisid = fmisid;
       ssp.symbol = get_symbol(wawa);
       if (ssp.symbol <= 0)

@@ -59,8 +59,8 @@ struct LegendGraphicLayout
   std::optional<unsigned int> legend_width;                       // width of one legend
   std::map<std::string, unsigned int> legend_width_per_language;  // legend width per language
   unsigned int
-      output_document_width;  // size of non-automatically generated documents, default 500*500
-  unsigned int output_document_height;
+      output_document_width = 0;  // size of non-automatically generated documents, default 500*500
+  unsigned int output_document_height = 0;
 };
 
 class LegendGraphicSettings

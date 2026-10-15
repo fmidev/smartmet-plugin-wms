@@ -31,9 +31,9 @@ static constexpr double METERS_PER_DEGREE = 111319.49079327357;
 struct TileMatrix
 {
   std::string identifier;     // zoom level id, e.g. "0", "1", ..., "18"
-  double scale_denominator;   // OGC scale denominator
-  double top_left_corner_x;   // in CRS units
-  double top_left_corner_y;
+  double scale_denominator = 0.0;   // OGC scale denominator
+  double top_left_corner_x = 0.0;   // in CRS units
+  double top_left_corner_y = 0.0;
   unsigned tile_width = 256;
   unsigned tile_height = 256;
   unsigned matrix_width = 1;   // number of tiles horizontally at this zoom level
@@ -57,10 +57,10 @@ struct TileMatrixSet
 
 struct TileBBox
 {
-  double min_x;
-  double min_y;
-  double max_x;
-  double max_y;
+  double min_x = 0.0;
+  double min_y = 0.0;
+  double max_x = 0.0;
+  double max_y = 0.0;
   std::string crs;
 };
 

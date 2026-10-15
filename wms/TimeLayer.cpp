@@ -429,7 +429,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       else if (formatter == "strftime")
       {
         auto timeinfo = to_tm(loctime->local_time());
-        std::array<char, 100> buffer;
+        std::array<char, 100> buffer{};
         if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
         {
           throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
@@ -628,7 +628,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       else if (formatter == "strftime")
       {
         auto timeinfo = to_tm(loctime->local_time());
-        std::array<char, 101> buffer;
+        std::array<char, 101> buffer{};
         if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
         {
           throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")

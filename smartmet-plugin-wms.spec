@@ -190,6 +190,7 @@ rm -rf $RPM_BUILD_ROOT
 - Requires 26.10.13 versions of newbase, spine, grid-files, grid-content, engine-observation, engine-grid due to their ABI changes
 - Fixed mechanical clang-tidy findings (internal linkage, unused parameters, initialization, redundant code), no functional changes
 - Fixed clang-tidy style findings (loops, nested conditionals, dead code)
+- Fixed clang-tidy correctness findings (member initialization, rule of five, printf formats, dead stores)
 
 * Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
 - Generated OpenAPI 3.1 definitions of OGC API - Tiles (/tiles/api) and the WMTS RESTful

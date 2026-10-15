@@ -406,7 +406,6 @@ MetarData MetarLayer::parseTAC(const std::string& message,
         if (boost::regex_match(t, varwind_re))
           break;  // wind direction variability group, skip
         // Token doesn't look like wind – fall through to Vis
-        state = S::Vis;
         [[fallthrough]];
 
       // ----------------------------------------------------------

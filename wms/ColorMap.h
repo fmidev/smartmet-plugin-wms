@@ -21,6 +21,7 @@ class ColorMap
     ColorMap(const ColorMap &colorMap);
     ColorMap(const std::string& colorMap);
     virtual ~ColorMap();
+    ColorMap& operator=(const ColorMap&) = default;
 
     virtual void addColor(float value, unsigned int color);
     virtual void setColors(Colors &colors);
