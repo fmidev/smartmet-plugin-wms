@@ -222,7 +222,7 @@ start-valkey-db:
 	@rm -rf cnf/grid
 	@cp -pr $(datadir)/smartmet/test/grid cnf/
 	@echo "*** Creating the Redis configuration file."
-	@smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/valkey/valkey-template.conf cnf/grid/valkey/valkey.conf
+	@smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
 	@echo "*** Starting the Redis database."
 	@valkey-server cnf/grid/valkey/valkey.conf
 
