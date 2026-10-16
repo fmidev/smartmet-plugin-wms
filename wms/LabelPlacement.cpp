@@ -362,6 +362,34 @@ std::pair<double, double> candidateSymbolHalf(const LabelCandidate& c)
           (c.obstacle.y2 - c.obstacle.y1) / 2.0};
 }
 
+// True if the label bbox of candidate i covers the marker of an already kept candidate,
+// or the label of a kept candidate covers the marker of candidate i
+bool conflictsWithKept(size_t i,
+                       const LabelBBox& test_i,
+                       const std::vector<LabelCandidate>& candidates,
+                       const std::vector<LabelBBox>& chosen,
+                       const std::vector<bool>& kept,
+                       double pad)
+{
+  for (size_t j = 0; j < i; j++)
+  {
+    if (!kept[j])
+      continue;
+    const auto& bj = chosen[j];
+    const LabelBBox test_j = (pad > 0.0) ? bj.inflated(pad) : bj;
+
+    // i's label covering j's marker, or j's already-kept label
+    // covering i's marker — either way drop i.
+    const auto& ob_j = candidates[j].obstacle;
+    const auto& ob_i = candidates[i].obstacle;
+    if (ob_j.valid() && test_i.overlaps(ob_j))
+      return true;
+    if (ob_i.valid() && test_j.overlaps(ob_i))
+      return true;
+  }
+  return false;
+}
+
 std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
                                         const std::vector<LabelCandidate>& candidates,
                                         double /*map_w*/, double /*map_h*/,
@@ -409,29 +437,7 @@ std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
       continue;
     }
 
-    bool conflict = false;
-    for (size_t j = 0; j < i; j++)
-    {
-      if (!kept[j])
-        continue;
-      const auto& bj = chosen[j];
-      const LabelBBox test_j = (pad > 0.0) ? bj.inflated(pad) : bj;
-
-      // i's label covering j's marker, or j's already-kept label
-      // covering i's marker — either way drop i.
-      const auto& ob_j = candidates[j].obstacle;
-      const auto& ob_i = candidates[i].obstacle;
-      if (ob_j.valid() && test_i.overlaps(ob_j))
-      {
-        conflict = true;
-        break;
-      }
-      if (ob_i.valid() && test_j.overlaps(ob_i))
-      {
-        conflict = true;
-        break;
-      }
-    }
+    const bool conflict = conflictsWithKept(i, test_i, candidates, chosen, kept, pad);
     kept[i] = !conflict;
   }
 
