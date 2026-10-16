@@ -354,6 +354,26 @@ void check_namespace_length(const std::string& pattern,
         .addParameter("Maximum length", std::to_string(max_length));
 }
 
+// Append the layer capabilities unless they are outside the requested namespace
+void push_layer_capabilities(CTPP::CDT& layersCapabilities,
+                             const CTPP::CDT& cdt,
+                             const std::optional<std::string>& wms_namespace)
+{
+  if (!wms_namespace)
+  {
+    layersCapabilities.PushBack(cdt);
+  }
+  else
+  {
+    // Return capability only if the namespace matches
+    if (cdt.Exists("name"))
+    {
+      std::string name = cdt["name"].GetString();
+      if (OGC::match_namespace_pattern(name, *wms_namespace))
+        layersCapabilities.PushBack(cdt);
+    }
+  }
+}
 }  // namespace
 
 CTPP::CDT Config::get_request(const libconfig::Config& config,
@@ -1303,22 +1323,7 @@ CTPP::CDT Config::getCapabilities(const std::optional<std::string>& apikey,
 
       // Note: The std::optional is empty for hidden layers.
       if (cdt)
-      {
-        if (!wms_namespace)
-        {
-          layersCapabilities.PushBack(*cdt);
-        }
-        else
-        {
-          // Return capability only if the namespace matches
-          if (cdt->Exists("name"))
-          {
-            std::string name = (*cdt)["name"].GetString();
-            if (OGC::match_namespace_pattern(name, *wms_namespace))
-              layersCapabilities.PushBack(*cdt);
-          }
-        }
-      }
+        push_layer_capabilities(layersCapabilities, *cdt, wms_namespace);
     }
 
     return layersCapabilities;
