@@ -602,6 +602,14 @@ std::size_t reject_too_close_candidates(Statuses& status, const BadPairList& bad
   return count;
 }
 
+// Accept the candidate and reject the ones too close to it. Returns the number of candidates
+// which are no longer undecided.
+std::size_t accept_candidate(Statuses& status, const BadPairs& bad_pairs, std::size_t i)
+{
+  status[i] = Status::Accepted;
+  return 1 + reject_too_close_candidates(status, bad_pairs[i]);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Assign weights for candidates
@@ -1272,36 +1280,28 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
     const auto status2 = status[j];
 
     // rejected candidates do not count in building the tree
-    if (status1 != Status::Rejected && status2 != Status::Rejected)
-    {
-      // nothing to do if both candidates already accepted
-      if (status1 != Status::Accepted && status2 != Status::Accepted)
-      {
-        // Now we have either undecided-undecided or accpeted-undecided, and we
-        // must do the Kruskal test to see if the edge would build up the tree
+    if (status1 == Status::Rejected || status2 == Status::Rejected)
+      continue;
 
-        if (kruskal_test(edge, parents))
-        {
-          // Add the new candidate. Each Undecided reduces the remaining number of available
-          // candidates by one, plus the number of new candidates it rejects (some may have been
-          // rejected already, hence the size of the bad_pairs[x] container is not sufficient here,
-          // but must be explicitly counted in the function.
+    // nothing to do if both candidates already accepted
+    if (status1 == Status::Accepted || status2 == Status::Accepted)
+      continue;
 
-          if (status1 == Status::Undecided)
-          {
-            status[i] = Status::Accepted;
-            --undecided;
-            undecided -= reject_too_close_candidates(status, bad_pairs[i]);
-          }
-          if (status2 == Status::Undecided)
-          {
-            status[j] = Status::Accepted;
-            --undecided;
-            undecided -= reject_too_close_candidates(status, bad_pairs[j]);
-          }
-        }
-      }
-    }
+    // Now we have either undecided-undecided or accpeted-undecided, and we
+    // must do the Kruskal test to see if the edge would build up the tree
+
+    if (!kruskal_test(edge, parents))
+      continue;
+
+    // Add the new candidate. Each Undecided reduces the remaining number of available
+    // candidates by one, plus the number of new candidates it rejects (some may have been
+    // rejected already, hence the size of the bad_pairs[x] container is not sufficient here,
+    // but must be explicitly counted in the function.
+
+    if (status1 == Status::Undecided)
+      undecided -= accept_candidate(status, bad_pairs, i);
+    if (status2 == Status::Undecided)
+      undecided -= accept_candidate(status, bad_pairs, j);
   }
 
   // Return accepted candidates only, not Undecided ones too
