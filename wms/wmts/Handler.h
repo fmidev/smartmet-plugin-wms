@@ -105,6 +105,17 @@ class Handler
                                    const std::string& info_format,
                                    const std::vector<std::string>& dimensionValues = {});
 
+  QueryStatus routeGetFeatureInfo(const Spine::Reactor& theReactor,
+                                  Dali::State& theState,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse,
+                                  const std::vector<std::string>& parts);
+
+  QueryStatus routeGetTile(Dali::State& theState,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& theResponse,
+                           const std::vector<std::string>& parts);
+
   QueryStatus generateTile(Dali::State& theState,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse,

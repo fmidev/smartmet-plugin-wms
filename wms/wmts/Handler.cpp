@@ -176,6 +176,131 @@ void Handler::shutdown()
 
 // -----------------------------------------------------------------------
 /*!
+ * \brief Parse a RESTful GetFeatureInfo path and route it to handleGetFeatureInfo
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::routeGetFeatureInfo(const Spine::Reactor& theReactor,
+                                         Dali::State& theState,
+                                         const Spine::HTTP::Request& theRequest,
+                                         Spine::HTTP::Response& theResponse,
+                                         const std::vector<std::string>& parts)
+{
+  const std::size_t n = parts.size();
+  const std::string& layer   = parts[1];
+  const std::string& style   = parts[2];
+  const std::string& tms_id  = parts[n - 6];
+  const std::string& tm_id   = parts[n - 5];
+  const std::string& row_str = parts[n - 4];
+  const std::string& col_str = parts[n - 3];
+  const std::string& j_str   = parts[n - 2];
+  const std::string& i_str   = parts[n - 1];  // "{I}.{ext}"
+
+  std::vector<std::string> dimensionValues(parts.begin() + 3, parts.begin() + (n - 6));
+
+  unsigned tile_row = 0;
+  unsigned tile_col = 0;
+  unsigned pixel_j = 0;
+  unsigned pixel_i = 0;
+  std::string ext;
+
+  try
+  {
+    tile_row = Fmi::stoul(row_str);
+    tile_col = Fmi::stoul(col_str);
+    pixel_j = Fmi::stoul(j_str);
+  }
+  catch (...)
+  {
+    sendException("InvalidParameterValue",
+                  "Invalid TileRow/TileCol/J in FeatureInfo URL",
+                  theState, theRequest, theResponse);
+    return QueryStatus::OK;
+  }
+
+  if (!parseColAndFormat(i_str, pixel_i, ext))
+  {
+    sendException("InvalidParameterValue",
+                  "Invalid I or info format: " + i_str,
+                  theState, theRequest, theResponse);
+    return QueryStatus::OK;
+  }
+
+  std::string info_format;
+  if (ext == "json")
+    info_format = "application/json";
+  else if (ext == "html")
+    info_format = "text/html";
+  else
+  {
+    sendException("InvalidParameterValue",
+                  "Unsupported info format: " + ext,
+                  theState, theRequest, theResponse);
+    return QueryStatus::OK;
+  }
+
+  return handleGetFeatureInfo(theReactor, theState, theRequest, theResponse,
+                              layer, style, tms_id, tm_id,
+                              tile_row, tile_col, pixel_j, pixel_i,
+                              info_format, dimensionValues);
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief Parse a RESTful GetTile path and route it to handleGetTile
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::routeGetTile(Dali::State& theState,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse,
+                                  const std::vector<std::string>& parts)
+{
+  const std::size_t n = parts.size();
+  const std::string& layer   = parts[1];
+  const std::string& style   = parts[2];
+  const std::string& tms_id  = parts[n - 4];
+  const std::string& tm_id   = parts[n - 3];
+  const std::string& row_str = parts[n - 2];
+  const std::string& col_str = parts[n - 1];
+
+  // Dimension values sit between the style (index 2) and the 4-segment tail.
+  std::vector<std::string> dimensionValues(parts.begin() + 3, parts.begin() + (n - 4));
+
+  unsigned tile_row = 0;
+  unsigned tile_col = 0;
+  std::string ext;
+
+  try { tile_row = Fmi::stoul(row_str); }
+  catch (...)
+  {
+    sendException("InvalidParameterValue", "Invalid TileRow: " + row_str,
+                  theState, theRequest, theResponse);
+    return QueryStatus::OK;
+  }
+
+  if (!parseColAndFormat(col_str, tile_col, ext))
+  {
+    sendException("InvalidParameterValue",
+                  "Invalid TileCol or format: " + col_str,
+                  theState, theRequest, theResponse);
+    return QueryStatus::OK;
+  }
+
+  std::string mime_type = extensionToMimeType(ext);
+  if (mime_type.empty())
+  {
+    sendException("InvalidParameterValue",
+                  "Unsupported tile format: " + ext,
+                  theState, theRequest, theResponse);
+    return QueryStatus::OK;
+  }
+
+  return handleGetTile(theState, theRequest, theResponse,
+                       layer, style, tms_id, tm_id,
+                       tile_row, tile_col, mime_type, dimensionValues);
+}
+
+// -----------------------------------------------------------------------
+/*!
  * \brief Main WMTS query entry point — parses REST path and routes request
  */
 // -----------------------------------------------------------------------
@@ -218,62 +343,7 @@ QueryStatus Handler::query(const Spine::Reactor& theReactor,
       const std::size_t n = parts.size();
       if (itsWMTSConfig->findTileMatrixSet(parts[n - 6]) != nullptr)
       {
-        const std::string& layer   = parts[1];
-        const std::string& style   = parts[2];
-        const std::string& tms_id  = parts[n - 6];
-        const std::string& tm_id   = parts[n - 5];
-        const std::string& row_str = parts[n - 4];
-        const std::string& col_str = parts[n - 3];
-        const std::string& j_str   = parts[n - 2];
-        const std::string& i_str   = parts[n - 1];  // "{I}.{ext}"
-
-        std::vector<std::string> dimensionValues(parts.begin() + 3, parts.begin() + (n - 6));
-
-        unsigned tile_row = 0;
-        unsigned tile_col = 0;
-        unsigned pixel_j = 0;
-        unsigned pixel_i = 0;
-        std::string ext;
-
-        try
-        {
-          tile_row = Fmi::stoul(row_str);
-          tile_col = Fmi::stoul(col_str);
-          pixel_j = Fmi::stoul(j_str);
-        }
-        catch (...)
-        {
-          sendException("InvalidParameterValue",
-                        "Invalid TileRow/TileCol/J in FeatureInfo URL",
-                        theState, theRequest, theResponse);
-          return QueryStatus::OK;
-        }
-
-        if (!parseColAndFormat(i_str, pixel_i, ext))
-        {
-          sendException("InvalidParameterValue",
-                        "Invalid I or info format: " + i_str,
-                        theState, theRequest, theResponse);
-          return QueryStatus::OK;
-        }
-
-        std::string info_format;
-        if (ext == "json")
-          info_format = "application/json";
-        else if (ext == "html")
-          info_format = "text/html";
-        else
-        {
-          sendException("InvalidParameterValue",
-                        "Unsupported info format: " + ext,
-                        theState, theRequest, theResponse);
-          return QueryStatus::OK;
-        }
-
-        return handleGetFeatureInfo(theReactor, theState, theRequest, theResponse,
-                                    layer, style, tms_id, tm_id,
-                                    tile_row, tile_col, pixel_j, pixel_i,
-                                    info_format, dimensionValues);
+        return routeGetFeatureInfo(theReactor, theState, theRequest, theResponse, parts);
       }
     }
 
@@ -287,49 +357,7 @@ QueryStatus Handler::query(const Spine::Reactor& theReactor,
     // this reduces to the original fixed layout.
     if (parts.size() >= 7)
     {
-      const std::size_t n = parts.size();
-      const std::string& layer   = parts[1];
-      const std::string& style   = parts[2];
-      const std::string& tms_id  = parts[n - 4];
-      const std::string& tm_id   = parts[n - 3];
-      const std::string& row_str = parts[n - 2];
-      const std::string& col_str = parts[n - 1];
-
-      // Dimension values sit between the style (index 2) and the 4-segment tail.
-      std::vector<std::string> dimensionValues(parts.begin() + 3, parts.begin() + (n - 4));
-
-      unsigned tile_row = 0;
-      unsigned tile_col = 0;
-      std::string ext;
-
-      try { tile_row = Fmi::stoul(row_str); }
-      catch (...)
-      {
-        sendException("InvalidParameterValue", "Invalid TileRow: " + row_str,
-                      theState, theRequest, theResponse);
-        return QueryStatus::OK;
-      }
-
-      if (!parseColAndFormat(col_str, tile_col, ext))
-      {
-        sendException("InvalidParameterValue",
-                      "Invalid TileCol or format: " + col_str,
-                      theState, theRequest, theResponse);
-        return QueryStatus::OK;
-      }
-
-      std::string mime_type = extensionToMimeType(ext);
-      if (mime_type.empty())
-      {
-        sendException("InvalidParameterValue",
-                      "Unsupported tile format: " + ext,
-                      theState, theRequest, theResponse);
-        return QueryStatus::OK;
-      }
-
-      return handleGetTile(theState, theRequest, theResponse,
-                           layer, style, tms_id, tm_id,
-                           tile_row, tile_col, mime_type, dimensionValues);
+      return routeGetTile(theState, theRequest, theResponse, parts);
     }
 
     sendException("OperationNotSupported",
