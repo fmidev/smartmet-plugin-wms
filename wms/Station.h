@@ -39,6 +39,8 @@ class Station
   std::optional<int> dx;
   std::optional<int> dy;
 
+ private:
+  void validate() const;
 };  // class Station
 
 }  // namespace Dali

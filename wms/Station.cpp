@@ -13,6 +13,42 @@ namespace Dali
 {
 // ----------------------------------------------------------------------
 /*!
+ * \brief Check that the station is uniquely identified
+ */
+// ----------------------------------------------------------------------
+
+void Station::validate() const
+{
+  // Make sure the selection is unique. For historical reasons
+  // we allow the coordinates to be specified even if an unique
+  // ID is given, otherwise the WindRose test would break.
+
+  int count = 0;
+  if (fmisid)
+    ++count;
+  if (lpnn)
+    ++count;
+  if (wmo)
+    ++count;
+  if (geoid)
+    ++count;
+
+  if (count == 0)
+    throw Fmi::Exception(
+        BCP, "Station does not specify any of fmisid, lpnn, wmo, geoid or latlon coordinates");
+  if (count > 1)
+    throw Fmi::Exception(
+        BCP,
+        "Station must be defined by only one of fmisid, lpnn, wmo, geoid or latlon coordinates");
+
+  if (longitude && !latitude)
+    throw Fmi::Exception(BCP, "Station latitude missing");
+  if (!longitude && latitude)
+    throw Fmi::Exception(BCP, "Station longitude missing");
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize from JSON
  *
  * We allow initializing from an integer, which we interpret to
@@ -75,32 +111,7 @@ void Station::init(Json::Value& theJson, const Config& theConfig)
         throw Fmi::Exception(BCP, "Station does not have a setting named '" + name + "'");
     }
 
-    // Make sure the selection is unique. For historical reasons
-    // we allow the coordinates to be specified even if an unique
-    // ID is given, otherwise the WindRose test would break.
-
-    int count = 0;
-    if (fmisid)
-      ++count;
-    if (lpnn)
-      ++count;
-    if (wmo)
-      ++count;
-    if (geoid)
-      ++count;
-
-    if (count == 0)
-      throw Fmi::Exception(
-          BCP, "Station does not specify any of fmisid, lpnn, wmo, geoid or latlon coordinates");
-    if (count > 1)
-      throw Fmi::Exception(
-          BCP,
-          "Station must be defined by only one of fmisid, lpnn, wmo, geoid or latlon coordinates");
-
-    if (longitude && !latitude)
-      throw Fmi::Exception(BCP, "Station latitude missing");
-    if (!longitude && latitude)
-      throw Fmi::Exception(BCP, "Station longitude missing");
+    validate();
   }
   catch (...)
   {
