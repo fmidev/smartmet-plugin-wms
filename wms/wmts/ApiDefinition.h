@@ -22,6 +22,10 @@ namespace WMTS
 class Config;
 
 // The definition of /wmts. Paths are relative to the WMTS root URL.
+// The title and description of the API, also used in the API catalog
+extern const char* const API_TITLE;
+extern const char* const API_DESCRIPTION;
+
 Spine::OpenAPI::Document apiDefinition(const Config& config,
                                        const std::vector<OGC::OpenApiLayer>& layers,
                                        const Spine::OpenAPI::Settings& settings);

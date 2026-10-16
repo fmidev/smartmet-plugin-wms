@@ -11,6 +11,11 @@ namespace Plugin
 {
 namespace WMTS
 {
+const char* const API_TITLE = "SmartMet WMTS";
+const char* const API_DESCRIPTION =
+    "The RESTful interface of the Web Map Tile Service (WMTS 1.0.0) of the WMS layers. The "
+    "capabilities document lists the layers, styles, tile matrix sets and dimensions.";
+
 namespace
 {
 namespace OA = Spine::OpenAPI;
@@ -182,12 +187,7 @@ Spine::OpenAPI::Document apiDefinition(const Config& config,
   {
     const auto max_enum = settings.max_enum;
 
-    OA::Document doc("SmartMet WMTS",
-                     "The RESTful interface of the Web Map Tile Service (WMTS 1.0.0) of the WMS "
-                     "layers. The capabilities document lists the layers, styles, tile matrix "
-                     "sets and dimensions.",
-                     "1.0.0",
-                     settings);
+    OA::Document doc(API_TITLE, API_DESCRIPTION, "1.0.0", settings);
     doc.addTag(TAG_CAPABILITIES, "The capabilities and the API definition");
     doc.addTag(TAG_TILES, "Tiles and feature info");
     doc.json()["externalDocs"]["description"] = "OGC Web Map Tile Service 1.0.0 (07-057r7)";

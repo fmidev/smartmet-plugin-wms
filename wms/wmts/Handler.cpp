@@ -126,7 +126,10 @@ void Handler::init(std::unique_ptr<Config> wmtsConfig)
 
   auto settings = Spine::OpenAPI::Settings::parse(itsDaliConfig.getConfig());
   if (settings.enabled)
+  {
     itsApi = std::make_unique<Spine::OpenAPI::Publisher>(std::move(settings));
+    itsApi->addToCatalog(itsDaliConfig.wmtsUrl(), API_TITLE, API_DESCRIPTION);
+  }
 }
 
 // -----------------------------------------------------------------------

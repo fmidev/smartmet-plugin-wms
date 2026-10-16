@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.16
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.10.16
 BuildRequires: smartmet-library-grid-content-devel >= 26.10.16
 BuildRequires: smartmet-library-grid-files-devel >= 26.10.16
 BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
-BuildRequires: smartmet-library-spine-devel >= 26.10.16
+BuildRequires: smartmet-library-spine-devel >= 26.10.16-2
 BuildRequires: smartmet-library-timeseries-devel >= 26.10.16
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.10.16
@@ -85,7 +85,7 @@ Requires: smartmet-library-grid-files >= 26.10.16
 Requires: smartmet-library-gis >= 26.10.16
 Requires: smartmet-library-trax >= 26.10.16
 Requires: smartmet-library-macgyver >= 26.10.16
-Requires: smartmet-library-spine >= 26.10.16
+Requires: smartmet-library-spine >= 26.10.16-2
 Requires: smartmet-swagger-ui
 Requires: smartmet-library-timeseries >= 26.10.16
 Requires: smartmet-library-giza >= 26.10.16
@@ -104,7 +104,7 @@ Requires: smartmet-engine-grid >= 26.10.16
 Requires: smartmet-engine-geonames >= 26.10.16
 Requires: smartmet-engine-satellite >= 26.10.16
 Requires: smartmet-server >= 26.10.16
-Requires: smartmet-library-spine >= 26.10.16
+Requires: smartmet-library-spine >= 26.10.16-2
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -139,7 +139,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 26.10.16
 #TestRequires: smartmet-library-newbase-devel >= 26.10.16
 #TestRequires: smartmet-library-macgyver-devel >= 26.10.16
-#TestRequires: smartmet-library-spine-devel >= 26.10.16
+#TestRequires: smartmet-library-spine-devel >= 26.10.16-2
 #TestRequires: smartmet-library-timeseries-devel >= 26.10.16
 #TestRequires: smartmet-engine-grid-devel >= 26.10.16
 #TestRequires: smartmet-library-grid-files-test >= 26.10.16
@@ -185,6 +185,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-2.fmi
+- OGC API - Tiles and WMTS are listed in the API catalog of the server (/api)
+
 * Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
 - Fixed compiler warnings and clang-tidy findings (unused code, unreachable code, empty statements, member initialization, parameter passing, noexcept), no functional changes
 
