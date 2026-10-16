@@ -96,6 +96,30 @@ PointValues read_gridForecasts(const Positions::Point& point,
   }
 }
 
+
+// The label of the value from the conversions of a legend layer, or an empty string
+std::string legend_layer_label(const Json::Value& layer_json,
+                               double theValue,
+                               const std::optional<std::string>& language,
+                               const Config& config)
+{
+  Json::Value nulljson;
+  if (!layer_json.isObject())
+    return {};
+  const auto layer_type = layer_json.get("layer_type", nulljson);
+  if (!layer_type.isString() || layer_type.asString() != "legend")
+    return {};
+
+  const auto& labels_json = layer_json.get("labels", nulljson);
+  if (labels_json.isNull() || !labels_json.isObject())
+    return {};
+
+  LegendLabels labels;
+  Json::Value labels_copy = labels_json;
+  labels.init(labels_copy, config);
+
+  return labels.findConversion(theValue, language);
+}
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -778,21 +802,7 @@ std::string Layer::getLegendLabelText(double theValue, const State& theState) co
 
       for (const auto& layer_json : layers_json)
       {
-        if (!layer_json.isObject())
-          continue;
-        const auto layer_type = layer_json.get("layer_type", nulljson);
-        if (!layer_type.isString() || layer_type.asString() != "legend")
-          continue;
-
-        const auto& labels_json = layer_json.get("labels", nulljson);
-        if (labels_json.isNull() || !labels_json.isObject())
-          continue;
-
-        LegendLabels labels;
-        Json::Value labels_copy = labels_json;
-        labels.init(labels_copy, config);
-
-        const auto text = labels.findConversion(theValue, language);
+        const auto text = legend_layer_label(layer_json, theValue, language, config);
         if (!text.empty())
           return text;
       }
