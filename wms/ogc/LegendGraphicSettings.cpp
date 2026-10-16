@@ -42,6 +42,13 @@ std::vector<std::string> language_codes = {
     "th", "bo", "ti",      "to",      "ts", "tr", "tk", "tw", "ug", "uk",   "ur", "uz", "ve", "vi",
     "vo", "wa", "cy",      "wo",      "fy", "xh", "yi", "ji", "yo", "za",   "zu"};
 
+// Replace the target value with the source value if the source value is set
+template <typename T>
+void set_if_given(T& target, const T& source)
+{
+  if (source)
+    target = source;
+}
 }  // namespace
 
 LegendGraphicSettings::LegendGraphicSettings(bool initDefaults /*= false*/)
@@ -255,28 +262,17 @@ void LegendGraphicSettings::merge(const LegendGraphicSettings& settings)
     symbolsToIgnore.insert(settings.symbolsToIgnore.begin(), settings.symbolsToIgnore.end());
 
   // Layout settings
-  if (settings.layout.param_name_xoffset)
-    layout.param_name_xoffset = settings.layout.param_name_xoffset;
-  if (settings.layout.param_name_yoffset)
-    layout.param_name_yoffset = settings.layout.param_name_yoffset;
-  if (settings.layout.param_unit_xoffset)
-    layout.param_unit_xoffset = settings.layout.param_unit_xoffset;
-  if (settings.layout.param_unit_yoffset)
-    layout.param_unit_yoffset = settings.layout.param_unit_yoffset;
-  if (settings.layout.symbol_group_x_padding)
-    layout.symbol_group_x_padding = settings.layout.symbol_group_x_padding;
-  if (settings.layout.symbol_group_y_padding)
-    layout.symbol_group_y_padding = settings.layout.symbol_group_y_padding;
-  if (settings.layout.symbol_text_xoffset)
-    layout.symbol_text_xoffset = settings.layout.symbol_text_xoffset;
-  if (settings.layout.symbol_text_yoffset)
-    layout.symbol_text_yoffset = settings.layout.symbol_text_yoffset;
-  if (settings.layout.legend_xoffset)
-    layout.legend_xoffset = settings.layout.legend_xoffset;
-  if (settings.layout.legend_yoffset)
-    layout.legend_yoffset = settings.layout.legend_yoffset;
-  if (settings.layout.legend_width)
-    layout.legend_width = settings.layout.legend_width;
+  set_if_given(layout.param_name_xoffset, settings.layout.param_name_xoffset);
+  set_if_given(layout.param_name_yoffset, settings.layout.param_name_yoffset);
+  set_if_given(layout.param_unit_xoffset, settings.layout.param_unit_xoffset);
+  set_if_given(layout.param_unit_yoffset, settings.layout.param_unit_yoffset);
+  set_if_given(layout.symbol_group_x_padding, settings.layout.symbol_group_x_padding);
+  set_if_given(layout.symbol_group_y_padding, settings.layout.symbol_group_y_padding);
+  set_if_given(layout.symbol_text_xoffset, settings.layout.symbol_text_xoffset);
+  set_if_given(layout.symbol_text_yoffset, settings.layout.symbol_text_yoffset);
+  set_if_given(layout.legend_xoffset, settings.layout.legend_xoffset);
+  set_if_given(layout.legend_yoffset, settings.layout.legend_yoffset);
+  set_if_given(layout.legend_width, settings.layout.legend_width);
   // Replace widths per language if exist
   for (const auto& item : settings.layout.legend_width_per_language)
   {
