@@ -1019,6 +1019,28 @@ Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geo
   return candidates;
 }
 
+namespace
+{
+// Turn the label to point towards the higher values and then upright if so requested
+void orient_label(double& angle, double value, double isovalue, bool upright)
+{
+  if (value < isovalue)
+  {
+    angle = angle + 180;
+    if (angle > 360)
+      angle -= 360;
+  }
+
+  // Force labels upright if so requested
+  if (upright && (angle < -90 || angle > 90))
+  {
+    angle += 180;
+    if (angle > 360)
+      angle -= 360;
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Fix label orientations by peeking at querydata values.
@@ -1072,44 +1094,30 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
     if (!transformation.transform(x, y))
     {
       cand.angle = std::numeric_limits<double>::quiet_NaN();
+      continue;
     }
+
+    // Must convert to native geocentric coordinates since the API does not support WorldXY
+    // interpolation
+    NFmiPoint latlon = q->area().WorldXYToLatLon(NFmiPoint(x, y));
+
+    // Q API SUCKS!!
+    Spine::Location loc(latlon.X(), latlon.Y());
+    Engine::Querydata::ParameterOptions options(
+        param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
+
+    auto result = q->value(options, localdatetime);
+
+    double tmp = cand.isovalue;
+
+    if (const double* ptr = std::get_if<double>(&result))
+      tmp = *ptr;
+    else if (const int* ptr = std::get_if<int>(&result))
+      tmp = *ptr;
     else
-    {
-      // Must convert to native geocentric coordinates since the API does not support WorldXY
-      // interpolation
-      NFmiPoint latlon = q->area().WorldXYToLatLon(NFmiPoint(x, y));
+      cand.angle = std::numeric_limits<double>::quiet_NaN();
 
-      // Q API SUCKS!!
-      Spine::Location loc(latlon.X(), latlon.Y());
-      Engine::Querydata::ParameterOptions options(
-          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
-
-      auto result = q->value(options, localdatetime);
-
-      double tmp = cand.isovalue;
-
-      if (const double* ptr = std::get_if<double>(&result))
-        tmp = *ptr;
-      else if (const int* ptr = std::get_if<int>(&result))
-        tmp = *ptr;
-      else
-        cand.angle = std::numeric_limits<double>::quiet_NaN();
-
-      if (tmp < cand.isovalue)
-      {
-        cand.angle = cand.angle + 180;
-        if (cand.angle > 360)
-          cand.angle -= 360;
-      }
-
-      // Force labels upright if so requested
-      if (upright && (cand.angle < -90 || cand.angle > 90))
-      {
-        cand.angle += 180;
-        if (cand.angle > 360)
-          cand.angle -= 360;
-      }
-    }
+    orient_label(cand.angle, tmp, cand.isovalue, upright);
   }
 }
 
