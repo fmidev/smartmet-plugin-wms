@@ -485,6 +485,42 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
   }
 }
 
+namespace
+{
+// Convert the SVG to the requested binary image format
+std::string convertSvg(const std::string &theSvg,
+                       const std::string &theType,
+                       const Product &theProduct)
+{
+  if (theType == "png")
+    return Giza::Svg::topng(theSvg, theProduct.png.options);
+
+  if (theType == "webp")
+  {
+    if (!theProduct.webp.frames)
+      return Giza::Svg::towebp(theSvg, theProduct.png.options, theProduct.webp.options);
+
+    // Animated WebP: render one frame per time animation bucket
+    const int nframes = *theProduct.webp.frames;
+    std::vector<std::string> svgs;
+    svgs.reserve(nframes);
+    for (int i = 0; i < nframes; i++)
+      svgs.push_back(injectFrameStyle(theSvg, i, theProduct.webp.accumulate));
+    std::vector<int> durations(nframes, theProduct.webp.frame_duration);
+    return Giza::Svg::towebpanim(
+        svgs, durations, theProduct.webp.loop, theProduct.png.options, theProduct.webp.options);
+  }
+
+  if (theType == "pdf")
+    return Giza::Svg::topdf(theSvg);
+
+  if (theType == "ps")
+    return Giza::Svg::tops(theSvg);
+
+  throw Fmi::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Convert the SVG to the response object
@@ -540,36 +576,7 @@ void Plugin::formatResponse(const std::string &theSvg,
         mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
 
-      std::shared_ptr<std::string> buffer;
-      if (theType == "png")
-        buffer = std::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
-      else if (theType == "webp")
-      {
-        if (theProduct.webp.frames)
-        {
-          // Animated WebP: render one frame per time animation bucket
-          const int nframes = *theProduct.webp.frames;
-          std::vector<std::string> svgs;
-          svgs.reserve(nframes);
-          for (int i = 0; i < nframes; i++)
-            svgs.push_back(injectFrameStyle(theSvg, i, theProduct.webp.accumulate));
-          std::vector<int> durations(nframes, theProduct.webp.frame_duration);
-          buffer = std::make_shared<std::string>(Giza::Svg::towebpanim(svgs,
-                                                                       durations,
-                                                                       theProduct.webp.loop,
-                                                                       theProduct.png.options,
-                                                                       theProduct.webp.options));
-        }
-        else
-          buffer = std::make_shared<std::string>(
-              Giza::Svg::towebp(theSvg, theProduct.png.options, theProduct.webp.options));
-      }
-      else if (theType == "pdf")
-        buffer = std::make_shared<std::string>(Giza::Svg::topdf(theSvg));
-      else if (theType == "ps")
-        buffer = std::make_shared<std::string>(Giza::Svg::tops(theSvg));
-      else
-        throw Fmi::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
+      auto buffer = std::make_shared<std::string>(convertSvg(theSvg, theType, theProduct));
 
       auto etag = (theHash != Fmi::bad_hash) ? theHash : Fmi::hash_value(*buffer);
       itsImageCache->insert(etag, buffer);
