@@ -118,6 +118,34 @@ void Attributes::init(Json::Value& theJson, const Config& /* theConfig */)
   }
 }
 
+namespace
+{
+// Build the value of the style attribute from the presentation attributes
+std::string style_text(const std::map<std::string, std::string>& style)
+{
+  std::string text;
+  for (const auto& name_value : style)
+  {
+    if (!text.empty())
+      text += "; ";
+
+    if (name_value.second.substr(0, 5) == "url(#")
+    {
+      auto found = name_value.second.find('?');
+      if (found != std::string::npos)
+        text += name_value.first + ':' + name_value.second.substr(0, found) + ")";
+      else
+        text += name_value.first + ':' + name_value.second;
+    }
+    else
+    {
+      text += name_value.first + ':' + name_value.second;
+    }
+  }
+  return text;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Add the attributes to the CDT
@@ -181,25 +209,7 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
 
     if (!style.empty())
     {
-      std::string text;
-      for (const auto& name_value : style)
-      {
-        if (!text.empty())
-          text += "; ";
-
-        if (name_value.second.substr(0, 5) == "url(#")
-        {
-          auto found = name_value.second.find('?');
-          if (found != std::string::npos)
-            text += name_value.first + ':' + name_value.second.substr(0, found) + ")";
-          else
-            text += name_value.first + ':' + name_value.second;
-        }
-        else
-        {
-          text += name_value.first + ':' + name_value.second;
-        }
-      }
+      std::string text = style_text(style);
       attrs["style"] = Fmi::safexmlescape(text);
     }
 
