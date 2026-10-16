@@ -104,7 +104,7 @@ class Layer
 
  public:
   virtual ~Layer() = default;
-  Layer(const LayerConfig& lc);
+  Layer(LayerConfig lc);
   Layer(const Layer& other) = delete;
   Layer(Layer&& other) = delete;
   Layer& operator=(const Layer& other) = delete;

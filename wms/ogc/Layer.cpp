@@ -1,10 +1,10 @@
 #include "Layer.h"
 #include "../CaseInsensitiveComparator.h"
-#include "StyleSelection.h"
-#include "../TextUtility.h"
 #include "../Config.h"
-#include "LayerConfig.h"
+#include "../TextUtility.h"
 #include "../wms/Exception.h"
+#include "LayerConfig.h"
+#include "StyleSelection.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -18,6 +18,7 @@
 #include <macgyver/TimeParser.h>
 #include <algorithm>
 #include <ogr_spatialref.h>
+#include <utility>
 
 namespace SmartMet
 {
@@ -1139,7 +1140,7 @@ NamedLegendGraphicInfo get_named_info(const Json::Value& root,
 }  // namespace
 
 // Remember to run updateLayerMetaData before using the layer!
-Layer::Layer(const LayerConfig& lc) : queryable(true), config(lc)
+Layer::Layer(LayerConfig lc) : queryable(true), config(std::move(lc))
 {
   config.getDaliConfig().getConfig().lookupValue("wms.get_capabilities.update_interval",
                                                     metadataUpdateInterval);

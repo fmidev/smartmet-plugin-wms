@@ -19,7 +19,7 @@ class ColorPainter_border : public ColorPainter
     class Border
     {
       public:
-       Border() {}
+       Border() = default;
 
        double inside_value_min{0};
        double step_increase{0};

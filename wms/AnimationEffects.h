@@ -26,7 +26,7 @@ class AnimationEffects
     class Effect
     {
       public:
-       Effect() {}
+       Effect() = default;
 
        bool enabled{false};
        std::string effect;

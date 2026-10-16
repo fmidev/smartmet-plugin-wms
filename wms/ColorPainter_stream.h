@@ -19,7 +19,7 @@ class ColorPainter_stream : public ColorPainter
     class StreamSpeed
     {
       public:
-       StreamSpeed() {}
+       StreamSpeed() = default;
 
        double speed{1.0};
        double value_min{-1000000000};
