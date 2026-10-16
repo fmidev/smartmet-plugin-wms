@@ -113,6 +113,37 @@ std::optional<Fmi::DateTime> parse_optional_time(const std::optional<std::string
   return Fmi::TimeParser::parse(*time_string);
 }
 
+
+// The layer hierarchy type requested with the layout option, or the configured default
+LayerHierarchy::HierarchyType requested_hierarchy_type(const Spine::HTTP::Request& theRequest,
+                                                       LayerHierarchy::HierarchyType hierarchyType)
+{
+  auto layout = theRequest.getParameter("layout");
+  if (layout)
+  {
+    if (*layout == "flat")
+      hierarchyType = LayerHierarchy::HierarchyType::flat;
+    else if (*layout == "recursive")
+      hierarchyType = LayerHierarchy::HierarchyType::recursive;
+    else if (*layout == "recursivetimes")
+      hierarchyType = LayerHierarchy::HierarchyType::recursivetimes;
+    else
+    {
+      throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in request: " + *layout));
+    }
+  }
+  return hierarchyType;
+}
+
+// Value 1 enables and value 0 disables multiple intervals, other values keep the default
+bool requested_intervals(const std::string& enableintervals, bool multipleIntervals)
+{
+  if (enableintervals == "1")
+    return true;
+  if (enableintervals == "0")
+    return false;
+  return multipleIntervals;
+}
 }  // namespace
 
 std::string GetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
@@ -147,21 +178,8 @@ std::string GetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
     // Layer hierarchy type: default value is flat, can be
     // overwritten in configuration file, and finally
     // can be overwritten in URL
-    LayerHierarchy::HierarchyType hierarchyType = theConfig.getLayerHierarchyType();
-    auto layout = theRequest.getParameter("layout");
-    if (layout)
-    {
-      if (*layout == "flat")
-        hierarchyType = LayerHierarchy::HierarchyType::flat;
-      else if (*layout == "recursive")
-        hierarchyType = LayerHierarchy::HierarchyType::recursive;
-      else if (*layout == "recursivetimes")
-        hierarchyType = LayerHierarchy::HierarchyType::recursivetimes;
-      else
-      {
-        throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in request: " + *layout));
-      }
-    }
+    const LayerHierarchy::HierarchyType hierarchyType =
+        requested_hierarchy_type(theRequest, theConfig.getLayerHierarchyType());
 
     try
     {
@@ -179,12 +197,7 @@ std::string GetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
 
       // If request option given and it is 1 or 0 use it
       if (enableintervals)
-      {
-        if (*enableintervals == "1")
-          multipleIntervals = true;
-        else if (*enableintervals == "0")
-          multipleIntervals = false;
-      }
+        multipleIntervals = requested_intervals(*enableintervals, multipleIntervals);
 
       auto language = theConfig.getDaliConfig().defaultLanguage();  // Should this be WMS specific?
       auto query_lang = theRequest.getParameter("LANGUAGE");
