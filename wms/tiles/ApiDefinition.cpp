@@ -223,6 +223,7 @@ void add_parameters(OA::Document& doc,
   using OA::stringSchema;
 
   std::vector<std::string> ids;
+  ids.reserve(layers.size());
   for (const auto& layer : layers)
     ids.push_back(layer.id);
 
@@ -271,6 +272,7 @@ void add_parameters(OA::Document& doc,
                              stringSchema()));
 
   std::vector<std::string> formats;
+  formats.reserve(tile_formats.size());
   for (const auto& format : tile_formats)
     formats.push_back(format.first);
   std::set<std::string> media_types;

@@ -102,6 +102,7 @@ void add_components(OA::Document& doc,
       "parameters", "I", parameter("I", "path", "Pixel column within the tile", integer_schema(0)));
 
   std::vector<std::string> extensions;
+  extensions.reserve(tile_formats.size());
   for (const auto& format : tile_formats)
     extensions.push_back(format.first);
   doc.addComponent("parameters",
