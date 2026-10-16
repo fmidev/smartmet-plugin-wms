@@ -9,6 +9,7 @@
 #include <macgyver/Exception.h>
 #include <cmath>
 #include <iostream>
+#include <optional>
 
 namespace SmartMet
 {
@@ -62,6 +63,70 @@ const TileMatrixSetTemplate REGISTRY[] = {
      ""},
 };
 
+// The OGC-standard tile matrix parameters of a registered EPSG, or parameters derived from
+// the PROJ database for other EPSGs. Returns nothing if the EPSG cannot be used.
+std::optional<TileMatrixSetTemplate> tile_matrix_template(int epsg)
+{
+  // Check the registry first for OGC-standard tile matrix parameters.
+  for (const auto& r : REGISTRY)
+    if (r.epsg == epsg)
+      return r;
+
+  TileMatrixSetTemplate t{};
+  t.epsg = epsg;
+  t.well_known_scale_set = "";
+
+  // For EPSGs not in the registry, derive tile matrix parameters from the PROJ database.
+  // This allows any EPSG enabled in the WMS configuration to be served as tiles.
+  auto epsginfo = Fmi::EPSGInfo::getInfo(epsg);
+  if (!epsginfo)
+  {
+    std::cerr << "WMS/WMTS: EPSG:" << epsg << " is unknown to PROJ, cannot build tile matrix set\n";
+    return std::nullopt;
+  }
+
+  const auto& bounds = epsginfo->bounds;
+  double width = bounds.east - bounds.west;
+  double height = bounds.north - bounds.south;
+  if (width <= 0 || height <= 0)
+  {
+    std::cerr << "WMS/WMTS: EPSG:" << epsg
+              << " has invalid native bounds, cannot build tile matrix set\n";
+    return std::nullopt;
+  }
+
+  t.is_geographic = epsginfo->geodetic;
+  t.top_x = bounds.west;
+  t.top_y = bounds.north;
+
+  // Choose base_w/base_h to cover the full extent with the fewest zoom-0 tiles.
+  if (t.is_geographic)
+  {
+    t.base_w = std::max(1U, static_cast<unsigned>(std::round(width / height)));
+    t.base_h = 1U;
+  }
+  else
+  {
+    t.base_w = 1U;
+    t.base_h = std::max(1U, static_cast<unsigned>(std::round(height / width)));
+  }
+
+  // Scale denominator at zoom 0 for 256×256 tiles so that base_w tiles span the full width.
+  if (t.is_geographic)
+    t.scale0_at_256 = (width / t.base_w) * METERS_PER_DEGREE / (256.0 * OGC_PIXEL_SIZE);
+  else
+    t.scale0_at_256 = (width / t.base_w) / (256.0 * OGC_PIXEL_SIZE);
+
+  // Limit zoom to where pixel size drops below ~0.5 m.
+  t.max_zoom = std::min(18, static_cast<int>(std::floor(std::log2(t.scale0_at_256 / 1785.0))));
+
+  t.bbox_min_x = epsginfo->bbox.west;
+  t.bbox_min_y = epsginfo->bbox.south;
+  t.bbox_max_x = epsginfo->bbox.east;
+  t.bbox_max_y = epsginfo->bbox.north;
+  return t;
+}
+
 }  // namespace
 
 TileBBox computeTileBBox(const TileMatrixSet& tms,
@@ -108,98 +173,16 @@ std::vector<TileMatrixSet> buildTileMatrixSets(const std::vector<int>& epsg_ids,
 
     for (int epsg : epsg_ids)
     {
-      // Check the registry first for OGC-standard tile matrix parameters.
-      const TileMatrixSetTemplate* tmpl = nullptr;
-      for (const auto& r : REGISTRY)
-        if (r.epsg == epsg)
-        {
-          tmpl = &r;
-          break;
-        }
+      const auto tmpl = tile_matrix_template(epsg);
+      if (!tmpl)
+        continue;
 
-      // Parameters filled either from the registry or computed from the EPSG definition.
-      double scale0_256 = 0;
-      double top_x = 0;
-      double top_y = 0;
-      unsigned base_w = 1;
-      unsigned base_h = 1;
-      int max_zoom = 18;
-      bool is_geographic = false;
-      double bbox_min_x = -180;
-      double bbox_min_y = -90;
-      double bbox_max_x = 180;
-      double bbox_max_y = 90;
-      std::string well_known_scale_set_str;
-
-      if (tmpl != nullptr)
-      {
-        // Use OGC-standard parameters for known projections.
-        scale0_256 = tmpl->scale0_at_256;
-        top_x = tmpl->top_x;
-        top_y = tmpl->top_y;
-        base_w = tmpl->base_w;
-        base_h = tmpl->base_h;
-        max_zoom = tmpl->max_zoom;
-        is_geographic = tmpl->is_geographic;
-        bbox_min_x = tmpl->bbox_min_x;
-        bbox_min_y = tmpl->bbox_min_y;
-        bbox_max_x = tmpl->bbox_max_x;
-        bbox_max_y = tmpl->bbox_max_y;
-        well_known_scale_set_str = tmpl->well_known_scale_set;
-      }
-      else
-      {
-        // For EPSGs not in the registry, derive tile matrix parameters from the PROJ database.
-        // This allows any EPSG enabled in the WMS configuration to be served as tiles.
-        auto epsginfo = Fmi::EPSGInfo::getInfo(epsg);
-        if (!epsginfo)
-        {
-          std::cerr << "WMS/WMTS: EPSG:" << epsg
-                    << " is unknown to PROJ, cannot build tile matrix set\n";
-          continue;
-        }
-
-        const auto& bounds = epsginfo->bounds;
-        double width = bounds.east - bounds.west;
-        double height = bounds.north - bounds.south;
-        if (width <= 0 || height <= 0)
-        {
-          std::cerr << "WMS/WMTS: EPSG:" << epsg
-                    << " has invalid native bounds, cannot build tile matrix set\n";
-          continue;
-        }
-
-        is_geographic = epsginfo->geodetic;
-        top_x = bounds.west;
-        top_y = bounds.north;
-
-        // Choose base_w/base_h to cover the full extent with the fewest zoom-0 tiles.
-        if (is_geographic)
-        {
-          base_w = std::max(1U, static_cast<unsigned>(std::round(width / height)));
-          base_h = 1U;
-        }
-        else
-        {
-          base_w = 1U;
-          base_h = std::max(1U, static_cast<unsigned>(std::round(height / width)));
-        }
-
-        // Scale denominator at zoom 0 for 256×256 tiles so that base_w tiles span the full width.
-        if (is_geographic)
-          scale0_256 = (width / base_w) * METERS_PER_DEGREE / (256.0 * OGC_PIXEL_SIZE);
-        else
-          scale0_256 = (width / base_w) / (256.0 * OGC_PIXEL_SIZE);
-
-        // Limit zoom to where pixel size drops below ~0.5 m.
-        max_zoom = std::min(18, static_cast<int>(std::floor(std::log2(scale0_256 / 1785.0))));
-
-        bbox_min_x = epsginfo->bbox.west;
-        bbox_min_y = epsginfo->bbox.south;
-        bbox_max_x = epsginfo->bbox.east;
-        bbox_max_y = epsginfo->bbox.north;
-        well_known_scale_set_str = "";
-      }
+      const double scale0_256 = tmpl->scale0_at_256;
+      const double top_x = tmpl->top_x;
+      const double top_y = tmpl->top_y;
+      const unsigned base_w = tmpl->base_w;
+      const unsigned base_h = tmpl->base_h;
+      const int max_zoom = tmpl->max_zoom;
 
       // Larger tiles → fewer pixels per unit ground area → smaller scale denominator per pixel.
       // This preserves the same geographic coverage per zoom level as the 256×256 reference.
@@ -209,12 +192,12 @@ std::vector<TileMatrixSet> buildTileMatrixSets(const std::vector<int>& epsg_ids,
       TileMatrixSet tms;
       tms.identifier = "EPSG:" + std::to_string(epsg);
       tms.crs = "EPSG:" + std::to_string(epsg);
-      tms.well_known_scale_set = well_known_scale_set_str;
-      tms.is_geographic = is_geographic;
-      tms.bbox_min_x = bbox_min_x;
-      tms.bbox_min_y = bbox_min_y;
-      tms.bbox_max_x = bbox_max_x;
-      tms.bbox_max_y = bbox_max_y;
+      tms.well_known_scale_set = tmpl->well_known_scale_set;
+      tms.is_geographic = tmpl->is_geographic;
+      tms.bbox_min_x = tmpl->bbox_min_x;
+      tms.bbox_min_y = tmpl->bbox_min_y;
+      tms.bbox_max_x = tmpl->bbox_max_x;
+      tms.bbox_max_y = tmpl->bbox_max_y;
 
       for (int zoom = 0; zoom <= max_zoom; ++zoom)
       {
