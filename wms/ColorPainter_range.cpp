@@ -122,6 +122,76 @@ void ColorPainter_range::addRange(const Range& range)
 
 
 
+namespace
+{
+
+// Interpolate the four color channels between a and b
+inline void interpolate_channels(const uchar *a,const uchar *b,uchar *n,double vv)
+{
+  for (uint t=0; t<4; t++)
+  {
+    int d = ((int)b[t] - (int)a[t]) * vv;
+    n[t] = a[t] + d;
+  }
+}
+
+// Paint the values of one range unless all its colors are fully transparent
+void paint_range(const ColorPainter_range::Range& range,uint width,uint height,uint *image,const std::vector<float>& land,const std::vector<float>& values,double opacity_land,double opacity_sea)
+{
+  double dv = range.value_max - range.value_min;
+
+  uint minCol = range.color_min;
+  uint maxCol = range.color_max;
+  uint lowCol = range.color_low;
+  uint highCol = range.color_high;
+
+  if (!((minCol & 0xFF000000) || (maxCol & 0xFF000000) || (lowCol & 0xFF000000) || (highCol & 0xFF000000)))
+    return;
+
+  auto* a = (uchar*)&minCol;
+  auto* b = (uchar*)&maxCol;
+
+  uint newCol = 0;
+  auto* n = (uchar*)&newCol;
+
+  uint c = 0;
+  for (uint y = 0; y < height; y++)
+  {
+    uint yy = height - y -1;
+    uint p = yy * width;
+    for (uint x = 0; x < width; x++)
+    {
+      uint cc = p + x;
+      uint oldcol = image[c];
+      uint valcol = 0;
+      float val = values[cc];
+      float landval = land[cc];
+      if (val != ParamValueMissing)
+      {
+        if (val < range.value_min)
+          valcol = lowCol;
+        else if (val > range.value_max)
+          valcol = highCol;
+        else
+        {
+          double vv = (val - range.value_min) / dv;
+          interpolate_channels(a,b,n,vv);
+          valcol = newCol;
+        }
+        if (landval > 0.9)
+          image[c] = merge_ARGB(color_with_opacity(valcol,opacity_land),oldcol);
+        else
+          image[c] = merge_ARGB(color_with_opacity(valcol,opacity_sea),oldcol);
+      }
+      c++;
+    }
+  }
+}
+
+}  // namespace
+
+
+
 void ColorPainter_range::setImageColors(uint width,uint height,uint /* loop_step */,uint /* loop_steps */ ,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& /*parameters */)
 {
   try
@@ -141,92 +211,7 @@ void ColorPainter_range::setImageColors(uint width,uint height,uint /* loop_step
     }
 
     for (auto& range : ranges)
-    {
-      double dv = range.value_max - range.value_min;
-
-      uint minCol = range.color_min;
-      uint maxCol = range.color_max;
-      uint lowCol = range.color_low;
-      uint highCol = range.color_high;
-
-      if ((minCol & 0xFF000000) || (maxCol & 0xFF000000) || (lowCol & 0xFF000000) || (highCol & 0xFF000000))
-      {
-        auto* a = (uchar*)&minCol;
-        auto* b = (uchar*)&maxCol;
-
-        uint newCol = 0;
-        auto* n = (uchar*)&newCol;
-
-        uint c = 0;
-        for (uint y = 0; y < height; y++)
-        {
-          uint yy = height - y -1;
-          uint p = yy * width;
-          for (uint x = 0; x < width; x++)
-          {
-            uint cc = p + x;
-            uint oldcol = image[c];
-            uint valcol = 0;
-            float val = values[cc];
-            float landval = land[cc];
-            if (val != ParamValueMissing)
-            {
-              if (val < range.value_min)
-                valcol = lowCol;
-              else if (val > range.value_max)
-                valcol = highCol;
-              else
-              {
-                double vv = (val - range.value_min) / dv;
-                for (uint t=0; t<4; t++)
-                {
-                  int d = ((int)b[t] - (int)a[t]) * vv;
-                  n[t] = a[t] + d;
-                }
-                valcol = newCol;
-              }
-              if (landval > 0.9)
-              {
-                if (opacity_land != 1.0)
-                {
-                  uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
-                  if (op > 255)
-                    op = 0xFF000000;
-                  else
-                    op = (op & 0xFF) << 24;
-
-                  uint nv = op + (valcol & 0x00FFFFFF);
-                  image[c] = merge_ARGB(nv,oldcol);
-                }
-                else
-                {
-                  image[c] = merge_ARGB(valcol,oldcol);
-                }
-              }
-              else
-              {
-                if (opacity_sea != 1.0)
-                {
-                  uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
-                  if (op > 255)
-                    op = 0xFF000000;
-                  else
-                    op = (op & 0xFF) << 24;
-
-                  uint nv = op + (valcol & 0x00FFFFFF);
-                  image[c] = merge_ARGB(nv,oldcol);
-                }
-                else
-                {
-                  image[c] = merge_ARGB(valcol,oldcol);
-                }
-              }
-            }
-            c++;
-          }
-        }
-      }
-    }
+      paint_range(range,width,height,image,land,values,opacity_land,opacity_sea);
   }
   catch (...)
   {
