@@ -426,90 +426,9 @@ QueryStatus Handler::query(const Spine::Reactor& theReactor,
     // --- /collections ---
     if (parts[0] == "collections")
     {
-      if (parts.size() == 1)
-        return handleCollections(base, theState, theRequest, theResponse);
-
-      const std::string& collId = parts[1];
-
-      if (parts.size() == 2)
-        return handleCollection(base, collId, theState, theRequest, theResponse);
-
-      if (parts.size() == 3 && parts[2] == "tiles")
-        return handleCollectionTilesets(base, collId, theResponse);
-
-      if (parts.size() == 4 && parts[2] == "tiles")
-        return handleTilesetMetadata(base, collId, parts[3], theResponse);
-
-      // --- /collections/{id}/styles (OGC API - Styles) ---
-      if (parts.size() == 3 && parts[2] == "styles")
-        return handleCollectionStyles(base, collId, theRequest, theResponse);
-
-      if (parts.size() == 4 && parts[2] == "styles")
-        return handleStyle(base, collId, parts[3], theState, theRequest, theResponse);
-
-      // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}
-      if (parts.size() == 7 && parts[2] == "tiles")
-      {
-        const std::string& tmsId = parts[3];
-        const std::string& tmId = parts[4];
-
-        unsigned row = 0;
-        unsigned col = 0;
-        try
-        {
-          row = Fmi::stoul(parts[5]);
-          col = Fmi::stoul(parts[6]);
-        }
-        catch (...)
-        {
-          sendError(400,
-                    "Bad Request",
-                    "Invalid tile row or column: " + parts[5] + "/" + parts[6],
-                    theResponse);
-          return QueryStatus::OK;
-        }
-
-        std::string format = negotiateFormat(theRequest);
-        if (!itsTilesConfig->isValidFormat(format))
-        {
-          sendError(400, "Bad Request", "Unsupported tile format: " + format, theResponse);
-          return QueryStatus::OK;
-        }
-
-        return handleGetTile(
-            theState, theRequest, theResponse, collId, tmsId, tmId, row, col, format);
-      }
-
-      // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}/{j}/{i} — feature info
-      // (non-standard extension mirroring the WMTS FeatureInfo resource)
-      if (parts.size() == 9 && parts[2] == "tiles")
-      {
-        const std::string& tmsId = parts[3];
-        const std::string& tmId = parts[4];
-
-        unsigned row = 0;
-        unsigned col = 0;
-        unsigned pixel_j = 0;
-        unsigned pixel_i = 0;
-        try
-        {
-          row = Fmi::stoul(parts[5]);
-          col = Fmi::stoul(parts[6]);
-          pixel_j = Fmi::stoul(parts[7]);
-          pixel_i = Fmi::stoul(parts[8]);
-        }
-        catch (...)
-        {
-          sendError(400,
-                    "Bad Request",
-                    "Invalid tile row/column or pixel J/I in feature info request",
-                    theResponse);
-          return QueryStatus::OK;
-        }
-
-        return handleGetFeatureInfo(theReactor, theState, theRequest, theResponse,
-                                    collId, tmsId, tmId, row, col, pixel_j, pixel_i);
-      }
+      auto status = routeCollections(theReactor, base, parts, theState, theRequest, theResponse);
+      if (status)
+        return *status;
     }
 
     sendError(
@@ -520,6 +439,138 @@ QueryStatus Handler::query(const Spine::Reactor& theReactor,
   {
     throw Fmi::Exception::Trace(BCP, "OGC API - Tiles query failed!");
   }
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief Route the /collections requests, returns nothing if the path is not recognized
+ */
+// -----------------------------------------------------------------------
+std::optional<QueryStatus> Handler::routeCollections(const Spine::Reactor& theReactor,
+                                                     const std::string& base,
+                                                     const std::vector<std::string>& parts,
+                                                     Dali::State& theState,
+                                                     const Spine::HTTP::Request& theRequest,
+                                                     Spine::HTTP::Response& theResponse)
+{
+  if (parts.size() == 1)
+    return handleCollections(base, theState, theRequest, theResponse);
+
+  const std::string& collId = parts[1];
+
+  if (parts.size() == 2)
+    return handleCollection(base, collId, theState, theRequest, theResponse);
+
+  if (parts.size() == 3 && parts[2] == "tiles")
+    return handleCollectionTilesets(base, collId, theResponse);
+
+  if (parts.size() == 4 && parts[2] == "tiles")
+    return handleTilesetMetadata(base, collId, parts[3], theResponse);
+
+  // --- /collections/{id}/styles (OGC API - Styles) ---
+  if (parts.size() == 3 && parts[2] == "styles")
+    return handleCollectionStyles(base, collId, theRequest, theResponse);
+
+  if (parts.size() == 4 && parts[2] == "styles")
+    return handleStyle(base, collId, parts[3], theState, theRequest, theResponse);
+
+  // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}
+  if (parts.size() == 7 && parts[2] == "tiles")
+    return routeGetTile(theState, theRequest, theResponse, parts);
+
+  // /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}/{j}/{i} — feature info
+  // (non-standard extension mirroring the WMTS FeatureInfo resource)
+  if (parts.size() == 9 && parts[2] == "tiles")
+    return routeGetFeatureInfo(theReactor, theState, theRequest, theResponse, parts);
+  return std::nullopt;
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief Parse /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col} and get the tile
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::routeGetTile(Dali::State& theState,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse,
+                                  const std::vector<std::string>& parts)
+{
+  const std::string& collId = parts[1];
+  const std::string& tmsId = parts[3];
+  const std::string& tmId = parts[4];
+
+  unsigned row = 0;
+  unsigned col = 0;
+  try
+  {
+    row = Fmi::stoul(parts[5]);
+    col = Fmi::stoul(parts[6]);
+  }
+  catch (...)
+  {
+    sendError(400,
+              "Bad Request",
+              "Invalid tile row or column: " + parts[5] + "/" + parts[6],
+              theResponse);
+    return QueryStatus::OK;
+  }
+
+  std::string format = negotiateFormat(theRequest);
+  if (!itsTilesConfig->isValidFormat(format))
+  {
+    sendError(400, "Bad Request", "Unsupported tile format: " + format, theResponse);
+    return QueryStatus::OK;
+  }
+
+  return handleGetTile(theState, theRequest, theResponse, collId, tmsId, tmId, row, col, format);
+}
+
+// -----------------------------------------------------------------------
+/*!
+ * \brief Parse /collections/{id}/tiles/{tmsId}/{tm}/{row}/{col}/{j}/{i} and get feature info
+ */
+// -----------------------------------------------------------------------
+QueryStatus Handler::routeGetFeatureInfo(const Spine::Reactor& theReactor,
+                                         Dali::State& theState,
+                                         const Spine::HTTP::Request& theRequest,
+                                         Spine::HTTP::Response& theResponse,
+                                         const std::vector<std::string>& parts)
+{
+  const std::string& collId = parts[1];
+  const std::string& tmsId = parts[3];
+  const std::string& tmId = parts[4];
+
+  unsigned row = 0;
+  unsigned col = 0;
+  unsigned pixel_j = 0;
+  unsigned pixel_i = 0;
+  try
+  {
+    row = Fmi::stoul(parts[5]);
+    col = Fmi::stoul(parts[6]);
+    pixel_j = Fmi::stoul(parts[7]);
+    pixel_i = Fmi::stoul(parts[8]);
+  }
+  catch (...)
+  {
+    sendError(400,
+              "Bad Request",
+              "Invalid tile row/column or pixel J/I in feature info request",
+              theResponse);
+    return QueryStatus::OK;
+  }
+
+  return handleGetFeatureInfo(theReactor,
+                              theState,
+                              theRequest,
+                              theResponse,
+                              collId,
+                              tmsId,
+                              tmId,
+                              row,
+                              col,
+                              pixel_j,
+                              pixel_i);
 }
 
 // -----------------------------------------------------------------------

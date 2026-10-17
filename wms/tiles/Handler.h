@@ -49,6 +49,7 @@
 #include <spine/OpenApi.h>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -155,6 +156,21 @@ class Handler
                                                          const Spine::HTTP::Request& theRequest);
 
   // Tile rendering endpoint
+  std::optional<QueryStatus> routeCollections(const Spine::Reactor& theReactor,
+                                              const std::string& base,
+                                              const std::vector<std::string>& parts,
+                                              Dali::State& theState,
+                                              const Spine::HTTP::Request& theRequest,
+                                              Spine::HTTP::Response& theResponse);
+  QueryStatus routeGetTile(Dali::State& theState,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& theResponse,
+                           const std::vector<std::string>& parts);
+  QueryStatus routeGetFeatureInfo(const Spine::Reactor& theReactor,
+                                  Dali::State& theState,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse,
+                                  const std::vector<std::string>& parts);
   QueryStatus handleGetTile(Dali::State& theState,
                             const Spine::HTTP::Request& theRequest,
                             Spine::HTTP::Response& theResponse,
