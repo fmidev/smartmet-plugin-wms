@@ -485,6 +485,83 @@ void add_symbol_attribute(std::vector<std::pair<std::string, MVTValue>>& attrs,
   }
 }
 
+// The first two non-empty value vectors in the query result, and the coordinates of the first
+void two_value_vectors(const QueryServer::Query& query,
+                       std::shared_ptr<QueryServer::ParameterValues>& pval1,
+                       std::shared_ptr<QueryServer::ParameterValues>& pval2,
+                       const T::Coordinate_vec*& coordinates)
+{
+  for (const auto& qp : query.mQueryParameterList)
+  {
+    for (const auto& val : qp.mValueList)
+    {
+      if (!val->mValueVector.empty())
+      {
+        if (!pval1)
+        {
+          pval1 = val;
+          if (!qp.mCoordinates.empty())
+            coordinates = &qp.mCoordinates;
+        }
+        else if (!pval2)
+        {
+          pval2 = val;
+        }
+        break;
+      }
+    }
+  }
+}
+
+// Check the two value vectors are available and of the correct size
+void check_two_value_vectors(const std::shared_ptr<QueryServer::ParameterValues>& pval1,
+                             const std::shared_ptr<QueryServer::ParameterValues>& pval2,
+                             int width,
+                             int height,
+                             const std::string& what)
+{
+  if (!pval1 || pval1->mValueVector.empty())
+    throw Fmi::Exception(BCP, "No data returned for first parameter in " + what);
+  if (!pval2 || pval2->mValueVector.empty())
+    throw Fmi::Exception(BCP, "No data returned for second parameter in " + what);
+
+  if (static_cast<int>(pval1->mValueVector.size()) != width * height ||
+      static_cast<int>(pval2->mValueVector.size()) != width * height)
+    throw Fmi::Exception(BCP, "Value vector size mismatch in " + what);
+}
+
+// Speed with optional unit conversion, missing values are kept as is
+inline float converted_speed(float v2,
+                             float nodata,
+                             const std::optional<double>& multiplier,
+                             const std::optional<double>& offset)
+{
+  if (v2 == nodata)
+    return nodata;
+  double spd = v2;
+  if (multiplier && *multiplier != 1.0)
+    spd *= *multiplier;
+  if (offset && *offset)
+    spd += *offset;
+  return static_cast<float>(spd);
+}
+
+// u/v -> meteorological direction and speed
+inline void uv_to_direction_speed(float v1, float v2, float nodata, float& dir, float& spd)
+{
+  if (v1 == nodata || v2 == nodata)
+  {
+    dir = nodata;
+    spd = nodata;
+  }
+  else
+  {
+    spd = static_cast<float>(std::sqrt(double(v1) * v1 + double(v2) * v2));
+    dir = static_cast<float>(
+        std::fmod(180.0 + 180.0 / pi * std::atan2(double(v1), double(v2)), 360.0));
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -1547,6 +1624,87 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Query the two wind vector components (u+v or direction+speed) for the grid
+ */
+// ----------------------------------------------------------------------
+
+std::shared_ptr<QueryServer::Query> ArrowLayer::queryWindVectors(
+    const Engine::Grid::Engine& gridEngine, bool uv_mode, std::string& wkt)
+{
+  std::string producerName = gridEngine.getProducerName(*paraminfo.producer);
+  auto crs_ref = projection.getCRS();
+  const auto& box = projection.getBox();
+  wkt = *projection.crs;
+  if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+    wkt = crs_ref.WKT();
+
+  auto originalGridQuery = std::make_shared<QueryServer::Query>();
+  QueryServer::QueryConfigurator queryConfigurator;
+  T::AttributeList attributeList;
+
+  auto bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+  auto bl = projection.bottomLeftLatLon();
+  auto tr = projection.topRightLatLon();
+  if (projection.x1 == bl.X() && projection.y1 == bl.Y() && projection.x2 == tr.X() &&
+      projection.y2 == tr.Y())
+    originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+  originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+  const std::string& p1name = uv_mode ? *u : *direction;
+  const std::string& p2name = uv_mode ? *v : *speed;
+
+  auto param1 = gridEngine.getParameterString(producerName, p1name);
+  auto param2 = gridEngine.getParameterString(producerName, p2name);
+
+  if (!projection.projectionParameter)
+    projection.projectionParameter = param1;
+
+  if (param1 == p1name && originalGridQuery->mProducerNameList.empty())
+  {
+    gridEngine.getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+    if (originalGridQuery->mProducerNameList.empty())
+      originalGridQuery->mProducerNameList.push_back(producerName);
+  }
+
+  attributeList.addAttribute("param", param1 + "," + param2);
+
+  add_time_attributes(attributeList, getValidTime(), origintime);
+
+  queryConfigurator.configure(*originalGridQuery, attributeList);
+
+  for (auto& p : originalGridQuery->mQueryParameterList)
+  {
+    p.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+    p.mType = QueryServer::QueryParameter::Type::Vector;
+    p.mFlags |= QueryServer::QueryParameter::Flags::ReturnCoordinates;
+    p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
+    p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
+    p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
+
+    set_query_parameter_selections(p, paraminfo);
+  }
+
+  originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+  originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+  add_grid_size_attributes(*originalGridQuery, projection);
+
+  if (projection.bboxcrs)
+    originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
+
+  auto query = gridEngine.executeQuery(originalGridQuery);
+
+  // Update projection dimensions from result if needed
+  update_projection_size(projection, *query);
+
+  if (!projection.xsize || !projection.ysize)
+    throw Fmi::Exception(BCP, "Grid size is unknown after query");
+
+  return query;
+}
+
 std::string ArrowLayer::generateGeoTiff(State& theState)
 {
   try
@@ -1570,75 +1728,9 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
     if (!projection.crs || *projection.crs == "data")
       throw Fmi::Exception(BCP, "GeoTiff output requires an explicit CRS");
 
-    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
-    auto crs_ref = projection.getCRS();
-    const auto& box = projection.getBox();
-    std::string wkt = *projection.crs;
-    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
-      wkt = crs_ref.WKT();
-
-    auto originalGridQuery = std::make_shared<QueryServer::Query>();
-    QueryServer::QueryConfigurator queryConfigurator;
-    T::AttributeList attributeList;
-
-    auto bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-    auto bl = projection.bottomLeftLatLon();
-    auto tr = projection.topRightLatLon();
-    if (projection.x1 == bl.X() && projection.y1 == bl.Y() &&
-        projection.x2 == tr.X() && projection.y2 == tr.Y())
-      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
-    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-
     const bool uv_mode = (u && v);
-    const std::string& p1name = uv_mode ? *u : *direction;
-    const std::string& p2name = uv_mode ? *v : *speed;
-
-    auto param1 = gridEngine->getParameterString(producerName, p1name);
-    auto param2 = gridEngine->getParameterString(producerName, p2name);
-
-    if (!projection.projectionParameter)
-      projection.projectionParameter = param1;
-
-    if (param1 == p1name && originalGridQuery->mProducerNameList.empty())
-    {
-      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.empty())
-        originalGridQuery->mProducerNameList.push_back(producerName);
-    }
-
-    attributeList.addAttribute("param", param1 + "," + param2);
-
-    add_time_attributes(attributeList, getValidTime(), origintime);
-
-    queryConfigurator.configure(*originalGridQuery, attributeList);
-
-    for (auto& p : originalGridQuery->mQueryParameterList)
-    {
-      p.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      p.mType = QueryServer::QueryParameter::Type::Vector;
-      p.mFlags |= QueryServer::QueryParameter::Flags::ReturnCoordinates;
-      p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
-      p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
-      p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
-
-      set_query_parameter_selections(p, paraminfo);
-    }
-
-    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
-
-    add_grid_size_attributes(*originalGridQuery, projection);
-
-    if (projection.bboxcrs)
-      originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
-
-    auto query = gridEngine->executeQuery(originalGridQuery);
-
-    // Update projection dimensions from result if needed
-    update_projection_size(projection, *query);
-
-    if (!projection.xsize || !projection.ysize)
-      throw Fmi::Exception(BCP, "Grid size is unknown after query");
+    std::string wkt;
+    auto query = queryWindVectors(*gridEngine, uv_mode, wkt);
 
     const int width = *projection.xsize;
     const int height = *projection.ysize;
@@ -1647,41 +1739,11 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
     std::shared_ptr<QueryServer::ParameterValues> pval1;
     std::shared_ptr<QueryServer::ParameterValues> pval2;
     const T::Coordinate_vec* coordinates = nullptr;
-
-    for (const auto& qp : query->mQueryParameterList)
-    {
-      for (const auto& val : qp.mValueList)
-      {
-        if (!val->mValueVector.empty())
-        {
-          if (!pval1)
-          {
-            pval1 = val;
-            if (!qp.mCoordinates.empty())
-              coordinates = &qp.mCoordinates;
-          }
-          else if (!pval2)
-          {
-            pval2 = val;
-          }
-          break;
-        }
-      }
-    }
-
-    if (!pval1 || pval1->mValueVector.empty())
-      throw Fmi::Exception(BCP, "No data returned for first parameter in GeoTiff generation");
-    if (!pval2 || pval2->mValueVector.empty())
-      throw Fmi::Exception(BCP, "No data returned for second parameter in GeoTiff generation");
-
-    if (static_cast<int>(pval1->mValueVector.size()) != width * height ||
-        static_cast<int>(pval2->mValueVector.size()) != width * height)
-      throw Fmi::Exception(BCP, "Value vector size mismatch in GeoTiff generation");
+    two_value_vectors(*query, pval1, pval2, coordinates);
+    check_two_value_vectors(pval1, pval2, width, height, "GeoTiff generation");
 
     // Detect row order from coordinates
-    const bool south_up = (coordinates &&
-                           static_cast<int>(coordinates->size()) > 10 * width &&
-                           (*coordinates)[0].y() < (*coordinates)[10 * width].y());
+    const bool south_up = is_south_up(coordinates, width);
 
     const auto nodata = static_cast<float>(ParamValueMissing);
 
@@ -1701,33 +1763,13 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
         if (uv_mode)
         {
           // u/v → meteorological direction (band 1) + speed (band 2)
-          if (v1 == nodata || v2 == nodata)
-          {
-            band1[dst] = nodata;
-            band2[dst] = nodata;
-          }
-          else
-          {
-            band2[dst] = static_cast<float>(std::sqrt(double(v1) * v1 + double(v2) * v2));
-            band1[dst] = static_cast<float>(
-                std::fmod(180.0 + 180.0 / pi * std::atan2(double(v1), double(v2)), 360.0));
-          }
+          uv_to_direction_speed(v1, v2, nodata, band1[dst], band2[dst]);
         }
         else
         {
           // direction (band 1) + speed (band 2) with optional unit conversion on speed
           band1[dst] = v1;
-          if (v2 == nodata)
-            band2[dst] = nodata;
-          else
-          {
-            double spd = v2;
-            if (multiplier && *multiplier != 1.0)
-              spd *= *multiplier;
-            if (offset && *offset)
-              spd += *offset;
-            band2[dst] = static_cast<float>(spd);
-          }
+          band2[dst] = converted_speed(v2, nodata, multiplier, offset);
         }
       }
     }
@@ -1777,75 +1819,9 @@ std::string ArrowLayer::generateDataTile(State& theState)
     if (!projection.crs || *projection.crs == "data")
       throw Fmi::Exception(BCP, "Datatile output requires an explicit CRS");
 
-    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
-    auto crs_ref = projection.getCRS();
-    const auto& box = projection.getBox();
-    std::string wkt = *projection.crs;
-    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
-      wkt = crs_ref.WKT();
-
-    auto originalGridQuery = std::make_shared<QueryServer::Query>();
-    QueryServer::QueryConfigurator queryConfigurator;
-    T::AttributeList attributeList;
-
-    auto bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-    auto bl = projection.bottomLeftLatLon();
-    auto tr = projection.topRightLatLon();
-    if (projection.x1 == bl.X() && projection.y1 == bl.Y() &&
-        projection.x2 == tr.X() && projection.y2 == tr.Y())
-      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
-    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-
     const bool uv_mode = (u && v);
-    const std::string& p1name = uv_mode ? *u : *direction;
-    const std::string& p2name = uv_mode ? *v : *speed;
-
-    auto param1 = gridEngine->getParameterString(producerName, p1name);
-    auto param2 = gridEngine->getParameterString(producerName, p2name);
-
-    if (!projection.projectionParameter)
-      projection.projectionParameter = param1;
-
-    if (param1 == p1name && originalGridQuery->mProducerNameList.empty())
-    {
-      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.empty())
-        originalGridQuery->mProducerNameList.push_back(producerName);
-    }
-
-    attributeList.addAttribute("param", param1 + "," + param2);
-
-    add_time_attributes(attributeList, getValidTime(), origintime);
-
-    queryConfigurator.configure(*originalGridQuery, attributeList);
-
-    for (auto& p : originalGridQuery->mQueryParameterList)
-    {
-      p.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      p.mType = QueryServer::QueryParameter::Type::Vector;
-      p.mFlags |= QueryServer::QueryParameter::Flags::ReturnCoordinates;
-      p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
-      p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
-      p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
-
-      set_query_parameter_selections(p, paraminfo);
-    }
-
-    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
-
-    add_grid_size_attributes(*originalGridQuery, projection);
-
-    if (projection.bboxcrs)
-      originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
-
-    auto query = gridEngine->executeQuery(originalGridQuery);
-
-    // Update projection dimensions from result if needed
-    update_projection_size(projection, *query);
-
-    if (!projection.xsize || !projection.ysize)
-      throw Fmi::Exception(BCP, "Grid size is unknown after query");
+    std::string wkt;
+    auto query = queryWindVectors(*gridEngine, uv_mode, wkt);
 
     const int width = *projection.xsize;
     const int height = *projection.ysize;
@@ -1854,41 +1830,11 @@ std::string ArrowLayer::generateDataTile(State& theState)
     std::shared_ptr<QueryServer::ParameterValues> pval1;
     std::shared_ptr<QueryServer::ParameterValues> pval2;
     const T::Coordinate_vec* coordinates = nullptr;
-
-    for (const auto& qp : query->mQueryParameterList)
-    {
-      for (const auto& val : qp.mValueList)
-      {
-        if (!val->mValueVector.empty())
-        {
-          if (!pval1)
-          {
-            pval1 = val;
-            if (!qp.mCoordinates.empty())
-              coordinates = &qp.mCoordinates;
-          }
-          else if (!pval2)
-          {
-            pval2 = val;
-          }
-          break;
-        }
-      }
-    }
-
-    if (!pval1 || pval1->mValueVector.empty())
-      throw Fmi::Exception(BCP, "No data returned for first parameter in datatile generation");
-    if (!pval2 || pval2->mValueVector.empty())
-      throw Fmi::Exception(BCP, "No data returned for second parameter in datatile generation");
-
-    if (static_cast<int>(pval1->mValueVector.size()) != width * height ||
-        static_cast<int>(pval2->mValueVector.size()) != width * height)
-      throw Fmi::Exception(BCP, "Value vector size mismatch in datatile generation");
+    two_value_vectors(*query, pval1, pval2, coordinates);
+    check_two_value_vectors(pval1, pval2, width, height, "datatile generation");
 
     // Detect row order from coordinates
-    const bool south_up = (coordinates &&
-                           static_cast<int>(coordinates->size()) > 10 * width &&
-                           (*coordinates)[0].y() < (*coordinates)[10 * width].y());
+    const bool south_up = is_south_up(coordinates, width);
 
     const auto nd = static_cast<float>(ParamValueMissing);
 
@@ -1915,17 +1861,7 @@ std::string ArrowLayer::generateDataTile(State& theState)
         {
           // direction + speed with optional unit conversion on speed
           band1[dst] = v1;
-          if (v2 == nd)
-            band2[dst] = nd;
-          else
-          {
-            double spd = v2;
-            if (multiplier && *multiplier != 1.0)
-              spd *= *multiplier;
-            if (offset && *offset)
-              spd += *offset;
-            band2[dst] = static_cast<float>(spd);
-          }
+          band2[dst] = converted_speed(v2, nd, multiplier, offset);
         }
       }
     }

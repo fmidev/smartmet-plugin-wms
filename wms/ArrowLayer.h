@@ -91,6 +91,10 @@ class ArrowLayer : public Layer
                      const State& theState,
                      int& valid_count);
 
+  std::shared_ptr<QueryServer::Query> queryWindVectors(const Engine::Grid::Engine& gridEngine,
+                                                       bool uv_mode,
+                                                       std::string& wkt);
+
   std::shared_ptr<QueryServer::Query> build_grid_query(const std::vector<std::string>& paramNames,
                                                        const T::Coordinate_vec& coordinates,
                                                        const State& theState);
