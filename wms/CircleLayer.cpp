@@ -193,6 +193,50 @@ void find_right_point(double& x, double& y, const OGRGeometryPtr& geom)
   }
 }
 
+// Clip the circle as a line or as a polygon
+OGRGeometry* clip_circle(const OGRGeometry& geom, const Fmi::Box& clipbox, bool lines)
+{
+  if (lines)
+    return Fmi::OGR::lineclip(geom, clipbox);
+  return Fmi::OGR::polyclip(geom, clipbox);
+}
+
+// Position of a radius label in world coordinates for the layout direction
+void label_world_position(const std::string& direction,
+                          double lon,
+                          double lat,
+                          double radius,
+                          const Fmi::CoordinateTransformation& transformation,
+                          const OGRGeometryPtr& circle,
+                          double& x,
+                          double& y)
+{
+  static const std::map<std::string, double> directions = {
+      {"north", 90}, {"south", -90}, {"west", -180}, {"east", 180}};
+
+  auto dir = directions.find(direction);
+  if (dir != directions.end())
+  {
+    auto angle = dir->second;
+    auto lonlat = coordinate_at_distance(lon, lat, angle, radius * 1000);
+
+    x = lonlat.first;
+    y = lonlat.second;
+    transformation.transform(x, y);  // latlon -> world xy
+  }
+  else
+  {
+    if (direction == "top")
+      find_top_point(x, y, circle);
+    else if (direction == "bottom")
+      find_bottom_point(x, y, circle);
+    else if (direction == "left")
+      find_left_point(x, y, circle);
+    else if (direction == "right")
+      find_right_point(x, y, circle);
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -261,6 +305,197 @@ void CircleLayer::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Resolve keyword, places and geoids into locations
+ */
+// ----------------------------------------------------------------------
+
+Spine::LocationList CircleLayer::resolveLocations(const State& theState) const
+{
+  Spine::LocationList locations;
+
+  const auto& geoengine = theState.getGeoEngine();
+
+  Locus::QueryOptions options;
+
+  if (!keyword.empty())
+    locations = geoengine.keywordSearch(options, keyword);
+
+  for (const auto& geoid : geoids)
+  {
+    auto newlocations = geoengine.idSearch(options, geoid);
+
+    if (newlocations.size() > 1)  // use only the first match
+      newlocations.resize(1);
+
+    locations.splice(locations.end(), newlocations);
+  }
+
+  if (!places.empty())
+  {
+    if (!features.empty())
+      options.SetFeatures(features);  // done only for places
+    for (const auto& place : places)
+    {
+      auto newlocations = geoengine.nameSearch(options, place);
+
+      if (newlocations.size() > 1)  // use only the first match
+        newlocations.resize(1);
+
+      locations.splice(locations.end(), newlocations);
+    }
+  }
+  return locations;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate a <g> group of circle radius labels
+ */
+// ----------------------------------------------------------------------
+
+void CircleLayer::generateLabels(CTPP::CDT& theGlobals,
+                                 CTPP::CDT& theLayersCdt,
+                                 State& theState,
+                                 const Spine::LocationList& locations,
+                                 const std::vector<OGRGeometryPtr>& all_circles,
+                                 const Fmi::CoordinateTransformation& transformation,
+                                 const Fmi::Box& clipbox,
+                                 const Fmi::Box& box) const
+{
+  std::string labels_iri = theState.makeQid("circle-labels-");
+  if (!theState.addId(labels_iri))
+    throw Fmi::Exception(BCP, "Non-unique ID assigned to circle radius labels")
+        .addParameter("ID", labels_iri);
+
+  CTPP::CDT labels_cdt(CTPP::CDT::HASH_VAL);
+  labels_cdt["attributes"]["id"] = labels_iri;
+  labels_cdt["start"] = "<g";
+  labels_cdt["end"] = "";
+  theState.addAttributes(theGlobals, labels_cdt, labels.attributes);
+  theLayersCdt.PushBack(labels_cdt);
+
+  auto current_circle = all_circles.begin();
+  for (const auto& location : locations)
+  {
+    auto lon = location->longitude;
+    auto lat = location->latitude;
+    for (const auto& circle : circles)
+    {
+      auto txt = labels.format(circle.radius);
+
+      for (const auto& direction : labels.layout)
+      {
+        double x = 0;
+        double y = 0;
+        label_world_position(
+            direction, lon, lat, circle.radius, transformation, *current_circle, x, y);
+
+        if (clipbox.position(x, y) == Fmi::Box::Inside)
+        {
+          box.transform(x, y);  // world xy -> pixel
+
+          auto xpos = lround(x + labels.dx);
+          auto ypos = lround(y + labels.dy);
+
+          CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+          text_cdt["start"] = " <text";
+          text_cdt["end"] = "</text>";
+          text_cdt["cdata"] = Fmi::safexmlescape(txt);
+
+          text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+          text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+
+          theState.addAttributes(theGlobals, text_cdt, labels.textattributes);
+          theLayersCdt.PushBack(text_cdt);
+        }
+      }
+      ++current_circle;
+    }
+  }
+  // Close labels_cdt
+  theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add a clipped circle to the group
+ */
+// ----------------------------------------------------------------------
+
+void CircleLayer::addCircle(CTPP::CDT& theGlobals,
+                            CTPP::CDT& group_cdt,
+                            State& theState,
+                            const OGRGeometryPtr& geom,
+                            double lon,
+                            double lat,
+                            const Circle& circle,
+                            const Fmi::Box& box,
+                            const Fmi::SpatialReference& crs,
+                            double precision) const
+{
+  // Generate unique ID for the circle
+  std::string iri = qid + (qid.empty() ? "" : ".") + theState.makeQid("circle");
+
+  if (!theState.addId(iri))
+    throw Fmi::Exception(BCP, "Non-unique ID assigned to circle").addParameter("ID", iri);
+
+  CTPP::CDT circle_cdt(CTPP::CDT::HASH_VAL);
+  circle_cdt["iri"] = iri;
+
+  std::string arcNumbers;
+  std::string arcCoordinates;
+
+  auto coords = Geometry::toString(*geom,
+                                   theState.getType(),
+                                   box,
+                                   crs,
+                                   precision,
+                                   theState.arcHashMap,
+                                   theState.arcCounter,
+                                   arcNumbers,
+                                   arcCoordinates);
+  if (!coords.empty())
+    circle_cdt["data"] = coords;
+
+  circle_cdt["type"] = Geometry::name(*geom, theState.getType());
+  circle_cdt["layertype"] = "circle";
+
+  circle_cdt["longitude"] = lon;
+  circle_cdt["latitude"] = lat;
+  circle_cdt["radius"] = circle.radius;
+
+  theState.addPresentationAttributes(circle_cdt, css, attributes, circle.attributes);
+
+  if (theState.getType() == "topojson")
+  {
+    if (!arcNumbers.empty())
+      circle_cdt["arcs"] = arcNumbers;
+
+    if (!arcCoordinates.empty())
+    {
+      CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
+      arc_cdt["data"] = arcCoordinates;
+      theGlobals["arcs"][theState.insertCounter] = arc_cdt;
+      theState.insertCounter++;
+    }
+    group_cdt["paths"][iri] = circle_cdt;
+  }
+  else
+  {
+    theGlobals["paths"][iri] = circle_cdt;
+  }
+
+  // Add the SVG use element
+  CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+  tag_cdt["start"] = "<use";
+  tag_cdt["end"] = "/>";
+  theState.addAttributes(theGlobals, tag_cdt, circle.attributes);
+  tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+  group_cdt["tags"].PushBack(tag_cdt);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the layer details into the template hash
  */
 // ----------------------------------------------------------------------
@@ -275,52 +510,9 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!validLayer(theState))
       return;
 
-    // latlon coordinates to be used
-
-    struct LonLat
-    {
-      double lon;
-      double lat;
-    };
-
-    Spine::LocationList locations;
-
     // Resolve keyword, places, geoids
 
-    const auto& geoengine = theState.getGeoEngine();
-
-    Locus::QueryOptions options;
-
-    if (!keyword.empty())
-      locations = geoengine.keywordSearch(options, keyword);
-
-    if (!geoids.empty())
-    {
-      for (const auto& geoid : geoids)
-      {
-        auto newlocations = geoengine.idSearch(options, geoid);
-
-        if (newlocations.size() > 1)  // use only the first match
-          newlocations.resize(1);
-
-        locations.splice(locations.end(), newlocations);
-      }
-    }
-
-    if (!places.empty())
-    {
-      if (!features.empty())
-        options.SetFeatures(features);  // done only for places
-      for (const auto& place : places)
-      {
-        auto newlocations = geoengine.nameSearch(options, place);
-
-        if (newlocations.size() > 1)  // use only the first match
-          newlocations.resize(1);
-
-        locations.splice(locations.end(), newlocations);
-      }
-    }
+    Spine::LocationList locations = resolveLocations(theState);
 
     // Get projection details
 
@@ -360,83 +552,8 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // Generate a <g> group of labels
 
     if (!labels.empty())
-    {
-      std::string labels_iri = theState.makeQid("circle-labels-");
-      if (!theState.addId(labels_iri))
-        throw Fmi::Exception(BCP, "Non-unique ID assigned to circle radius labels")
-            .addParameter("ID", labels_iri);
-
-      CTPP::CDT labels_cdt(CTPP::CDT::HASH_VAL);
-      labels_cdt["attributes"]["id"] = labels_iri;
-      labels_cdt["start"] = "<g";
-      labels_cdt["end"] = "";
-      theState.addAttributes(theGlobals, labels_cdt, labels.attributes);
-      theLayersCdt.PushBack(labels_cdt);
-
-      const std::map<std::string, double> directions = {
-          {"north", 90}, {"south", -90}, {"west", -180}, {"east", 180}};
-
-      auto current_circle = all_circles.begin();
-      for (const auto& location : locations)
-      {
-        auto lon = location->longitude;
-        auto lat = location->latitude;
-        for (const auto& circle : circles)
-        {
-          auto txt = labels.format(circle.radius);
-
-          for (const auto& direction : labels.layout)
-          {
-            double x = 0;
-            double y = 0;
-
-            auto dir = directions.find(direction);
-            if (dir != directions.end())
-            {
-              auto angle = dir->second;
-              auto lonlat = coordinate_at_distance(lon, lat, angle, circle.radius * 1000);
-
-              x = lonlat.first;
-              y = lonlat.second;
-              transformation.transform(x, y);  // latlon -> world xy
-            }
-            else
-            {
-              if (direction == "top")
-                find_top_point(x, y, *current_circle);
-              else if (direction == "bottom")
-                find_bottom_point(x, y, *current_circle);
-              else if (direction == "left")
-                find_left_point(x, y, *current_circle);
-              else if (direction == "right")
-                find_right_point(x, y, *current_circle);
-            }
-
-            if (clipbox.position(x, y) == Fmi::Box::Inside)
-            {
-              box.transform(x, y);  // world xy -> pixel
-
-              auto xpos = lround(x + labels.dx);
-              auto ypos = lround(y + labels.dy);
-
-              CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-              text_cdt["start"] = " <text";
-              text_cdt["end"] = "</text>";
-              text_cdt["cdata"] = Fmi::safexmlescape(txt);
-
-              text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
-              text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
-
-              theState.addAttributes(theGlobals, text_cdt, labels.textattributes);
-              theLayersCdt.PushBack(text_cdt);
-            }
-          }
-          ++current_circle;
-        }
-      }
-      // Close labels_cdt
-      theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
-    }
+      generateLabels(
+          theGlobals, theLayersCdt, theState, locations, all_circles, transformation, clipbox, box);
 
     // Generate a <g> group of circles
 
@@ -464,73 +581,12 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         if (!geom || geom->IsEmpty() != 0)
           continue;
 
-        if (lines)
-          geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-        else
-          geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+        geom.reset(clip_circle(*geom, clipbox, lines));
 
         if (!geom || geom->IsEmpty() != 0)
           continue;
 
-        // Generate unique ID for the circle
-        std::string iri = qid + (qid.empty() ? "" : ".") + theState.makeQid("circle");
-
-        if (!theState.addId(iri))
-          throw Fmi::Exception(BCP, "Non-unique ID assigned to circle").addParameter("ID", iri);
-
-        CTPP::CDT circle_cdt(CTPP::CDT::HASH_VAL);
-        circle_cdt["iri"] = iri;
-
-        std::string arcNumbers;
-        std::string arcCoordinates;
-
-        auto coords = Geometry::toString(*geom,
-                                         theState.getType(),
-                                         box,
-                                         crs,
-                                         precision,
-                                         theState.arcHashMap,
-                                         theState.arcCounter,
-                                         arcNumbers,
-                                         arcCoordinates);
-        if (!coords.empty())
-          circle_cdt["data"] = coords;
-
-        circle_cdt["type"] = Geometry::name(*geom, theState.getType());
-        circle_cdt["layertype"] = "circle";
-
-        circle_cdt["longitude"] = lon;
-        circle_cdt["latitude"] = lat;
-        circle_cdt["radius"] = circle.radius;
-
-        theState.addPresentationAttributes(circle_cdt, css, attributes, circle.attributes);
-
-        if (theState.getType() == "topojson")
-        {
-          if (!arcNumbers.empty())
-            circle_cdt["arcs"] = arcNumbers;
-
-          if (!arcCoordinates.empty())
-          {
-            CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
-            arc_cdt["data"] = arcCoordinates;
-            theGlobals["arcs"][theState.insertCounter] = arc_cdt;
-            theState.insertCounter++;
-          }
-          group_cdt["paths"][iri] = circle_cdt;
-        }
-        else
-        {
-          theGlobals["paths"][iri] = circle_cdt;
-        }
-
-        // Add the SVG use element
-        CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-        tag_cdt["start"] = "<use";
-        tag_cdt["end"] = "/>";
-        theState.addAttributes(theGlobals, tag_cdt, circle.attributes);
-        tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-        group_cdt["tags"].PushBack(tag_cdt);
+        addCircle(theGlobals, group_cdt, theState, geom, lon, lat, circle, box, crs, precision);
       }
     }
 
@@ -581,33 +637,7 @@ void CircleLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
       return;
 
     // Resolve locations from geo engine
-    Spine::LocationList locations;
-    const auto& geoengine = theState.getGeoEngine();
-    Locus::QueryOptions options;
-
-    if (!keyword.empty())
-      locations = geoengine.keywordSearch(options, keyword);
-
-    for (const auto& geoid : geoids)
-    {
-      auto locs = geoengine.idSearch(options, geoid);
-      if (locs.size() > 1)
-        locs.resize(1);
-      locations.splice(locations.end(), locs);
-    }
-
-    if (!places.empty())
-    {
-      if (!features.empty())
-        options.SetFeatures(features);
-      for (const auto& place : places)
-      {
-        auto locs = geoengine.nameSearch(options, place);
-        if (locs.size() > 1)
-          locs.resize(1);
-        locations.splice(locations.end(), locs);
-      }
-    }
+    Spine::LocationList locations = resolveLocations(theState);
 
     if (locations.empty())
       return;
@@ -640,11 +670,7 @@ void CircleLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
         if (!polygon || polygon->IsEmpty() != 0)
           continue;
 
-        OGRGeometryPtr clipped;
-        if (lines)
-          clipped.reset(Fmi::OGR::lineclip(*polygon, clipbox));
-        else
-          clipped.reset(Fmi::OGR::polyclip(*polygon, clipbox));
+        OGRGeometryPtr clipped(clip_circle(*polygon, clipbox, lines));
 
         if (!clipped || clipped->IsEmpty())
           continue;

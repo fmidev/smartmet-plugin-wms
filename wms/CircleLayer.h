@@ -10,8 +10,11 @@
 #include "Circle.h"
 #include "CircleLabels.h"
 #include "Layer.h"
+#include <gis/Types.h>
+#include <spine/Location.h>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace CTPP
 {
@@ -42,6 +45,26 @@ class CircleLayer : public Layer
   std::size_t hash_value(const State& theState) const override;
 
  private:
+  Spine::LocationList resolveLocations(const State& theState) const;
+  void generateLabels(CTPP::CDT& theGlobals,
+                      CTPP::CDT& theLayersCdt,
+                      State& theState,
+                      const Spine::LocationList& locations,
+                      const std::vector<OGRGeometryPtr>& all_circles,
+                      const Fmi::CoordinateTransformation& transformation,
+                      const Fmi::Box& clipbox,
+                      const Fmi::Box& box) const;
+  void addCircle(CTPP::CDT& theGlobals,
+                 CTPP::CDT& group_cdt,
+                 State& theState,
+                 const OGRGeometryPtr& geom,
+                 double lon,
+                 double lat,
+                 const Circle& circle,
+                 const Fmi::Box& box,
+                 const Fmi::SpatialReference& crs,
+                 double precision) const;
+
   std::string keyword;           // locations from database
   std::set<std::string> places;  // locations from database
   std::set<int> geoids;          // locations from database
