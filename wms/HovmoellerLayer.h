@@ -23,6 +23,10 @@
 
 #include "Isoband.h"
 #include "Layer.h"
+#include <engines/querydata/Q.h>
+#include <engines/querydata/ValidTimeList.h>
+#include <spine/Parameter.h>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -79,6 +83,20 @@ class HovmoellerLayer : public Layer
 
   // Colour bands – same structure as IsobandLayer
   std::vector<Isoband> isobands;
+
+ private:
+  void selectData(const Engine::Querydata::Q& q, const Spine::Parameter& param) const;
+  void renderSpaceTime(std::ostringstream& svg,
+                       const Engine::Querydata::Q& q,
+                       const Engine::Querydata::ValidTimeList& valid_times,
+                       int canvas_w,
+                       int canvas_h) const;
+  void renderTimeLevel(std::ostringstream& svg,
+                       const Engine::Querydata::Q& q,
+                       const Spine::Parameter& param,
+                       const Engine::Querydata::ValidTimeList& valid_times,
+                       int canvas_w,
+                       int canvas_h) const;
 };
 
 }  // namespace Dali

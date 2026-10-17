@@ -127,6 +127,114 @@ void HovmoellerLayer::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Select the level for the spatial slice directions, and the parameter
+ */
+// ----------------------------------------------------------------------
+
+void HovmoellerLayer::selectData(const Engine::Querydata::Q& q, const Spine::Parameter& param) const
+{
+  // Select pressure level for the two spatial-slice directions
+  if (direction != "time_level")
+  {
+    if (!q->firstLevel())
+      throw Fmi::Exception(BCP, "HovmoellerLayer: unable to reset levels");
+    if (paraminfo.level)
+    {
+      if (!q->selectLevel(*paraminfo.level))
+        throw Fmi::Exception(BCP,
+            "HovmoellerLayer: level " + Fmi::to_string(*paraminfo.level) + " not available");
+    }
+  }
+
+  if (!q->param(param.number()))
+    throw Fmi::Exception(BCP,
+        "HovmoellerLayer: parameter '" + paraminfo.parameter + "' not available in data");
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Render a time-longitude or time-latitude diagram
+ */
+// ----------------------------------------------------------------------
+
+void HovmoellerLayer::renderSpaceTime(std::ostringstream& svg,
+                                      const Engine::Querydata::Q& q,
+                                      const Engine::Querydata::ValidTimeList& valid_times,
+                                      int canvas_w,
+                                      int canvas_h) const
+{
+  const int n_times = static_cast<int>(valid_times.size());
+
+  const bool time_lon = (direction == "time_lon");
+  const double space_min = time_lon ? lon_min : lat_min;
+  const double space_max = time_lon ? lon_max : lat_max;
+  const double fixed     = time_lon ? latitude : longitude;
+
+  const double cell_w = static_cast<double>(canvas_w) / nx;
+  const double cell_h = static_cast<double>(canvas_h) / n_times;
+
+  int ti = 0;
+  for (const auto& t : valid_times)
+  {
+    for (int si = 0; si < nx; ++si)
+    {
+      const double space = space_min + (space_max - space_min) * si / (nx - 1);
+      const double lon   = time_lon ? space : fixed;
+      const double lat   = time_lon ? fixed : space;
+
+      const float value = q->interpolate(NFmiPoint(lon, lat), t, 180);
+      const std::string cls = isoband_class(value, isobands);
+      if (!cls.empty())
+        emit_rect(svg, si * cell_w, ti * cell_h, cell_w, cell_h, cls);
+    }
+    ++ti;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Render a time-level diagram
+ */
+// ----------------------------------------------------------------------
+
+void HovmoellerLayer::renderTimeLevel(std::ostringstream& svg,
+                                      const Engine::Querydata::Q& q,
+                                      const Spine::Parameter& param,
+                                      const Engine::Querydata::ValidTimeList& valid_times,
+                                      int canvas_w,
+                                      int canvas_h) const
+{
+  const int n_times = static_cast<int>(valid_times.size());
+
+  // Collect all available pressure levels in data order
+  std::vector<double> levels;
+  for (q->resetLevel(); q->nextLevel();)
+    levels.push_back(q->levelValue());
+  const int n_levels = static_cast<int>(levels.size());
+  if (n_levels == 0)
+    throw Fmi::Exception(BCP, "HovmoellerLayer: no levels in data");
+
+  const double cell_w = static_cast<double>(canvas_w) / n_levels;
+  const double cell_h = static_cast<double>(canvas_h) / n_times;
+
+  int ti = 0;
+  for (const auto& t : valid_times)
+  {
+    for (int li = 0; li < n_levels; ++li)
+    {
+      q->selectLevel(levels[li]);
+      q->param(param.number());
+      const float value = q->interpolate(NFmiPoint(longitude, latitude), t, 180);
+      const std::string cls = isoband_class(value, isobands);
+      if (!cls.empty())
+        emit_rect(svg, li * cell_w, ti * cell_h, cell_w, cell_h, cls);
+    }
+    ++ti;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate SVG content into the CTPP CDT
  */
 // ----------------------------------------------------------------------
@@ -159,22 +267,8 @@ void HovmoellerLayer::generate(CTPP::CDT& theGlobals,
 
     auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter);
 
-    // Select pressure level for the two spatial-slice directions
-    if (direction != "time_level")
-    {
-      if (!q->firstLevel())
-        throw Fmi::Exception(BCP, "HovmoellerLayer: unable to reset levels");
-      if (paraminfo.level)
-      {
-        if (!q->selectLevel(*paraminfo.level))
-          throw Fmi::Exception(BCP,
-              "HovmoellerLayer: level " + Fmi::to_string(*paraminfo.level) + " not available");
-      }
-    }
-
-    if (!q->param(param.number()))
-      throw Fmi::Exception(BCP,
-          "HovmoellerLayer: parameter '" + paraminfo.parameter + "' not available in data");
+    // Select pressure level for the two spatial-slice directions and the parameter
+    selectData(q, param);
 
     // ---- valid times ----
 
@@ -182,7 +276,6 @@ void HovmoellerLayer::generate(CTPP::CDT& theGlobals,
     if (!valid_times_ptr || valid_times_ptr->empty())
       throw Fmi::Exception(BCP, "HovmoellerLayer: no valid times in querydata");
     const auto& valid_times = *valid_times_ptr;
-    const int n_times = static_cast<int>(valid_times.size());
 
     // ---- canvas dimensions from the product globals ----
 
@@ -197,68 +290,13 @@ void HovmoellerLayer::generate(CTPP::CDT& theGlobals,
     std::ostringstream svg;
 
     if (direction == "time_lon" || direction == "time_lat")
-    {
-      const bool time_lon = (direction == "time_lon");
-      const double space_min = time_lon ? lon_min : lat_min;
-      const double space_max = time_lon ? lon_max : lat_max;
-      const double fixed     = time_lon ? latitude : longitude;
-
-      const double cell_w = static_cast<double>(canvas_w) / nx;
-      const double cell_h = static_cast<double>(canvas_h) / n_times;
-
-      int ti = 0;
-      for (const auto& t : valid_times)
-      {
-        for (int si = 0; si < nx; ++si)
-        {
-          const double space = space_min + (space_max - space_min) * si / (nx - 1);
-          const double lon   = time_lon ? space : fixed;
-          const double lat   = time_lon ? fixed : space;
-
-          const float value = q->interpolate(NFmiPoint(lon, lat), t, 180);
-          const std::string cls = isoband_class(value, isobands);
-          if (!cls.empty())
-            emit_rect(svg, si * cell_w, ti * cell_h, cell_w, cell_h, cls);
-        }
-        ++ti;
-      }
-    }
+      renderSpaceTime(svg, q, valid_times, canvas_w, canvas_h);
     else  // time_level
-    {
-      // Collect all available pressure levels in data order
-      std::vector<double> levels;
-      for (q->resetLevel(); q->nextLevel();)
-        levels.push_back(q->levelValue());
-      const int n_levels = static_cast<int>(levels.size());
-      if (n_levels == 0)
-        throw Fmi::Exception(BCP, "HovmoellerLayer: no levels in data");
-
-      const double cell_w = static_cast<double>(canvas_w) / n_levels;
-      const double cell_h = static_cast<double>(canvas_h) / n_times;
-
-      int ti = 0;
-      for (const auto& t : valid_times)
-      {
-        for (int li = 0; li < n_levels; ++li)
-        {
-          q->selectLevel(levels[li]);
-          q->param(param.number());
-          const float value = q->interpolate(NFmiPoint(longitude, latitude), t, 180);
-          const std::string cls = isoband_class(value, isobands);
-          if (!cls.empty())
-            emit_rect(svg, li * cell_w, ti * cell_h, cell_w, cell_h, cls);
-        }
-        ++ti;
-      }
-    }
+      renderTimeLevel(svg, q, param, valid_times, canvas_w, canvas_h);
 
     // ---- CSS ----
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // ---- assemble CDT layer entry ----
 
