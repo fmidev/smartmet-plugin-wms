@@ -115,6 +115,91 @@ void ColorPainter_border::addBorder(const Border& border)
 
 
 
+namespace
+{
+
+// Border colors on land and on sea
+struct BorderColors
+{
+  uint inside_land = 0;
+  uint inside_sea = 0;
+  uint outside_land = 0;
+  uint outside_sea = 0;
+};
+
+// Paint the colors of the previous and the current pixel if they are on different sides of the border
+inline void paint_transition(uint *image,uint prevpos,double prevland,bool previnside,uint pos,double landval,bool inside,const BorderColors& colors)
+{
+  if (!previnside  &&  inside)
+  {
+    if (prevland > 0.9)
+      image[prevpos] = merge_ARGB(colors.outside_land,image[prevpos]);
+    else
+      image[prevpos] = merge_ARGB(colors.outside_sea,image[prevpos]);
+
+    if (landval > 0.9)
+      image[pos] = merge_ARGB(colors.inside_land,image[pos]);
+    else
+      image[pos] = merge_ARGB(colors.inside_sea,image[pos]);
+  }
+  else
+  if (previnside  &&  !inside)
+  {
+    if (prevland > 0.9)
+      image[prevpos] = merge_ARGB(colors.inside_land,image[prevpos]);
+    else
+      image[prevpos] = merge_ARGB(colors.inside_sea,image[prevpos]);
+
+    if (landval > 0.9)
+      image[pos] = merge_ARGB(colors.outside_land,image[pos]);
+    else
+      image[pos] = merge_ARGB(colors.outside_sea,image[pos]);
+  }
+}
+
+// Paint the border of the area where values are at least minVal
+void paint_border(uint width,uint height,uint *image,const std::vector<float>& land,const std::vector<float>& values,double minVal,const BorderColors& colors)
+{
+  std::vector<bool> prevInsideY(width, false);
+  std::vector<uint> prevInsidePos(width, 0);
+  std::vector<double> prevLandVal(width, 0.0);
+
+  uint c = 0;
+  for (uint y = 0; y < height; y++)
+  {
+    uint yy = height - y -1;
+    uint p = yy * width;
+    bool prevInside = false;
+    double prevLand = 0.0;
+    for (uint x = 0; x < width; x++)
+    {
+      uint cc = p + x;
+      float val = values[cc];
+      float landval = land[cc];
+      bool inside = true;
+      if (val < minVal)
+        inside = false;
+
+      if (x > 0)
+        paint_transition(image,c-1,prevLand,prevInside,c,landval,inside,colors);
+
+      if (y > 0)
+        paint_transition(image,prevInsidePos[x],prevLandVal[x],prevInsideY[x],c,landval,inside,colors);
+
+      prevInside = inside;
+      prevLand = landval;
+      prevLandVal[x] = landval;
+      prevInsideY[x] = inside;
+      prevInsidePos[x] = c;
+      c++;
+    }
+  }
+}
+
+}  // namespace
+
+
+
 void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_step */,uint /* loop_steps */,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& /* parameters */)
 {
   try
@@ -135,151 +220,18 @@ void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_ste
 
     for (auto& border : borders)
     {
+      // Border colors on land and on sea
+      BorderColors colors;
+      colors.inside_land = color_with_opacity(border.inside_color,opacity_land);
+      colors.inside_sea = color_with_opacity(border.inside_color,opacity_sea);
+      colors.outside_land = color_with_opacity(border.outside_color,opacity_land);
+      colors.outside_sea = color_with_opacity(border.outside_color,opacity_sea);
+
       double minVal = border.inside_value_min;
-      double stepIncrease = border.step_increase;
-      uint insideCol = border.inside_color;
-      uint outsideCol = border.outside_color;
-      uint steps = border.steps;
-
-      uint insideCol_land = insideCol;
-      uint insideCol_sea = insideCol;
-      uint outsideCol_land = outsideCol;
-      uint outsideCol_sea = outsideCol;
-
-      uint o = (uint)((double)((outsideCol & 0xFF000000) >> 24));
-      uint i = (uint)((double)((insideCol & 0xFF000000) >> 24));
-
-      if (opacity_land != 1.0)
+      for (uint t=0; t<(uint)border.steps; t++)
       {
-        uint op = o * opacity_land;
-        if (op > 255)
-          op = 0xFF000000;
-        else
-          op = (op & 0xFF) << 24;
-
-        outsideCol_land = op + (outsideCol & 0x00FFFFFF);
-
-        op = i * opacity_land;
-        if (op > 255)
-          op = 0xFF000000;
-        else
-          op = (op & 0xFF) << 24;
-
-        insideCol_land = op + (insideCol & 0x00FFFFFF);
-      }
-
-      if (opacity_sea != 1.0)
-      {
-        uint op = o * opacity_sea;
-        if (op > 255)
-          op = 0xFF000000;
-        else
-          op = (op & 0xFF) << 24;
-
-        outsideCol_sea = op + (outsideCol & 0x00FFFFFF);
-
-        op = i * opacity_sea;
-        if (op > 255)
-          op = 0xFF000000;
-        else
-          op = (op & 0xFF) << 24;
-
-        insideCol_sea = op + (insideCol & 0x00FFFFFF);
-      }
-
-
-      for (uint t=0; t<steps; t++)
-      {
-        std::vector<bool> prevInsideY(width, false);
-        std::vector<uint> prevInsidePos(width, 0);
-        std::vector<double> prevLandVal(width, 0.0);
-        
-        uint c = 0;
-        for (uint y = 0; y < height; y++)
-        {
-          uint yy = height - y -1;
-          uint p = yy * width;
-          bool prevInside = false;
-          double prevLand = 0.0;
-          for (uint x = 0; x < width; x++)
-          {
-            uint cc = p + x;
-            float val = values[cc];
-            float landval = land[cc];
-            bool inside = true;
-            if (val < minVal)
-              inside = false;
-
-            if (x > 0)
-            {
-              if (!prevInside  &&  inside)
-              {
-                if (prevLand > 0.9)
-                  image[c-1] = merge_ARGB(outsideCol_land,image[c-1]);
-                else
-                  image[c-1] = merge_ARGB(outsideCol_sea,image[c-1]);
-
-                if (landval > 0.9)
-                  image[c] = merge_ARGB(insideCol_land,image[c]);
-                else
-                  image[c] = merge_ARGB(insideCol_sea,image[c]);
-              }
-              else
-              if (prevInside  &&  !inside)
-              {
-                if (prevLand > 0.9)
-                  image[c-1] = merge_ARGB(insideCol_land,image[c-1]);
-                else
-                  image[c-1] = merge_ARGB(insideCol_sea,image[c-1]);
-
-                if (landval > 0.9)
-                  image[c] = merge_ARGB(outsideCol_land,image[c]);
-                else
-                  image[c] = merge_ARGB(outsideCol_sea,image[c]);
-              }
-            }
-
-            if (y > 0)
-            {
-              uint pp = prevInsidePos[x];
-              bool prevIn = prevInsideY[x];
-              double prevL = prevLandVal[x];
-              if (!prevIn  &&  inside)
-              {
-                if (prevL > 0.9)
-                  image[pp] = merge_ARGB(outsideCol_land,image[pp]);
-                else
-                  image[pp] = merge_ARGB(outsideCol_sea,image[pp]);
-
-                if (landval > 0.9)
-                  image[c] = merge_ARGB(insideCol_land,image[c]);
-                else
-                  image[c] = merge_ARGB(insideCol_sea,image[c]);
-              }
-              else
-              if (prevIn  &&  !inside)
-              {
-                if (prevL > 0.9)
-                  image[pp] = merge_ARGB(insideCol_land,image[pp]);
-                else
-                  image[pp] = merge_ARGB(insideCol_sea,image[pp]);
-
-                if (landval > 0.9)
-                  image[c] = merge_ARGB(outsideCol_land,image[c]);
-                else
-                  image[c] = merge_ARGB(outsideCol_sea,image[c]);
-              }
-            }
-
-            prevInside = inside;
-            prevLand = landval;
-            prevLandVal[x] = landval;
-            prevInsideY[x] = inside;
-            prevInsidePos[x] = c;
-            c++;
-          }
-        }
-        minVal = minVal + stepIncrease;
+        paint_border(width,height,image,land,values,minVal,colors);
+        minVal = minVal + border.step_increase;
       }
     }
   }
