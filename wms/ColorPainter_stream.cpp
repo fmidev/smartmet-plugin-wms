@@ -133,7 +133,7 @@ void ColorPainter_stream::initStream(Json::Value &theJson,const State& theState)
 
     std::string col = "FF000000";
     JsonTools::remove_string(col, theJson, "line_color_land");
-    line_color_sea = argb(col.c_str());
+    line_color_land = argb(col.c_str());
 
     col = "FF000000";
     JsonTools::remove_string(col, theJson, "line_color_sea");
