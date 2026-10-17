@@ -308,6 +308,214 @@ std::vector<double> calculate_rose_maxima(const TS::TimeSeries& directions,
   }
 }
 
+// Image coordinates of a geographic point
+std::pair<int, int> image_coordinates(const Fmi::CoordinateTransformation& transformation,
+                                      const Fmi::Box& box,
+                                      double lon,
+                                      double lat)
+{
+  double x = lon;
+  double y = lat;
+  transformation.transform(x, y);
+  box.transform(x, y);
+  return {lround(x), lround(y)};
+}
+
+// Add a <use> tag for the symbol
+void add_symbol(CTPP::CDT& group_cdt,
+                CTPP::CDT& theGlobals,
+                State& theState,
+                const std::string& iri,
+                const Attributes& attributes,
+                int x,
+                int y)
+{
+  CTPP::CDT symbol_cdt(CTPP::CDT::HASH_VAL);
+  symbol_cdt["start"] = "<use";
+  symbol_cdt["end"] = "/>";
+
+  std::string IRI = Iri::normalize(iri);
+  if (theState.addId(IRI))
+    theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+  theState.addAttributes(theGlobals, symbol_cdt, attributes);
+
+  symbol_cdt["attributes"]["xlink:href"] = "#" + IRI;
+  symbol_cdt["attributes"]["x"] = Fmi::to_string(x);
+  symbol_cdt["attributes"]["y"] = Fmi::to_string(y);
+
+  group_cdt["tags"].PushBack(symbol_cdt);
+}
+
+// Draw the wind rose sectors
+void add_rose_sectors(CTPP::CDT& group_cdt,
+                      CTPP::CDT& theGlobals,
+                      State& theState,
+                      const WindRose& windrose,
+                      const WindRoseData& wdata,
+                      int xrose,
+                      int yrose)
+{
+  const double pi = boost::math::constants::pi<double>();
+  for (int i = 0; i < windrose.sectors; i++)
+  {
+    double max_percentage = *std::max_element(wdata.percentages.begin(), wdata.percentages.end());
+
+    if (wdata.percentages[i] >= windrose.minpercentage)
+    {
+      // Note: The largest sector always reaches the circle edge, hence we must
+      // use a percentage relative to the largest sector
+      double relative_percentage = wdata.percentages[i] / max_percentage;
+      // Note: The areas scale as a square of the radius
+      double r = windrose.radius * sqrt(relative_percentage);
+
+      double angle1 = sector_start_angle(i, windrose.sectors) * pi / 180;
+      double angle2 = sector_end_angle(i, windrose.sectors) * pi / 180;
+
+      // Note that for winds angle zero is north wind, but in SVG coordinates
+      // angle 0 is to the right.
+      double x1 = xrose + r * cos(angle1 - pi / 2);
+      double y1 = yrose + r * sin(angle1 - pi / 2);
+      double x2 = xrose + r * cos(angle2 - pi / 2);
+      double y2 = yrose + r * sin(angle2 - pi / 2);
+
+      CTPP::CDT sector_cdt(CTPP::CDT::HASH_VAL);
+      sector_cdt["start"] = "<path";
+      sector_cdt["end"] = "/>";
+
+      auto selection = Select::attribute(windrose.limits, wdata.max_winds[i]);
+      if (selection)
+        theState.addAttributes(theGlobals, sector_cdt, selection->attributes);
+
+      std::string path = std::string("M") + Fmi::to_string(xrose) + ' ' + Fmi::to_string(yrose) +
+                         ' ' + Fmi::to_string(x1) + ',' + Fmi::to_string(y1) + " A " +
+                         Fmi::to_string(r) + ' ' + Fmi::to_string(r) + " 0,0,1 " +
+                         Fmi::to_string(x2) + ',' + Fmi::to_string(y2) + 'Z';
+
+      sector_cdt["attributes"]["d"] = path;
+
+      group_cdt["tags"].PushBack(sector_cdt);
+    }
+  }
+}
+
+// Connect the station to the wind rose
+void add_connector(CTPP::CDT& group_cdt,
+                   CTPP::CDT& theGlobals,
+                   State& theState,
+                   const Connector& connector,
+                   int xstation,
+                   int ystation,
+                   int xrose,
+                   int yrose)
+{
+  int x1 = xstation;
+  int y1 = ystation;
+  int x2 = xrose;
+  int y2 = yrose;
+  bool ok = true;
+
+  // Clip from the station end if so requested
+  if (connector.startoffset > 0)
+  {
+    double length = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    double alpha = connector.startoffset / length;
+    if (alpha >= 1)
+      ok = false;
+    else
+    {
+      x1 += lround(alpha * (x2 - x1));
+      y1 += lround(alpha * (y2 - y1));
+    }
+  }
+
+  // Clip from the rose end if so requested
+  if (ok && connector.endoffset > 0)
+  {
+    double length = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    double alpha = connector.endoffset / length;
+    if (alpha >= 1)
+      ok = false;
+    else
+    {
+      x2 += lround(alpha * (x1 - x2));
+      y2 += lround(alpha * (y1 - y2));
+    }
+  }
+
+  // And render if there is something left to draw
+  if (ok)
+  {
+    CTPP::CDT line_cdt(CTPP::CDT::HASH_VAL);
+    line_cdt["start"] = "<line";
+    line_cdt["end"] = "/>";
+
+    theState.addAttributes(theGlobals, line_cdt, connector.attributes);
+
+    line_cdt["attributes"]["x1"] = x1;
+    line_cdt["attributes"]["y1"] = y1;
+    line_cdt["attributes"]["x2"] = x2;
+    line_cdt["attributes"]["y2"] = y2;
+
+    group_cdt["tags"].PushBack(line_cdt);
+  }
+}
+
+// Draw the title
+void add_title(std::list<CTPP::CDT>& text_layers,
+               CTPP::CDT& theGlobals,
+               State& theState,
+               const Title& title,
+               const std::string& text,
+               int xrose,
+               int yrose)
+{
+  CTPP::CDT title_cdt(CTPP::CDT::HASH_VAL);
+  title_cdt["start"] = "<text";
+  title_cdt["end"] = "</text>";
+  title_cdt["cdata"] = Fmi::safexmlescape(text);
+
+  theState.addAttributes(theGlobals, title_cdt, title.attributes);
+  title_cdt["attributes"]["x"] = Fmi::to_string(xrose + title.dx);
+  title_cdt["attributes"]["y"] = Fmi::to_string(yrose + title.dy);
+
+  text_layers.push_back(title_cdt);
+}
+
+// Draw the observations
+void add_observations(std::list<CTPP::CDT>& text_layers,
+                      CTPP::CDT& theGlobals,
+                      State& theState,
+                      const Observations& observations,
+                      const WindRoseData& wdata,
+                      int xrose,
+                      int yrose)
+{
+  for (const auto& observation : observations.observations)
+  {
+    double value = 0;
+    if (observation.parameter == "mean_t(T)")
+      value = wdata.mean_temperature;
+    else if (observation.parameter == "mean_t(ws_10min)")
+      value = wdata.mean_wind;
+    else if (observation.parameter == "max_t(ws_10min)")
+      value = wdata.max_wind;
+    else
+      throw Fmi::Exception(BCP, "Unknown WindRoseLayer parameter '" + observation.parameter + "'");
+
+    CTPP::CDT obs_cdt(CTPP::CDT::HASH_VAL);
+    obs_cdt["start"] = "<text";
+    obs_cdt["end"] = "</text>";
+    obs_cdt["cdata"] = Fmi::safexmlescape(observation.label.print(value));
+
+    theState.addAttributes(theGlobals, obs_cdt, observation.attributes);
+    obs_cdt["attributes"]["x"] = Fmi::to_string(xrose + observation.label.dx);
+    obs_cdt["attributes"]["y"] = Fmi::to_string(yrose + observation.label.dy);
+
+    text_layers.push_back(obs_cdt);
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -394,11 +602,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Establish the projection
 
@@ -449,221 +653,61 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       const WindRoseData& wdata = it->second;
 
       // Where to center the rose
-      double lon = (station.longitude ? *station.longitude : wdata.longitude);
-      double lat = (station.latitude ? *station.latitude : wdata.latitude);
+      double lon = station.longitude.value_or(wdata.longitude);
+      double lat = station.latitude.value_or(wdata.latitude);
 
       // The respective image coordinate
 
-      double x = lon;
-      double y = lat;
-      transformation.transform(x, y);
-      box.transform(x, y);
-      int xrose = lround(x);
-      int yrose = lround(y);
+      const auto [xrose, yrose] = image_coordinates(transformation, box, lon, lat);
 
       // Where the station is located
 
-      x = wdata.longitude;
-      y = wdata.latitude;
-      transformation.transform(x, y);
-      box.transform(x, y);
-      int xstation = lround(x);
-      int ystation = lround(y);
+      const auto [xstation, ystation] =
+          image_coordinates(transformation, box, wdata.longitude, wdata.latitude);
 
       // Generate marker for station if so desired
 
       if (station.symbol && !station.symbol->empty())
-      {
-        CTPP::CDT station_cdt(CTPP::CDT::HASH_VAL);
-        station_cdt["start"] = "<use";
-        station_cdt["end"] = "/>";
-
-        const std::string& iri = *station.symbol;
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        theState.addAttributes(theGlobals, station_cdt, station.attributes);
-
-        station_cdt["attributes"]["xlink:href"] = "#" + IRI;
-        station_cdt["attributes"]["x"] = Fmi::to_string(xstation);
-        station_cdt["attributes"]["y"] = Fmi::to_string(ystation);
-
-        group_cdt["tags"].PushBack(station_cdt);
-      }
+        add_symbol(group_cdt,
+                   theGlobals,
+                   theState,
+                   *station.symbol,
+                   station.attributes,
+                   xstation,
+                   ystation);
 
       // Generate the symbol for the wind rose
 
       if (windrose.symbol && !windrose.symbol->empty())
-      {
-        CTPP::CDT rose_cdt(CTPP::CDT::HASH_VAL);
-        rose_cdt["start"] = "<use";
-        rose_cdt["end"] = "/>";
-
-        const std::string& iri = *windrose.symbol;
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        theState.addAttributes(theGlobals, rose_cdt, windrose.attributes);
-
-        rose_cdt["attributes"]["xlink:href"] = "#" + IRI;
-        rose_cdt["attributes"]["x"] = Fmi::to_string(xrose);
-        rose_cdt["attributes"]["y"] = Fmi::to_string(yrose);
-
-        group_cdt["tags"].PushBack(rose_cdt);
-      }
+        add_symbol(
+            group_cdt, theGlobals, theState, *windrose.symbol, windrose.attributes, xrose, yrose);
 
       // Draw the wind rose sectors
 
       if (wdata.valid)
-      {
-        const double pi = boost::math::constants::pi<double>();
-        for (int i = 0; i < windrose.sectors; i++)
-        {
-          double max_percentage =
-              *std::max_element(wdata.percentages.begin(), wdata.percentages.end());
-
-          if (wdata.percentages[i] >= windrose.minpercentage)
-          {
-            // Note: The largest sector always reaches the circle edge, hence we must
-            // use a percentage relative to the largest sector
-            double relative_percentage = wdata.percentages[i] / max_percentage;
-            // Note: The areas scale as a square of the radius
-            double r = windrose.radius * sqrt(relative_percentage);
-
-            double angle1 = sector_start_angle(i, windrose.sectors) * pi / 180;
-            double angle2 = sector_end_angle(i, windrose.sectors) * pi / 180;
-
-            // Note that for winds angle zero is north wind, but in SVG coordinates
-            // angle 0 is to the right.
-            double x1 = xrose + r * cos(angle1 - pi / 2);
-            double y1 = yrose + r * sin(angle1 - pi / 2);
-            double x2 = xrose + r * cos(angle2 - pi / 2);
-            double y2 = yrose + r * sin(angle2 - pi / 2);
-
-            CTPP::CDT sector_cdt(CTPP::CDT::HASH_VAL);
-            sector_cdt["start"] = "<path";
-            sector_cdt["end"] = "/>";
-
-            auto selection = Select::attribute(windrose.limits, wdata.max_winds[i]);
-            if (selection)
-              theState.addAttributes(theGlobals, sector_cdt, selection->attributes);
-
-            std::string path =
-                std::string("M") + Fmi::to_string(xrose) + ' ' + Fmi::to_string(yrose) + ' ' +
-                Fmi::to_string(x1) + ',' + Fmi::to_string(y1) + " A " + Fmi::to_string(r) + ' ' +
-                Fmi::to_string(r) + " 0,0,1 " + Fmi::to_string(x2) + ',' + Fmi::to_string(y2) + 'Z';
-
-            sector_cdt["attributes"]["d"] = path;
-
-            group_cdt["tags"].PushBack(sector_cdt);
-          }
-        }
-      }
+        add_rose_sectors(group_cdt, theGlobals, theState, windrose, wdata, xrose, yrose);
 
       // Connect the station to the wind rose
 
       if (windrose.connector)
-      {
-        int x1 = xstation;
-        int y1 = ystation;
-        int x2 = xrose;
-        int y2 = yrose;
-        bool ok = true;
-
-        // Clip from the station end if so requested
-        if (windrose.connector->startoffset > 0)
-        {
-          double length = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-          double alpha = windrose.connector->startoffset / length;
-          if (alpha >= 1)
-            ok = false;
-          else
-          {
-            x1 += lround(alpha * (x2 - x1));
-            y1 += lround(alpha * (y2 - y1));
-          }
-        }
-
-        // Clip from the rose end if so requested
-        if (ok && windrose.connector->endoffset > 0)
-        {
-          double length = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-          double alpha = windrose.connector->endoffset / length;
-          if (alpha >= 1)
-            ok = false;
-          else
-          {
-            x2 += lround(alpha * (x1 - x2));
-            y2 += lround(alpha * (y1 - y2));
-          }
-        }
-
-        // And render if there is something left to draw
-        if (ok)
-        {
-          CTPP::CDT line_cdt(CTPP::CDT::HASH_VAL);
-          line_cdt["start"] = "<line";
-          line_cdt["end"] = "/>";
-
-          theState.addAttributes(theGlobals, line_cdt, windrose.connector->attributes);
-
-          line_cdt["attributes"]["x1"] = x1;
-          line_cdt["attributes"]["y1"] = y1;
-          line_cdt["attributes"]["x2"] = x2;
-          line_cdt["attributes"]["y2"] = y2;
-
-          group_cdt["tags"].PushBack(line_cdt);
-        }
-      }
+        add_connector(
+            group_cdt, theGlobals, theState, *windrose.connector, xstation, ystation, xrose, yrose);
 
       // Draw the title
 
       if (station.title)
-      {
-        CTPP::CDT title_cdt(CTPP::CDT::HASH_VAL);
-        title_cdt["start"] = "<text";
-        title_cdt["end"] = "</text>";
-        title_cdt["cdata"] = Fmi::safexmlescape(
-            station.title->translate(language, theState.getConfig().defaultLanguage()));
-
-        theState.addAttributes(theGlobals, title_cdt, station.title->attributes);
-        title_cdt["attributes"]["x"] = Fmi::to_string(xrose + station.title->dx);
-        title_cdt["attributes"]["y"] = Fmi::to_string(yrose + station.title->dy);
-
-        text_layers.push_back(title_cdt);
-      }
+        add_title(text_layers,
+                  theGlobals,
+                  theState,
+                  *station.title,
+                  station.title->translate(language, theState.getConfig().defaultLanguage()),
+                  xrose,
+                  yrose);
 
       // Draw the observations
 
       if (wdata.valid)
-      {
-        for (const auto& observation : observations.observations)
-        {
-          double value = 0;
-          if (observation.parameter == "mean_t(T)")
-            value = wdata.mean_temperature;
-          else if (observation.parameter == "mean_t(ws_10min)")
-            value = wdata.mean_wind;
-          else if (observation.parameter == "max_t(ws_10min)")
-            value = wdata.max_wind;
-          else
-            throw Fmi::Exception(BCP,
-                                 "Unknown WindRoseLayer parameter '" + observation.parameter + "'");
-
-          CTPP::CDT obs_cdt(CTPP::CDT::HASH_VAL);
-          obs_cdt["start"] = "<text";
-          obs_cdt["end"] = "</text>";
-          obs_cdt["cdata"] = Fmi::safexmlescape(observation.label.print(value));
-
-          theState.addAttributes(theGlobals, obs_cdt, observation.attributes);
-          obs_cdt["attributes"]["x"] = Fmi::to_string(xrose + observation.label.dx);
-          obs_cdt["attributes"]["y"] = Fmi::to_string(yrose + observation.label.dy);
-
-          text_layers.push_back(obs_cdt);
-        }
-      }
+        add_observations(text_layers, theGlobals, theState, observations, wdata, xrose, yrose);
     }
 
     theLayersCdt.PushBack(group_cdt);
