@@ -2545,6 +2545,34 @@ bool Layer::identicalKeywords(const Layer& layer) const
 //   • A CRS present in `inherited` with a different bbox   → emitted (override)
 //   • A CRS not present in `inherited` at all              → emitted (new)
 //   • Returns {} when nothing differs (fully inherited)
+namespace
+{
+// A bounding box entry in capabilities
+CTPP::CDT bbox_cdt(const std::string& id, double minx, double miny, double maxx, double maxy)
+{
+  CTPP::CDT bb(CTPP::CDT::HASH_VAL);
+  bb["crs"] = id;
+  bb["minx"] = minx;
+  bb["miny"] = miny;
+  bb["maxx"] = maxx;
+  bb["maxy"] = maxy;
+  return bb;
+}
+
+bool identical_bbox(const Fmi::BBox& mb, const Fmi::BBox& ib)
+{
+  return (mb.west == ib.west && mb.east == ib.east && mb.south == ib.south &&
+          mb.north == ib.north);
+}
+}  // namespace
+
+// True if the layer has an identical projected bounding box for the CRS
+bool Layer::hasIdenticalProjectedBBox(const std::string& id, const Fmi::BBox& bbox) const
+{
+  auto pos = projected_bbox.find(id);
+  return (pos != projected_bbox.end() && identical_bbox(bbox, pos->second));
+}
+
 std::optional<CTPP::CDT> Layer::getProjectedBoundingBoxDelta(const Layer& inherited) const
 {
   try
@@ -2577,13 +2605,11 @@ std::optional<CTPP::CDT> Layer::getProjectedBoundingBoxDelta(const Layer& inheri
           continue;  // fully inherited, skip
 
         delta_crs_list.PushBack(id);
-        CTPP::CDT bb(CTPP::CDT::HASH_VAL);
-        bb["crs"] = id;
-        bb["minx"] = geographicBoundingBox.xMin;
-        bb["miny"] = geographicBoundingBox.yMin;
-        bb["maxx"] = geographicBoundingBox.xMax;
-        bb["maxy"] = geographicBoundingBox.yMax;
-        delta_bbox_list.PushBack(bb);
+        delta_bbox_list.PushBack(bbox_cdt(id,
+                                          geographicBoundingBox.xMin,
+                                          geographicBoundingBox.yMin,
+                                          geographicBoundingBox.xMax,
+                                          geographicBoundingBox.yMax));
       }
       else if (boost::algorithm::starts_with(id, "AUTO2:"))
       {
@@ -2598,28 +2624,13 @@ std::optional<CTPP::CDT> Layer::getProjectedBoundingBoxDelta(const Layer& inheri
         if (my_pos == projected_bbox.end())
           continue;  // we have no bbox for it either way
 
-        if (inherited_has_crs)
-        {
-          auto inh_pos = inherited.projected_bbox.find(id);
-          if (inh_pos != inherited.projected_bbox.end())
-          {
-            const Fmi::BBox& mb = my_pos->second;
-            const Fmi::BBox& ib = inh_pos->second;
-            if (mb.west == ib.west && mb.east == ib.east && mb.south == ib.south &&
-                mb.north == ib.north)
-              continue;  // identical bbox — fully inherited, skip
-          }
-        }
+        if (inherited_has_crs && inherited.hasIdenticalProjectedBBox(id, my_pos->second))
+          continue;  // identical bbox — fully inherited, skip
 
         // New or changed — include in delta
         delta_crs_list.PushBack(id);
-        CTPP::CDT bb(CTPP::CDT::HASH_VAL);
-        bb["crs"] = id;
-        bb["minx"] = my_pos->second.west;
-        bb["miny"] = my_pos->second.south;
-        bb["maxx"] = my_pos->second.east;
-        bb["maxy"] = my_pos->second.north;
-        delta_bbox_list.PushBack(bb);
+        const Fmi::BBox& mb = my_pos->second;
+        delta_bbox_list.PushBack(bbox_cdt(id, mb.west, mb.south, mb.east, mb.north));
       }
     }
 

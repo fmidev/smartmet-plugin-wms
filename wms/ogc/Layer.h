@@ -43,6 +43,7 @@ class Layer
 {
  private:
   void setProductFile(const std::string& theProductFile);
+  bool hasIdenticalProjectedBBox(const std::string& id, const Fmi::BBox& bbox) const;
 
  protected:
   bool quiet = true;
