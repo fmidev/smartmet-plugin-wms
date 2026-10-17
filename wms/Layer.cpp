@@ -120,6 +120,22 @@ std::string legend_layer_label(const Json::Value& layer_json,
 
   return labels.findConversion(theValue, language);
 }
+// Range of the non-NaN values, returns false if there are none
+bool valid_range(const std::vector<double>& values, double& minvalue, double& maxvalue)
+{
+  bool missing = true;
+  for (auto value : values)
+  {
+    if (!std::isnan(value))
+    {
+      minvalue = (missing ? value : std::min(minvalue, value));
+      maxvalue = (missing ? value : std::max(maxvalue, value));
+      missing = false;
+    }
+  }
+  return !missing;
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -571,28 +587,8 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   double minlat = 0;
   double maxlat = 0;
 
-  bool lon_missing = true;
-  for (auto lon : x)
-  {
-    if (!std::isnan(lon))
-    {
-      minlon = (lon_missing ? lon : std::min(minlon, lon));
-      maxlon = (lon_missing ? lon : std::max(maxlon, lon));
-      lon_missing = false;
-    }
-  }
-
-  bool lat_missing = true;
-  for (auto lat : y)
-  {
-    if (!std::isnan(lat))
-    {
-      // Bugfix: was incorrectly using minlon/maxlon instead of minlat/maxlat
-      minlat = (lat_missing ? lat : std::min(minlat, lat));
-      maxlat = (lat_missing ? lat : std::max(maxlat, lat));
-      lat_missing = false;
-    }
-  }
+  const bool lon_missing = !valid_range(x, minlon, maxlon);
+  const bool lat_missing = !valid_range(y, minlat, maxlat);
 
   if (lon_missing || lat_missing)
     return {};
