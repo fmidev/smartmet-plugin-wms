@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.16
+Version: 26.10.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -80,31 +80,31 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
-Requires: smartmet-library-grid-content >= 26.10.16
-Requires: smartmet-library-grid-files >= 26.10.16
-Requires: smartmet-library-gis >= 26.10.16
-Requires: smartmet-library-trax >= 26.10.16
-Requires: smartmet-library-macgyver >= 26.10.16
-Requires: smartmet-library-spine >= 26.10.16
+Requires: smartmet-library-grid-content >= 26.10.17
+Requires: smartmet-library-grid-files >= 26.10.17
+Requires: smartmet-library-gis >= 26.10.17
+Requires: smartmet-library-trax >= 26.10.17
+Requires: smartmet-library-macgyver >= 26.10.17
+Requires: smartmet-library-spine >= 26.10.17
 Requires: smartmet-swagger-ui
 Requires: smartmet-library-timeseries >= 26.10.16
-Requires: smartmet-library-giza >= 26.10.16
+Requires: smartmet-library-giza >= 26.10.17
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.10.16
 %endif
 %if %{with observation}
-Requires: smartmet-engine-observation >= 26.10.16
+Requires: smartmet-engine-observation >= 26.10.17
 %endif
-Requires: smartmet-engine-avi >= 26.10.16
-Requires: smartmet-engine-querydata >= 26.10.16
-Requires: smartmet-engine-satellite >= 26.10.16
-Requires: smartmet-engine-contour >= 26.10.16
-Requires: smartmet-engine-gis >= 26.10.16
-Requires: smartmet-engine-grid >= 26.10.16
-Requires: smartmet-engine-geonames >= 26.10.16
-Requires: smartmet-engine-satellite >= 26.10.16
-Requires: smartmet-server >= 26.10.16
-Requires: smartmet-library-spine >= 26.10.16
+Requires: smartmet-engine-avi >= 26.10.17
+Requires: smartmet-engine-querydata >= 26.10.17
+Requires: smartmet-engine-satellite >= 26.10.17
+Requires: smartmet-engine-contour >= 26.10.17
+Requires: smartmet-engine-gis >= 26.10.17
+Requires: smartmet-engine-grid >= 26.10.17
+Requires: smartmet-engine-geonames >= 26.10.17
+Requires: smartmet-engine-satellite >= 26.10.17
+Requires: smartmet-server >= 26.10.17
+Requires: smartmet-library-spine >= 26.10.17
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -131,7 +131,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 26.10.16
 #TestRequires: smartmet-engine-geonames-devel >= 26.10.16
 #TestRequires: smartmet-engine-gis-devel >= 26.10.16
-#TestRequires: smartmet-engine-satellite >= 26.10.16
+#TestRequires: smartmet-engine-satellite >= 26.10.17
 #TestRequires: smartmet-engine-querydata-devel >= 26.10.16
 #TestRequires: smartmet-engine-authentication-devel >= 26.10.16
 #TestRequires: smartmet-engine-satellite-devel >= 26.10.16
@@ -147,7 +147,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-utils-devel >= 26.9.3
 #TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
-#TestRequires: smartmet-library-regression >= 26.10.16
+#TestRequires: smartmet-library-regression >= 26.10.17
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: protobuf-compiler
@@ -185,6 +185,24 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- ColorPainter_stream::initStream: assign line_color_land to the land color
+- add_contour_value_attributes: do not dereference an unset multiplier
+- Grid layers: use GridQueryTools helpers for the repeated grid query blocks
+- OGC get_styles: construct the default style title before initializing it
+- NonTemporalLayer: default geographic bounding box starts at longitude -180, not -90
+- Positions: add the north pole when it can be projected
+- Graticule edge_center labels: consider the first label position too
+- ColorPainter_shadow: a shadow without an offset no longer stops painting the remaining shadows
+- RasterLayer: paint the sea shading also below the data
+- MetarLayer: skip the wind direction variability group after the wind group
+- FrameLayer: intermediate and small tics without long tics, and at negative coordinates
+- WMS animation: one frame delay per frame, fail on frames that cannot be rendered, unique temporary
+  file
+- Debug: fix the EXCEPTIONS label
+- Tests: expected outputs for the global default bounding box and the METAR variable wind fix
+- Split functions with a cognitive complexity above 25 into smaller helpers, no functional changes
+
 * Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
 - Fixed compiler warnings and clang-tidy findings (unused code, unreachable code, empty statements, member initialization, parameter passing, noexcept), no functional changes
 
