@@ -190,6 +190,38 @@ void Layers::check_warnings(Warnings& warnings) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Establish the projection of the first layer if it uses the grid-engine
+ *
+ * If the projection CRS is "data" and we are using the grid-engine, then we
+ * actually need to fetch some data in order to see which projection it comes from.
+ */
+// ----------------------------------------------------------------------
+
+Projection Layers::gridProjection(CTPP::CDT& theGlobals, State& theState)
+{
+  Projection projection;
+  auto first = layers.begin();
+  if ((*first) != nullptr && (*first)->paraminfo.source &&
+      *(*first)->paraminfo.source == "grid" && (*first)->visible)
+  {
+    if ((*first)->projection.crs && *(*first)->projection.crs == "data")
+    {
+      CTPP::CDT tmpGlobals(theGlobals);
+      State tmpState(theState.getPlugin(), theState.getRequest());
+      tmpState.setCustomer(theState.getCustomer());
+      CTPP::CDT tmpLayersCdt;
+      getProjection(tmpGlobals, tmpLayersCdt, tmpState, projection);
+    }
+    else
+    {
+      projection = (*first)->projection;
+    }
+  }
+  return projection;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the definitions into the template hash tables
  */
 // ----------------------------------------------------------------------
@@ -209,24 +241,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
     // fetch some data. That's why we first need to find out the actual projection and then use it
     // with the other layers.
 
-    Projection projection;
-    auto first = layers.begin();
-    if ((*first) != nullptr && (*first)->paraminfo.source &&
-        *(*first)->paraminfo.source == "grid" && (*first)->visible)
-    {
-      if ((*first)->projection.crs && *(*first)->projection.crs == "data")
-      {
-        CTPP::CDT tmpGlobals(theGlobals);
-        State tmpState(theState.getPlugin(), theState.getRequest());
-        tmpState.setCustomer(theState.getCustomer());
-        CTPP::CDT tmpLayersCdt;
-        getProjection(tmpGlobals, tmpLayersCdt, tmpState, projection);
-      }
-      else
-      {
-        projection = (*first)->projection;
-      }
-    }
+    Projection projection = gridProjection(theGlobals, theState);
 
     for (auto& layer : layers)
     {
@@ -234,35 +249,35 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
       // (Animations, inner tags etc). Each is pushed separately
       // to the back of the layers CDT
 
-      if (layer->visible)
+      if (!layer->visible)
+        continue;
+
+      if (layer->attributes.value("display") == "none" &&
+          theState.getRequest().getParameter("optimizesize") != std::string("0"))
+        continue;
+
+      if (layer->paraminfo.source == std::string("grid"))
+        layer->setProjection(projection);
+
+      // std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs  <<
+      // "\n";
+
+      if (!layer->projection.projectionParameter)
       {
-        if (layer->attributes.value("display") != "none" ||
-            theState.getRequest().getParameter("optimizesize") == std::string("0"))
-        {
-          if (layer->paraminfo.source == std::string("grid"))
-            layer->setProjection(projection);
+        if (!projection.projectionParameter)
+          projection.projectionParameter = getProjectionParameter();
 
-          // std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs  <<
-          // "\n";
-
-          if (!layer->projection.projectionParameter)
-          {
-            if (!projection.projectionParameter)
-              projection.projectionParameter = getProjectionParameter();
-
-            if (projection.projectionParameter)
-              layer->projection.projectionParameter = projection.projectionParameter;
-          }
-
-          // if (layer->projection.projectionParameter)
-          //  std::cout << "  PARAM : " << *layer->projection.projectionParameter << "\n";
-
-          layer->generate(theGlobals, theLayersCdt, theState);
-
-          if (layer->projection.projectionParameter && !projection.projectionParameter)
-            projection.projectionParameter = *layer->projection.projectionParameter;
-        }
+        if (projection.projectionParameter)
+          layer->projection.projectionParameter = projection.projectionParameter;
       }
+
+      // if (layer->projection.projectionParameter)
+      //  std::cout << "  PARAM : " << *layer->projection.projectionParameter << "\n";
+
+      layer->generate(theGlobals, theLayersCdt, theState);
+
+      if (layer->projection.projectionParameter && !projection.projectionParameter)
+        projection.projectionParameter = *layer->projection.projectionParameter;
     }
   }
   catch (...)

@@ -56,6 +56,9 @@ class Layers
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   std::list<std::shared_ptr<Layer> > layers;
+
+ private:
+  Projection gridProjection(CTPP::CDT& theGlobals, State& theState);
 };
 
 }  // namespace Dali
