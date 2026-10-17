@@ -195,6 +195,7 @@ class Layer
 
   //
   void initLegendGraphicInfo(const Json::Value& root);
+  void setLegendUrlSizes();
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual bool updateLayerMetaData() = 0;

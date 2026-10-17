@@ -1267,6 +1267,315 @@ Layer::Layer(LayerConfig lc) : queryable(true), config(std::move(lc))
   geographicBoundingBox.yMax = 0.0;
 }
 
+namespace
+{
+// The legend template files and their settings
+struct LegendTemplates
+{
+  const std::map<std::string, Json::Value>& files;
+  const std::map<std::string, LegendGraphicSettings>& settings;
+  const LegendGraphicSettings& layerSettings;
+};
+
+// Legends are identified by parameter name + layer type (e.g. Temperature_isoline,
+// Temperature_isoband), or by plain layer type (e.g. isoline, isoband). Returns an empty
+// key if there is no template.
+std::string legend_template_key(const std::string& parameterName,
+                                const std::string& layerType,
+                                const std::map<std::string, Json::Value>& templateFiles,
+                                bool& isGenericTemplate)
+{
+  std::string key = Fmi::ascii_tolower_copy(parameterName + "_" + layerType);
+  if (parameterName.empty() || templateFiles.find(key) == templateFiles.end())
+  {
+    key = Fmi::ascii_tolower_copy(layerType);
+    if (templateFiles.find(key) != templateFiles.end())
+    {
+      isGenericTemplate = true;
+    }
+    else
+    {
+      key.clear();
+    }
+  }
+  return key;
+}
+
+// Add the legend of an isoband or isoline layer
+void add_layer_legend(LegendGraphicResult& result,
+                      const LegendGraphicInfoItem& lgi,
+                      const std::string& layerType,
+                      const std::string& parameterName,
+                      const std::string& key,
+                      bool isGenericTemplate,
+                      const std::string& language,
+                      const LegendTemplates& templates,
+                      LegendGraphicSettings& actualSettings,
+                      unsigned int& xpos,
+                      unsigned int ypos,
+                      unsigned int& uniqueId,
+                      const LayerConfig& config,
+                      const std::string& customer)
+{
+  const auto& templateFiles = templates.files;
+  const auto& templateSettings = templates.settings;
+  const auto& layerSettings = templates.layerSettings;
+
+  // 3) Settings from template file will overwrite the previous settings (default settings,
+  // wms.conf)
+  const auto& templateJson = templateFiles.at(key);
+  actualSettings.merge(templateSettings.at(key));
+
+  // 4) Settings from layer file (product file) will overwrite the previous settings (default
+  // settings, wms.conf, template file)
+  actualSettings.merge(layerSettings);
+
+  LegendGraphicParameter lgp(parameterName);
+  const LegendGraphicParameter& parameterSettings =
+      (actualSettings.parameters.find(parameterName) != actualSettings.parameters.end()
+           ? actualSettings.parameters.at(parameterName)
+           : lgp);
+
+  std::string legendHeader = get_legend_title_string(parameterSettings, language);
+
+  // Generic template file is the same for all layers of same type (e.g. all isobands),
+  // non-generic is parameter-specific and only location need to be modified here
+  auto legendJson = process_legend_json(templateJson,
+                                        layerType,
+                                        parameterName,
+                                        isGenericTemplate,
+                                        legendHeader,
+                                        parameterSettings.unit,
+                                        actualSettings,
+                                        lgi,
+                                        xpos,
+                                        ypos,
+                                        uniqueId++);
+
+  unsigned int labelHeight = 0;
+  unsigned int isobandWidth = 0;
+  if (layerType == "isoband")
+  {
+    std::string customerRoot =
+        (config.getDaliConfig().rootDirectory(true) + "/customers/" + customer);
+    std::string layersRoot = customerRoot + "/layers/";
+
+    Spine::JSON::preprocess(legendJson,
+                            config.getDaliConfig().rootDirectory(true),
+                            layersRoot,
+                            config.getJsonCache());
+
+    labelHeight = isoband_legend_height(legendJson);
+    isobandWidth = isoband_legend_width(legendJson, *(actualSettings.layout.legend_width));
+    unsigned int localizedWidth = lgi.labelWidth(language);
+    if (actualSettings.layout.legend_xoffset)
+      localizedWidth += *(actualSettings.layout.legend_xoffset);
+
+    isobandWidth = std::max(isobandWidth, localizedWidth);
+  }
+  else if (layerType == "isoline")
+  {
+    labelHeight = ypos + (*actualSettings.layout.legend_yoffset * 2);
+  }
+
+  result.height = std::max(result.height, labelHeight);
+
+  result.legendLayers.push_back(legendJson.toStyledString());
+
+  xpos += (*(actualSettings.layout.legend_width) > isobandWidth
+               ? *(actualSettings.layout.legend_width)
+               : isobandWidth);
+}
+
+// Add the legends of the symbol groups
+void add_symbol_group_legends(LegendGraphicResult& result,
+                              const NamedLegendGraphicInfo& lgiSymbols,
+                              const std::string& language,
+                              const LegendTemplates& templates,
+                              const LegendGraphicSettings& actualSettings,
+                              unsigned int xpos,
+                              unsigned int ypos,
+                              unsigned int uniqueId)
+{
+  Json::Value nulljson;
+  const auto& templateFiles = templates.files;
+  const auto& templateSettings = templates.settings;
+  const auto& layerSettings = templates.layerSettings;
+
+  for (const auto& symbol : lgiSymbols)
+  {
+    std::string templateName = Fmi::ascii_tolower_copy(symbol.first + "_symbol");
+    if (symbol.first.empty() || templateFiles.find(templateName) == templateFiles.end())
+      templateName = "symbol";
+
+    LegendGraphicSettings actualSymbolSettings = actualSettings;
+    // 3) Settings from template file will overwrite the previous settings (default settings,
+    // wms.conf)
+    actualSymbolSettings.merge(templateSettings.at(templateName));
+    // 4) Settings from layer file (product file) will overwrite the previous settings
+    // (default settings, wms.conf, template file)
+    actualSymbolSettings.merge(layerSettings);
+
+    Json::Value symbolTemplate = templateFiles.at(templateName);
+    const LegendGraphicInfo& legendGraphicInfo = symbol.second;
+
+    symbolTemplate = process_symbol_group_json(symbolTemplate,
+                                               actualSymbolSettings,
+                                               legendGraphicInfo,
+                                               language,
+                                               xpos,
+                                               ypos,
+                                               uniqueId);
+
+    result.legendLayers.push_back(symbolTemplate.toStyledString());
+    auto layersJson = symbolTemplate.get("layers", nulljson);
+    if (!layersJson.isNull() && layersJson.isArray())
+    {
+      for (const auto& layer : layersJson)
+      {
+        get_legend_dimension(layer, "attributes", result.width, result.height);
+        get_legend_dimension(layer, "positions", result.width, result.height);
+      }
+    }
+    result.width += *actualSymbolSettings.layout.symbol_group_x_padding;
+    result.height += *actualSettings.layout.symbol_group_y_padding;
+  }
+}
+
+// Make sure the legend is wide enough for the parameter names
+void include_parameter_name_widths(LegendGraphicResult& result,
+                                   const std::set<std::string>& parameterNames,
+                                   const LegendGraphicSettings& actualSettings,
+                                   const std::string& language)
+{
+  for (const auto& name : parameterNames)
+  {
+    Dali::text_dimension_t tdim = Dali::getTextDimension(name, Dali::text_style_t());
+    unsigned int data_name_width = (tdim.width * 1.6);
+    unsigned int parameter_name_width = data_name_width;
+
+    if (actualSettings.parameters.find(name) != actualSettings.parameters.end())
+    {
+      const auto& lgp = actualSettings.parameters.at(name);
+      tdim = Dali::getTextDimension(lgp.given_name, Dali::text_style_t());
+      unsigned int given_name_width = (tdim.width * 1.6);
+      parameter_name_width = std::max(data_name_width, given_name_width);
+      // Translation of parameter overrides original parameter name
+      if (lgp.text_lengths.find(language) != lgp.text_lengths.end())
+        parameter_name_width = lgp.text_lengths.at(language);
+    }
+    if (actualSettings.layout.legend_xoffset)
+      parameter_name_width += *actualSettings.layout.legend_xoffset;
+    result.width = std::max(parameter_name_width, result.width);
+  }
+}
+
+// Add the legends of the named legend graphic info
+void add_named_legend(LegendGraphicResult& result,
+                      const LegendGraphicInfo& legendGraphicInfo,
+                      const std::string& language,
+                      const LegendTemplates& templates,
+                      LegendGraphicSettings& actualSettings,
+                      unsigned int& uniqueId,
+                      const LayerConfig& config,
+                      const std::string& customer)
+{
+  std::set<std::string> parameterNames;
+  unsigned int xpos = 0;
+  unsigned int ypos = 0;
+
+  // Vector of symbol groups for PrecipitationForm, CloudBase2, ...
+  NamedLegendGraphicInfo lgiSymbols;
+  for (const auto& lgi : legendGraphicInfo)
+  {
+    std::string layerType = lgi.asString("layer_type");
+    std::string layerSubType = lgi.asString("layer_subtype");
+    std::string parameterName = lgi.asString("parameter_name");
+
+    parameterNames.insert(parameterName);
+
+    if (layerType == "icemap" && layerSubType == "symbol")
+      layerType = "symbol";
+
+    // Handle all symbols together in the end
+    if (layerType == "symbol")
+    {
+      lgiSymbols[parameterName].push_back(lgi);
+      continue;
+    }
+
+    bool isGenericTemplate = false;
+    std::string key =
+        legend_template_key(parameterName, layerType, templates.files, isGenericTemplate);
+    if (key.empty())
+      continue;
+
+    add_layer_legend(result,
+                     lgi,
+                     layerType,
+                     parameterName,
+                     key,
+                     isGenericTemplate,
+                     language,
+                     templates,
+                     actualSettings,
+                     xpos,
+                     ypos,
+                     uniqueId,
+                     config,
+                     customer);
+  }
+
+  result.width = xpos;
+
+  // Finally all symbol groups are handled
+  if (!lgiSymbols.empty())
+    add_symbol_group_legends(
+        result, lgiSymbols, language, templates, actualSettings, xpos, ypos, uniqueId);
+
+  include_parameter_name_widths(result, parameterNames, actualSettings, language);
+}
+
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set width, height in GetLegendGraphic URL
+ */
+// ----------------------------------------------------------------------
+
+void Layer::setLegendUrlSizes()
+{
+  for (const auto& item : itsLegendGraphicResults)
+  {
+    const LegendGraphicResultPerLanguage& languageResult = itsLegendGraphicResults[item.first];
+    for (const auto& item2 : item.second)
+    {
+      if (item2.first == config.getDaliConfig().defaultLanguage())
+      {
+        const LegendGraphicResult& result =
+            languageResult.at(config.getDaliConfig().defaultLanguage());
+
+        std::string styleName = item.first.substr(item.first.rfind("::") + 2);
+        if (itsStyles.find(styleName) != itsStyles.end())
+        {
+          // Width, height must be > 0
+          if ((result.width == 0 || result.height == 0) && !hidden)
+          {
+            itsStyles.erase(styleName);
+            continue;
+          }
+          itsStyles[styleName].legend_url.online_resource +=
+              ("&amp;width=" + Fmi::to_string(result.width) +
+               "&amp;height=" + Fmi::to_string(result.height));
+          itsStyles[styleName].legend_url.width = Fmi::to_string(result.width);
+          itsStyles[styleName].legend_url.height = Fmi::to_string(result.height);
+        }
+      }
+    }
+  }
+}
+
 void Layer::initLegendGraphicInfo(const Json::Value& root)
 {
   Json::Value nulljson;
@@ -1314,221 +1623,29 @@ void Layer::initLegendGraphicInfo(const Json::Value& root)
 
   NamedLegendGraphicInfo named_lgi = get_named_info(root, name, itsStyles, itsLegendFiles);
 
+  const LegendTemplates templates{templateFiles, templateSettings, layerSettings};
+
   unsigned int uniqueId = 0;
   for (const auto& language : languages)
   {
     for (const auto& item : named_lgi)
     {
-      std::set<std::string> parameterNames;
-      unsigned int xpos = 0;
-      unsigned int ypos = 0;
-      const auto& legendGraphicInfo = item.second;
-
       LegendGraphicResultPerLanguage& languageResult = itsLegendGraphicResults[item.first];
       LegendGraphicResult& result = languageResult[language];
 
-      // Vector of symbol groups for PrecipitationForm, CloudBase2, ...
-      NamedLegendGraphicInfo lgiSymbols;
-      for (const auto& lgi : legendGraphicInfo)
-      {
-        std::string layerType = lgi.asString("layer_type");
-        std::string layerSubType = lgi.asString("layer_subtype");
-        std::string parameterName = lgi.asString("parameter_name");
-
-        parameterNames.insert(parameterName);
-
-        if (layerType == "icemap" && layerSubType == "symbol")
-          layerType = "symbol";
-
-        // Handle all symbols together in the end
-        if (layerType == "symbol")
-        {
-          lgiSymbols[parameterName].push_back(lgi);
-          continue;
-        }
-
-        bool isGenericTemplate = false;
-        // Legends are identified by parameter name + layer type (e.g. Temperature_isoline,
-        // Temperature_isoband), or by plain layer type (e.g. isoline, isoband)
-        std::string key = Fmi::ascii_tolower_copy(parameterName + "_" + layerType);
-        if (parameterName.empty() || templateFiles.find(key) == templateFiles.end())
-        {
-          key = Fmi::ascii_tolower_copy(layerType);
-          if (templateFiles.find(key) != templateFiles.end())
-          {
-            isGenericTemplate = true;
-          }
-          else
-          {
-            key.clear();
-          }
-        }
-        if (key.empty())
-          continue;
-
-        // 3) Settings from template file will overwrite the previous settings (default settings,
-        // wms.conf)
-        const auto& templateJson = templateFiles.at(key);
-        actualSettings.merge(templateSettings.at(key));
-
-        // 4) Settings from layer file (product file) will overwrite the previous settings (default
-        // settings, wms.conf, template file)
-        actualSettings.merge(layerSettings);
-
-        LegendGraphicParameter lgp(parameterName);
-        const LegendGraphicParameter& parameterSettings =
-            (actualSettings.parameters.find(parameterName) != actualSettings.parameters.end()
-                 ? actualSettings.parameters.at(parameterName)
-                 : lgp);
-
-        std::string legendHeader = get_legend_title_string(parameterSettings, language);
-
-        // Generic template file is the same for all layers of same type (e.g. all isobands),
-        // non-generic is parameter-specific and only location need to be modified here
-        auto legendJson = process_legend_json(templateJson,
-                                              layerType,
-                                              parameterName,
-                                              isGenericTemplate,
-                                              legendHeader,
-                                              parameterSettings.unit,
-                                              actualSettings,
-                                              lgi,
-                                              xpos,
-                                              ypos,
-                                              uniqueId++);
-
-        unsigned int labelHeight = 0;
-        unsigned int isobandWidth = 0;
-        if (layerType == "isoband")
-        {
-          std::string customerRoot =
-              (config.getDaliConfig().rootDirectory(true) + "/customers/" + customer);
-          std::string layersRoot = customerRoot + "/layers/";
-
-          Spine::JSON::preprocess(legendJson,
-                                  config.getDaliConfig().rootDirectory(true),
-                                  layersRoot,
-                                  config.getJsonCache());
-
-          labelHeight = isoband_legend_height(legendJson);
-          isobandWidth = isoband_legend_width(legendJson, *(actualSettings.layout.legend_width));
-          unsigned int localizedWidth = lgi.labelWidth(language);
-          if (actualSettings.layout.legend_xoffset)
-            localizedWidth += *(actualSettings.layout.legend_xoffset);
-
-          isobandWidth = std::max(isobandWidth, localizedWidth);
-        }
-        else if (layerType == "isoline")
-        {
-          labelHeight = ypos + (*actualSettings.layout.legend_yoffset * 2);
-        }
-
-        result.height = std::max(result.height, labelHeight);
-
-        result.legendLayers.push_back(legendJson.toStyledString());
-
-        xpos += (*(actualSettings.layout.legend_width) > isobandWidth
-                     ? *(actualSettings.layout.legend_width)
-                     : isobandWidth);
-      }
-
-      result.width = xpos;
-
-      // Finally all symbol groups are handled
-      if (!lgiSymbols.empty())
-      {
-        for (const auto& symbol : lgiSymbols)
-        {
-          std::string templateName = Fmi::ascii_tolower_copy(symbol.first + "_symbol");
-          if (symbol.first.empty() || templateFiles.find(templateName) == templateFiles.end())
-            templateName = "symbol";
-
-          LegendGraphicSettings actualSymbolSettings = actualSettings;
-          // 3) Settings from template file will overwrite the previous settings (default settings,
-          // wms.conf)
-          actualSymbolSettings.merge(templateSettings.at(templateName));
-          // 4) Settings from layer file (product file) will overwrite the previous settings
-          // (default settings, wms.conf, template file)
-          actualSymbolSettings.merge(layerSettings);
-
-          Json::Value symbolTemplate = templateFiles.at(templateName);
-          const LegendGraphicInfo& legendGraphicInfo = symbol.second;
-
-          symbolTemplate = process_symbol_group_json(symbolTemplate,
-                                                     actualSymbolSettings,
-                                                     legendGraphicInfo,
-                                                     language,
-                                                     xpos,
-                                                     ypos,
-                                                     uniqueId);
-
-          result.legendLayers.push_back(symbolTemplate.toStyledString());
-          auto layersJson = symbolTemplate.get("layers", nulljson);
-          if (!layersJson.isNull() && layersJson.isArray())
-          {
-            for (const auto& layer : layersJson)
-            {
-              get_legend_dimension(layer, "attributes", result.width, result.height);
-              get_legend_dimension(layer, "positions", result.width, result.height);
-            }
-          }
-          result.width += *actualSymbolSettings.layout.symbol_group_x_padding;
-          result.height += *actualSettings.layout.symbol_group_y_padding;
-        }
-      }
-
-      for (const auto& name : parameterNames)
-      {
-        Dali::text_dimension_t tdim = Dali::getTextDimension(name, Dali::text_style_t());
-        unsigned int data_name_width = (tdim.width * 1.6);
-        unsigned int parameter_name_width = data_name_width;
-
-        if (actualSettings.parameters.find(name) != actualSettings.parameters.end())
-        {
-          const auto& lgp = actualSettings.parameters.at(name);
-          tdim = Dali::getTextDimension(lgp.given_name, Dali::text_style_t());
-          unsigned int given_name_width = (tdim.width * 1.6);
-          parameter_name_width = std::max(data_name_width, given_name_width);
-          // Translation of parameter overrides original parameter name
-          if (lgp.text_lengths.find(language) != lgp.text_lengths.end())
-            parameter_name_width = lgp.text_lengths.at(language);
-        }
-        if (actualSettings.layout.legend_xoffset)
-          parameter_name_width += *actualSettings.layout.legend_xoffset;
-        result.width = std::max(parameter_name_width, result.width);
-      }
+      add_named_legend(result,
+                       item.second,
+                       language,
+                       templates,
+                       actualSettings,
+                       uniqueId,
+                       config,
+                       customer);
     }
   }
 
   // Set width, height in GetLegendGraphic URL
-  for (const auto& item : itsLegendGraphicResults)
-  {
-    const LegendGraphicResultPerLanguage& languageResult = itsLegendGraphicResults[item.first];
-    for (const auto& item2 : item.second)
-    {
-      if (item2.first == config.getDaliConfig().defaultLanguage())
-      {
-        const LegendGraphicResult& result =
-            languageResult.at(config.getDaliConfig().defaultLanguage());
-
-        std::string styleName = item.first.substr(item.first.rfind("::") + 2);
-        if (itsStyles.find(styleName) != itsStyles.end())
-        {
-          // Width, height must be > 0
-          if ((result.width == 0 || result.height == 0) && !hidden)
-          {
-            itsStyles.erase(styleName);
-            continue;
-          }
-          itsStyles[styleName].legend_url.online_resource +=
-              ("&amp;width=" + Fmi::to_string(result.width) +
-               "&amp;height=" + Fmi::to_string(result.height));
-          itsStyles[styleName].legend_url.width = Fmi::to_string(result.width);
-          itsStyles[styleName].legend_url.height = Fmi::to_string(result.height);
-        }
-      }
-    }
-  }
+  setLegendUrlSizes();
 }
 
 LegendGraphicResult Layer::getLegendGraphic(const std::string& legendGraphicID,
