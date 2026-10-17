@@ -53,6 +53,41 @@ void hashTfpOptions(std::size_t& seed, const TfpOptions& opts)
   Fmi::hash_combine(seed, Fmi::hash_value(opts.scale));
 }
 
+namespace
+{
+// The 1-2-1 weighted mean of the non-missing values around cell (i, j)
+inline float smoothed_value(const NFmiDataMatrix<float>& a,
+                            std::size_t i,
+                            std::size_t j,
+                            std::size_t W,
+                            std::size_t H)
+{
+  const int iw[3] = {1, 2, 1};
+  const int jw[3] = {1, 2, 1};
+  double sum = 0.0;
+  double wsum = 0.0;
+  for (int dj = -1; dj <= 1; ++dj)
+  {
+    const std::ptrdiff_t jj = static_cast<std::ptrdiff_t>(j) + dj;
+    if (jj < 0 || jj >= static_cast<std::ptrdiff_t>(H))
+      continue;
+    for (int di = -1; di <= 1; ++di)
+    {
+      const std::ptrdiff_t ii = static_cast<std::ptrdiff_t>(i) + di;
+      if (ii < 0 || ii >= static_cast<std::ptrdiff_t>(W))
+        continue;
+      const float v = a[ii][jj];
+      if (v == kFloatMissing)
+        continue;
+      const double w = iw[di + 1] * jw[dj + 1];
+      sum += w * v;
+      wsum += w;
+    }
+  }
+  return (wsum > 0.0) ? static_cast<float>(sum / wsum) : kFloatMissing;
+}
+}  // namespace
+
 NFmiDataMatrix<float> smoothScalar(const NFmiDataMatrix<float>& field, int passes)
 {
   if (passes <= 0)
@@ -67,29 +102,7 @@ NFmiDataMatrix<float> smoothScalar(const NFmiDataMatrix<float>& field, int passe
     {
       for (std::size_t i = 0; i < W; ++i)
       {
-        const int iw[3] = {1, 2, 1};
-        const int jw[3] = {1, 2, 1};
-        double sum = 0.0;
-        double wsum = 0.0;
-        for (int dj = -1; dj <= 1; ++dj)
-        {
-          const std::ptrdiff_t jj = static_cast<std::ptrdiff_t>(j) + dj;
-          if (jj < 0 || jj >= static_cast<std::ptrdiff_t>(H))
-            continue;
-          for (int di = -1; di <= 1; ++di)
-          {
-            const std::ptrdiff_t ii = static_cast<std::ptrdiff_t>(i) + di;
-            if (ii < 0 || ii >= static_cast<std::ptrdiff_t>(W))
-              continue;
-            const float v = a[ii][jj];
-            if (v == kFloatMissing)
-              continue;
-            const double w = iw[di + 1] * jw[dj + 1];
-            sum += w * v;
-            wsum += w;
-          }
-        }
-        b[i][j] = (wsum > 0.0) ? static_cast<float>(sum / wsum) : kFloatMissing;
+        b[i][j] = smoothed_value(a, i, j, W, H);
       }
     }
     std::swap(a, b);
