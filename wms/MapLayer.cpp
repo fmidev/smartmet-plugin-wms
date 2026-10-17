@@ -496,6 +496,33 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
   }
 }
 
+namespace
+{
+// Clip lines or polygons to the clipping box
+void clip_geometry(OGRGeometryPtr& geom, const Fmi::Box& clipbox, bool lines)
+{
+  if (lines)
+    geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
+  else
+    geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+}
+
+// Convert feature field value to MVTValue
+MVTValue mvt_value(const Fmi::Attribute& fval)
+{
+  MVTValue attrVal;
+  if (fval.index() == 0)
+    attrVal = static_cast<int64_t>(std::get<int>(fval));
+  else if (fval.index() == 1)
+    attrVal = std::get<double>(fval);
+  else if (fval.index() == 2)
+    attrVal = std::get<std::string>(fval);
+  else
+    attrVal = std::string{};  // time or unknown: skip or empty
+  return attrVal;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate MVT layer
@@ -528,10 +555,7 @@ void MapLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
       geom.reset(geom->clone());
       Fmi::OGR::normalizeWindingOrder(geom.get());
-      if (map.lines)
-        geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-      else
-        geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+      clip_geometry(geom, clipbox, map.lines);
 
       if (!geom || geom->IsEmpty())
         return;
@@ -553,25 +577,13 @@ void MapLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
           continue;
 
         OGRGeometryPtr geom = feature->geom;
-        if (map.lines)
-          geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-        else
-          geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+        clip_geometry(geom, clipbox, map.lines);
 
         if (!geom || geom->IsEmpty())
           continue;
 
         // Convert feature field value to MVTValue
-        const auto& fval = feature->attributes.at(styles->field);
-        MVTValue attrVal;
-        if (fval.index() == 0)
-          attrVal = static_cast<int64_t>(std::get<int>(fval));
-        else if (fval.index() == 1)
-          attrVal = std::get<double>(fval);
-        else if (fval.index() == 2)
-          attrVal = std::get<std::string>(fval);
-        else
-          attrVal = std::string{};  // time or unknown: skip or empty
+        MVTValue attrVal = mvt_value(feature->attributes.at(styles->field));
 
         mvtLayer.addFeature(*geom, {{styles->field, attrVal}});
       }
