@@ -93,6 +93,14 @@ class IsobandLayer : public Layer
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
+  void addHeatmapPoints(heatmap_t* hm,
+                        const heatmap_stamp_t* hms,
+                        const TS::TimeSeriesVector& values,
+                        std::size_t nrows,
+                        const Fmi::SpatialReference& crs,
+                        const NFmiArea& area,
+                        const Fmi::Box& box,
+                        NFmiGrid& grid) const;
   std::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
                                                          const Fmi::DateTime& theTime,
                                                          const State& theState);

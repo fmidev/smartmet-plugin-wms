@@ -197,6 +197,48 @@ void IsobandLayer::init(Json::Value& theJson,
  */
 // ----------------------------------------------------------------------
 
+// Add the observation points inside the image to the heatmap
+void IsobandLayer::addHeatmapPoints(heatmap_t* hm,
+                                    const heatmap_stamp_t* hms,
+                                    const TS::TimeSeriesVector& values,
+                                    std::size_t nrows,
+                                    const Fmi::SpatialReference& crs,
+                                    const NFmiArea& area,
+                                    const Fmi::Box& box,
+                                    NFmiGrid& grid) const
+{
+  for (std::size_t row = 0; row < nrows; ++row)
+  {
+    double lon = get_double(values.at(0).at(row));
+    double lat = get_double(values.at(1).at(row));
+
+    // The parameter value could be used to add weighted points
+    //
+    // double value = get_double(values.at(2).at(row));
+
+    // Convert latlon to world coordinate if needed
+
+    double x = lon;
+    double y = lat;
+    if (crs.isGeographic() == 0)
+    {
+      auto xy = area.LatLonToWorldXY(NFmiPoint(x, y));
+      x = xy.X();
+      y = xy.Y();
+    }
+
+    // To pixel coordinate
+    box.transform(x, y);
+
+    // Skip if not inside desired area
+    if (Properties::inside(box, x, y))
+    {
+      NFmiPoint gridPoint = grid.LatLonToGrid(lon, lat);
+      heatmap_add_point_with_stamp(hm, lround(gridPoint.X()), lround(gridPoint.Y()), hms);
+    }
+  }
+}
+
 std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     const Spine::Parameter& theParameter, const Fmi::DateTime& theTime, const State& theState)
 {
@@ -295,37 +337,7 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
         if (!hms)
           throw Fmi::Exception(BCP, "Heatmap stamp generation failed");
 
-        for (std::size_t row = 0; row < nrows; ++row)
-        {
-          double lon = get_double(values.at(0).at(row));
-          double lat = get_double(values.at(1).at(row));
-
-          // The parameter value could be used to add weighted points
-          //
-          // double value = get_double(values.at(2).at(row));
-
-          // Convert latlon to world coordinate if needed
-
-          double x = lon;
-          double y = lat;
-          if (crs.isGeographic() == 0)
-          {
-            auto xy = newarea->LatLonToWorldXY(NFmiPoint(x, y));
-            x = xy.X();
-            y = xy.Y();
-          }
-
-          // To pixel coordinate
-          box.transform(x, y);
-
-          // Skip if not inside desired area
-          if (Properties::inside(box, x, y))
-          {
-            NFmiPoint gridPoint = grid.LatLonToGrid(lon, lat);
-            heatmap_add_point_with_stamp(
-                hm.get(), lround(gridPoint.X()), lround(gridPoint.Y()), hms.get());
-          }
-        }
+        addHeatmapPoints(hm.get(), hms.get(), values, nrows, crs, *newarea, box, grid);
       }
     }
 
