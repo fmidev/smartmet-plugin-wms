@@ -182,6 +182,9 @@ class Layer : public Properties
  protected:
   void getFeatureValue(CTPP::CDT& theInfo, const State& theState);
 
+  // Add the CSS file of the layer, if any, to the globals
+  void addCss(CTPP::CDT& theGlobals, const State& theState) const;
+
   // Convert a pixel coordinate in theInfo["x"]/["y"] to WGS84 lon/lat.
   // Returns nullopt if the transformation fails.
   std::optional<std::pair<double, double>> pixel_to_lonlat(const CTPP::CDT& theInfo,

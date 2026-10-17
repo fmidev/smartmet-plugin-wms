@@ -200,6 +200,19 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
   }
 }
 
+// Add the latlon and projected bounding boxes of the projection to the query
+void add_symbol_bbox_attributes(QueryServer::Query& query, const Projection& projection)
+{
+  auto bl = projection.bottomLeftLatLon();
+  auto tr = projection.topRightLatLon();
+  auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
+  query.mAttributeList.addAttribute("grid.llbox", bbox);
+
+  const auto& box = projection.getBox();
+  bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+  query.mAttributeList.addAttribute("grid.bbox", bbox);
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -262,6 +275,275 @@ void SymbolLayer::init(Json::Value& theJson,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create the use tag of the symbol for the value at the point
+ *
+ * Returns false if there is no symbol for the value.
+ */
+// ----------------------------------------------------------------------
+
+bool SymbolLayer::symbolTag(CTPP::CDT& theGlobals,
+                            CTPP::CDT& tag_cdt,
+                            State& theState,
+                            const Positions::Point& point,
+                            double value) const
+{
+  tag_cdt["start"] = "<use";
+  tag_cdt["end"] = "/>";
+
+  std::string iri;
+
+  if (symbol)
+    iri = *symbol;
+
+  // librsvg cannot handle scale + transform, must move former into latter
+  std::optional<double> rescale;
+
+  if (!symbols.empty())
+  {
+    auto selection = Select::attribute(symbols, value);
+    if (selection)
+    {
+      if (selection->symbol)
+        iri = *selection->symbol;
+
+      auto scaleattr = selection->attributes.remove("scale");
+      if (scaleattr)
+        rescale = Fmi::stod(*scaleattr);
+
+      theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
+    }
+  }
+
+  if (iri.empty())
+    return false;
+
+  std::string IRI = Iri::normalize(iri);
+  if (theState.addId(IRI))
+    theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+  // Lack of CSS3 transform support forces us to use a direct transformation
+  // which may override user settings
+  tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
+
+  int x = point.x + point.dx + (dx ? *dx : 0);
+  int y = point.y + point.dy + (dy ? *dy : 0);
+
+  std::string tmp = fmt::sprintf("translate(%d,%d)", x, y);
+
+  double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
+  if (newscale != 1.0)
+    tmp += fmt::sprintf(" scale(%g)", newscale);
+
+  tag_cdt["attributes"]["transform"] = tmp;
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the symbols of the grid values, returns the number of valid values
+ */
+// ----------------------------------------------------------------------
+
+int SymbolLayer::addGridSymbols(CTPP::CDT& theGlobals,
+                                CTPP::CDT& group_cdt,
+                                State& theState,
+                                const std::vector<PointData>& pointvalues,
+                                double xmultiplier,
+                                double xoffset) const
+{
+  int valid_count = 0;
+
+  for (const auto& pointvalue : pointvalues)
+  {
+    const auto& point = pointvalue.point();
+
+    float value = pointvalue[0];
+
+    if (value != kFloatMissing)
+    {
+      ++valid_count;
+      value = xmultiplier * value + xoffset;
+    }
+
+    // Start generating the hash
+
+    CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+    if (!symbolTag(theGlobals, tag_cdt, theState, point, value))
+      continue;
+
+    group_cdt["tags"].PushBack(tag_cdt);
+  }
+  return valid_count;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the symbols of the values, returns the number of valid values
+ */
+// ----------------------------------------------------------------------
+
+int SymbolLayer::addSymbols(CTPP::CDT& theGlobals,
+                            CTPP::CDT& group_cdt,
+                            State& theState,
+                            const std::vector<PointData>& pointvalues,
+                            double xmultiplier,
+                            double xoffset,
+                            const Fmi::TimePeriod& valid_time_period) const
+{
+  int valid_count = 0;
+
+  for (const auto& pointvalue : pointvalues)
+  {
+    auto value = pointvalue[0];
+    if (value != kFloatMissing)
+    {
+      ++valid_count;
+      value = xmultiplier * value + xoffset;
+    }
+
+    const auto& point = pointvalue.point();
+
+    // Start generating the hash
+
+    CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+    if (!symbolTag(theGlobals, tag_cdt, theState, point, value))
+      continue;
+
+    // Animated WebP output: tag the symbol with its time animation frame
+    // bucket class so that formatResponse can toggle frame visibility
+    if (theState.time_animation_frames && pointvalue.time())
+    {
+      const int nframes = *theState.time_animation_frames;
+      const auto duration = (valid_time_period.end() - valid_time_period.begin()).total_seconds();
+      int bucket = 0;
+      if (duration > 0 && nframes > 1)
+      {
+        const auto elapsed = (*pointvalue.time() - valid_time_period.begin()).total_seconds();
+        bucket = std::clamp(
+            static_cast<int>(static_cast<long>(nframes) * elapsed / duration), 0, nframes - 1);
+      }
+      std::string cls = "flashanim flashanim-f" + Fmi::to_string(bucket);
+      if (tag_cdt["attributes"].Exists("class"))
+        cls = tag_cdt["attributes"]["class"].GetString() + " " + cls;
+      tag_cdt["attributes"]["class"] = cls;
+    }
+
+    group_cdt["tags"].PushBack(tag_cdt);
+  }
+  return valid_count;
+}
+
+#ifndef WITHOUT_OBSERVATION
+// ----------------------------------------------------------------------
+/*!
+ * \brief Read the observations
+ */
+// ----------------------------------------------------------------------
+
+std::vector<PointData> SymbolLayer::readObservations(const State& theState,
+                                                     const Fmi::SpatialReference& crs,
+                                                     const Fmi::Box& box,
+                                                     const Fmi::DateTime& valid_time,
+                                                     const Fmi::TimePeriod& valid_time_period)
+{
+  PointValues pointvalues;
+  // Conditional priorities need extra parameters after the actual one
+  auto extra_parameters = point_value_options.extraParameters();
+  if (!sources.empty())
+  {
+    pointvalues = ObservationReader::read(theState,
+                                          sources,
+                                          extra_parameters,
+                                          *this,
+                                          *positions,
+                                          maxdistance_km,
+                                          crs,
+                                          box,
+                                          valid_time,
+                                          valid_time_period);
+  }
+  else
+  {
+    auto parameters = extra_parameters;
+    parameters.insert(parameters.begin(), paraminfo.parameter);
+    pointvalues = ObservationReader::read(theState,
+                                          parameters,
+                                          *this,
+                                          *positions,
+                                          maxdistance_km,
+                                          crs,
+                                          box,
+                                          valid_time,
+                                          valid_time_period);
+  }
+  return pointvalues;
+}
+#endif
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Select the first level or the requested level of the data
+ */
+// ----------------------------------------------------------------------
+
+void SymbolLayer::selectLevel(const Engine::Querydata::Q& q) const
+{
+  if (q && !q->firstLevel())
+    throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
+
+  if (paraminfo.level)
+  {
+    if (!q)
+      throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
+
+    if (!q->selectLevel(*paraminfo.level))
+      throw Fmi::Exception(
+          BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the grid-engine parameter to the query
+ */
+// ----------------------------------------------------------------------
+
+void SymbolLayer::addGridParameter(const Engine::Grid::Engine& gridEngine,
+                                   const std::string& producerName,
+                                   T::AttributeList& attributeList,
+                                   QueryServer::Query& query)
+{
+  std::string pName;
+
+  if (!paraminfo.parameter.empty())
+    pName = paraminfo.parameter;
+  else
+    pName = *projection.projectionParameter;
+
+  auto pos = pName.find(".raw");
+  if (pos != std::string::npos)
+  {
+    attributeList.addAttribute("grid.areaInterpolationMethod",
+                               Fmi::to_string(T::AreaInterpolationMethod::Nearest));
+    pName.erase(pos, 4);
+  }
+
+  std::string param = gridEngine.getParameterString(producerName, pName);
+  attributeList.addAttribute("param", param);
+
+  if (!projection.projectionParameter)
+    projection.projectionParameter = param;
+
+  if (param == paraminfo.parameter && query.mProducerNameList.empty())
+  {
+    gridEngine.getProducerNameList(producerName, query.mProducerNameList);
+    if (query.mProducerNameList.empty())
+      query.mProducerNameList.push_back(producerName);
   }
 }
 
@@ -340,11 +622,8 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Establish the parameter
 
-    if (!symbols.empty())
-    {
-      if (paraminfo.parameter.empty())
-        throw Fmi::Exception(BCP, "Parameter not set for symbol-layer");
-    }
+    if (!symbols.empty() && paraminfo.parameter.empty())
+      throw Fmi::Exception(BCP, "Parameter not set for symbol-layer");
 
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
@@ -371,56 +650,22 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
-      auto bl = projection.bottomLeftLatLon();
-      auto tr = projection.topRightLatLon();
-      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
-      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
-
-      const auto& box = projection.getBox();
-      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+      add_symbol_bbox_attributes(*originalGridQuery, projection);
 
       positions->init(paraminfo.producer, projection, valid_time, theState);
     }
-    else
-    {
-      // The requested projection is the same as the projection of the requested data. This means
-      // that we we do not know the actual projection yet and we have to wait that the grid-engine
-      // delivers us the requested data and the projection information of the current data.
-    }
+
+    // Otherwise the requested projection is the same as the projection of the requested data.
+    // This means that we we do not know the actual projection yet and we have to wait that the
+    // grid-engine delivers us the requested data and the projection information of the current
+    // data.
 
     // Adding parameter information into the query.
 
     if (paraminfo.parameter.empty() && !projection.projectionParameter)
       return;
 
-    std::string pName;
-
-    if (!paraminfo.parameter.empty())
-      pName = paraminfo.parameter;
-    else
-      pName = *projection.projectionParameter;
-
-    auto pos = pName.find(".raw");
-    if (pos != std::string::npos)
-    {
-      attributeList.addAttribute("grid.areaInterpolationMethod",
-                                 Fmi::to_string(T::AreaInterpolationMethod::Nearest));
-      pName.erase(pos, 4);
-    }
-
-    std::string param = gridEngine->getParameterString(producerName, pName);
-    attributeList.addAttribute("param", param);
-
-    if (!projection.projectionParameter)
-      projection.projectionParameter = param;
-
-    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
-    {
-      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.empty())
-        originalGridQuery->mProducerNameList.push_back(producerName);
-    }
+    addGridParameter(*gridEngine, producerName, attributeList, *originalGridQuery);
 
     add_time_attributes(attributeList, getValidTime(), origintime);
 
@@ -429,38 +674,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    if (positions)
-    {
-      const bool forecast_mode = true;
-      const auto& box = projection.getBox();
-      auto points =
-          positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
-
-      T::Coordinate_vec coordinates;
-      for (const auto& point : points)
-        coordinates.emplace_back(point.latlon.X(), point.latlon.Y());
-
-      originalGridQuery->mAreaCoordinates.push_back(coordinates);
-      originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
-    }
-
-    for (auto& param : originalGridQuery->mQueryParameterList)
-    {
-      if (positions)
-      {
-        param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
-        param.mType = QueryServer::QueryParameter::Type::PointValues;
-      }
-      else
-      {
-        param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-        param.mType = QueryServer::QueryParameter::Type::Vector;
-        param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
-        // param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
-      }
-
-      set_query_parameter_selections(param, paraminfo);
-    }
+    set_query_locations(*originalGridQuery, positions, projection, paraminfo, theState);
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
@@ -500,19 +714,12 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Set the proper symbol on if it is needed
-    if (!symbols.empty())
-    {
-      if (paraminfo.parameter.empty())
-        throw Fmi::Exception(
-            BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
-    }
+    if (!symbols.empty() && paraminfo.parameter.empty())
+      throw Fmi::Exception(
+          BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
 
     // Establish the numbers to draw.
 
@@ -540,74 +747,8 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
-    int valid_count = 0;
-
-    for (const auto& pointvalue : pointvalues)
-    {
-      const auto& point = pointvalue.point();
-
-      float value = pointvalue[0];
-
-      if (value != kFloatMissing)
-      {
-        ++valid_count;
-        value = xmultiplier * value + xoffset;
-      }
-
-      // Start generating the hash
-
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-
-      std::string iri;
-
-      if (symbol)
-        iri = *symbol;
-
-      // librsvg cannot handle scale + transform, must move former into latter
-      std::optional<double> rescale;
-
-      if (!symbols.empty())
-      {
-        auto selection = Select::attribute(symbols, value);
-        if (selection)
-        {
-          if (selection->symbol)
-            iri = *selection->symbol;
-
-          auto scaleattr = selection->attributes.remove("scale");
-          if (scaleattr)
-            rescale = Fmi::stod(*scaleattr);
-
-          theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
-        }
-      }
-
-      if (!iri.empty())
-      {
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        // Lack of CSS3 transform support forces us to use a direct transformation
-        // which may override user settings
-        tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
-
-        int x = point.x + point.dx + (dx ? *dx : 0);
-        int y = point.y + point.dy + (dy ? *dy : 0);
-
-        std::string tmp = fmt::sprintf("translate(%d,%d)", x, y);
-
-        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
-        if (newscale != 1.0)
-          tmp += fmt::sprintf(" scale(%g)", newscale);
-
-        tag_cdt["attributes"]["transform"] = tmp;
-
-        group_cdt["tags"].PushBack(tag_cdt);
-      }
-    }
+    int valid_count =
+        addGridSymbols(theGlobals, group_cdt, theState, pointvalues, xmultiplier, xoffset);
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in symbol layer")
@@ -667,18 +808,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Establish the level
 
-    if (q && !q->firstLevel())
-      throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
-
-    if (paraminfo.level)
-    {
-      if (!q)
-        throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
-
-      if (!q->selectLevel(*paraminfo.level))
-        throw Fmi::Exception(
-            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
-    }
+    selectLevel(q);
 
     // Get projection details
 
@@ -687,20 +817,13 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     const auto& box = projection.getBox();
 
     // Set the proper symbol on if it is needed
-    if (!symbols.empty())
-    {
-      if (paraminfo.parameter.empty())
-        throw Fmi::Exception(
-            BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
-    }
+    if (!symbols.empty() && paraminfo.parameter.empty())
+      throw Fmi::Exception(
+          BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
 
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Initialize inside/outside shapes and intersection isobands
 
@@ -715,37 +838,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       pointvalues = read_forecasts(*this, q, crs, box, valid_time, theState);
 #ifndef WITHOUT_OBSERVATION
     else
-    {
-      // Conditional priorities need extra parameters after the actual one
-      auto extra_parameters = point_value_options.extraParameters();
-      if (!sources.empty())
-      {
-        pointvalues = ObservationReader::read(theState,
-                                              sources,
-                                              extra_parameters,
-                                              *this,
-                                              *positions,
-                                              maxdistance_km,
-                                              crs,
-                                              box,
-                                              valid_time,
-                                              valid_time_period);
-      }
-      else
-      {
-        auto parameters = extra_parameters;
-        parameters.insert(parameters.begin(), paraminfo.parameter);
-        pointvalues = ObservationReader::read(theState,
-                                              parameters,
-                                              *this,
-                                              *positions,
-                                              maxdistance_km,
-                                              crs,
-                                              box,
-                                              valid_time,
-                                              valid_time_period);
-      }
-    }
+      pointvalues = readObservations(theState, crs, box, valid_time, valid_time_period);
 #endif
 
     pointvalues = prioritize(pointvalues, point_value_options);
@@ -769,93 +862,8 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
-    int valid_count = 0;
-
-    for (const auto& pointvalue : pointvalues)
-    {
-      auto value = pointvalue[0];
-      if (value != kFloatMissing)
-      {
-        ++valid_count;
-        value = xmultiplier * value + xoffset;
-      }
-
-      const auto& point = pointvalue.point();
-
-      // Start generating the hash
-
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-
-      std::string iri;
-
-      if (symbol)
-        iri = *symbol;
-
-      // librsvg cannot handle scale + transform, must move former into latter
-      std::optional<double> rescale;
-
-      if (!symbols.empty())
-      {
-        auto selection = Select::attribute(symbols, value);
-        if (selection)
-        {
-          if (selection->symbol)
-            iri = *selection->symbol;
-
-          auto scaleattr = selection->attributes.remove("scale");
-          if (scaleattr)
-            rescale = Fmi::stod(*scaleattr);
-
-          theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
-        }
-      }
-
-      if (!iri.empty())
-      {
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        // Lack of CSS3 transform support forces us to use a direct transformation
-        // which may override user settings
-        tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
-
-        int x = point.x + point.dx + (dx ? *dx : 0);
-        int y = point.y + point.dy + (dy ? *dy : 0);
-
-        std::string tmp = fmt::sprintf("translate(%d,%d)", x, y);
-
-        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
-        if (newscale != 1.0)
-          tmp += fmt::sprintf(" scale(%g)", newscale);
-
-        tag_cdt["attributes"]["transform"] = tmp;
-
-        // Animated WebP output: tag the symbol with its time animation frame
-        // bucket class so that formatResponse can toggle frame visibility
-        if (theState.time_animation_frames && pointvalue.time())
-        {
-          const int nframes = *theState.time_animation_frames;
-          const auto duration =
-              (valid_time_period.end() - valid_time_period.begin()).total_seconds();
-          int bucket = 0;
-          if (duration > 0 && nframes > 1)
-          {
-            const auto elapsed = (*pointvalue.time() - valid_time_period.begin()).total_seconds();
-            bucket = std::clamp(
-                static_cast<int>(static_cast<long>(nframes) * elapsed / duration), 0, nframes - 1);
-          }
-          std::string cls = "flashanim flashanim-f" + Fmi::to_string(bucket);
-          if (tag_cdt["attributes"].Exists("class"))
-            cls = tag_cdt["attributes"]["class"].GetString() + " " + cls;
-          tag_cdt["attributes"]["class"] = cls;
-        }
-
-        group_cdt["tags"].PushBack(tag_cdt);
-      }
-    }
+    int valid_count = addSymbols(
+        theGlobals, group_cdt, theState, pointvalues, xmultiplier, xoffset, valid_time_period);
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in symbol layer")

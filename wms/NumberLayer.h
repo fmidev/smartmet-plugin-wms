@@ -68,7 +68,6 @@ class NumberLayer : public Layer
   std::vector<AttributeSelection> numbers;
 
  private:
-  void setQueryLocations(QueryServer::Query& query, const State& theState);
   void addSymbols(CTPP::CDT& theGlobals,
                   CTPP::CDT& group_cdt,
                   State& theState,

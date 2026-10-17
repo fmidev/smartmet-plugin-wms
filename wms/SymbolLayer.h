@@ -42,6 +42,36 @@ class SymbolLayer : public Layer
   std::size_t hash_value(const State& theState) const override;
 
  private:
+  bool symbolTag(CTPP::CDT& theGlobals,
+                 CTPP::CDT& tag_cdt,
+                 State& theState,
+                 const Positions::Point& point,
+                 double value) const;
+#ifndef WITHOUT_OBSERVATION
+  std::vector<PointData> readObservations(const State& theState,
+                                          const Fmi::SpatialReference& crs,
+                                          const Fmi::Box& box,
+                                          const Fmi::DateTime& valid_time,
+                                          const Fmi::TimePeriod& valid_time_period);
+#endif
+  void selectLevel(const Engine::Querydata::Q& q) const;
+  void addGridParameter(const Engine::Grid::Engine& gridEngine,
+                        const std::string& producerName,
+                        T::AttributeList& attributeList,
+                        QueryServer::Query& query);
+  int addGridSymbols(CTPP::CDT& theGlobals,
+                     CTPP::CDT& group_cdt,
+                     State& theState,
+                     const std::vector<PointData>& pointvalues,
+                     double xmultiplier,
+                     double xoffset) const;
+  int addSymbols(CTPP::CDT& theGlobals,
+                 CTPP::CDT& group_cdt,
+                 State& theState,
+                 const std::vector<PointData>& pointvalues,
+                 double xmultiplier,
+                 double xoffset,
+                 const Fmi::TimePeriod& valid_time_period) const;
 #ifndef WITHOUT_OBSERVATION
   std::optional<std::uint64_t> flashGeneration(const State& theState) const;
 #endif

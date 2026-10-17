@@ -39,8 +39,10 @@ namespace Plugin
 namespace Dali
 {
 struct ParameterInfo;
+class Positions;
 class Projection;
 class Smoother;
+class State;
 
 // Add the grid-engine parameter string of the parameter with the multiplier and offset applied
 // to the attributes, use it as the projection parameter if there is none yet, and add the
@@ -62,6 +64,13 @@ void add_time_attributes(T::AttributeList& attributeList,
 // Set the geometry, level and forecast selections of the layer parameter to a query parameter
 void set_query_parameter_selections(QueryServer::QueryParameter& param,
                                     const ParameterInfo& paraminfo);
+
+// Set the point locations of the positions to the query, or a geometry query if there are none
+void set_query_locations(QueryServer::Query& query,
+                         const std::optional<Positions>& positions,
+                         const Projection& projection,
+                         const ParameterInfo& paraminfo,
+                         const State& theState);
 
 // Add the grid.size attribute, or the grid.width and grid.height attributes of the projection
 void add_grid_size_attributes(QueryServer::Query& query, const Projection& projection);

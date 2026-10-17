@@ -225,6 +225,21 @@ void Layer::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add the CSS file of the layer, if any, to the globals
+ */
+// ----------------------------------------------------------------------
+
+void Layer::addCss(CTPP::CDT& theGlobals, const State& theState) const
+{
+  if (css)
+  {
+    std::string name = theState.getCustomer() + "/" + *css;
+    theGlobals["css"][name] = theState.getStyle(*css);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Test if the layer generation is OK
  */
 // ----------------------------------------------------------------------

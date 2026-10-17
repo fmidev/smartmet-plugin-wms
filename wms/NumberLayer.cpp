@@ -321,47 +321,6 @@ int NumberLayer::addNumbers(CTPP::CDT& theGlobals,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Set the point locations or the geometry to the grid query
- */
-// ----------------------------------------------------------------------
-
-void NumberLayer::setQueryLocations(QueryServer::Query& query, const State& theState)
-{
-  if (positions)
-  {
-    const bool forecast_mode = true;
-    const auto& box = projection.getBox();
-    auto points =
-        positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
-
-    T::Coordinate_vec coordinates;
-    for (const auto& point : points)
-      coordinates.emplace_back(point.latlon.X(), point.latlon.Y());
-
-    query.mAreaCoordinates.push_back(coordinates);
-    query.mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
-  }
-
-  for (auto& queryparam : query.mQueryParameterList)
-  {
-    if (positions)
-    {
-      queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Point;
-      queryparam.mType = QueryServer::QueryParameter::Type::PointValues;
-    }
-    else
-    {
-      queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      queryparam.mType = QueryServer::QueryParameter::Type::Vector;
-      queryparam.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
-    }
-
-    set_query_parameter_selections(queryparam, paraminfo);
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Initialize from JSON
  */
 // ----------------------------------------------------------------------
@@ -566,7 +525,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    setQueryLocations(*originalGridQuery, theState);
+    set_query_locations(*originalGridQuery, positions, projection, paraminfo, theState);
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
