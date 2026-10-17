@@ -147,6 +147,9 @@ class Positions
   int ymargin = 0;
 
  private:
+  void initSetting(const std::string& name, Json::Value& json, const Config& theConfig);
+  void validate() const;
+
   Points getGridPoints(const Engine::Querydata::Q& theQ,
                        const Fmi::SpatialReference& theCRS,
                        const Fmi::Box& theBox,

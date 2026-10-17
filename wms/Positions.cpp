@@ -249,7 +249,141 @@ Spine::LocationList search_station(const Engine::Geonames::Engine& geonames,
   return places;
 }
 
+// Parse the name of a positions layout
+Positions::Layout parse_layout(const std::string& tmp)
+{
+  if (tmp == "grid")
+    return Positions::Layout::Grid;
+  if (tmp == "data")
+    return Positions::Layout::Data;
+  if (tmp == "graticule")
+    return Positions::Layout::Graticule;
+  if (tmp == "graticulefill")
+    return Positions::Layout::GraticuleFill;
+  if (tmp == "keyword")
+    return Positions::Layout::Keyword;
+  if (tmp == "latlon")
+    return Positions::Layout::LatLon;
+  if (tmp == "station")
+    return Positions::Layout::Station;
+  throw Fmi::Exception(BCP, "Unknown layout type for positions: '" + tmp + "'!");
+}
+
 }  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize a single setting from JSON
+ */
+// ----------------------------------------------------------------------
+
+void Positions::initSetting(const std::string& name, Json::Value& json, const Config& theConfig)
+{
+  if (name == "layout")
+    layout = parse_layout(json.asString());
+
+  else if (name == "x")
+    x = json.asInt();
+  else if (name == "y")
+    y = json.asInt();
+  else if (name == "dx")
+    dx = json.asInt();
+  else if (name == "dy")
+    dy = json.asInt();
+  else if (name == "ddx")
+    ddx = json.asInt();
+
+  else if (name == "xmargin")
+    xmargin = json.asInt();
+  else if (name == "ymargin")
+    ymargin = json.asInt();
+  else if (name == "margin")
+  {
+    xmargin = json.asInt();
+    ymargin = xmargin;
+  }
+
+  else if (name == "directionoffset")
+    directionoffset = json.asInt();
+  else if (name == "rotate")
+    rotate = json.asInt();
+  else if (name == "direction")
+    direction = json.asString();
+  else if (name == "u")
+    u = json.asString();
+  else if (name == "v")
+    v = json.asString();
+
+  else if (name == "size")
+    size = json.asUInt();
+  else if (name == "step")
+    step = json.asUInt();
+
+  else if (name == "mindistance")
+    mindistance = json.asDouble();
+
+  else if (name == "keyword")
+    keyword = json.asString();
+
+  else if (name == "locations")
+    locations.init(json, theConfig);
+
+  else if (name == "stations")
+    stations.init(json, theConfig);
+
+  else if (name == "outside")
+  {
+    outsidemap = Map();
+    outsidemap->init(json, theConfig);
+  }
+  else if (name == "inside")
+  {
+    insidemap = Map();
+    insidemap->init(json, theConfig);
+  }
+  else if (name == "intersect")
+    intersections.init(json, theConfig);
+
+  else
+    throw Fmi::Exception(BCP, "Positions does not have a setting named '" + name + "'!");
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Validate the settings
+ */
+// ----------------------------------------------------------------------
+
+void Positions::validate() const
+{
+  if (size <= 0)
+    throw Fmi::Exception(BCP, "Positions size-setting must be nonnegative!");
+
+  if (step <= 0)
+    throw Fmi::Exception(BCP, "Positions step-setting must be nonnegative!");
+
+  if (step > size)
+    throw Fmi::Exception(BCP, "Positions step-setting must be smaller than the size-setting!");
+
+  if (180 % step != 0)
+    throw Fmi::Exception(BCP, "Positions step-size must divide 180 degrees evenly");
+
+  // we cannot allow stuff like 1e-6, that'll generate a huge amounts of points
+  if (mindistance < 2)
+    throw Fmi::Exception(BCP, "Minimum distance between positions must be at least 2 pixels!");
+
+  if (!direction.empty() && (!u.empty() || !v.empty()))
+    throw Fmi::Exception(
+        BCP, "Cannot specify position offsets using both direction and the u- and v-components!");
+
+  if ((!u.empty() && v.empty()) || (!v.empty() && u.empty()))
+    throw Fmi::Exception(BCP,
+                         "Cannot specify only one of u- and v-components for position offsets!");
+
+  if (directionoffset != 0 && direction.empty() && u.empty() && v.empty())
+    throw Fmi::Exception(BCP,
+                         "Must specify direction parameter for direction offset of positions!");
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -269,122 +403,10 @@ void Positions::init(Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      Json::Value& json = theJson[name];
-
-      if (name == "layout")
-      {
-        std::string tmp = json.asString();
-        if (tmp == "grid")
-          layout = Layout::Grid;
-        else if (tmp == "data")
-          layout = Layout::Data;
-        else if (tmp == "graticule")
-          layout = Layout::Graticule;
-        else if (tmp == "graticulefill")
-          layout = Layout::GraticuleFill;
-        else if (tmp == "keyword")
-          layout = Layout::Keyword;
-        else if (tmp == "latlon")
-          layout = Layout::LatLon;
-        else if (tmp == "station")
-          layout = Layout::Station;
-        else
-          throw Fmi::Exception(BCP, "Unknown layout type for positions: '" + tmp + "'!");
-      }
-
-      else if (name == "x")
-        x = json.asInt();
-      else if (name == "y")
-        y = json.asInt();
-      else if (name == "dx")
-        dx = json.asInt();
-      else if (name == "dy")
-        dy = json.asInt();
-      else if (name == "ddx")
-        ddx = json.asInt();
-
-      else if (name == "xmargin")
-        xmargin = json.asInt();
-      else if (name == "ymargin")
-        ymargin = json.asInt();
-      else if (name == "margin")
-      {
-        xmargin = json.asInt();
-        ymargin = xmargin;
-      }
-
-      else if (name == "directionoffset")
-        directionoffset = json.asInt();
-      else if (name == "rotate")
-        rotate = json.asInt();
-      else if (name == "direction")
-        direction = json.asString();
-      else if (name == "u")
-        u = json.asString();
-      else if (name == "v")
-        v = json.asString();
-
-      else if (name == "size")
-        size = json.asUInt();
-      else if (name == "step")
-        step = json.asUInt();
-
-      else if (name == "mindistance")
-        mindistance = json.asDouble();
-
-      else if (name == "keyword")
-        keyword = json.asString();
-
-      else if (name == "locations")
-        locations.init(json, theConfig);
-
-      else if (name == "stations")
-        stations.init(json, theConfig);
-
-      else if (name == "outside")
-      {
-        outsidemap = Map();
-        outsidemap->init(json, theConfig);
-      }
-      else if (name == "inside")
-      {
-        insidemap = Map();
-        insidemap->init(json, theConfig);
-      }
-      else if (name == "intersect")
-        intersections.init(json, theConfig);
-
-      else
-        throw Fmi::Exception(BCP, "Positions does not have a setting named '" + name + "'!");
+      initSetting(name, theJson[name], theConfig);
     }
 
-    if (size <= 0)
-      throw Fmi::Exception(BCP, "Positions size-setting must be nonnegative!");
-
-    if (step <= 0)
-      throw Fmi::Exception(BCP, "Positions step-setting must be nonnegative!");
-
-    if (step > size)
-      throw Fmi::Exception(BCP, "Positions step-setting must be smaller than the size-setting!");
-
-    if (180 % step != 0)
-      throw Fmi::Exception(BCP, "Positions step-size must divide 180 degrees evenly");
-
-    // we cannot allow stuff like 1e-6, that'll generate a huge amounts of points
-    if (mindistance < 2)
-      throw Fmi::Exception(BCP, "Minimum distance between positions must be at least 2 pixels!");
-
-    if (!direction.empty() && (!u.empty() || !v.empty()))
-      throw Fmi::Exception(
-          BCP, "Cannot specify position offsets using both direction and the u- and v-components!");
-
-    if ((!u.empty() && v.empty()) || (!v.empty() && u.empty()))
-      throw Fmi::Exception(BCP,
-                           "Cannot specify only one of u- and v-components for position offsets!");
-
-    if (directionoffset != 0 && direction.empty() && u.empty() && v.empty())
-      throw Fmi::Exception(BCP,
-                           "Must specify direction parameter for direction offset of positions!");
+    validate();
   }
   catch (...)
   {
