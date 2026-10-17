@@ -36,6 +36,119 @@ namespace Dali
 {
 namespace
 {
+// Wind direction (degrees) from U- and V-components, missing if not available
+T::ParamValue uv_direction(double uspd, double vspd, double missing)
+{
+  if (uspd != missing && vspd != missing)
+  {
+    // double wspd = sqrt(uspd * uspd + vspd * vspd);
+    if (uspd != 0 || vspd != 0)
+    {
+      double wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+      return wdir;
+    }
+    return ParamValueMissing;
+  }
+  return ParamValueMissing;
+}
+
+// Reads point values from querydata. The ParameterOptions hold references to their
+// arguments, hence the arguments are kept as members.
+class QueryValueReader
+{
+ public:
+  QueryValueReader(const Engine::Querydata::Q& theQ, const Fmi::LocalDateTime& theTime)
+      : q(theQ), localdatetime(theTime)
+  {
+  }
+
+  TS::Value value(const Spine::Parameter& param, const Spine::Location& loc)
+  {
+    auto p = Engine::Querydata::ParameterOptions(
+        param, tmp, loc, tmp, tmp, *timeformatter, tmp, tmp, mylocale, tmp, nearest, 0, dummy);
+    return q->value(p, localdatetime);
+  }
+
+ private:
+  const Engine::Querydata::Q& q;
+  Fmi::LocalDateTime localdatetime;
+  std::shared_ptr<Fmi::TimeFormatter> timeformatter{Fmi::TimeFormatter::create("iso")};
+  const std::string tmp;
+  const std::locale& mylocale = std::locale::classic();
+  const bool nearest = false;
+  NFmiPoint dummy;
+};
+
+// Direction values of the parameter at the coordinates
+void direction_values(QueryValueReader& reader,
+                      const std::string& parameter,
+                      const T::Coordinate_vec& latlonCoordinates,
+                      uint gwidth,
+                      uint gheight,
+                      T::ParamValue_vec& gridValues)
+{
+  auto param = TS::ParameterFactory::instance().parse(parameter);
+
+  uint c = 0;
+  for (uint y = 0; y < gheight; y++)
+  {
+    for (uint x = 0; x < gwidth; x++)
+    {
+      Spine::Location loc(latlonCoordinates[c].x(), latlonCoordinates[c].y());
+
+      auto res = reader.value(param, loc);
+      if (const double* ptr = std::get_if<double>(&res))
+      {
+        auto direction = *ptr;
+        gridValues.push_back(direction);
+      }
+      else
+      {
+        gridValues.push_back(ParamValueMissing);
+      }
+      c++;
+    }
+  }
+}
+
+// Direction values from the U- and V-parameters at the coordinates
+void uv_direction_values(QueryValueReader& reader,
+                         const std::string& u_parameter,
+                         const std::string& v_parameter,
+                         const T::Coordinate_vec& latlonCoordinates,
+                         uint gwidth,
+                         uint gheight,
+                         T::ParamValue_vec& gridValues)
+{
+  auto u_param = TS::ParameterFactory::instance().parse(u_parameter);
+  auto v_param = TS::ParameterFactory::instance().parse(v_parameter);
+
+  uint c = 0;
+  for (uint y = 0; y < gheight; y++)
+  {
+    for (uint x = 0; x < gwidth; x++)
+    {
+      Spine::Location loc(latlonCoordinates[c].x(), latlonCoordinates[c].y());
+
+      auto res_u = reader.value(u_param, loc);
+      auto res_v = reader.value(v_param, loc);
+
+      const double* ptr_u = std::get_if<double>(&res_u);
+      const double* ptr_v = std::get_if<double>(&res_v);
+      if (ptr_u && ptr_v)
+      {
+        // Note: qengine fixes orientation automatically
+        gridValues.push_back(uv_direction(*ptr_u, *ptr_v, kFloatMissing));
+      }
+      else
+      {
+        gridValues.push_back(ParamValueMissing);
+      }
+      c++;
+    }
+  }
+}
+
 // Wind directions (degrees) from U- and V-components
 T::ParamValue_vec uv_directions(const T::ParamValue_vec& u,
                                 const T::ParamValue_vec& v,
@@ -48,24 +161,7 @@ T::ParamValue_vec uv_directions(const T::ParamValue_vec& u,
   {
     double uspd = u[t];
     double vspd = v[t];
-
-    if (uspd != ParamValueMissing && vspd != ParamValueMissing)
-    {
-      // double wspd = sqrt(uspd * uspd + vspd * vspd);
-      if (uspd != 0 || vspd != 0)
-      {
-        double wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-        gridValues.push_back(wdir);
-      }
-      else
-      {
-        gridValues.push_back(ParamValueMissing);
-      }
-    }
-    else
-    {
-      gridValues.push_back(ParamValueMissing);
-    }
+    gridValues.push_back(uv_direction(uspd, vspd, ParamValueMissing));
   }
   return gridValues;
 }
@@ -440,133 +536,18 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     std::size_t sz = gwidth * gheight;
     gridValues.reserve(sz);
 
-    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-
     auto valid_time_period = getValidTimePeriod();
     NFmiMetTime met_time = valid_time_period.begin();
-    Fmi::LocalDateTime localdatetime(met_time, Fmi::TimeZonePtr::utc);
-    std::string tmp;
-    const auto& mylocale = std::locale::classic();
-    NFmiPoint dummy;
+    QueryValueReader reader(q, Fmi::LocalDateTime(met_time, Fmi::TimeZonePtr::utc));
 
     // Fetching values for the new grid.
 
-    uint c = 0;
-
     if (!paraminfo.parameter.empty())
-    {
-      auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter);
-
-      for (uint y = 0; y < gheight; y++)
-      {
-        for (uint x = 0; x < gwidth; x++)
-        {
-          Spine::Location loc((*latlonCoordinates)[c].x(), (*latlonCoordinates)[c].y());
-
-          auto p = Engine::Querydata::ParameterOptions(param,
-                                                       tmp,
-                                                       loc,
-                                                       tmp,
-                                                       tmp,
-                                                       *timeformatter,
-                                                       tmp,
-                                                       tmp,
-                                                       mylocale,
-                                                       tmp,
-                                                       false,
-                                                       0,
-                                                       dummy);
-
-          auto res = q->value(p, localdatetime);
-          if (const double* ptr = std::get_if<double>(&res))
-          {
-            auto direction = *ptr;
-            gridValues.push_back(direction);
-          }
-          else
-          {
-            gridValues.push_back(ParamValueMissing);
-          }
-          c++;
-        }
-      }
-    }
+      direction_values(
+          reader, paraminfo.parameter, *latlonCoordinates, gwidth, gheight, gridValues);
     else if (u_parameter && v_parameter)
-    {
-      auto u_param = TS::ParameterFactory::instance().parse(*u_parameter);
-      auto v_param = TS::ParameterFactory::instance().parse(*v_parameter);
-
-      for (uint y = 0; y < gheight; y++)
-      {
-        for (uint x = 0; x < gwidth; x++)
-        {
-          Spine::Location loc((*latlonCoordinates)[c].x(), (*latlonCoordinates)[c].y());
-
-          auto p_u = Engine::Querydata::ParameterOptions(u_param,
-                                                         tmp,
-                                                         loc,
-                                                         tmp,
-                                                         tmp,
-                                                         *timeformatter,
-                                                         tmp,
-                                                         tmp,
-                                                         mylocale,
-                                                         tmp,
-                                                         false,
-                                                         0,
-                                                         dummy);
-
-          auto p_v = Engine::Querydata::ParameterOptions(v_param,
-                                                         tmp,
-                                                         loc,
-                                                         tmp,
-                                                         tmp,
-                                                         *timeformatter,
-                                                         tmp,
-                                                         tmp,
-                                                         mylocale,
-                                                         tmp,
-                                                         false,
-                                                         0,
-                                                         dummy);
-
-          auto res_u = q->value(p_u, localdatetime);
-          auto res_v = q->value(p_v, localdatetime);
-
-          const double* ptr_u = std::get_if<double>(&res_u);
-          const double* ptr_v = std::get_if<double>(&res_v);
-          if (ptr_u && ptr_v)
-          {
-            auto uspd = *ptr_u;
-            auto vspd = *ptr_v;
-
-            if (uspd != kFloatMissing && vspd != kFloatMissing)
-            {
-              // double wspd = sqrt(uspd * uspd + vspd * vspd);
-              if (uspd != 0 || vspd != 0)
-              {
-                // Note: qengine fixes orientation automatically
-                double wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-                gridValues.push_back(wdir);
-              }
-              else
-              {
-                gridValues.push_back(ParamValueMissing);
-              }
-            }
-            else
-            {
-              gridValues.push_back(ParamValueMissing);
-            }
-          }
-          else
-          {
-            gridValues.push_back(ParamValueMissing);
-          }
-          c++;
-        }
-      }
-    }
+      uv_direction_values(
+          reader, *u_parameter, *v_parameter, *latlonCoordinates, gwidth, gheight, gridValues);
     else
     {
       throw Fmi::Exception(BCP,
@@ -587,14 +568,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                      yStep,
                      streamlines);
 
-      for (const auto& wkb : streamlines)
-      {
-        const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
-        OGRGeometry* geom = nullptr;
-        OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
-        auto geomPtr = OGRGeometryPtr(geom);
-        geoms.push_back(geomPtr);
-      }
+      geoms = wkb_lines(streamlines);
     }
     return geoms;
   }
