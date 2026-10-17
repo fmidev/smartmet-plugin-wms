@@ -117,6 +117,82 @@ void ColorPainter_shadow::addShadow(const Shadow& shadow)
 
 
 
+namespace
+{
+
+// Interpolate the four color channels between a and b
+inline void interpolate_channels(const uchar *a,const uchar *b,uchar *n,double vv)
+{
+  for (uint t=0; t<4; t++)
+  {
+    int d = ((int)b[t] - (int)a[t]) * vv;
+    n[t] = a[t] + d;
+  }
+}
+
+// Paint one shadow. Returns false if the shadow has no offset, which ends the painting.
+bool paint_shadow(const ColorPainter_shadow::Shadow& shadow,uint width,uint height,int sz,uint *image,const std::vector<float>& values)
+{
+  double minVal = shadow.value_min;
+  double maxVal = shadow.value_max;
+  uint minCol = shadow.color_min;
+  uint maxCol = shadow.color_max;
+  int dx = shadow.dx;
+  int dy = shadow.dy;
+
+  double dv = maxVal - minVal;
+
+  if (dx == 0 && dy == 0)
+    return false;
+
+  auto* a = (uchar*)&minCol;
+  auto* b = (uchar*)&maxCol;
+
+  uint newCol = 0;
+  auto* n = (uchar*)&newCol;
+
+  uint c = 0;
+  for (uint y = 0; y < height; y++)
+  {
+    int dyy = y + dy;
+    uint yy = height - y -1;
+    int py = yy * width;
+    int yp = (yy+dy) * width;
+
+    for (uint x = 0; x < width; x++)
+    {
+      int dxx = x - dx;
+      int px = py + x;
+      int xp = yp + x - dx;
+
+      if (xp >= 0  &&  xp < sz  &&  dxx >= 0  &&  dxx < (int)width  &&  dyy >=0  &&  dyy < (int)height)
+      {
+        uint oldcol = image[c];
+        uint valcol = 0;
+        float val = values[xp];
+        float valx = values[px];
+
+        if (val != ParamValueMissing)
+        {
+          if (val >= minVal && val <= maxVal && (valx < minVal || valx > maxVal))
+          {
+            double vv = (val - minVal) / dv;
+            interpolate_channels(a,b,n,vv);
+            valcol = newCol;
+          }
+          image[c] = merge_ARGB(valcol,oldcol);
+        }
+      }
+      c++;
+    }
+  }
+  return true;
+}
+
+}  // namespace
+
+
+
 void ColorPainter_shadow::setImageColors(uint width,uint height,uint /* loop_step */,uint /* loop_steps */,uint *image,std::vector<float>& /* land */,std::vector<float>& values,Parameters& /* parameters */)
 {
   try
@@ -137,63 +213,8 @@ void ColorPainter_shadow::setImageColors(uint width,uint height,uint /* loop_ste
 
     for (auto& shadow : shadows)
     {
-      double minVal = shadow.value_min;
-      double maxVal = shadow.value_max;
-      uint minCol = shadow.color_min;
-      uint maxCol = shadow.color_max;
-      int dx = shadow.dx;
-      int dy = shadow.dy;
-
-      double dv = maxVal - minVal;
-
-      if (dx == 0 && dy == 0)
+      if (!paint_shadow(shadow,width,height,sz,image,values))
         return;
-
-      auto* a = (uchar*)&minCol;
-      auto* b = (uchar*)&maxCol;
-
-      uint newCol = 0;
-      auto* n = (uchar*)&newCol;
-
-      uint c = 0;
-      for (uint y = 0; y < height; y++)
-      {
-        int dyy = y + dy;
-        uint yy = height - y -1;
-        int py = yy * width;
-        int yp = (yy+dy) * width;
-
-        for (uint x = 0; x < width; x++)
-        {
-          int dxx = x - dx;
-          int px = py + x;
-          int xp = yp + x - dx;
-
-          if (xp >= 0  &&  xp < sz  &&  dxx >= 0  &&  dxx < (int)width  &&  dyy >=0  &&  dyy < (int)height)
-          {
-            uint oldcol = image[c];
-            uint valcol = 0;
-            float val = values[xp];
-            float valx = values[px];
-
-            if (val != ParamValueMissing)
-            {
-              if (val >= minVal && val <= maxVal && (valx < minVal || valx > maxVal))
-              {
-                double vv = (val - minVal) / dv;
-                for (uint t=0; t<4; t++)
-                {
-                  int d = ((int)b[t] - (int)a[t]) * vv;
-                  n[t] = a[t] + d;
-                }
-                valcol = newCol;
-              }
-              image[c] = merge_ARGB(valcol,oldcol);
-            }
-          }
-          c++;
-        }
-      }
     }
   }
   catch (...)
