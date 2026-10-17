@@ -198,6 +198,18 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
   return ret;
 }
 
+// Shift the x and y members of the JSON object by the given amounts, if they are present
+void shift_xy(Json::Value& json, unsigned int xpos, unsigned int ypos)
+{
+  Json::Value nulljson;
+  Json::Value& xposJson = (json.isMember("x") ? json["x"] : nulljson);
+  Json::Value& yposJson = (json.isMember("y") ? json["y"] : nulljson);
+  if (!xposJson.isNull())
+    xposJson = Json::Value(xpos + xposJson.asInt());
+  if (!yposJson.isNull())
+    yposJson = Json::Value(ypos + yposJson.asInt());
+}
+
 Json::Value set_legend_position(const Json::Value& jsonTemplate,
                                 unsigned int xpos,
                                 unsigned int ypos)
@@ -211,29 +223,15 @@ Json::Value set_legend_position(const Json::Value& jsonTemplate,
   {
     for (auto& layerJson : layersJson)
     {
-      if (!layerJson.isNull())
-      {
-        Json::Value& layerXposJson = (layerJson.isMember("x") ? layerJson["x"] : nulljson);
-        Json::Value& layerYposJson = (layerJson.isMember("y") ? layerJson["y"] : nulljson);
-        if (!layerXposJson.isNull())
-          layerXposJson = Json::Value(xpos + layerXposJson.asInt());
-        if (!layerYposJson.isNull())
-          layerYposJson = Json::Value(ypos + layerYposJson.asInt());
+      if (layerJson.isNull())
+        continue;
 
-        Json::Value& attributesJson =
-            (layerJson.isMember("attributes") ? layerJson["attributes"] : nulljson);
-        if (!attributesJson.isNull())
-        {
-          Json::Value& attributesXposJson =
-              (attributesJson.isMember("x") ? attributesJson["x"] : nulljson);
-          Json::Value& attributesYposJson =
-              (attributesJson.isMember("y") ? attributesJson["y"] : nulljson);
-          if (!attributesXposJson.isNull())
-            attributesXposJson = Json::Value(xpos + attributesXposJson.asInt());
-          if (!attributesYposJson.isNull())
-            attributesYposJson = Json::Value(ypos + attributesYposJson.asInt());
-        }
-      }
+      shift_xy(layerJson, xpos, ypos);
+
+      Json::Value& attributesJson =
+          (layerJson.isMember("attributes") ? layerJson["attributes"] : nulljson);
+      if (!attributesJson.isNull())
+        shift_xy(attributesJson, xpos, ypos);
     }
   }
 
@@ -274,73 +272,83 @@ void get_legend_dimension(const Json::Value& json,
   }
 }
 
+// Set the css and class of a template sublayer from the legend graphic info
+void process_template_sublayer(Json::Value& subLayerJson, const LegendGraphicInfoItem& lgi)
+{
+  Json::Value nulljson;
+
+  Json::Value& cssJson = (subLayerJson.isMember("css") ? subLayerJson["css"] : nulljson);
+
+  if (!cssJson.isNull())
+    cssJson = lgi.asJsonValue("css");
+
+  Json::Value& attributesJson =
+      (subLayerJson.isMember("attributes") ? subLayerJson["attributes"] : nulljson);
+
+  if (!attributesJson.isNull())
+  {
+    Json::Value& classJson =
+        (attributesJson.isMember("class") ? attributesJson["class"] : nulljson);
+
+    if (!classJson.isNull())
+      classJson = lgi.asJsonValue("class");
+  }
+}
+
+// Set the isobands, css, id and sublayer settings of a template layer from the legend
+// graphic info
+void process_template_layer(Json::Value& layerJson,
+                            const std::string& legendId,
+                            const LegendGraphicInfoItem& lgi)
+{
+  Json::Value nulljson;
+
+  Json::Value& isobandsJson = (layerJson.isMember("isobands") ? layerJson["isobands"] : nulljson);
+  if (!isobandsJson.isNull() && lgi.exists("isobands"))
+    isobandsJson = lgi.asJsonValue("isobands");
+
+  Json::Value& layerCssJson = (layerJson.isMember("css") ? layerJson["css"] : nulljson);
+
+  if (!layerCssJson.isNull())
+    layerCssJson = lgi.asJsonValue("css");
+
+  Json::Value& symbolsJson = (layerJson.isMember("symbols") ? layerJson["symbols"] : nulljson);
+  if (!symbolsJson.isNull())
+  {
+    Json::Value& symbolsCssJson = (symbolsJson.isMember("css") ? symbolsJson["css"] : nulljson);
+    if (!symbolsCssJson.isNull() && lgi.exists("css"))
+      symbolsCssJson = lgi.asJsonValue("css");
+  }
+
+  Json::Value& attributesJson =
+      (layerJson.isMember("attributes") ? layerJson["attributes"] : nulljson);
+  if (!attributesJson.isNull())
+  {
+    Json::Value& idJson = attributesJson["id"];
+    if (!idJson.isNull())
+    {
+      idJson = Json::Value(legendId);
+    }
+  }
+
+  Json::Value& subLayersJson = (layerJson.isMember("layers") ? layerJson["layers"] : nulljson);
+  for (auto& subLayerJson : subLayersJson)
+  {
+    if (!subLayerJson.isNull())
+      process_template_sublayer(subLayerJson, lgi);
+  }
+}
+
 void process_template_layers(Json::Value& layersJson,
                              const std::string& legendId,
                              const LegendGraphicInfoItem& lgi)
 {
   if (!layersJson.isNull() && layersJson.isArray())
   {
-    Json::Value nulljson;
     for (auto& layerJson : layersJson)
     {
       if (!layerJson.isNull())
-      {
-        Json::Value& isobandsJson =
-            (layerJson.isMember("isobands") ? layerJson["isobands"] : nulljson);
-        if (!isobandsJson.isNull() && lgi.exists("isobands"))
-          isobandsJson = lgi.asJsonValue("isobands");
-
-        Json::Value& layerCssJson = (layerJson.isMember("css") ? layerJson["css"] : nulljson);
-
-        if (!layerCssJson.isNull())
-          layerCssJson = lgi.asJsonValue("css");
-
-        Json::Value& symbolsJson =
-            (layerJson.isMember("symbols") ? layerJson["symbols"] : nulljson);
-        if (!symbolsJson.isNull())
-        {
-          Json::Value& symbolsCssJson =
-              (symbolsJson.isMember("css") ? symbolsJson["css"] : nulljson);
-          if (!symbolsCssJson.isNull() && lgi.exists("css"))
-            symbolsCssJson = lgi.asJsonValue("css");
-        }
-
-        Json::Value& attributesJson =
-            (layerJson.isMember("attributes") ? layerJson["attributes"] : nulljson);
-        if (!attributesJson.isNull())
-        {
-          Json::Value& idJson = attributesJson["id"];
-          if (!idJson.isNull())
-          {
-            idJson = Json::Value(legendId);
-          }
-        }
-
-        Json::Value& subLayersJson =
-            (layerJson.isMember("layers") ? layerJson["layers"] : nulljson);
-        for (auto& subLayerJson : subLayersJson)
-        {
-          if (!subLayerJson.isNull())
-          {
-            Json::Value& cssJson = (subLayerJson.isMember("css") ? subLayerJson["css"] : nulljson);
-
-            if (!cssJson.isNull())
-              cssJson = lgi.asJsonValue("css");
-
-            Json::Value& attributesJson =
-                (subLayerJson.isMember("attributes") ? subLayerJson["attributes"] : nulljson);
-
-            if (!attributesJson.isNull())
-            {
-              Json::Value& classJson =
-                  (attributesJson.isMember("class") ? attributesJson["class"] : nulljson);
-
-              if (!classJson.isNull())
-                classJson = lgi.asJsonValue("class");
-            }
-          }
-        }
-      }
+        process_template_layer(layerJson, legendId, lgi);
     }
   }
 }
