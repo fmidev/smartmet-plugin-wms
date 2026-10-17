@@ -458,6 +458,47 @@ Labels generate_labels_edge_center(const Graticule& g,
   }
 }
 
+// Label positions of a graticule line which are inside the image
+struct LabelCandidates
+{
+  std::vector<double> x;
+  std::vector<double> y;
+  std::vector<std::string> txt;
+  std::vector<double> angle;
+};
+
+// Project the label positions to pixel coordinates and discard points outside the box
+LabelCandidates visible_label_candidates(const std::vector<double>& lons,
+                                         const std::vector<double>& lats,
+                                         std::vector<double>& x,
+                                         std::vector<double>& y,
+                                         const std::vector<std::string>& txt,
+                                         const Fmi::CoordinateTransformation& transformation,
+                                         const Fmi::Box& box)
+{
+  // Convert to world coordinates
+  transformation.transform(x, y);
+
+  // Convert to pixel coordinates
+  for (auto i = 0UL; i < x.size(); i++)
+    box.transform(x[i], y[i]);
+
+  // Discard points outside the box
+
+  LabelCandidates valid;
+  for (auto i = 0UL; i < x.size(); i++)
+  {
+    if (x[i] >= 0 && x[i] < box.width() && y[i] >= 0 && y[i] < box.height())
+    {
+      valid.x.push_back(x[i]);
+      valid.y.push_back(y[i]);
+      valid.txt.emplace_back(txt[i]);
+      valid.angle.push_back(get_angle(lons[i], lats[i], transformation));
+    }
+  }
+  return valid;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate graticule labels at lines which would display most of them
@@ -475,10 +516,7 @@ Labels generate_labels_cross(const Graticule& g,
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
-    std::vector<double> x_best;
-    std::vector<double> y_best;
-    std::vector<std::string> txt_best;
-    std::vector<double> angle_best;
+    LabelCandidates best;
 
     // Choose longitude containing most valid label positions at centers of lines
 
@@ -500,49 +538,18 @@ Labels generate_labels_cross(const Graticule& g,
         txt.emplace_back(get_lat_label(label, lat));
       }
 
-      // Convert to world coordinates
-      transformation.transform(x, y);
-
-      // Convert to pixel coordinates
-      for (auto i = 0UL; i < x.size(); i++)
-        box.transform(x[i], y[i]);
-
-      // Discard points outside the box
-
-      std::vector<double> valid_x;
-      std::vector<double> valid_y;
-      std::vector<std::string> valid_txt;
-      std::vector<double> valid_angle;
-
-      for (auto i = 0UL; i < x.size(); i++)
-      {
-        if (x[i] >= 0 && x[i] < box.width() && y[i] >= 0 && y[i] < box.height())
-        {
-          valid_x.push_back(x[i]);
-          valid_y.push_back(y[i]);
-          valid_txt.emplace_back(txt[i]);
-          valid_angle.push_back(get_angle(lons[i], lats[i], transformation));
-        }
-      }
+      auto candidates = visible_label_candidates(lons, lats, x, y, txt, transformation, box);
 
       // Keep the first candidate with the most positions
-      if (valid_x.size() > x_best.size())
-      {
-        x_best = std::move(valid_x);
-        y_best = std::move(valid_y);
-        txt_best = std::move(valid_txt);
-        angle_best = std::move(valid_angle);
-      }
+      if (candidates.x.size() > best.x.size())
+        best = std::move(candidates);
     }
 
     // Keep the selected longitude
-    for (auto i = 0UL; i < x_best.size(); i++)
-      labels.emplace_back(txt_best[i], x_best[i], y_best[i], angle_best[i]);
+    for (auto i = 0UL; i < best.x.size(); i++)
+      labels.emplace_back(best.txt[i], best.x[i], best.y[i], best.angle[i]);
 
-    x_best.clear();
-    y_best.clear();
-    txt_best.clear();
-    angle_best.clear();
+    best = LabelCandidates();
 
     // Choose latitude containing most valid label positions at centers of lines
 
@@ -563,44 +570,16 @@ Labels generate_labels_cross(const Graticule& g,
         txt.emplace_back(get_lon_label(label, lon));
       }
 
-      // Convert to world coordinates
-      transformation.transform(x, y);
-
-      // Convert to pixel coordinates
-      for (auto i = 0UL; i < x.size(); i++)
-        box.transform(x[i], y[i]);
-
-      // Discard points outside the box
-
-      std::vector<double> valid_x;
-      std::vector<double> valid_y;
-      std::vector<std::string> valid_txt;
-      std::vector<double> valid_angle;
-
-      for (auto i = 0UL; i < x.size(); i++)
-      {
-        if (x[i] >= 0 && x[i] < box.width() && y[i] >= 0 && y[i] < box.height())
-        {
-          valid_x.push_back(x[i]);
-          valid_y.push_back(y[i]);
-          valid_txt.emplace_back(txt[i]);
-          valid_angle.push_back(get_angle(lons[i], lats[i], transformation));
-        }
-      }
+      auto candidates = visible_label_candidates(lons, lats, x, y, txt, transformation, box);
 
       // Keep the first candidate with the most positions
-      if (valid_x.size() > x_best.size())
-      {
-        x_best = std::move(valid_x);
-        y_best = std::move(valid_y);
-        txt_best = std::move(valid_txt);
-        angle_best = std::move(valid_angle);
-      }
+      if (candidates.x.size() > best.x.size())
+        best = std::move(candidates);
     }
 
     // Keep the selected longitude
-    for (auto i = 0UL; i < x_best.size(); i++)
-      labels.emplace_back(txt_best[i], x_best[i], y_best[i], angle_best[i]);
+    for (auto i = 0UL; i < best.x.size(); i++)
+      labels.emplace_back(best.txt[i], best.x[i], best.y[i], best.angle[i]);
 
     return labels;
   }
