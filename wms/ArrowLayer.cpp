@@ -1,14 +1,15 @@
 //======================================================================
 #include "ArrowLayer.h"
-#include "MapboxVectorTile.h"
 #include "AggregationUtility.h"
 #include "Config.h"
 #include "DataTile.h"
 #include "GridDataGeoTiff.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "ObservationReader.h"
 #include "PointData.h"
 #include "Select.h"
@@ -613,13 +614,7 @@ std::shared_ptr<QueryServer::Query> ArrowLayer::build_grid_query(
     attributeList.addAttribute("param", paramBuf);
 
     // Time
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     queryConfigurator.configure(*gridQuery, attributeList);
 
@@ -633,47 +628,13 @@ std::shared_ptr<QueryServer::Query> ArrowLayer::build_grid_query(
       param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
       param.mType = QueryServer::QueryParameter::Type::PointValues;
 
-      if (paraminfo.geometryId)
-        param.mGeometryId = *paraminfo.geometryId;
-
-      if (paraminfo.levelId)
-        param.mParameterLevelId = *paraminfo.levelId;
-
-      if (paraminfo.level)
-        param.mParameterLevel = C_INT(*paraminfo.level);
-      else if (paraminfo.pressure)
-      {
-        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        param.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-
-      if (paraminfo.elevation_unit)
-      {
-        if (*paraminfo.elevation_unit == "m")
-          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-        if (*paraminfo.elevation_unit == "p")
-          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-
-      if (paraminfo.forecastType)
-        param.mForecastType = C_INT(*paraminfo.forecastType);
-
-      if (paraminfo.forecastNumber)
-        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(param, paraminfo);
     }
 
     gridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     gridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-      gridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
-    else
-    {
-      if (projection.xsize)
-        gridQuery->mAttributeList.addAttribute("grid.width", Fmi::to_string(*projection.xsize));
-      if (projection.ysize)
-        gridQuery->mAttributeList.addAttribute("grid.height", Fmi::to_string(*projection.ysize));
-    }
+    add_grid_size_attributes(*gridQuery, projection);
 
     return gridEngine->executeQuery(gridQuery);
   }
@@ -899,47 +860,12 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     auto query = build_grid_query(paramList, coordinates, theState);
 
     // Extract projection dimensions from query result
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-      if (widthStr)
-        projection.xsize = Fmi::stoi(widthStr);
-      if (heightStr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
 
-    if (*projection.crs == "data")
-    {
-      const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
-      const char* proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
-      if (proj4Str && strstr(proj4Str, "+lon_wrap"))
-        crsStr = proj4Str;
-
-      if (crsStr)
-      {
-        projection.crs = crsStr;
-        if (!projection.bboxcrs)
-        {
-          const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
-          if (bboxStr)
-          {
-            std::vector<double> partList;
-            splitString(bboxStr, ',', partList);
-            if (partList.size() == 4)
-            {
-              projection.x1 = partList[0];
-              projection.y1 = partList[1];
-              projection.x2 = partList[2];
-              projection.y2 = partList[3];
-            }
-          }
-        }
-      }
-    }
+    update_data_projection(projection, *query);
 
     auto crs = projection.getCRS();
 
@@ -1410,15 +1336,7 @@ void ArrowLayer::getGridValue(CTPP::CDT& theInfo, const State& theState)
     auto query = build_grid_query(paramNames, coordinates, theState);
 
     // Update projection dimensions from query result if needed
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-      if (widthStr)
-        projection.xsize = Fmi::stoi(widthStr);
-      if (heightStr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
@@ -1690,13 +1608,7 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
 
     attributeList.addAttribute("param", param1 + "," + param2);
 
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
@@ -1709,45 +1621,13 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
       p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
       p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
 
-      if (paraminfo.geometryId)
-        p.mGeometryId = *paraminfo.geometryId;
-      if (paraminfo.levelId)
-        p.mParameterLevelId = *paraminfo.levelId;
-      if (paraminfo.level)
-        p.mParameterLevel = C_INT(*paraminfo.level);
-      else if (paraminfo.pressure)
-      {
-        p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        p.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-      if (paraminfo.elevation_unit)
-      {
-        if (*paraminfo.elevation_unit == "m")
-          p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-        if (*paraminfo.elevation_unit == "p")
-          p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-      if (paraminfo.forecastType)
-        p.mForecastType = C_INT(*paraminfo.forecastType);
-      if (paraminfo.forecastNumber)
-        p.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(p, paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-      originalGridQuery->mAttributeList.addAttribute("grid.size",
-                                                      Fmi::to_string(*projection.size));
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                        Fmi::to_string(*projection.xsize));
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                        Fmi::to_string(*projection.ysize));
-    }
+    add_grid_size_attributes(*originalGridQuery, projection);
 
     if (projection.bboxcrs)
       originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
@@ -1755,15 +1635,7 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
     auto query = gridEngine->executeQuery(originalGridQuery);
 
     // Update projection dimensions from result if needed
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-      if (widthStr)
-        projection.xsize = Fmi::stoi(widthStr);
-      if (heightStr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize || !projection.ysize)
       throw Fmi::Exception(BCP, "Grid size is unknown after query");
@@ -1943,13 +1815,7 @@ std::string ArrowLayer::generateDataTile(State& theState)
 
     attributeList.addAttribute("param", param1 + "," + param2);
 
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
@@ -1962,45 +1828,13 @@ std::string ArrowLayer::generateDataTile(State& theState)
       p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
       p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
 
-      if (paraminfo.geometryId)
-        p.mGeometryId = *paraminfo.geometryId;
-      if (paraminfo.levelId)
-        p.mParameterLevelId = *paraminfo.levelId;
-      if (paraminfo.level)
-        p.mParameterLevel = C_INT(*paraminfo.level);
-      else if (paraminfo.pressure)
-      {
-        p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        p.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-      if (paraminfo.elevation_unit)
-      {
-        if (*paraminfo.elevation_unit == "m")
-          p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-        if (*paraminfo.elevation_unit == "p")
-          p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-      if (paraminfo.forecastType)
-        p.mForecastType = C_INT(*paraminfo.forecastType);
-      if (paraminfo.forecastNumber)
-        p.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(p, paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-      originalGridQuery->mAttributeList.addAttribute("grid.size",
-                                                      Fmi::to_string(*projection.size));
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                        Fmi::to_string(*projection.xsize));
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                        Fmi::to_string(*projection.ysize));
-    }
+    add_grid_size_attributes(*originalGridQuery, projection);
 
     if (projection.bboxcrs)
       originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
@@ -2008,15 +1842,7 @@ std::string ArrowLayer::generateDataTile(State& theState)
     auto query = gridEngine->executeQuery(originalGridQuery);
 
     // Update projection dimensions from result if needed
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-      if (widthStr)
-        projection.xsize = Fmi::stoi(widthStr);
-      if (heightStr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize || !projection.ysize)
       throw Fmi::Exception(BCP, "Grid size is unknown after query");

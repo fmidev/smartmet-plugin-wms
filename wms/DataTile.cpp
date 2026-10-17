@@ -1,20 +1,21 @@
 // ======================================================================
 
 #include "DataTile.h"
+#include "GridQueryTools.h"
 #include "Layer.h"
 #include "State.h"
-#include <cmath>
-#include <cstdint>
-#include <cstring>
+#include <boost/crc.hpp>
 #include <engines/grid/Engine.h>
 #include <fmt/format.h>
+#include <giza/Giza.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/grid/Typedefs.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <boost/crc.hpp>
-#include <giza/Giza.h>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
 
 namespace SmartMet
 {
@@ -328,43 +329,18 @@ std::string gridDataTile(Layer& layer,
 
     // Parameter with optional unit conversion
     {
-      std::string pName = parameterName;
-      auto pos = pName.find(".raw");
-      if (pos != std::string::npos)
-      {
-        attributeList.addAttribute("grid.areaInterpolationMethod",
-                                   Fmi::to_string(T::AreaInterpolationMethod::Nearest));
-        pName.erase(pos, 4);
-      }
-
-      std::string param = gridEngine->getParameterString(producerName, pName);
-
-      if (layer.multiplier && *layer.multiplier != 1.0)
-        param = "MUL{" + param + ";" + std::to_string(*layer.multiplier) + "}";
-      if (layer.offset && *layer.offset)
-        param = "SUM{" + param + ";" + std::to_string(*layer.offset) + "}";
-
-      attributeList.addAttribute("param", param);
-
-      if (!layer.projection.projectionParameter)
-        layer.projection.projectionParameter = param;
-
-      if (param == parameterName && originalGridQuery->mProducerNameList.empty())
-      {
-        gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-        if (originalGridQuery->mProducerNameList.empty())
-          originalGridQuery->mProducerNameList.push_back(producerName);
-      }
+      add_grid_parameter(*gridEngine,
+                         producerName,
+                         parameterName,
+                         layer.multiplier,
+                         layer.offset,
+                         layer.projection,
+                         attributeList,
+                         *originalGridQuery);
     }
 
     // Time
-    std::string forecastTime = Fmi::to_iso_string(layer.getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-    if (layer.origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*layer.origintime));
+    add_time_attributes(attributeList, layer.getValidTime(), layer.origintime);
 
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
@@ -410,18 +386,7 @@ std::string gridDataTile(Layer& layer,
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (layer.projection.size && *layer.projection.size > 0)
-      originalGridQuery->mAttributeList.addAttribute("grid.size",
-                                                      Fmi::to_string(*layer.projection.size));
-    else
-    {
-      if (layer.projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                        Fmi::to_string(*layer.projection.xsize));
-      if (layer.projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                        Fmi::to_string(*layer.projection.ysize));
-    }
+    add_grid_size_attributes(*originalGridQuery, layer.projection);
 
     if (layer.projection.bboxcrs)
       originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *layer.projection.bboxcrs);
@@ -430,16 +395,7 @@ std::string gridDataTile(Layer& layer,
     auto query = gridEngine->executeQuery(originalGridQuery);
 
     // Update projection dimensions from result if needed
-    if ((layer.projection.size && *layer.projection.size > 0) ||
-        (!layer.projection.xsize && !layer.projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-      if (widthStr)
-        layer.projection.xsize = Fmi::stoi(widthStr);
-      if (heightStr)
-        layer.projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(layer.projection, *query);
 
     if (!layer.projection.xsize || !layer.projection.ysize)
       throw Fmi::Exception(BCP, "Grid size is unknown after query");

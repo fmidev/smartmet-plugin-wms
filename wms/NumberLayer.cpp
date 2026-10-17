@@ -2,14 +2,15 @@
 
 #include "NumberLayer.h"
 #include "AggregationUtility.h"
-#include "MapboxVectorTile.h"
 #include "Config.h"
 #include "DataTile.h"
 #include "GridDataGeoTiff.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "ObservationReader.h"
 #include "PointData.h"
 #include "Select.h"
@@ -388,14 +389,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
@@ -431,62 +425,16 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         queryparam.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
       }
 
-      if (paraminfo.geometryId)
-        queryparam.mGeometryId = *paraminfo.geometryId;
-
-      if (paraminfo.levelId)
-        queryparam.mParameterLevelId = *paraminfo.levelId;
-
-      if (paraminfo.level)
-      {
-        queryparam.mParameterLevel = C_INT(*paraminfo.level);
-      }
-      else if (paraminfo.pressure)
-      {
-        queryparam.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        queryparam.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-
-      if (paraminfo.elevation_unit)
-      {
-        if (*paraminfo.elevation_unit == "m")
-          queryparam.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-
-        if (*paraminfo.elevation_unit == "p")
-          queryparam.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-
-      if (paraminfo.forecastType)
-        queryparam.mForecastType = C_INT(*paraminfo.forecastType);
-
-      if (paraminfo.forecastNumber)
-        queryparam.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(queryparam, paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-    {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
-    }
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       Fmi::to_string(*projection.xsize));
+    add_grid_size_attributes(*originalGridQuery, projection);
 
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       Fmi::to_string(*projection.ysize));
-    }
-
-    if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
-    {
-      auto bbox = fmt::format(
-          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-    }
+    if (wkt == "data")
+      add_data_bbox_attribute(*originalGridQuery, projection);
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
@@ -499,50 +447,12 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Extracting the projection information from the query result.
 
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-
-      if (widthStr != nullptr)
-        projection.xsize = Fmi::stoi(widthStr);
-
-      if (heightStr != nullptr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
 
-    if (*projection.crs == "data")
-    {
-      const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
-      const char* proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
-      if (proj4Str != nullptr && strstr(proj4Str, "+lon_wrap") != nullptr)
-        crsStr = proj4Str;
-
-      if (crsStr != nullptr)
-      {
-        projection.crs = crsStr;
-        if (!projection.bboxcrs)
-        {
-          const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
-          if (bboxStr != nullptr)
-          {
-            std::vector<double> partList;
-            splitString(bboxStr, ',', partList);
-
-            if (partList.size() == 4)
-            {
-              projection.x1 = partList[0];
-              projection.y1 = partList[1];
-              projection.x2 = partList[2];
-              projection.y2 = partList[3];
-            }
-          }
-        }
-      }
-    }
+    update_data_projection(projection, *query);
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();

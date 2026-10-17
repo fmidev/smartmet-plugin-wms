@@ -12,6 +12,7 @@
 #include "DataTile.h"
 #include "Geometry.h"
 #include "GridDataGeoTiff.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
@@ -620,34 +621,14 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
 
     if (!paraminfo.parameter.empty())
     {
-      std::string pName = paraminfo.parameter;
-      auto pos = pName.find(".raw");
-      if (pos != std::string::npos)
-      {
-        attributeList.addAttribute("grid.areaInterpolationMethod",
-                                   Fmi::to_string(T::AreaInterpolationMethod::Nearest));
-        pName.erase(pos, 4);
-      }
-
-      std::string param = gridEngine->getParameterString(producerName, pName);
-
-      if (multiplier && *multiplier != 1.0)
-        param = "MUL{" + param + ";" + std::to_string(*multiplier) + "}";
-
-      if (offset && *offset)
-        param = "SUM{" + param + ";" + std::to_string(*offset) + "}";
-
-      attributeList.addAttribute("param", param);
-
-      if (!projection.projectionParameter)
-        projection.projectionParameter = param;
-
-      if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
-      {
-        gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-        if (originalGridQuery->mProducerNameList.empty())
-          originalGridQuery->mProducerNameList.push_back(producerName);
-      }
+      add_grid_parameter(*gridEngine,
+                         producerName,
+                         paraminfo.parameter,
+                         multiplier,
+                         offset,
+                         projection,
+                         attributeList,
+                         *originalGridQuery);
     }
     else if (direction && speed)
     {
@@ -704,55 +685,13 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
         p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
       }
 
-      if (paraminfo.geometryId)
-        p.mGeometryId = *paraminfo.geometryId;
-
-      if (paraminfo.levelId)
-        p.mParameterLevelId = *paraminfo.levelId;
-
-      if (paraminfo.level)
-      {
-        p.mParameterLevel = C_INT(*paraminfo.level);
-      }
-      else if (paraminfo.pressure)
-      {
-        p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        p.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-
-      if (paraminfo.elevation_unit)
-      {
-        if (*paraminfo.elevation_unit == "m")
-          p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-
-        if (*paraminfo.elevation_unit == "p")
-          p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-
-      if (paraminfo.forecastType)
-        p.mForecastType = C_INT(*paraminfo.forecastType);
-
-      if (paraminfo.forecastNumber)
-        p.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(p, paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-    {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
-    }
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       Fmi::to_string(*projection.xsize));
-
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       Fmi::to_string(*projection.ysize));
-    }
+    add_grid_size_attributes(*originalGridQuery, projection);
 
     if (projection.bboxcrs)
       originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
@@ -767,12 +706,8 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
       originalGridQuery->mAttributeList.addAttribute("grid.resolution",
                                                      Fmi::to_string(*projection.resolution));
 
-    if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
-    {
-      auto bbox = fmt::format(
-          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-    }
+    if (wkt == "data")
+      add_data_bbox_attribute(*originalGridQuery, projection);
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
@@ -785,50 +720,12 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
 
     // Extracting the projection information from the query result.
 
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char *widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char *heightStr = query->mAttributeList.getAttributeValue("grid.height");
-
-      if (widthStr != nullptr)
-        projection.xsize = Fmi::stoi(widthStr);
-
-      if (heightStr != nullptr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
 
-    if (*projection.crs == "data")
-    {
-      const char *crsStr = query->mAttributeList.getAttributeValue("grid.crs");
-      const char *proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
-      if (proj4Str != nullptr && strstr(proj4Str, "+lon_wrap") != nullptr)
-        crsStr = proj4Str;
-
-      if (crsStr != nullptr)
-      {
-        projection.crs = crsStr;
-        if (!projection.bboxcrs)
-        {
-          const char *bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
-          if (bboxStr != nullptr)
-          {
-            std::vector<double> partList;
-            splitString(bboxStr, ',', partList);
-
-            if (partList.size() == 4)
-            {
-              projection.x1 = partList[0];
-              projection.y1 = partList[1];
-              projection.x2 = partList[2];
-              projection.y2 = partList[3];
-            }
-          }
-        }
-      }
-    }
+    update_data_projection(projection, *query);
 
     if (wkt == "data")
       return;

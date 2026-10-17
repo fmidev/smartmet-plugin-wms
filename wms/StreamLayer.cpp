@@ -3,6 +3,7 @@
 #include "StreamLayer.h"
 #include "Config.h"
 #include "Geometry.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "Isoline.h"
 #include "JsonTools.h"
@@ -187,14 +188,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
                            "Missing 'parameter' (= direction) or 'u' / 'v' vector definitions");
     }
 
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
@@ -242,20 +236,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-    {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
-    }
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       Fmi::to_string(*projection.xsize));
-
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       Fmi::to_string(*projection.ysize));
-    }
+    add_grid_size_attributes(*originalGridQuery, projection);
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
@@ -276,50 +257,12 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
 
     // Extracting the projection information from the query result.
 
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-
-      if (widthStr != nullptr)
-        projection.xsize = Fmi::stoi(widthStr);
-
-      if (heightStr != nullptr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
 
-    if (*projection.crs == "data")
-    {
-      const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
-      const char* proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
-      if (proj4Str != nullptr && strstr(proj4Str, "+lon_wrap") != nullptr)
-        crsStr = proj4Str;
-
-      if (crsStr != nullptr)
-      {
-        projection.crs = crsStr;
-        if (!projection.bboxcrs)
-        {
-          const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
-          if (bboxStr != nullptr)
-          {
-            std::vector<double> partList;
-            splitString(bboxStr, ',', partList);
-
-            if (partList.size() == 4)
-            {
-              projection.x1 = partList[0];
-              projection.y1 = partList[1];
-              projection.x2 = partList[2];
-              projection.y2 = partList[3];
-            }
-          }
-        }
-      }
-    }
+    update_data_projection(projection, *query);
 
     std::vector<OGRGeometryPtr> geoms;
 

@@ -1,14 +1,15 @@
 // ======================================================================
 
 #include "Layer.h"
-#include "LegendLabels.h"
-#include "MapboxVectorTile.h"
 #include "AggregationUtility.h"
 #include "Config.h"
 #include "Defs.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "LayerFactory.h"
+#include "LegendLabels.h"
+#include "MapboxVectorTile.h"
 #include "ObservationReader.h"
 #include "PointData.h"
 #include "State.h"
@@ -1004,61 +1005,17 @@ void Layer::getGridValue(CTPP::CDT& theInfo, const State& theState)
       param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
       param.mType = QueryServer::QueryParameter::Type::PointValues;
 
-      if (paraminfo.geometryId)
-        param.mGeometryId = *paraminfo.geometryId;
-
-      if (paraminfo.levelId)
-        param.mParameterLevelId = *paraminfo.levelId;
-
-      if (paraminfo.level)
-        param.mParameterLevel = C_INT(*paraminfo.level);
-      else if (paraminfo.pressure)
-      {
-        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        param.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-
-      if (paraminfo.elevation_unit)
-      {
-        if (*paraminfo.elevation_unit == "m")
-          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-        if (*paraminfo.elevation_unit == "p")
-          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-
-      if (paraminfo.forecastType)
-        param.mForecastType = C_INT(*paraminfo.forecastType);
-
-      if (paraminfo.forecastNumber)
-        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(param, paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       Fmi::to_string(*projection.xsize));
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       Fmi::to_string(*projection.ysize));
-    }
+    add_grid_size_attributes(*originalGridQuery, projection);
 
     std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
 
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-      if (widthStr)
-        projection.xsize = Fmi::stoi(widthStr);
-      if (heightStr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");

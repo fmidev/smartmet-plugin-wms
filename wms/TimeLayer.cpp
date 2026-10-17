@@ -2,6 +2,7 @@
 
 #include "TimeLayer.h"
 #include "Config.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
@@ -213,14 +214,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     attributeList.addAttribute("param", paramStr);
 
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
@@ -237,27 +231,10 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-    {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
-    }
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       Fmi::to_string(*projection.xsize));
+    add_grid_size_attributes(*originalGridQuery, projection);
 
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       Fmi::to_string(*projection.ysize));
-    }
-
-    if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
-    {
-      auto bbox = fmt::format(
-          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-    }
+    if (wkt == "data")
+      add_data_bbox_attribute(*originalGridQuery, projection);
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
