@@ -53,6 +53,10 @@ class StreamLayer : public Layer
   T::MessageIndex messageIndex = 0;
 
  private:
+  void addStreamParameters(const Engine::Grid::Engine& gridEngine,
+                           const std::string& producerName,
+                           T::AttributeList& attributeList,
+                           QueryServer::Query& query);
   std::vector<OGRGeometryPtr> getStreamsGrid(const State& theState);
   std::vector<OGRGeometryPtr> getStreamsQuerydata(const State& theState);
 

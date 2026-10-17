@@ -34,6 +34,59 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+// Wind directions (degrees) from U- and V-components
+T::ParamValue_vec uv_directions(const T::ParamValue_vec& u,
+                                const T::ParamValue_vec& v,
+                                std::size_t sz)
+{
+  T::ParamValue_vec gridValues;
+  gridValues.reserve(sz);
+
+  for (uint t = 0; t < sz; t++)
+  {
+    double uspd = u[t];
+    double vspd = v[t];
+
+    if (uspd != ParamValueMissing && vspd != ParamValueMissing)
+    {
+      // double wspd = sqrt(uspd * uspd + vspd * vspd);
+      if (uspd != 0 || vspd != 0)
+      {
+        double wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+        gridValues.push_back(wdir);
+      }
+      else
+      {
+        gridValues.push_back(ParamValueMissing);
+      }
+    }
+    else
+    {
+      gridValues.push_back(ParamValueMissing);
+    }
+  }
+  return gridValues;
+}
+
+// Converting WKB lines to OGRGeometries
+std::vector<OGRGeometryPtr> wkb_lines(const T::ByteData_vec& streamlines)
+{
+  std::vector<OGRGeometryPtr> geoms;
+  for (const auto& wkb : streamlines)
+  {
+    const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
+    OGRGeometry* geom = nullptr;
+    OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
+    auto geomPtr = OGRGeometryPtr(geom);
+    geoms.push_back(geomPtr);
+  }
+  return geoms;
+}
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -98,6 +151,56 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreams(const State& theState)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add the direction parameter or the U and V parameters to the grid query
+ */
+// ----------------------------------------------------------------------
+
+void StreamLayer::addStreamParameters(const Engine::Grid::Engine& gridEngine,
+                                      const std::string& producerName,
+                                      T::AttributeList& attributeList,
+                                      QueryServer::Query& query)
+{
+  if (!paraminfo.parameter.empty())
+  {
+    std::string param = gridEngine.getParameterString(producerName, paraminfo.parameter);
+    attributeList.addAttribute("param", param);
+
+    if (!projection.projectionParameter)
+      projection.projectionParameter = param;
+
+    if (param == paraminfo.parameter && query.mProducerNameList.empty())
+    {
+      gridEngine.getProducerNameList(producerName, query.mProducerNameList);
+      if (query.mProducerNameList.empty())
+        query.mProducerNameList.push_back(producerName);
+    }
+  }
+  else if (u_parameter && v_parameter)
+  {
+    std::string u_param = gridEngine.getParameterString(producerName, *u_parameter);
+    std::string v_param = gridEngine.getParameterString(producerName, *v_parameter);
+
+    attributeList.addAttribute("param", u_param + "," + v_param);
+
+    if (!projection.projectionParameter)
+      projection.projectionParameter = u_param;
+
+    if (u_param == *u_parameter && query.mProducerNameList.empty())
+    {
+      gridEngine.getProducerNameList(producerName, query.mProducerNameList);
+      if (query.mProducerNameList.empty())
+        query.mProducerNameList.push_back(producerName);
+    }
+  }
+  else
+  {
+    throw Fmi::Exception(BCP,
+                         "Missing 'parameter' (= direction) or 'u' / 'v' vector definitions");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the streamline vectors based on the settings
  */
 // ----------------------------------------------------------------------
@@ -150,43 +253,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
 
     // Adding parameter information into the query.
 
-    if (!paraminfo.parameter.empty())
-    {
-      std::string param = gridEngine->getParameterString(producerName, paraminfo.parameter);
-      attributeList.addAttribute("param", param);
-
-      if (!projection.projectionParameter)
-        projection.projectionParameter = param;
-
-      if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
-      {
-        gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-        if (originalGridQuery->mProducerNameList.empty())
-          originalGridQuery->mProducerNameList.push_back(producerName);
-      }
-    }
-    else if (u_parameter && v_parameter)
-    {
-      std::string u_param = gridEngine->getParameterString(producerName, *u_parameter);
-      std::string v_param = gridEngine->getParameterString(producerName, *v_parameter);
-
-      attributeList.addAttribute("param", u_param + "," + v_param);
-
-      if (!projection.projectionParameter)
-        projection.projectionParameter = u_param;
-
-      if (u_param == *u_parameter && originalGridQuery->mProducerNameList.empty())
-      {
-        gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-        if (originalGridQuery->mProducerNameList.empty())
-          originalGridQuery->mProducerNameList.push_back(producerName);
-      }
-    }
-    else
-    {
-      throw Fmi::Exception(BCP,
-                           "Missing 'parameter' (= direction) or 'u' / 'v' vector definitions");
-    }
+    addStreamParameters(*gridEngine, producerName, attributeList, *originalGridQuery);
 
     add_time_attributes(attributeList, getValidTime(), origintime);
 
@@ -201,36 +268,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
       param.mType = QueryServer::QueryParameter::Type::Vector;
       param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
 
-      if (paraminfo.geometryId)
-        param.mGeometryId = *paraminfo.geometryId;
-
-      if (paraminfo.levelId)
-        param.mParameterLevelId = *paraminfo.levelId;
-
-      if (paraminfo.level)
-      {
-        param.mParameterLevel = C_INT(*paraminfo.level);
-      }
-      else if (paraminfo.pressure)
-      {
-        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        param.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-
-      if (paraminfo.elevation_unit)
-      {
-        if (paraminfo.elevation_unit == std::string("m"))
-          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-
-        if (paraminfo.elevation_unit == std::string("p"))
-          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-
-      if (paraminfo.forecastType)
-        param.mForecastType = C_INT(*paraminfo.forecastType);
-
-      if (paraminfo.forecastNumber)
-        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(param, paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -238,12 +276,8 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
 
     add_grid_size_attributes(*originalGridQuery, projection);
 
-    if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
-    {
-      std::string bbox = fmt::format(
-          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-    }
+    if (wkt == "data")
+      add_data_bbox_attribute(*originalGridQuery, projection);
 
     originalGridQuery->mAttributeList.setAttribute(
         "grid.coordinateType",
@@ -293,37 +327,15 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
              query->mQueryParameterList[0].mCoordinates.size() == sz)
     {
       // Grid contains U- and V- parameters. Counting directions (degrees)
-      T::ParamValue_vec gridValues;
-      gridValues.reserve(sz);
-
       uint sz1 = query->mQueryParameterList[0].mValueList[0]->mValueVector.size();
       uint sz2 = query->mQueryParameterList[1].mValueList[0]->mValueVector.size();
 
       if (sz1 == sz && sz2 == sz)
       {
-        for (uint t = 0; t < sz; t++)
-        {
-          double uspd = query->mQueryParameterList[0].mValueList[0]->mValueVector[t];
-          double vspd = query->mQueryParameterList[1].mValueList[0]->mValueVector[t];
-
-          if (uspd != ParamValueMissing && vspd != ParamValueMissing)
-          {
-            // double wspd = sqrt(uspd * uspd + vspd * vspd);
-            if (uspd != 0 || vspd != 0)
-            {
-              double wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-              gridValues.push_back(wdir);
-            }
-            else
-            {
-              gridValues.push_back(ParamValueMissing);
-            }
-          }
-          else
-          {
-            gridValues.push_back(ParamValueMissing);
-          }
-        }
+        T::ParamValue_vec gridValues =
+            uv_directions(query->mQueryParameterList[0].mValueList[0]->mValueVector,
+                          query->mQueryParameterList[1].mValueList[0]->mValueVector,
+                          sz);
         getStreamlines(gridValues,
                        &query->mQueryParameterList[0].mCoordinates,
                        gwidth,
@@ -339,14 +351,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(const State& theState)
 
     // Converting WKB lines to OGRGeometries:
 
-    for (const auto& wkb : streamlines)
-    {
-      const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
-      OGRGeometry* geom = nullptr;
-      OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
-      auto geomPtr = OGRGeometryPtr(geom);
-      geoms.push_back(geomPtr);
-    }
+    geoms = wkb_lines(streamlines);
     return geoms;
   }
   catch (...)
