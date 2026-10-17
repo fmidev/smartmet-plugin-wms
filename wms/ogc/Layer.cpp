@@ -558,6 +558,130 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
   return legendJson;
 }
 
+// Update the maximum label text lengths per language from the isoband labels
+void update_text_lengths(LegendGraphicInfoItem& lgi, const Json::Value& isobands)
+{
+  Json::Value nulljson;
+  for (const auto& isoband : isobands)
+  {
+    Json::Value label = isoband.get("label", nulljson);
+    if (label.isNull())
+      continue;
+
+    Json::Value::Members members = label.getMemberNames();
+    for (const auto& language : members)
+    {
+      Json::Value translationJson = label.get(language, nulljson);
+      std::string translation = (!translationJson.isNull() ? translationJson.asString() : "");
+      Dali::text_dimension_t tdim = Dali::getTextDimension(translation, Dali::text_style_t());
+      tdim.width *= 1.6;
+      if (lgi.text_lengths.find(language) == lgi.text_lengths.end())
+        lgi.text_lengths.insert(make_pair(language, 0));
+      if (tdim.width > lgi.text_lengths.at(language))
+        lgi.text_lengths[language] = tdim.width;
+    }
+  }
+}
+
+// Expand a symbol group into separate legend items
+void expand_symbol_group(LegendGraphicInfo& ret,
+                         const LegendGraphicInfoItem& lgi,
+                         const Json::Value& symbolGroup)
+{
+  Json::Value nulljson;
+  for (const auto& symbolJson : symbolGroup)
+  {
+    LegendGraphicInfoItem lgiSymbol;
+    if (!lgi.asJsonValue("parameter_name").isNull())
+      lgiSymbol.add("parameter_name", lgi.asJsonValue("parameter_name"));
+    if (!lgi.asJsonValue("layer_type").isNull())
+      lgiSymbol.add("layer_type", lgi.asJsonValue("layer_type"));
+    auto json = symbolJson.get("symbol", nulljson);
+    if (!json.isNull())
+      lgiSymbol.add("symbol", json);
+    json = symbolJson.get("attributes", nulljson);
+    if (!json.isNull())
+      lgiSymbol.add("attributes", json);
+    json = symbolJson.get("lolimit", nulljson);
+    if (!json.isNull())
+      lgiSymbol.add("lolimit", json);
+    json = symbolJson.get("hilimit", nulljson);
+    if (!json.isNull())
+      lgiSymbol.add("hilimit", json);
+
+    ret.push_back(lgiSymbol);
+  }
+}
+
+// Add the legend information of a layer with a layer type. Returns false if the sublayers
+// should not be processed.
+bool add_layer_legend_info(LegendGraphicInfo& ret,
+                           const Json::Value& layerJson,
+                           const Json::Value& layerTypeJson)
+{
+  Json::Value nulljson;
+  LegendGraphicInfoItem lgi;
+
+  std::string layerTypeString = layerTypeJson.asString();
+  auto json = layerJson.get("parameter", nulljson);
+
+  if (!json.isNull())
+    lgi.add("parameter_name", json);
+
+  if (layerTypeString == "icemap")
+  {
+    json = layerJson.get("layer_subtype", nulljson);
+
+    if (!json.isNull())
+      layerTypeString = json.asString();
+    lgi.add("layer_subtype", json);
+  }
+  if (supportedStyleLayers.find(layerTypeString) == supportedStyleLayers.end())
+    return false;
+
+  lgi.add("layer_type", layerTypeJson);
+
+  json = layerJson.get("isobands", nulljson);
+  if (!json.isNull())
+  {
+    lgi.add("isobands", json);
+    if (json.isArray())
+      update_text_lengths(lgi, json);
+  }
+  json = layerJson.get("isolines", nulljson);
+  if (!json.isNull())
+    lgi.add("isolines", json);
+  json = layerJson.get("css", nulljson);
+  if (!json.isNull())
+    lgi.add("css", json);
+  // Single symbol
+  json = layerJson.get("symbol", nulljson);
+  if (!json.isNull())
+  {
+    lgi.add("symbol", json);
+  }
+  json = layerJson.get("symbols", nulljson);
+  if (!json.isNull())
+  {
+    // Expand symbol group
+    Json::Value symbolGroup = Layer::parseJsonString(json.toStyledString());
+    if (symbolGroup.isArray())
+    {
+      expand_symbol_group(ret, lgi, symbolGroup);
+      return false;
+    }
+  }
+  json = layerJson.get("attributes", nulljson);
+  if (!json.isNull())
+  {
+    json = json.get("class", nulljson);
+    if (!json.isNull())
+      lgi.add("class", json);
+  }
+  ret.push_back(lgi);
+  return true;
+}
+
 LegendGraphicInfo get_legend_graphic_info(const Json::Value& layersJson)
 {
   LegendGraphicInfo ret;
@@ -567,111 +691,9 @@ LegendGraphicInfo get_legend_graphic_info(const Json::Value& layersJson)
   {
     if (!layerJson.isNull())
     {
-      LegendGraphicInfoItem lgi;
       auto layerTypeJson = layerJson.get("layer_type", nulljson);
-      if (!layerTypeJson.isNull())
-      {
-        std::string layerTypeString = layerTypeJson.asString();
-        auto json = layerJson.get("parameter", nulljson);
-
-        if (!json.isNull())
-          lgi.add("parameter_name", json);
-
-        if (layerTypeString == "icemap")
-        {
-          json = layerJson.get("layer_subtype", nulljson);
-
-          if (!json.isNull())
-            layerTypeString = json.asString();
-          lgi.add("layer_subtype", json);
-        }
-        if (supportedStyleLayers.find(layerTypeString) == supportedStyleLayers.end())
-          continue;
-
-        lgi.add("layer_type", layerTypeJson);
-
-        json = layerJson.get("isobands", nulljson);
-        if (!json.isNull())
-        {
-          lgi.add("isobands", json);
-          if (json.isArray())
-          {
-            for (const auto& isoband : json)
-            {
-              Json::Value label = isoband.get("label", nulljson);
-              if (!label.isNull())
-              {
-                Json::Value::Members members = label.getMemberNames();
-                for (const auto& language : members)
-                {
-                  Json::Value translationJson = label.get(language, nulljson);
-                  std::string translation =
-                      (!translationJson.isNull() ? translationJson.asString() : "");
-                  Dali::text_dimension_t tdim =
-                      Dali::getTextDimension(translation, Dali::text_style_t());
-                  tdim.width *= 1.6;
-                  if (lgi.text_lengths.find(language) == lgi.text_lengths.end())
-                    lgi.text_lengths.insert(make_pair(language, 0));
-                  if (tdim.width > lgi.text_lengths.at(language))
-                    lgi.text_lengths[language] = tdim.width;
-                }
-              }
-            }
-          }
-        }
-        json = layerJson.get("isolines", nulljson);
-        if (!json.isNull())
-          lgi.add("isolines", json);
-        json = layerJson.get("css", nulljson);
-        if (!json.isNull())
-          lgi.add("css", json);
-        // Single symbol
-        json = layerJson.get("symbol", nulljson);
-        if (!json.isNull())
-        {
-          lgi.add("symbol", json);
-        }
-        json = layerJson.get("symbols", nulljson);
-        if (!json.isNull())
-        {
-          // Expand symbol group
-          Json::Value symbolGroup = Layer::parseJsonString(json.toStyledString());
-          if (symbolGroup.isArray())
-          {
-            for (const auto& symbolJson : symbolGroup)
-            {
-              LegendGraphicInfoItem lgiSymbol;
-              if (!lgi.asJsonValue("parameter_name").isNull())
-                lgiSymbol.add("parameter_name", lgi.asJsonValue("parameter_name"));
-              if (!lgi.asJsonValue("layer_type").isNull())
-                lgiSymbol.add("layer_type", lgi.asJsonValue("layer_type"));
-              json = symbolJson.get("symbol", nulljson);
-              if (!json.isNull())
-                lgiSymbol.add("symbol", json);
-              json = symbolJson.get("attributes", nulljson);
-              if (!json.isNull())
-                lgiSymbol.add("attributes", json);
-              json = symbolJson.get("lolimit", nulljson);
-              if (!json.isNull())
-                lgiSymbol.add("lolimit", json);
-              json = symbolJson.get("hilimit", nulljson);
-              if (!json.isNull())
-                lgiSymbol.add("hilimit", json);
-
-              ret.push_back(lgiSymbol);
-            }
-            continue;
-          }
-        }
-        json = layerJson.get("attributes", nulljson);
-        if (!json.isNull())
-        {
-          json = json.get("class", nulljson);
-          if (!json.isNull())
-            lgi.add("class", json);
-        }
-        ret.push_back(lgi);
-      }
+      if (!layerTypeJson.isNull() && !add_layer_legend_info(ret, layerJson, layerTypeJson))
+        continue;
     }
 
     auto layers_j = layerJson.get("layers", nulljson);
