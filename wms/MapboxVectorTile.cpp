@@ -189,6 +189,47 @@ void MVTLayerBuilder::encodeLineString(const OGRLineString* ls,
 }
 
 // ----------------------------------------------------------------------
+// All points in one MoveTo command sequence (separate MoveTo per point)
+
+void MVTLayerBuilder::encodeMultiPoint(const OGRMultiPoint& mp,
+                                       int32_t& cx,
+                                       int32_t& cy,
+                                       std::vector<uint32_t>& out) const
+{
+  for (int i = 0; i < mp.getNumGeometries(); ++i)
+  {
+    const auto* pt = mp.getGeometryRef(i);
+    if (!pt || pt->IsEmpty())
+      continue;
+    auto [tx, ty] = project(pt->getX(), pt->getY());
+    out.push_back(makeCmd(CMD_MOVETO, 1));
+    out.push_back(zigzag(tx - cx));
+    out.push_back(zigzag(ty - cy));
+    cx = tx;
+    cy = ty;
+  }
+}
+
+// ----------------------------------------------------------------------
+// The exterior and interior rings of all the non-empty polygons
+
+void MVTLayerBuilder::encodeMultiPolygon(const OGRMultiPolygon& mp,
+                                         int32_t& cx,
+                                         int32_t& cy,
+                                         std::vector<uint32_t>& out) const
+{
+  for (int i = 0; i < mp.getNumGeometries(); ++i)
+  {
+    const auto* poly = mp.getGeometryRef(i);
+    if (!poly || poly->IsEmpty())
+      continue;
+    encodeRing(poly->getExteriorRing(), true, cx, cy, out);
+    for (int j = 0; j < poly->getNumInteriorRings(); ++j)
+      encodeRing(poly->getInteriorRing(j), true, cx, cy, out);
+  }
+}
+
+// ----------------------------------------------------------------------
 
 std::vector<uint32_t> MVTLayerBuilder::encodeGeometry(const OGRGeometry& geom) const
 {
@@ -212,20 +253,7 @@ std::vector<uint32_t> MVTLayerBuilder::encodeGeometry(const OGRGeometry& geom) c
 
     case wkbMultiPoint:
     {
-      const auto& mp = static_cast<const OGRMultiPoint&>(geom);
-      // All points in one MoveTo command sequence (separate MoveTo per point)
-      for (int i = 0; i < mp.getNumGeometries(); ++i)
-      {
-        const auto* pt = mp.getGeometryRef(i);
-        if (!pt || pt->IsEmpty())
-          continue;
-        auto [tx, ty] = project(pt->getX(), pt->getY());
-        out.push_back(makeCmd(CMD_MOVETO, 1));
-        out.push_back(zigzag(tx - cx));
-        out.push_back(zigzag(ty - cy));
-        cx = tx;
-        cy = ty;
-      }
+      encodeMultiPoint(static_cast<const OGRMultiPoint&>(geom), cx, cy, out);
       break;
     }
 
@@ -260,16 +288,7 @@ std::vector<uint32_t> MVTLayerBuilder::encodeGeometry(const OGRGeometry& geom) c
 
     case wkbMultiPolygon:
     {
-      const auto& mp = static_cast<const OGRMultiPolygon&>(geom);
-      for (int i = 0; i < mp.getNumGeometries(); ++i)
-      {
-        const auto* poly = mp.getGeometryRef(i);
-        if (!poly || poly->IsEmpty())
-          continue;
-        encodeRing(poly->getExteriorRing(), true, cx, cy, out);
-        for (int j = 0; j < poly->getNumInteriorRings(); ++j)
-          encodeRing(poly->getInteriorRing(j), true, cx, cy, out);
-      }
+      encodeMultiPolygon(static_cast<const OGRMultiPolygon&>(geom), cx, cy, out);
       break;
     }
 

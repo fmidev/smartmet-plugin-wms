@@ -91,6 +91,15 @@ class MVTLayerBuilder
                         int32_t& cy,
                         std::vector<uint32_t>& out) const;
 
+  void encodeMultiPoint(const OGRMultiPoint& mp,
+                        int32_t& cx,
+                        int32_t& cy,
+                        std::vector<uint32_t>& out) const;
+  void encodeMultiPolygon(const OGRMultiPolygon& mp,
+                          int32_t& cx,
+                          int32_t& cy,
+                          std::vector<uint32_t>& out) const;
+
   vector_tile::Tile_GeomType ogrTypeToMVT(const OGRGeometry& geom) const;
 
   uint32_t internKey(const std::string& key);
