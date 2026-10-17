@@ -194,7 +194,7 @@ which returns the JSON instead of an image.
 | 1 | parse | The file is read (through the file cache) and parsed by jsoncpp. |
 | 2 | `Spine::JSON::replaceReferences(json, params)` | Query-string parameters whose **value** starts with `json:` or `ref:` are written into the JSON. This lets a URL swap an include: `l1.isobands=json:isobands/precipitation.json`. |
 | 3 | `Spine::JSON::preprocess(json, root, layers_root, cache)` | All `json:` includes are expanded, recursively, using the JSON cache. |
-| 4 | `Spine::JSON::dereference(json)` | All `ref:` references and `$ref` JSON pointers are resolved. |
+| 4 | `Spine::JSON::dereference(json)` | All `ref:` references are resolved. |
 | 5 | `Spine::JSON::expand(json, params, "", false)` | Remaining query-string parameters overwrite or add plain values. |
 
 Stage 2 runs before includes so a URL can redirect an include, and stage 5 runs after
@@ -208,7 +208,7 @@ keeps a parameter if either
 - its name contains a dot (a `qid`-addressed path, see below), or
 - its name is in the `allowed_keys` set near the top of `wms/Plugin.cpp`:
   `animation, attributes, clip, defs, forecastNumber, forecastType, geometryId, height,
-  interval_end, interval_start, language, level, levelId, margin, origintime, png,
+  interval_end, interval_start, language, level, levelId, levelid, margin, origintime, png,
   producer, projection, source, svg_tmpl, time, time_offset, timestep, title, type,
   tz, views, webp, width, xmargin, ymargin`.
 
@@ -279,8 +279,10 @@ request into Dali parameters and let the same expansion run:
   bounding box from the tile matrix and add exactly the same `projection.*` parameters.
 - WMS product files may carry a `variants` array (see "WMS layer variants" in
   reference.md). `Handler::wmsPreprocessJSON` selects the variant whose `name` matches
-  the requested layer and applies its members through `Spine::JSON::expand`, so a
-  variant is just a saved set of `qid.path=value` substitutions.
+  the requested layer and applies its members in the same two phases as the query
+  string: `JsonTools::apply_variant_references` writes the `json:`/`ref:` valued members
+  before the includes are expanded, and `JsonTools::apply_variant` the rest after them,
+  so a variant is just a saved set of `qid.path=value` substitutions.
 - WMS `STYLES=name` selects an entry of the product's `styles` array and
   `OGC::useStyle` (`wms/ogc/StyleSelection.cpp`) merges that style's `layers` into the
   matching `qid`s of the product.

@@ -50,6 +50,12 @@ Table of Contents
       - [PresentWeatherObservationLayer](#presentweatherobservationlayer)
         - [Algorithm to deduce present weather symbol](#algorithm-to-deduce-present-weather-symbol)
       - [MetarLayer](#metarlayer)
+      - [FrameLayer](#framelayer)
+      - [SatelliteLayer](#satellitelayer)
+      - [GeoTiffLayer](#geotifflayer)
+      - [GroupLayer](#grouplayer)
+      - [GridLayer](#gridlayer)
+      - [WeatherObjectsLayer](#weatherobjectslayer)
     - [Structure definitions](#structure-definitions)
       - [Attribute structure](#attribute-structure)
       - [AttributeSelection structure](#attributeselection-structure)
@@ -203,6 +209,18 @@ The table below contains a list of attributes that are shared from the top level
 | xmargin        | int          | 0               | X-margin in pixels for clipping out features.                                                                                                                                                                  |
 | ymargin        | int          | 0               | Y-margin in pixels for clipping out features.                                                                                                                                                                  |
 | clip           | bool         | false           | Whether each layer should be placed into a rectangular clipPath.                                                                                                                                               |
+| margin         | int          | 0               | Sets both xmargin and ymargin.                                                                                                                                                                                 |
+| timestep       | (int)        |                 | The time step of the data in minutes. Required by the observation layers (FinnishRoadObservationLayer, PresentWeatherObservationLayer).                                                                        |
+| contour_threads | (int)       |                 | The number of threads the contouring of isoband and isoline layers may use.                                                                                                                                   |
+| source         | (string)     | config          | The data source: "querydata" or "grid". By default the primaryForecastSource configuration setting is used; if it is set to an empty string, "grid" is used for producers known to the grid engine.                       |
+| parameter      | (string)     |                 | The parameter name, used by the layers which read data.                                                                                                                                                        |
+| level          | (double)     |                 | The level value. "elevation" is an alias. The request parameters "elevation" and "level" override the value.                                                                                                   |
+| elevation_unit | (string)     |                 | The unit of the elevation value. The "elevation_unit" request parameter overrides the value.                                                                                                                   |
+| pressure       | (double)     |                 | The pressure level.                                                                                                                                                                                            |
+| levelId        | (int)        |                 | The grid engine level type.                                                                                                                                                                                    |
+| forecastType   | (int)        |                 | The grid engine forecast type.                                                                                                                                                                                 |
+| forecastNumber | (int)        |                 | The grid engine forecast number.                                                                                                                                                                               |
+| geometryId     | (int)        |                 | The grid engine geometry. May also be given as a "producer:geometryId" producer name or as the "geometryId" request parameter.                                                                                   |
 
 #### Time intervals
 
@@ -263,6 +281,23 @@ a different visibility selection, so rendering cost grows only with rasterizatio
 encoding, not with data queries. Note that this product-level setting is separate from
 the WMS GetMap "animation" block, which animates over consecutive valid times.
 
+#### WMS animation
+
+A product level "animation" block makes WMS GetMap render an animated WebP image over
+consecutive valid times:
+
+| Name              | Type   | Default value | Description                                                                         |
+| ----------------- | ------ | ------------- | ----------------------------------------------------------------------------------- |
+| enabled           | (bool) | false         | Enables the animation.                                                              |
+| timesteps         | (int)  | 1             | The number of animation time steps.                                                 |
+| data_timestep     | (int)  | 60            | The time step of the data in minutes.                                               |
+| loopsteps         | (int)  | 1             | The number of animation frames within one time step (used by animating painters).  |
+| timestep_interval | (int)  | 50            | The display duration in milliseconds of the last frame of each time step.           |
+| loopstep_interval | (int)  | 50            | The display duration in milliseconds of the other frames within a time step.        |
+
+The animation has timesteps × loopsteps frames, and each frame has exactly one display
+duration. The request fails if any frame cannot be rendered.
+
 ### Product level attributes
 
 The product level is the highest structural level used in the product configuration file. The product attributes are used in order to define product level properties for the current product. On the other hand, the product attributes define the substructures related to the current product. 
@@ -273,6 +308,7 @@ The table below contains a list of attributes that can be defined for the produc
 | Name       | Type         | Default value    | Description                                                                                                                                                                              |
 | ---------- | ------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | svg_tmpl   | (string)     | config:templates | The <a href="http://ctpp.havoc.ru/en/">CTPP2</a> template to be used for generating the SVG image. The default template is selected automatically based on the selected image format.    |
+| type       | (string)     | svg              | The output format, usually given with the "type" request parameter.                                                                                                                      |
 | qid        | (string)     | -                | An identifier for the product. Usually this can be left empty.                                                                                                                           |
 | width      | (int)        | projection.xsize | The width of the SVG image. If the product contains only one view with no transformations, the default value will be taken from the Product projection xsize variable.                   |
 | height     | (int)        | projection.ysize | The height of the SVG image. If the product contains only one view with no transformations, the default value will be taken from the Product projection ysize variable.                  |
@@ -280,6 +316,9 @@ The table below contains a list of attributes that can be defined for the produc
 | attributes | _Attributes_ | -                | The SVG image attributes for the product level &lt;g&gt;...&lt;/g&gt; group.                                                                                                             |
 | defs       | _Defs_       | -                | The SVG image header definitions such as styles, symbols, paths not to be drawn directly etc. This information is defined as the Defs structure, which is described in the next section. |
 | views      | _[View]_     | -                | An array of the View structures used in the SVG image. Usually a product has only one View structure which shares the projection defined on the product level.                           |
+| png        | (object)     | -                | PNG output settings, see [Output formatting](#output-formatting).                                                                                                                        |
+| webp       | (object)     | -                | WebP output settings, see [Output formatting](#output-formatting).                                                                                                                       |
+| animation  | (object)     | -                | WMS animation settings, see [WMS animation](#wms-animation).                                                                                                                             |
 
 
 ### Views
@@ -313,31 +352,56 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>qid</td><td>(string)</td><td>-</td><td colspan="2">An identified for the layer. Normally something simple such as "layer1" or "t2mlayer" or just "l1".</td></tr>
 <tr><td>css</td><td>(string)</td><td>-</td><td colspan="2">An external CSS file to be included into the style section. E.g.,  "isobands/temperature.css".</td></tr>
 <tr><td>attributes</td><td><i>Attributes</i></td><td>-</td><td colspan="2">The SVG attributes for the Layer level top SVG tag. Often the tag is &lt;g&gt;, but may be any other tag too for example when layer_type=tag is used.</td></tr>
-<tr><td rowspan="17">layer_type</td><td rowspan="17">(string)</td><td rowspan="17">"tag"</td><td colspan="2">The type of the layer.</td></tr>
+<tr><td rowspan="37">layer_type</td><td rowspan="37">(string)</td><td rowspan="37">"tag"</td><td colspan="2">The type of the layer. The observation layers (windrose, finnish_road_observation, present_weather_observation, cloud_ceiling) require the observation engine and metar requires the AVI engine.</td></tr>
 <tr><td><b>Value</b></td><td><b>Layer</b></td></tr>
-<tr><td>background</td><td>BackgroundLayer</td></tr>
-<tr><td>map</td><td>MapLayer</td></tr>
-<tr><td>location</td><td>LocationLayer</td></tr>
-<tr><td>isoband</td><td>IsobandLayer</td></tr>
-<tr><td>isoline</td><td>IsolineLayer</td></tr>
-<tr><td>isolabel</td><td>IsolabelLayer</td></tr>
-<tr><td>symbol</td><td>SymbolLayer</td></tr>
 <tr><td>arrow</td><td>ArrowLayer</td></tr>
-<tr><td>number</td><td>NumberLayer</td></tr>
-<tr><td>null</td><td>NumllLayer</td></tr>
-<tr><td>cloudceiling</td><td>CloudCeilingLayer</td></tr>
-<tr><td>stream</td><td>StreamLayer</td></tr>
+<tr><td>background</td><td>BackgroundLayer</td></tr>
+<tr><td>circle</td><td>CircleLayer</td></tr>
+<tr><td>cloud_ceiling</td><td>CloudCeilingLayer</td></tr>
+<tr><td>finnish_road_observation</td><td>FinnishRoadObservationLayer</td></tr>
+<tr><td>frame</td><td>FrameLayer</td></tr>
+<tr><td>fronts</td><td>WeatherFrontsLayer</td></tr>
+<tr><td>geotiff</td><td>GeoTiffLayer</td></tr>
+<tr><td>graticule</td><td>GraticuleLayer</td></tr>
+<tr><td>grid</td><td>GridLayer</td></tr>
+<tr><td>group</td><td>GroupLayer</td></tr>
+<tr><td>hovmoeller</td><td>HovmoellerLayer</td></tr>
+<tr><td>icemap</td><td>IceMapLayer</td></tr>
+<tr><td>isoband</td><td>IsobandLayer</td></tr>
+<tr><td>isolabel</td><td>IsolabelLayer</td></tr>
+<tr><td>isoline</td><td>IsolineLayer</td></tr>
 <tr><td>legend</td><td>LegendLayer</td></tr>
-<tr><td>time</td><td>TileLayer</td></tr>
-<tr><td>tag</td><td>TagLayer</td></tr>
-<tr><td>translation</td><td>TranslationLayer</td></tr>
-<tr><td>windrose</td><td>WindRoseLayer</td></tr>
+<tr><td>location</td><td>LocationLayer</td></tr>
+<tr><td>map</td><td>MapLayer</td></tr>
 <tr><td>metar</td><td>MetarLayer</td></tr>
-<tr><td>osm</td><td>OSMLayer</td></tr>
+<tr><td>null</td><td>NullLayer</td></tr>
+<tr><td>number</td><td>NumberLayer</td></tr>
+<tr><td>osm</td><td>OSMLayer (only when built without -DWITHOUT_OSM)</td></tr>
 <tr><td>postgis</td><td>PostGISLayer</td></tr>
-<tr><td>icemap</td><td>IceMApLayer</td></tr>
+<tr><td>present_weather_observation</td><td>PresentWeatherObservationLayer</td></tr>
+<tr><td>raster</td><td>RasterLayer</td></tr>
+<tr><td>satellite</td><td>SatelliteLayer</td></tr>
+<tr><td>stream</td><td>StreamLayer</td></tr>
+<tr><td>symbol</td><td>SymbolLayer</td></tr>
+<tr><td>tag</td><td>TagLayer</td></tr>
+<tr><td>time</td><td>TimeLayer</td></tr>
+<tr><td>translation</td><td>TranslationLayer</td></tr>
+<tr><td>weather_objects</td><td>WeatherObjectsLayer</td></tr>
+<tr><td>windrose</td><td>WindRoseLayer</td></tr>
+<tr><td>wkt</td><td>WKTLayer</td></tr>
 <tr><td>minresolution</td><td>(double)</td><td>-</td><td colspan="2">Minimum resolution of the projection for the layer to be generated at all.</td></tr>
 <tr><td>maxresolution</td><td>(double)</td><td>-</td><td colspan="2">Maximum resolution of the projection for the layer to be generated at all.</td></tr>
+<tr><td>enable</td><td>[string]</td><td>-</td><td colspan="2">The output formats (for example "png") for which the layer is generated. Setting both enable and disable is an error.</td></tr>
+<tr><td>disable</td><td>[string]</td><td>-</td><td colspan="2">The output formats for which the layer is not generated.</td></tr>
+<tr><td>visible</td><td>(bool)</td><td>true</td><td colspan="2">If false, the layer is not generated.</td></tr>
+<tr><td>layers</td><td><i>[Layer]</i></td><td>-</td><td colspan="2">Sublayers of the layer.</td></tr>
+<tr><td>multiplier</td><td>(double)</td><td>-</td><td colspan="2">A multiplier for the data values, used by layers that read data.</td></tr>
+<tr><td>offset</td><td>(double)</td><td>-</td><td colspan="2">An offset for the data values, used by layers that read data.</td></tr>
+<tr><td>unit_conversion</td><td>(string)</td><td>-</td><td colspan="2">Name of a unit conversion defined in the configuration file. Overrides multiplier and offset.</td></tr>
+<tr><td>maxdistance</td><td>(double)</td><td>5</td><td colspan="2">Maximum distance in kilometers for a station to be accepted close enough to a position.</td></tr>
+<tr><td>legend_url_layer</td><td>(string)</td><td>-</td><td colspan="2">A legend product ("customer:path:to:product", or a product path of the current customer) whose label conversions are used to add a text label for the value in GetFeatureInfo responses.</td></tr>
+<tr><td>animation_enabled</td><td>(bool)</td><td>true</td><td colspan="2">If false, a raster layer renders the same image in all animation loop steps.</td></tr>
+<tr><td>animation_effects</td><td>[object]</td><td>-</td><td colspan="2">Animation effects, each an object with "effect" (currently "hide"), "enabled", "start_step" (default 0) and "end_step" (default 10000). A "hide" effect hides the layer during the given animation loop steps.</td></tr>
 </table>
 
 Notice that the term "resolution" used above might be a little bit misleading in this case, since it refers to the number of kilometers represented by one pixel. Hence the higher the resolution the worse the accuracy of the image actually is. The actual condition to be satisfied is minresolution <= resolution < maxresolution, where one or both of the limits may be missing.
@@ -766,7 +830,7 @@ The table below contains a list of attributes that can be defined for the isoban
 <th>Default Value </th>
 <th colspan="2"> Description </th></tr>
 <tr><td>parameter</td><td>(string)</td><td>-</td><td colspan="2">The parameter name for the isobands.</td></tr>
-<tr><td>level</td><td>double</td><td>linear</td><td colspan="2">The querydata level value. By default the first level is used.</td></tr>
+<tr><td>level</td><td>double</td><td>-</td><td colspan="2">The querydata level value. By default the first level is used.</td></tr>
 <tr><td rowspan="6">interpolation</td><td rowspan="6">(string)</td><td rowspan="6">"linear"</td><td colspan="2">The interpolation method.</td></tr>
 <tr><td><b>Value</b></td><td><b>Description</b></td></tr>
 <tr><td>linear</td><td>Values are interpolated linearly.</td></tr>
@@ -783,11 +847,12 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>sampling</td><td><i>Sampling<i></td><td>-</td><td colspan="2">Sampling settings for the 2D grid data.</tr>
 <tr><td>extrapolation</td><td><i>int</i></td><td>0</td><td colspan="2">How many grid cells to extrapolate data into regions with unknown values</tr>
 <tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Mimimum area for polygons, including holes</tr>
-<tr><td>areaunits</td><td><i>(string)</i></td><td>km^2</td><td colspan="2">Units for minarea setting. km^2 or px^2</tr>
-<tr><td>isofilter</td><td><i>Isofilter</i></td><td>-</td><td>Lowpass filter for isolines/isobands. Preferable to smoother settings when data resolution is high.</td></tr>
+<tr><td>areaunit</td><td><i>(string)</i></td><td>km^2</td><td colspan="2">Units for minarea setting. km^2 or px^2</tr>
+<tr><td>filter</td><td><i>Isofilter</i></td><td>-</td><td>Lowpass filter for isolines/isobands. Preferable to smoother settings when data resolution is high.</td></tr>
+<tr><td>tfp</td><td><i>object</i></td><td>-</td><td colspan="2">Thermal Front Parameter settings, see <a href="#tfp-metaparameter-isoband-and-isoline-layers">TFP metaparameter</a>.</td></tr>
 <tr><td>heatmap</td><td><i>Heatmap</i></td><td>-</td><td colspan="2">Heatmap settings.</tr>
 <tr><td>inside</td><td><i>Map</i></td><td>-</td><td colspan="2">Intersect isoband with the map</tr>
-<tr><td>outsider</td><td><i>Map</i></td><td>-</td><td colspan="2">Substract map from isoband.</tr>
+<tr><td>outside</td><td><i>Map</i></td><td>-</td><td colspan="2">Substract map from isoband.</tr>
 <tr><td>intersect</td><td><i>[Intersection]</i> or <i>Intersection</i></td><td>-</td><td colspan="2">Alternate isoband(s) with which to intersect.</td></tr>
 <tr><td>closed_range</td><td>bool<td>true</td><td>True if the last isoband is a closed interval. For example for percentages one would want range 90 <= x <= 100 instead of 90 <= x < 100.</td></tr>
 <tr><td>validate</td><td>bool</td><td>false</td><td>True if the geometries are to be validated (slow, for debugging purposes)</td></tr>
@@ -864,7 +929,7 @@ The table below contains a list of attributes that can be defined for the isolin
 | --------------- | ---------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | parameter       | (string)                     | -             | The parameter name for the isolines.                                                                                                           |
 | level           | (double)                     | -             | The querydata level value. By default the first level is used.                                                                                 |
-| interpolation   | linear                       | (string)      | linear or logarithmic                                                                                                                          |
+| interpolation   | (string)                     | linear        | linear or logarithmic                                                                                                                          |
 | isolines        | [Isoline]                    | -             | An array of Isoline structures or set of parameters which define how array of Isoline structures are generated (see. isolines-attribute below) |
 | autoqid         | (string)                     | -             | Pattern for generating a qid for each isoline, for example "temperature_{}"                                                                    |
 | autoclass       | (string)                     | -             | Pattern for generating a class for each isoline, for example "Temperature_{}"                                                                  |
@@ -876,10 +941,12 @@ The table below contains a list of attributes that can be defined for the isolin
 | sampling        | _Sampling_                   | -             | Sampling settings for the 2D grid data.                                                                                                        |
 | extrapolation   | int                          | 0             | How many grid cells to extrapolate data into regions with unknown values.                                                                      |
 | minarea         | double                       | -             | Minimum area for closed linestrings in km^2.                                                                                                   |
-|areaunits        | (string)                     | km^2          | Units for minarea setting. km^2 or px^2|
+| areaunit        | (string)                     | km^2          | Units for minarea setting. km^2 or px^2|
 | inside          | _Map_                        | -             | Intersect isoband with a map                                                                                                                   |
 | outside         | _Map_                        | -             | Substract map from isoband                                                                                                                     |
 | intersect       | _[Intersect]_ or _Intersect_ | -             | Alternate isoband(s) with which to intersect.                                                                                                  |
+| filter          | _Isofilter_                  | -             | Lowpass filter for the isolines.                                                                                                               |
+| tfp             | object                       | -             | Thermal Front Parameter settings, see [TFP metaparameter](#tfp-metaparameter-isoband-and-isoline-layers).                                      |
 | validate        | bool                         | false         | True if the geometries are to be validated (slow, for debugging purposes)                                                                      |
 | strict          | bool                         | false         | In strict mode invalid geometries cause an error. Extra information will be dumped to the journal and attached to the thrown exception         |
 | desliver        | bool                         | false         | True if sliver polygons are to be removed                                                                                                      |
@@ -963,7 +1030,7 @@ Example:
 
 | Name       | Type                                | Description                                                                       | Note                                  | Example                       |
 | ---------- | ----------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------- | ----------------------------- |
-| qidprefix  | string                              | Prefix of isoline layer id.                                                       | optional, default value is 'isoline_' | qidprefix="pressure_isoline_" |
+| qidprefix  | string                              | Prefix of the isoline ids, which become qidprefix_value. Ignored if autoqid is set. | optional, the default ids are 'isoline_value' | qidprefix="pressure_isoline" |
 | startvalue | int/double                          | Value of first Isoline.                                                           |                                       | startvalue=900                |
 | endvalue   | int/double                          | Value of last Isoline                                                             |                                       | endvalue=1100                 |
 | interval   | int/double                          | The interval between two successive Isolines.                                     |                                       | interval=10                   |
@@ -977,7 +1044,7 @@ Example:
                     "layer_type": "isoline",
                      "isolines": 
 		    {  
-			"qidprefix": "isoline_main_", 
+			"qidprefix": "isoline_main", 
 			"startvalue": 900, 
 			"endvalue": 1100,
 			"interval": 5
@@ -996,7 +1063,7 @@ Example:
                     "layer_type": "isoline",
                     "isolines": 
 		    {  
-			"qidprefix": "isoline_sub_", 
+			"qidprefix": "isoline_sub", 
 			"startvalue": 900, 
 			"endvalue": 1100,
 			"interval": 2,
@@ -1030,6 +1097,7 @@ The underlying scalar field is configured in a `"tfp"` block on the layer:
 | field             | string | `"PotentialTemperature"` | The underlying scalar field to compute TFP on. Any scalar is admissible — θ, θw (`PseudoAdiabaticPotentialTemperature`), θe, humidity, wind speed, potential vorticity — and the choice determines what kind of feature the TFP highlights. |
 | smoothing_passes  | int    | `3`                      | Number of separable 1-2-1 binomial smoother passes applied to the underlying field before TFP. TFP is a second derivative and strongly amplifies grid-scale noise; without smoothing the result is unreadable on typical NWP grids. |
 | min_gradient      | double | `0.0`                    | If non-zero, mask TFP to missing wherever `|∇field|` is below this threshold. Suppresses TFP noise in regions with no real gradient. |
+| scale             | double | `1.0`                    | Multiplies the TFP result before contouring, for example to bring different underlying fields onto a shared colour scale (e.g. 1e10 for θ, 1e9 for humidity). |
 
 TFP has units of `(units of field) / m²`. For potential temperature that's K/m²; Hewson
 scales by `(100 km)²` so "1 unit" in his paper equals 10⁻¹⁰ K/m². The supplied test
@@ -1081,7 +1149,7 @@ It is also possible to refer to the isolines that would be generated by an isoba
 | angles             | [double]  | [0,-45,45,180] | Orientations in which local maxima are searched for suitable label positions.                            |
 | upright            | bool      | false          | Optionally turn labels upright if their angle is outside -90...90                                        |
 | max_angle          | double    | 60             | Allow label angles only in range -60...60                                                                |
-| min_isoline_length | double    | 150            | Minimum length of the isoline in pixels for placing any labels                                           |
+| min_isoline_length | double    | 50             | Minimum length of the isoline in pixels for placing any labels                                           |
 | min_distance_other | double    | 20             | Minimum distance to labels on isolines with another value                                                |
 | min_distance_same  | double    | 50             | Minimum distance to labels on isolines with the same value                                               |
 | min_distance_self  | double    | 200            | Minimum distance to labels on the same isoline segment                                                   |
@@ -1431,6 +1499,8 @@ The table below contains a list of attributes that can be defined for the number
 | maxdistance     | double                  | 5             | Maximum distance for a station to be accepted close enough to the position.             |
 | label           | _Label_                 | -             | Label definitions.                                                                      |
 | numbers         | _[AttributeSelection]_  | -             | SVG attribute selection based on the value of the label.                                |
+| symbol          | (string)                | -             | A symbol drawn below each number. The numbers selection may override it with its own symbol. |
+| scale           | (double)                | -             | Scale factor for the symbols. Has no effect on the numbers.                             |
 | unit_conversion | (string)                | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file. |
 | multiplier      | (double)                | 1.0           | A multiplier for valid data values for unit conversion purposes.                        |
 | offset          | (double)                | 0.0           | An offset for valid data for unit conversion purposes.                                  |
@@ -1559,7 +1629,13 @@ The table below shows a simple example on the usage of the cloud_ceiling layer.
 </sub></code></pre></td><td><img src="images/cloud_ceiling.png"></td></tr>
 </table>
 
-The cloudceiling layer is inherited from number layer so the same attributes are available. Label object has two new attributes 'padding_char' and 'padding_length' to format numbers.
+The cloud_ceiling layer is inherited from number layer so the same attributes are available. Label object has two new attributes 'padding_char' and 'padding_length' to format numbers.
+The layer reads the cloud amount and cloud base height observations itself, but since the number layer requires a parameter, the "parameter" setting must still be given.
+
+| Name    | Type               | Default value | Description                                                          |
+| ------- | ------------------ | ------------- | -------------------------------------------------------------------- |
+| keyword | (string)           | -             | The geonames keyword identifying the stations.                       |
+| fmisid  | string or [string] | -             | The stations as fmisid numbers. Used only if keyword is not given.   |
 
 
 
@@ -1751,10 +1827,10 @@ The table below contains a list of attributes that can be defined for the raster
 <pre><b>RasterLayer </b></pre>
 | Name               | Type     | Default value | Description                                                                    |
 | ------------------ | -------- | ------------- | ------------------------------------------------------------------------------ |
-| parameter          | (string) | -             | The parameter name for the direction.                                          |
+| parameter          | (string) | -             | The parameter to be painted.                                                   |
 | compression        | (int)    | 1             | Compression rate (1 = fast,low compression, 9 = slow, high compression).       |
 | interpolation      | (string) | linear        | Interpolation method when fetching grid pixels (linear / nearest / transfer).  |
-| data_painter       | (string) | default       | Painter element (default / range / stream / border / shadow / null).           |
+| data_painter       | (string) | default       | Painter element (default / range / stream / rain / border / shadow / null).    |
 | data_opacity_land  | (double) | 1.0           | Opacity of the painted parameter over the land (0 .. 1).                       |
 | data_opacity_sea   | (double) | 1.0           | Opacity of the painted parameter over the sea (0 .. 1).                        |
 
@@ -1767,31 +1843,35 @@ The raster layer can paint land and sea colors above or below of the painted par
 | sea_position         | (string) | none          | Sea layer position compared to the painted parameter (none,bottom,top).        |
 | sea_color            | (ARGB)   | 00000000      | Sea layer color.                                                               |
 | land_border_position | (string) | none          | Land border position compared to the painted parameter (none,bottom,top).      |
-| land_border_color    | (ARGB)   | 00000000      | Land border color.                                                             |
-| sea_border_color     | (ARGB)   | 00000000      | Sea border color.                                                              |
+| land_border_color    | (ARGB)   | FF000000      | Land border color.                                                             |
+| sea_border_color     | (ARGB)   | FFFFFFFF      | Sea border color.                                                              |
 
 The raster layer can paint topographical shadings above or below the painted parameter. 
 
 | Name                  | Type     | Default value | Description                                                                      |
 | --------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
 | land_shading_position | (string) | none          | Land shading layer position compared to the painted parameter (none,bottom,top). |
-| land_shading_light    | (int)    | 0             | Multiplier for light areas (0..1000).                                            |
-| land_shading_shadow   | (int)    | 0             | Multiplier for shadow areas (0..1000).                                           |
+| land_shading_light    | (int)    | 128           | Multiplier for light areas (0..1000).                                            |
+| land_shading_shadow   | (int)    | 384           | Multiplier for shadow areas (0..1000).                                           |
 | sea_shading_position  | (string) | none          | Sea shading layer position compared to the painted parameter (none,bottom,top).  |
-| sea_shading_light     | (int)    | 0             | Multiplier for light areas (0..1000). Bigger value inceases the lightness.       |
-| sea_shading_shadow    | (int)    | 0             | Multiplier for shadow areas (0..1000). Bigger value inceases the darkness.       | 
+| sea_shading_light     | (int)    | 128           | Multiplier for light areas (0..1000). Bigger value inceases the lightness.       |
+| sea_shading_shadow    | (int)    | 384           | Multiplier for shadow areas (0..1000). Bigger value inceases the darkness.       | 
+
+The layers are painted in this order: the sea, land, sea shading, land shading and land border
+layers whose position is "bottom", then the data shadows, the data itself and the data borders,
+and finally the sea, land, sea shading, land shading and land border layers whose position is "top".
 
 The raster layer can create borders for the actual parameter. Technically this uses the "border" painter functionality, but in this case is more like an addition to the current painter.
 
 | Name                  | Type     | Default value | Description                                                                      |
 | --------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
-| data_borders          | (struct) |               | This is a structure that contain same attributes as the "border" painter uses.   |
+| data_borders          | (array)  |               | An array of "border" structures, the same as the "borders" array of the "border" painter. |
 
 The raster layer can create shadows for the actual parameter. Technically this uses the "shadow" painter functionality, but in this case is more like an addition to the current painter.
 
 | Name                  | Type     | Default value | Description                                                                      |
 | --------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
-| data_shadows          | (struct) |               | This is a structure that contain same attributes as the "shadow" painter uses.   |
+| data_shadows          | (array)  |               | An array of "shadow" structures, the same as the "shadows" array of the "shadow" painter. |
 
 
 Attributes for the painter "default".
@@ -1818,23 +1898,31 @@ Attributes for the "range" structure.
 | color_low     | (ARGB)   | 00000000      | The color used with values that are smaller than the minimum value (min_value). |
 | color_high    | (ARGB)   | 00000000      | The color used with values that are bigger than the maximum value (max_value).  |
 
-Attributes for the painter "stream".
+Attributes for the painter "stream". All of them except "direction" and "speed" are given inside a "stream" object of the layer.
 
 | Name              | Type     | Default value | Description                                                                 |
 | ----------------- | -------- | ------------- | --------------------------------------------------------------------------- |
-| stream_color      | (RGB)    | 000000        | The color used for stream lines.                                            |
 | trace_length_min  | (int)    | 10            | Minimum trace length of the stream line.                                    |
 | trace_length_max  | (int)    | 128           | Maximum trace length of the steram line.                                    |
 | trace_step_x      | (int)    | 10            | Stream line trace start point step size in x-direction.                     |
 | trace_step_y      | (int)    | 10            | Stream line trace start point step size in y-direction.                     |
 | line_length       | (int)    | 16            | Length of the line segment.                     |
+| speeds            | (array)  |               | Array of "speed" structures. The animation speed of the stream lines depends on the data value. |
 
-Stream lines can use colors for indicating the speed of the stream. In this case the 'parameter' attribute is replaced with 'speed' and 'direction' attributes. In addition, the 'colormap' attribute is used for selecting stream color according to the speed value.
+Attributes for the "speed" structure.
 
 | Name          | Type     | Default value | Description                                                                 |
 | ------------- | -------- | ------------- | --------------------------------------------------------------------------- |
-| direction     | (string) | -             | The parameter name for the direction.                                       |
-| speed         | (string) | -             | The parameter name for the speed.                                           |
+| speed         | (float)  | 1.0           | The animation speed of the stream lines whose value is in the value range.  |
+| value_min     | (float)  | -1000000000   | The minimum value of the value range.                                       |
+| value_max     | (float)  | 1000000000    | The maximum value of the value range.                                       |
+
+Stream lines can use colors for indicating the speed of the stream. In this case the 'parameter' attribute is replaced with layer level 'speed' and 'direction' attributes. In addition, the 'colormap' attribute is used for selecting stream color according to the speed value.
+
+| Name          | Type     | Default value | Description                                                                 |
+| ------------- | -------- | ------------- | --------------------------------------------------------------------------- |
+| direction     | (string) | -             | The parameter name for the direction (a layer level setting).               |
+| speed         | (string) | -             | The parameter name for the speed (a layer level setting).                   |
 | colormap      | (string) |               | Name of the colormap for "default" painter. This refers to a colormap file. |
 | smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.     |
 
@@ -1844,6 +1932,16 @@ If the data is given as 'parameter' attribute (without speed information) then t
 | ---------------- | -------- | ------------- | ------------------------------------------------------------------------ |
 | line_color_land  | (ARGB)   | FF000000      | The stream line color on the land area.                                  |
 | line_color_sea   | (ARGB)   | FF000000      | The stream line color on the sea area.                                   |
+
+Attributes for the painter "rain", which animates falling rain. They are given inside a "stream" object of the layer, and the line colors come from the colormap.
+
+| Name          | Type     | Default value | Description                                                                 |
+| ------------- | -------- | ------------- | --------------------------------------------------------------------------- |
+| line_length   | (int)    | 16            | Length of the line segment.                                                 |
+| step_x        | (int)    | 2             | Step size of the rain lines in x-direction.                                 |
+| speeds        | (array)  |               | Array of "speed" structures, as for the "stream" painter.                   |
+| colormap      | (string) |               | Name of the colormap. This refers to a colormap file.                       |
+| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.     |
 
 Attributes for the "border" painter.
 
@@ -1877,6 +1975,8 @@ Attributes for the "shadow" structure.
 | color_max     | (ARGB)   | 40000000      | The color used with the maximum value (max_value).                          |
 | dx            | (int)    | 10            | The number of pixels that the shadow painting is shifted in x-direction .   |
 | dy            | (int)    | 10            | The number of pixels that the shadow painting is shifted in y-direction .   |
+
+A shadow with zero "dx" and "dy" paints nothing, the remaining shadows are still painted.
 
 
 
@@ -1969,6 +2069,7 @@ The table below contains a list of attributes that can be defined for the legend
 | symbols  | _LegendSymbols_ | -             | Symbols to be used in the legend.                                   |
 | labels   | _LegendLabels_  | -             | Label definitions for the legend.                                   |
 | isobands | _[Isoband]_     | -             | An array if _Isobands_ structures from which to generate the legend |
+| isolines | _[Isoline]_     | -             | An array if _Isoline_ structures from which to generate the legend  |
 
 
 #### TimeLayer
@@ -2026,8 +2127,11 @@ The table below contains a list of attributes that can be defined for the time l
 | suffix    | (string)             | -                | Suffix for the full string to be printed.                                                                                                                                                                                                                                                                                                               |
 | timestamp | (string) or [string] | validtime        | Type of the timestamp. Valid values are "validtime", "origintime", "starttime", "endtime" and "wallclock". "now" is an alias for "wallclock". A duration can be shown instead by selecting one of "time_offset", "interval_start", "interval_end", "leadtime", "leadhour", an ISO time duration string or a signed integer with a time indicator suffix |
 | format    | (string) or [string] | "%Y-%m-%d %H:%M" | Format of the timestamp. See Boost time formatting flags.                                                                                                                                                                                                                                                                                               |
+| formatter | (string)             | boost            | The formatter used with the format: "boost", "strftime" or "fmt".                                                                                                                                                                                                                                                                       |
 | x         | (int)                | -                | X-position of the timestamp. If the value is negative then the position is counted from the right edge.                                                                                                                                                                                                                                                 |
 | y         | (int)                | -                | Y-position of the timestamp. If the value is negative then the position is counted from the bottom edge.                                                                                                                                                                                                                                                |
+| longitude | (double)             | -                | Longitude of the timestamp. If both longitude and latitude are given, they override x and y.                                                                                                                                                                                                                                                           |
+| latitude  | (double)             | -                | Latitude of the timestamp.                                                                                                                                                                                                                                                                                                                              |
 
 Both timestamp and format may be arrays, in which case their lengths should match. The formatted strings will be concatenated to the prefix and the suffix will be appended to the result. This feature can be used to print strings such as origintime + leadtime, starttime - endtime etc.
 
@@ -2119,6 +2223,10 @@ The table below contains a list of attributes that can be defined for the tag la
 | ----- | -------- | ------------- | --------------------------------------------------------------------------------- |
 | tag   | (string) | -             | The SVG tag to generate, for example "text" or "g".                               |
 | cdata | (string) | -             | The CDATA section for the tag. This should not be used if the tag is stand-alone. |
+
+Negative "x" and "y" attributes are counted from the right and bottom edges of the view (except inside defs).
+If the attributes include "longitude" and "latitude", the tag is positioned at that location; for a
+composite tag the "x" and "y" attributes of the sublayers are then offsets from the location.
 
 #### WKTLayer
 
@@ -2224,26 +2332,22 @@ By default the WKT is not segmented into smaller linesegments. However, if the C
 
 The `fronts` layer renders cold, warm, occluded, and stationary fronts as SVG paths decorated
 with meteorological symbols (triangles and semi-circles) at even arc-length intervals.  The
-symbols are rendered using a `<textPath>` element referencing a **weather-font** that maps
-specific characters to the standard front glyphs.
+symbols are drawn as inline SVG shapes selected by glyph characters.
 
-Two data sources are supported via the `source` field:
-
-| `source`      | Description |
-| ------------- | ----------- |
-| `"synthetic"` | Curves defined inline in the product JSON (default). Useful for testing and for manually drawn analyses. |
-| `"grid"`      | Fronts detected on the fly from querydata using Hewson's Thermal Front Parameter (TFP) method. |
+The data source is selected with the `front_source` field. Currently only `"synthetic"` (the
+default) is supported: the curves are defined inline in the product JSON, which is useful for
+testing and for manually drawn analyses.
 
 ##### Front types
 
-| Type          | JSON string    | Default line class | Default glyph characters |
-| ------------- | -------------- | ------------------ | ------------------------ |
-| Cold front    | `"cold"`       | `coldfront`        | `C` / `c`                |
-| Warm front    | `"warm"`       | `warmfront`        | `W` / `w`                |
-| Occluded      | `"occluded"`   | `occludedfront`    | `O` / `o`                |
-| Stationary    | `"stationary"` | `stationaryfront`  | `S` / `s`                |
-| Trough        | `"trough"`     | `trough`           | `T` / `t`                |
-| Ridge         | `"ridge"`      | `ridge`            | `R` / `r`                |
+| Type          | JSON string    | Default line class | Default glyph class    | Default glyph characters | Default spacing |
+| ------------- | -------------- | ------------------ | ---------------------- | ------------------------ | --------------- |
+| Cold front    | `"cold"`       | `coldfront`        | `coldfrontglyph`       | `C` / `c`                | 60              |
+| Warm front    | `"warm"`       | `warmfront`        | `warmfrontglyph`       | `W` / `w`                | 60              |
+| Occluded      | `"occluded"`   | `occludedfront`    | `occludedfrontglyph`   | `CW` / `cw`              | 60              |
+| Stationary    | `"stationary"` | `stationaryfront`  | `stationaryfrontglyph` | `Cw` / `Cw`              | 60              |
+| Trough        | `"trough"`     | `trough`           | `troughglyph`          | `t` / `T`                | 0 (no symbols)  |
+| Ridge         | `"ridge"`      | `ridge`            | `ridgeglyph`           | `r` / `R`                | 0 (no symbols)  |
 
 Symbols are rendered as inline SVG shapes (filled triangles and semicircles) — no external
 font is required.  Uppercase glyph characters produce symbols on the **left** side of the
@@ -2258,7 +2362,7 @@ even arc-length intervals using the spacing parameters below.
 | `w` | Filled semicircle bulging right of path (warm front passive side) |
 
 Compound glyphs (`"CW"`, `"Cw"`, etc.) place multiple shapes at the same position, used for
-occluded and stationary fronts.
+occluded and stationary fronts. Other characters draw nothing.
 
 ##### WeatherFrontsLayer settings
 
@@ -2266,7 +2370,7 @@ occluded and stationary fronts.
 | -------- | ------ | ------------ | ----------- |
 | front_source | string | `"synthetic"` | Data source. Currently only `"synthetic"` is implemented; the field is retained as an extensibility point for future sources such as WOML. (Named `front_source` rather than `source` because the latter is reserved for the paraminfo data source.) |
 | fronts   | array  | `[]`         | Front curve definitions (used when `front_source` is `"synthetic"`). See below. |
-| styles   | object | –            | Per-type style overrides. Keys are front type strings (e.g. `"cold"`). See below. |
+| cold, warm, occluded, stationary, trough, ridge | object | – | Per-type style overrides, given directly in the layer with the front type as the key. See below. |
 
 For automatic front *diagnosis* from gridded data, use the `TFP` metaparameter with
 `IsobandLayer` or `IsolineLayer` (documented below). That produces Hewson's Thermal
@@ -2281,13 +2385,13 @@ Each element in the `fronts` array defines one front curve:
 | Name   | Type   | Default  | Description |
 | ------ | ------ | -------- | ----------- |
 | type   | string | `"cold"` | Front type: `"cold"`, `"warm"`, `"occluded"`, `"stationary"`, `"trough"`, or `"ridge"`. |
-| side   | string | `"left"` | Which side the symbols face: `"left"` or `"right"`. |
+| side   | string | `"left"` | `"left"` or `"right"`. Currently has no effect: the side is determined by the glyph characters. |
 | points | array  | –        | Array of `[longitude, latitude]` pairs (WGS84) defining the front path. Required. |
 
-##### `styles` object
+##### Style overrides
 
-The `styles` object maps front type names to style overrides.  Any omitted field keeps its
-default value.
+The style of each front type can be overridden with an object whose key is the front type name
+(for example `"cold": { "spacing": 80 }`).  Any omitted field keeps its default value.
 
 | Name       | Type   | Default                | Description |
 | ---------- | ------ | ---------------------- | ----------- |
@@ -2295,8 +2399,8 @@ default value.
 | glyph_css  | string | (type-specific)        | CSS class name applied to the `<text>` glyph group. |
 | glyph1     | string | (type-specific)        | Character rendered at odd-numbered symbol positions. |
 | glyph2     | string | (type-specific)        | Character rendered at even-numbered symbol positions. |
-| font_size  | double | `30.0`                 | Glyph font size in pixels. |
-| spacing    | double | `60.0`                 | Arc-length spacing between glyph centres in pixels. |
+| font_size  | double | `30.0`                 | Glyph size in pixels. |
+| spacing    | double | `60.0`                 | Arc-length spacing between glyph centres in pixels. Zero disables the symbols. |
 
 ##### Example 1 – synthetic fronts (cold, warm, occluded, stationary)
 
@@ -2368,20 +2472,16 @@ fill colour for the symbol shapes:
 
 A Hovmöller layer renders a two-dimensional time–space cross-section (or vertical cross-section)
 as a grid of coloured rectangles inside an ordinary SVG product.  Unlike all other layers the
-coordinate axes are **not** a geographic map projection.  Five slice geometries are supported:
+coordinate axes are **not** a geographic map projection.  Three slice geometries are supported:
 
 | `direction`   | X axis (columns)               | Y axis (rows)       | Fixed coordinate(s)          |
 | ------------- | ------------------------------ | ------------------- | ---------------------------- |
 | `time_lon`    | Longitude, evenly spaced       | Time steps          | Latitude, pressure level     |
 | `time_lat`    | Latitude, evenly spaced        | Time steps          | Longitude, pressure level    |
 | `time_level`  | Pressure levels                | Time steps          | Latitude + longitude         |
-| `lon_level`   | Longitude, evenly spaced       | Pressure levels     | Latitude + valid time        |
-| `lat_level`   | Latitude, evenly spaced        | Pressure levels     | Longitude + valid time       |
 
-The three `time_*` directions (true Hovmöller diagrams) iterate **all** time steps available in
-the querydata; the `time` query-string parameter is ignored for those.  The two `*_level`
-directions are vertical cross-sections (not strictly Hovmöller diagrams) that render the single
-time step selected by the standard `time=` request parameter.
+All directions iterate **all** time steps available in the querydata, the oldest time at the
+top; the `time` query-string parameter is ignored.
 
 Each cell is coloured by matching the interpolated value against the first matching `Isoband`
 definition, using the same isoband JSON and CSS files as `IsobandLayer`.
@@ -2395,24 +2495,21 @@ The canvas pixel dimensions are taken from the product-level `projection.xsize` 
 | ----------- | -------- | --------- | ----------- |
 | parameter   | string   | –         | Parameter name, e.g. `"GeopHeight"` or `"Temperature"`. Required. |
 | level       | double   | –         | Pressure level in hPa for `time_lon` and `time_lat`. Inherited from the shared `Properties` block so it can also be set via the `level=` query-string parameter. |
-| direction       | string   | `time_lon` | Slice geometry: `time_lon`, `time_lat`, `time_level`, `lon_level`, or `lat_level`. |
-| latitude        | double   | `60.0`     | Fixed latitude for `time_lon`, `time_level`, `lon_level`. |
-| longitude       | double   | `25.0`     | Fixed longitude for `time_lat`, `time_level`, `lat_level`. |
-| lon_min         | double   | `5.0`      | Western longitude bound for `time_lon` and `lon_level`. |
-| lon_max         | double   | `35.0`     | Eastern longitude bound for `time_lon` and `lon_level`. |
-| lat_min         | double   | `55.0`     | Southern latitude bound for `time_lat` and `lat_level`. |
-| lat_max         | double   | `70.0`     | Northern latitude bound for `time_lat` and `lat_level`. |
-| nx              | integer  | `50`       | Number of evenly-spaced sample points along the space axis. Ignored for `time_level` (the number of levels in the data is used). |
-| time_ascending  | boolean  | `true`     | `true` = oldest time at the top (classic Hovmöller convention, time increases downward). `false` = newest time at the top. Has no effect on `*_level` directions. |
-| level_ascending | boolean  | `false`    | `false` = surface (high hPa) on the left / top (meteorological convention). `true` = surface on the right / bottom. Applies to all `*_level` directions. |
+| direction       | string   | `time_lon` | Slice geometry: `time_lon`, `time_lat` or `time_level`. |
+| latitude        | double   | `60.0`     | Fixed latitude for `time_lon` and `time_level`. |
+| longitude       | double   | `25.0`     | Fixed longitude for `time_lat` and `time_level`. |
+| lon_min         | double   | `5.0`      | Western longitude bound for `time_lon`. |
+| lon_max         | double   | `35.0`     | Eastern longitude bound for `time_lon`. |
+| lat_min         | double   | `55.0`     | Southern latitude bound for `time_lat`. |
+| lat_max         | double   | `70.0`     | Northern latitude bound for `time_lat`. |
+| nx              | integer  | `50`       | Number of evenly-spaced sample points along the space axis, at least 2. Ignored for `time_level` (the number of levels in the data is used). |
 | isobands        | string   | –          | Path to the isoband colour definitions, e.g. `"json:isobands/geoph500.json"`. |
 | css             | string   | –          | Path to the CSS stylesheet for the isoband classes. |
 
 **Notes on level ordering and sparse data**
 
-For all `*_level` directions the levels are drawn with surface (high hPa) on the left / top by
-default (`level_ascending=false`).  The data is commonly stored in ascending pressure order
-(300, 500 … 1000 hPa); the layer reverses this automatically so 1000 hPa appears first.
+For `time_level` the levels are drawn from left to right in the order they are stored in the
+data; the order is not changed by the layer.
 
 With only six pressure levels (as in the test data) the cells are wide and the diagram is more
 schematic than meteorologically detailed, but it clearly shows the vertical structure.  Finer
@@ -2511,7 +2608,7 @@ Request: `GET /dali?customer=…&product=hovmoeller_temperature_time_level`
 
 ![Hovmöller time × pressure level – temperature at 60°N 20°E](images/hovmoeller_temperature_time_level.png)
 
-*Time increases downward (oldest at top). X axis: pressure levels from surface (1000 hPa, left) to upper troposphere (300 hPa, right). Colour scale: red = warm (surface, low levels), blue = cold (upper troposphere).*
+*Time increases downward (oldest at top). X axis: pressure levels in data order, here from surface (1000 hPa, left) to upper troposphere (300 hPa, right). Colour scale: red = warm (surface, low levels), blue = cold (upper troposphere).*
 
 #### GraticuleLayer
 
@@ -2623,7 +2720,7 @@ The generated image is:
  |Name|Type|Default value|Description|
  |----|----|-------------|-----------|
  |layout|(string)|"grid"|Normal "grid" or "ticks" at the image edges|
- |step  |(integer)|10   |Desired multiples in degrees|
+ |step  |(integer)|10   |Desired multiples in degrees. Must divide 180 evenly.|
  |except|([int)]) |-    |Undesired multiples in degrees|
  |length|int      |5    |Tick length in pixels when layout=ticks|
  |attributes|(Attributes)|-|Presentation attributes for the lines|
@@ -2633,7 +2730,7 @@ The generated image is:
 
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
-|layout|(string)|"none"|Label layout algorithm: none|edges|grid|center|left_bottom|cross|
+|layout|(string)|"none"|Label layout algorithm: none, center (centers of the grid cell edges), edge_center (the outermost such centers of each line inside the image), cross (lines which would display most of the labels) or ticks (tick end points)|
 |step|int|-|Desired multiples in degrees, by default inherited from Graticule settings|
 |orientation|(string)|"horizontal"|Label orientation: horizontal|auto|
 |degree_sign|(bool)|true|If true, a degree sign will be appended to the number|
@@ -2925,6 +3022,8 @@ The table below contains a list of attributes that can be defined for the windro
 
 #### OSMLayer
 
+> **Note:** The OSM layer is optional and compiled out by default (`-DWITHOUT_OSM` in the Makefile); `layer_type` `"osm"` is then unknown.
+
 The OSM layer renders OpenStreetMap data loaded into PostGIS via `osm2pgsql`. It supports polygon features (landuse, water, buildings), linear features (roads, coastlines, administrative boundaries) and place-name labels. Each layer response carries an HTTP ETag derived from the OSM data age, enabling efficient HTTP caching. The OGC API – Tiles endpoint also supports Mapbox Vector Tile (MVT/PBF) output via the `addMVTLayer` mechanism.
 
 **Data setup and scale guidance**
@@ -3197,13 +3296,13 @@ The table below contains a list of attributes that can be defined for the PostGI
 | Name            | Type      | Default value | Description                                                                                                                                                                                                  |
 | --------------- | --------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | lines           | boolean   | false         | Should the data be handled as if it would be stroked or filled. This will alter how the data will be clipped to the view - polygons will either be preserved for filling or cut into polylines for stroking. |
-| pgname          | (string)  | -             | Identifier of PostGIS database. The GIS-engine configuration file defines connection info (host,database,username,password) for pgname.                                                                      |
-| schema          | (string)  | -             | The database schema used in the database query.                                                                                                                                                              |
-| table           | (string)  | -             | The database table used in the database query.                                                                                                                                                               |
-| geometry_column | (string)  | -             | The name of the geometry column in the specified schema.table                                                                                                                                                |
-| time_column     | string    | -             | The name of the time column in the specified schema.table.                                                                                                                                                   |
-| time_truncate   | string    | -             |                                                                                                                                                                                                              |
-| filters         | _Filters_ | -             |                                                                                                                                                                                                              |
+| pgname          | string    | -             | Required. Identifier of PostGIS database. The GIS-engine configuration file defines connection info (host,database,username,password) for pgname.                                                                      |
+| schema          | string    | -             | Required. The database schema used in the query.                                                                                                                                                             |
+| table           | string    | -             | Required. The database table used in the query.                                                                                                                                                              |
+| geometry_column | (string)  | -             | The name of the geometry column in the specified schema.table. Used only in GetCapabilities responses.                                                                                                       |
+| time_column     | (string)  | -             | The name of the time column in the specified schema.table. If set, only rows whose time equals the valid time are selected.                                                                                  |
+| time_truncate   | (string)  | -             | Compare the times truncated to a minute, hour, day, week, month or year.                                                                                                                                     |
+| filters         | _[Filters]_ | -           | Each filter generates one PostGIS query with its own where condition and attributes.                                                                                                                         |
 | precision       | (double)  | 1.0           | Precision of printed SVG coordinates.                                                                                                                                                                        |
 
 
@@ -3284,20 +3383,33 @@ The table below contains a list of attributes that can be defined for the ice ma
 <th>Default Value </th>
 <th colspan="2"> Description </th></tr>
 <tr><td>attribute_columns</td><td>(string)</td><td>-</td><td colspan="2">Comma-separated list of columns in specified schema.table.</td></tr>
-<tr><td>firstname_column</td><td>string</td><td>-</td><td colspan="2">Column name in specified schema.table. Primary name of the location, e.g. 'Helsinki'. This is used by 'named_location'-layer.</td></tr>
+<tr><td>additional_columns</td><td>(string)</td><td>-</td><td colspan="2">Comma-separated list of additional columns to be read.</td></tr>
+<tr><td>firstname_column</td><td>(string)</td><td>-</td><td colspan="2">Column name in specified schema.table. Primary name of the location, e.g. 'Helsinki'. This is used by 'named_location'-layer.</td></tr>
 <tr><td>secondname_column</td><td>(string)</td><td>-</td><td colspan="2">Column name in specified schema.table.Secondary name of the location, e.g. 'Helsingfors'. This is used by 'named_location'-layer.</td></tr>
-<tr><td>symbol</td><td>A symbol. Position of symbol is fetched from database</td><td></td><td colspan="2">The first parameter for PostGreSQL DATE_TRUNC-function. Supported values are 'minute', 'hour', 'day', 'week' ,'month', 'year'. If time_truncate is defined it is applied to requested datetime.</td></tr>
-<tr><td rowspan="9">layer_subtype</td><td rowspan="9">(string)</td><td rowspan="9">"geometry"</td><td colspan="2">Specifies the actual layer type. Full list of supported types is listed in the table below. If layer_subtype is missing geometry type is assumed.</td></tr>
+<tr><td>nameposition_column</td><td>(string)</td><td>-</td><td colspan="2">Column name for the position of the location name.</td></tr>
+<tr><td>text_column</td><td>(string)</td><td>-</td><td colspan="2">Column name for the text of a text field.</td></tr>
+<tr><td>textposition_column</td><td>(string)</td><td>-</td><td colspan="2">Column name for the position of the text.</td></tr>
+<tr><td>angle_column</td><td>(string)</td><td>-</td><td colspan="2">Column name for the rotation angle.</td></tr>
+<tr><td>labeltext_column</td><td>(string)</td><td>-</td><td colspan="2">One of the attribute columns, used as the label text.</td></tr>
+<tr><td>fontname_column</td><td>(string)</td><td>-</td><td colspan="2">Column name for the font name of the label.</td></tr>
+<tr><td>fontsize_column</td><td>(string)</td><td>-</td><td colspan="2">Column name for the font size of the label.</td></tr>
+<tr><td>longitude</td><td>(string)</td><td>-</td><td colspan="2">Longitude of a fixed position.</td></tr>
+<tr><td>latitude</td><td>(string)</td><td>-</td><td colspan="2">Latitude of a fixed position.</td></tr>
+<tr><td>table_attributes</td><td>JSON</td><td>-</td><td colspan="2">Attributes of a table.</td></tr>
+<tr><td>table_data</td><td>JSON</td><td>-</td><td colspan="2">Contents of a table.</td></tr>
+<tr><td rowspan="11">layer_subtype</td><td rowspan="11">(string)</td><td rowspan="11">"geometry"</td><td colspan="2">Specifies the actual layer type. Full list of supported types is listed in the table below. If layer_subtype is missing or unknown, geometry type is assumed.</td></tr>
 <tr><td><b>Name</b></td><td><b>Description</b></td></tr>
+<tr><td>geometry</td><td>The geometries of the result set.</td></tr>
 <tr><td>symbol</td><td>A symbol. Position of symbol is fetched from database.</td></tr>
 <tr><td>named_location</td><td>Location with name. Position of location is fetched from database. symbol-property can be defined to mark the location on map. firstname_column, secondname_column can be defined to show location name on map.</td></tr>
-<tr><td>coordinate_grid</td><td>Coordinate grid. Grid is drawn on requested geometry. If result set contains no geometry, grid is drawn on whole.</td></tr>
-<tr><td>degree_of_pressure</td><td>Degree of pressure for ice.</td></tr>
+<tr><td>text_field</td><td>A text field.</td></tr>
+<tr><td>degree_of_pressure</td><td>Degree of pressure for ice: a symbol and a label.</td></tr>
 <tr><td>mean_temperature</td><td>Ellipse type of label, where we have background ellipse and text written on .</td></tr>
-<tr><td>label</td><td>Rectangle type of label, where we have a background rectangle and text written on it. Attributes for background rectangle and foreground text is defined in filters' 'attribute' and 'text_attribute' sections. '*'-character is a wildcard-character: The beginning of the name can be anything, as long as it ends with 'label'-string.</td></tr>
-<tr><td>temperature_isotherm_label</td><td>Same as *label except that position (fetched from database) of label is modified a bit.</td></tr>
+<tr><td>traffic_restrictions</td><td>Traffic restrictions.</td></tr>
+<tr><td>ice_egg</td><td>Ice egg.</td></tr>
+<tr><td>*label</td><td>Rectangle type of label, where we have a background rectangle and text written on it. Attributes for background rectangle and foreground text is defined in filters' 'attribute' and 'text_attribute' sections. '*'-character is a wildcard-character: The beginning of the name can be anything, as long as it ends with 'label'-string.</td></tr>
 <tr><td>symbol</td><td>string</td><td>-</td><td colspan="2">Name of file containing the symbol-definition in SVG-format. This is needed only if value of layer_subtype-property is 'symbol'. The requested geometry determines the position of the symbol.</td></tr>
-<tr><td>pattern</td><td>string</td><td>0.0</td><td colspan="2">Name of the file containing the pattern definition in SVG-format. The pattern is applied on the requested geometry, for example diagonal hatching on polygonal area.</td></tr>
+<tr><td>pattern</td><td>string</td><td>-</td><td colspan="2">Name of the file containing the pattern definition in SVG-format. The pattern is applied on the requested geometry, for example diagonal hatching on polygonal area.</td></tr>
 <tr><td>precision</td><td>(double)</td><td>1.0</td><td colspan="2">Precision of printed SVG coordinates.</td></tr>
 </table>
 
@@ -3412,6 +3524,7 @@ The table below contains a list of attributes that can be defined for finnish ro
 | maxdistance | double      | 5             | Maximum distance for a station to be accepted close enough to the position.       |
 | mindistance | int         | -             | Minimum distance in pixels between symbols.                                       |
 | missing     | int         | 106           | Synop-font symbol for missing observations. Zero disables showing missing values. |
+| keyword     | (string)    | -             | The geonames keyword identifying the stations, used instead of positions.         |
 
 
 ##### Algorithm to deduce weather condition symbol
@@ -3705,6 +3818,7 @@ The table below contains a list of attributes that can be defined for present we
 | maxdistance | double      | 5             | Maximum distance for a station to be accepted close enough to the position.       |
 | mindistance | int         | -             | Minimum distance in pixels between symbols.                                       |
 | missing     | int         | 106           | Synop-font symbol for missing observations. Zero disables showing missing values. |
+| keyword     | (string)    | -             | The geonames keyword identifying the stations, used instead of positions.         |
 
 ##### Algorithm to deduce present weather symbol
 
@@ -3883,6 +3997,9 @@ Each station plot can include:
 - **Wind gust** — in knots when reported
 - **Aviation status box** — colour-coded LIFR / IFR / MVFR / VFR category
 
+The wind direction variability group (e.g. `200V280`) following the wind group is not plotted;
+the visibility, weather and cloud groups after it are decoded normally.
+
 > **Requires:** The AVI engine (`engines/avi`) must be configured and loaded. MetarLayer is compiled out when `WITHOUT_AVI` is defined.
 
 **Aviation flight rule categories**
@@ -3953,6 +4070,122 @@ To restrict the plot to specific airports or countries:
 | icaos             | [string]   | -          | Restrict rendering to the listed ICAO station codes. All stations are shown when omitted. |
 | countries         | [string]   | -          | Restrict rendering to stations in the listed ISO 3166-1 alpha-2 country codes (e.g. `"FI"`, `"SE"`). All countries are shown when omitted. |
 
+
+#### FrameLayer
+
+The frame layer draws a geographic frame between an inner and an optional outer border,
+with optional latitude and longitude scale tics and labels along the inner border. It is
+used for example in ice charts.
+
+```json
+{
+  "layer_type": "frame",
+  "dimension": { "inner_border": "9 53, 31 66.5", "outer_border": "6 50, 34 69" },
+  "scale": {
+    "small_tic_step": 0.1, "small_tic_length": 5,
+    "intermediate_tic_step": 0.5, "intermediate_tic_length": 10,
+    "long_tic_step": 1.0, "long_tic_length": 15,
+    "tic_position": "outside", "label_position": "outside", "label_step": 1.0
+  },
+  "attributes": { "class": "MapFrameWhite" },
+  "scale_attributes": { "stroke": "black", "font-family": "Arial", "font-size": "10" }
+}
+```
+
+<pre><b>FrameLayer</b></pre>
+| Name             | Type         | Default value | Description                                                                                       |
+| ---------------- | ------------ | ------------- | ------------------------------------------------------------------------------------------------- |
+| dimension        | object       | -             | Required. `inner_border` (required) and `outer_border` as `"lon lat, lon lat"` (bottom left, top right) in WGS84. |
+| scale            | object       | -             | Optional scale tics and labels, see below.                                                        |
+| scale_attributes | _Attributes_ | -             | SVG attributes for the tics and the labels (font-family, font-size etc).                          |
+| pattern          | (string)     | -             | A pattern to be included for the frame.                                                           |
+| precision        | (double)     | 1.0           | Precision of the SVG coordinates.                                                                 |
+
+<pre><b>FrameLayer scale</b></pre>
+| Name                    | Type     | Default value | Description                                                       |
+| ----------------------- | -------- | ------------- | ----------------------------------------------------------------- |
+| long_tic_step           | (double) | -             | Step of the long tics in degrees. No long tics if not set.        |
+| long_tic_length         | (int)    | 10            | Length of the long tics in pixels.                                |
+| intermediate_tic_step   | (double) | -             | Step of the intermediate tics in degrees.                         |
+| intermediate_tic_length | (int)    | 10            | Length of the intermediate tics in pixels.                        |
+| small_tic_step          | (double) | -             | Step of the small tics in degrees.                                |
+| small_tic_length        | (int)    | 10            | Length of the small tics in pixels.                               |
+| tic_position            | string   | "outside"     | Tics inside or outside the inner border.                          |
+| label_step              | double   | -             | Step of the labels in degrees. Required with a scale.             |
+| label_position          | string   | -             | "inside" or "outside" the inner border. Required with a scale.    |
+
+Each tic type is drawn independently of the others, also at negative coordinates. An
+intermediate tic is not drawn where there is a long tic, and a small tic is not drawn where
+there is a long or an intermediate tic.
+
+#### SatelliteLayer
+
+The satellite layer renders satellite imagery served by the satellite engine. The producer is
+the satellite and the parameter is the product (composite). Precoloured images are drawn as
+such using nearest neighbour interpolation; products holding values (for example cloud top
+temperature) need a colormap. The image closest to the requested time is used. A product
+containing a satellite layer defaults to true colour PNG output, see
+[Output formatting](#output-formatting).
+
+```json
+{ "layer_type": "satellite", "producer": "meteosat", "parameter": "natural" }
+```
+
+<pre><b>SatelliteLayer</b></pre>
+| Name           | Type     | Default value | Description                                                                                       |
+| -------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------- |
+| producer       | string   | -             | Required. The satellite.                                                                          |
+| parameter      | string   | -             | Required. The satellite product.                                                                  |
+| time_tolerance | (string or int) | 1 hour | The maximum distance of the image time from the requested time, as a duration string or in minutes. |
+| colormap       | (string) | -             | A colormap for products holding values. Required for them, an error for precoloured products.     |
+| smooth_colors  | (bool)   | true          | Interpolate the colormap colours linearly.                                                        |
+| compression    | (int)    | 1             | PNG compression level of the image embedded into the SVG.                                         |
+
+#### GeoTiffLayer
+
+The geotiff layer produces raw GeoTIFF output by fetching grid data directly from the grid
+engine and writing it via GDAL, bypassing the SVG pipeline. It takes the same settings as the
+[RasterLayer](#rasterlayer); only grid engine data sources are supported.
+
+#### GroupLayer
+
+The group layer renders its sublayers (the common `layers` setting) as a group. Its only own
+setting is `compression` (int, default 1).
+
+#### GridLayer
+
+The grid layer draws the cell outlines of the querydata grid of the producer, which is useful
+for inspecting the data resolution. It has no settings beyond the common layer attributes.
+
+#### WeatherObjectsLayer
+
+The weather objects layer renders meteorological features detected from wind data with the
+dynlib library. Each entry of the `objects` array selects one detector.
+
+```json
+{
+  "layer_type": "weather_objects",
+  "objects": [
+    { "type": "jet_axes", "producer": "ecmwf" },
+    { "type": "trough_axes" }
+  ]
+}
+```
+
+<pre><b>WeatherObjectsLayer objects</b></pre>
+| Name             | Type     | Default value      | Description                                                                                       |
+| ---------------- | -------- | ------------------ | ------------------------------------------------------------------------------------------------- |
+| type             | string   | -                  | Required. `jet_axes`, `trough_axes`, `convergence_lines`, `deformation_lines` or `vorticity_lines`. Fronts are not supported. |
+| u                | string   | "WindUMS"          | The U-component parameter.                                                                        |
+| v                | string   | "WindVMS"          | The V-component parameter.                                                                        |
+| producer         | (string) | the default model  | The producer.                                                                                     |
+| level            | (int)    | -                  | The level.                                                                                        |
+| smoothing_passes | (int)    | library default    | 1-2-1 smoothing passes before the detection.                                                      |
+| max_points       | (int)    | 10000              | Maximum number of points.                                                                         |
+| max_lines        | (int)    | 500                | Maximum number of lines.                                                                          |
+| css_class        | (string) | e.g. "jet-axis"    | CSS class of the objects. The defaults are jet-axis, trough-axis, convergence-line, deformation-line and vorticity-line. |
+| css_file         | (string) | -                  | An external CSS file to be included.                                                              |
+
 ### Structure definitions 
 
 The product, view and layer definitions contain several attributes of type  structure. This section  defines attributes used in these structures.  
@@ -4006,6 +4239,7 @@ The table below contains a list of attributes that can be defined in the Attribu
 | hilimit    | (double)     | -             | The upper limit to be matched.                   |
 | symbol     | (string)     | -             | The symbol name to be associated with the match. |
 | attributes | _Attributes_ | -             | The SVG attributes associated with the match.    |
+| translation | {string:string} | -          | Translations of a text for the match, the language code is the key. |
 
 <b>EXAMPLE: Selecting a precipitation symbol according to a value: </b>
 
@@ -4099,8 +4333,9 @@ The table below contains a list of attributes that can be defined in the Project
 | ---------- | -------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | crs        | (string) | -             | The projection description as understood by GDAL, or "data" implying the projection of the selected producer.                                                                                                                      |
 | bboxcrs    | (string) | -             | The projection description for defining the bounding box coordinates only. If not defined, the bounding box coordinates are expected to be in the same projection as the image.                                                    |
-| xsize      | (int)    | -             | Width of the projection in pixels.                                                                                                                                                                                                 |
-| ysize      | (int)    | -             | Height of the projection in pixels.                                                                                                                                                                                                |
+| xsize      | (int)    | -             | Width of the projection in pixels, 2-10000. The "xsize" request parameter overrides the value.                                                                                                                                     |
+| ysize      | (int)    | -             | Height of the projection in pixels, 2-10000. The "ysize" request parameter overrides the value.                                                                                                                                    |
+| size       | (double) | -             | With crs="data" only: a size multiplier for the data grid size used instead of xsize and ysize. The "size" request parameter overrides the value.                                                                                  |
 | x1         | (double) | -             | Bottom left X-coordinate of the bounding box.                                                                                                                                                                                      |
 | y1         | (double) | -             | Bottom left Y-coordinate of the bounding box.                                                                                                                                                                                      |
 | x2         | (double) | -             | Top right X-coordinate of the bounding box.                                                                                                                                                                                        |
@@ -4108,6 +4343,9 @@ The table below contains a list of attributes that can be defined in the Project
 | cx         | (double) | -             | Center coordinate of the bounding box.                                                                                                                                                                                             |
 | cy         | (double) | -             | Center coordinate of the bounding box.                                                                                                                                                                                             |
 | resolution | (double) | -             | The resolution of the image in kilometers. A resolution of 2.5 means one pixel is approximately 2.5 kilometers in the projection used. The description is not valid if the projection is geographic (latlon) instead of geometric. |
+| geoid      | (int)    | -             | A geonames id whose coordinates are used as the center point, overriding cx and cy.                                                                                                                                                |
+| place      | (string) | -             | A location name whose coordinates are used as the center point, overriding cx and cy.                                                                                                                                              |
+| bbox       | (string) | -             | The bounding box as "x1,y1,x2,y2" in bboxcrs (or crs) coordinates. The axis order follows the EPSG definition of the CRS, for example latitude first for EPSG:4326.                                                                   |
 
 The bounding box of the projection can be defined in the following ways:
 
@@ -4189,8 +4427,8 @@ The table below contains a list of attributes used in this structure.
 | ---------------- | ------ | ------------- | -------------------------------------------------------------------------------- |
 | size             | int    | -             | Savitzky-Golay: implies 2*N+1 adjacent points are used in the weighted mean.     |
 | degree           | int    | -             | Savitzky-Golay: degree of the polynomial to fit to the data.                     |
-| method           | string | -             | Trax smoother: `box`, `median` or `morphology`. Enables the Trax smoother path.  |
-| radius           | int    | -             | Trax smoother: window/element half-width in grid cells (2*radius+1 wide).        |
+| method           | string | -             | Trax smoother: `box`, `median` or `morphology` (also `pyramid` for very large radii, `savitzky-golay` and `none`). Enables the Trax smoother path. |
+| radius           | int    | 0             | Trax smoother: window/element half-width in grid cells (2*radius+1 wide).        |
 | passes           | int    | 3             | Trax smoother: number of repeats (box: passes>=3 approximates a Gaussian).       |
 | boundary         | string | normalized    | Trax smoother: edge handling — `normalized`, `replicate` or `reflect`.           |
 | morphology       | string | openclose     | Morphology only: `open`, `close` or `openclose`.                                 |
@@ -4248,10 +4486,12 @@ The table below contains a list of attributes used in the Intersection structure
 | --------------- | ---------- | ------------- | ----------------------------------------------------------------------------------------- |
 | lolimit         | (double)   | -             | The low limit value for the intersecting isoband. If omitted, -infinity is implied.       |
 | hilimit         | (double)   | -             | The high limit value for the intersecting isoband. If omitted, +infinity is implied.      |
+| value           | (double)   | -             | Sets both the low and the high limit.                                                     |
 | level           | (double)   | -             | The level from which to pick the intersecting isoband.                                    |
 | producer        | (string)   | -             | The model from which to take the isoband, if not the same model as in the isoband itself. |
 | parameter       | string     | -             | The parameter whose isoband is used to intersect the actual isoband.                      |
 | smoother        | (Smoother) | -             | How to smoothen the intersecting isoband.                                                 |
+| interpolation   | (string)   | linear        | Interpolation method: linear, nearest (or midpoint, discrete) or logarithmic.             |
 | unit_conversion | (string)   | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file.   |
 | multiplier      | (double)   | 1.0           | A multiplier for valid data values for unit conversion purposes.                          |
 | offset          | (double)   | 0.0           | An offset for valid data for unit conversion purposes.                                    |
@@ -4267,8 +4507,8 @@ The table below contains a list of attributes used in the Isoline structure.
 | ------------------------------------------------------------ | ------------ | ------------- | ------------------------------------------------------------------------------------------------------- |
 | qid                                                          | string       | -             | The identifier for the isoline.                                                                         |
 | value                                                        | double       | -             | The isoline value. The default is NaN, which means calculating the line between missing and valid data. |
-| attributes                                                   | _Attributes_ | -             | The SVG attributes for the isoline. Often omitted completely, and the _IsolineLayer_                    | label | (_Text_) | - | Translatable label for the isoline. |
-| level attributes are used instead commonly for all isolines. |
+| attributes                                                   | _Attributes_ | -             | The SVG attributes for the isoline. Often omitted completely, and the _IsolineLayer_ level attributes are used instead commonly for all isolines. |
+| label                                                        | (_Text_)     | -             | Translatable label for the isoline.                                                                     |
 
 #### Isofilter structure
 
@@ -4282,6 +4522,7 @@ Isolines and isobands can be smoothened by postprocessing the calculated polygon
 | iterations | integer | 1             | Number of passes. Zero disables filtering. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
 | lambda     | double  | 0.5           | Taubin shrinking-pass factor, in the open interval (0,1). Only used when type=taubin. |
 | mu         | double  | -0.53         | Taubin inflating-pass factor. Must be negative with magnitude greater than `lambda`. Only used when type=taubin. |
+| bezier     | double or object | 0    | Cubic Bezier fitting of the contours: the maximum deviation in pixels (2-100, 0 disables), or an object with `accuracy` and `maxdepth` (recursion depth 1-20, default 10). Not applied to GeoJSON, TopoJSON or KML output. See the [Bezier examples](examples/dali.md). |
 | validate   | bool or object | true     | Adaptive validity backoff (enabled by default; set to `false` to disable). With wide radii the smoother can pull a narrow isoband across itself, producing a self-intersecting polygon that is invalid for clipping. The whole set of geometries is re-smoothed at a halved radius until every polygon is valid; this keeps the shared edges between adjacent isobands coherent (gap-free), unlike repairing a single band. Only active when a smoothing filter is configured (`type`/`radius` set), so unsmoothed geometry is never validity-checked. See below. |
 
 Note that zooming into an image reduces the amount of smoothing since the set radius now covers a smaller area of the original data, and hence original details can be seen better.
@@ -4319,7 +4560,7 @@ The table below contains a list of attributes used in the LegendLabels structure
 <tr><td>range</td><td>A range of values will be used. If lolimit is missing, "&lt; hilimit" is used. If hilimit is missing, "&gt; lolimit" is used. If both limits are missing, the text "MISSING" is returned. Otherwise a label of the form "lolimit...hilimit" is used where the string separating the limits is configurable separately.</td></tr>
 <tr><td>format</td><td>(string)</td><td>-</td><td colspan="2">printf-type format for the labels. Normally not needed, but if decimals are involved it may be best to define a format such as "%.1f" since not all numbers (such as 0.1) can be represented exactly as IEEE-754 numbers.</td></tr>
 <tr><td>dx</td><td>int</td><td>30</td><td colspan="2">X-coordinate offset from the respective legend symbol.</td></tr>
-<tr><td>dy</td><td>int</td><td>30</td><td colspan="2">Y-coordinate offset from the respective legend symbol. Depending on the type of the legend, one may often have to define this value to be the height of the respective symbol plus possibly half of the used font size.</td></tr>
+<tr><td>dy</td><td>int</td><td>0</td><td colspan="2">Y-coordinate offset from the respective legend symbol. Depending on the type of the legend, one may often have to define this value to be the height of the respective symbol plus possibly half of the used font size.</td></tr>
 <tr><td>separator</td><td>(string)</td><td>"\u2013" (endash)</td><td colspan="2">The string separating the isoband lolimit and hilimit when type=range is used.</td></tr>
 <tr><td>conversions</td><td>{string:string}</td><td>-</td><td colspan="2">Conversions from automatically generated labels to alternate strings. Typically one may wish to change the values at the bottom and at the top of the legend to strings such as "&lt; lolimit" or "&gt; hilimit". The value may also be a map from language codes to translations.</td></tr>
 <tr><td>attributes</td><td><i>Attributes</i></td><td>-</td><td colspan="2">The SVG attributes for the labels.</td></tr>
@@ -4359,6 +4600,7 @@ The table below contains a list of attributes used in the Map structure.
 <pre><b>Map</b></pre>
 | Name                | Type    | Default value | Description                                                                                                                                                                                                  |
 | ------------------- | ------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| pgname              | string  | ""            | The PostGIS connection name defined in the GIS engine configuration. Empty uses the GIS engine default connection.                                                                                            |
 | schema              | string  | ""            | The database schema.                                                                                                                                                                                         |
 | table               | string  | ""            | The database table.                                                                                                                                                                                          |
 | where               | string  | ""            | The optional where clause for the PostGIS query. For example "cntryname='Finland'"                                                                                                                           |
@@ -4470,22 +4712,22 @@ The table below contains a list of attributes used in this structure.
 <tr><td>station</td><td>This layout places symbols at the stations listed by the user.</td></tr>
 <tr><td>latlon</td><td>This layout places symbols at the locations listed by the user.</td></tr>
 <tr><td>graticule</td><td>This layout places symbols along the edges of a NxN graticule grid with a fixed step size in degrees.</td></tr>
-<tr><td>graticulefill</td><td>This layout places symbols along the edges of a NxN graticule grid plus inside the graticule cell while satisfying the set minimum distance condition. This layout is recommended for arrow-layers.</td></tr>
+<tr><td>graticulefill</td><td>This layout places symbols along the edges of a NxN graticule grid plus inside the graticule cell while satisfying the set minimum distance condition. A symbol is also placed at the north pole if it is inside the image. This layout is recommended for arrow-layers.</td></tr>
 <tr><td>xmargin</td><td>uint</td><td>0</td><td colspan="2">Extra margin for coordinate generation</td></tr>
 <tr><td>ymargin</td><td>uint</td><td>0</td><td colspan="2">Extra margin for coordinate generation</td></tr>
 <tr><td>x</td><td>uint</td><td>5</td><td colspan="2">Grid layout: X-coordinate of the first number</td></tr>
 <tr><td>y</td><td>uint</td><td>5</td><td colspan="2">Grid layout: Y-coordinate of the first number</td></tr>
 <tr><td>dx</td><td>uint</td><td>20</td><td colspan="2">Grid layout: X-coordinate offset to the next number on the same row</td></tr>
 <tr><td></td><td>uint</td><td>-</td><td colspan="2">Other layouts: X-coordinate adjustment for the selected position</td></tr>
-<tr><td>dy</td></td>uint</td><td>20<td><td colspan="2">Grid layout: Y-coordinate offset to the next number on the next row</td></tr>
+<tr><td>dy</td><td>uint</td><td>20</td><td colspan="2">Grid layout: Y-coordinate offset to the next number on the next row</td></tr>
 <tr><td></td><td>uint</td><td>-</td><td colspan="2">Other layouts: Y-coordinate adjustment for the selected position</td></tr>
 <tr><td>ddx</td><td>uint</td><td>0</td><td colspan="2">Grid layout: X-coordinate adjustment for the next row in grid layout</td></tr>
 <tr><td>size</td><td>uint</td><td>10</td><td colspan="2">Graticule/GraticuleFill layout: size of the graticule cell in degrees</td></tr>
-<tr><td>step</td><td>uint>/td><td>1</td><td colspan="2">Graticule layout: step size for the graticule in degrees</td></tr>
+<tr><td>step</td><td>uint</td><td>1</td><td colspan="2">Graticule layout: step size for the graticule in degrees</td></tr>
 <tr><td>mindistance</td><td>double</td><td>50</td><td colspan="2">GraticuleFill layout: minimum distance between parallel and meridian symbols in pixels</td></tr>
 <tr><td>keyword</td><td>string</td><td>-</td><td colspan="2">Keyword layout: the database keyword</td></tr>
-<tr><td>stations</td><td>XXXXX</td><td>-</td><td colspan="2">Station layout: the user listed stations</td></tr>
-<tr><td>locations</td><td>XXXXX</td><td>-</td><td colspan="2">LatLon layout: the user listed locations</td></tr>
+<tr><td>stations</td><td><i>[Station]</i></td><td>-</td><td colspan="2">Station layout: the user listed stations</td></tr>
+<tr><td>locations</td><td><i>[Location]</i></td><td>-</td><td colspan="2">LatLon layout: the user listed locations</td></tr>
 <tr><td>direction</td><td>string</td><td>-</td><td colspan="2">Direction parameter. Specify a direction parameter or both "u" and "v" attributes</td></tr>
 <tr><td>u</td><td>string</td><td>-</td><td colspan="2">U-component of the direction parameter</td></tr>
 <tr><td>v</td><td>string</td><td>-</td><td colspan="2">V-component of the direction parameter</td></tr>
@@ -4711,7 +4953,7 @@ Dynamic grid caculation uses C++ or LUA functions for creating new grids. C++ fu
 
 # JSON references and includes
 
-Product JSON files support four mechanisms for composing and reusing configuration fragments.
+Product JSON files support two mechanisms for composing and reusing configuration fragments.
 
 ## `json:` value references
 
@@ -4763,23 +5005,18 @@ place to collect reusable fragments:
 }
 ```
 
-## JSON Pointer (`$ref`) dereferencing
-
-Standard JSON Pointer references of the form `{"$ref": "#/path/to/value"}` are resolved after
-`json:` and `ref:` substitution.  This follows the JSON Reference / JSON Schema convention.
-
 ## Processing pipeline
 
 The product JSON goes through the following stages, which can be inspected individually
-by adding `stage=<n>` to the request:
+by adding `type=cnf&stage=<n>` to the request:
 
 | Stage | `stage=` value | Operation |
 |-------|---------------|-----------|
 | Raw JSON | `1` | File loaded as-is, no substitution |
-| Reference substitution | `2` | Query-string `json:` and `ref:` replacements applied |
-| Include expansion | `3` | `json:` and `ref:` values resolved from files |
-| JSON Pointer dereferencing | `4` | `$ref` pointers resolved |
-| Variable expansion | (default) | Query-string variable overrides applied |
+| Reference substitution | `2` | Query-string (and WMS variant) `json:` and `ref:` replacements applied |
+| Include expansion | `3` | `json:` includes loaded from files, recursively |
+| Reference resolution | `4` | `ref:` references resolved |
+| Variable expansion | (default) | WMS variant settings and query-string variable overrides applied |
 
 
 # Symbol substitutions via URI
@@ -4867,7 +5104,7 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `customer` | string | config default | Customer name; selects the sub-tree under `<root>/customers/`. |
-| `type` | string | `svg` | Output format: `svg`, `png`, `pdf`, `ps`, `xml`, `geojson`, `topojson`, `kml`, `geotiff`, `mvt`, `datatile`. |
+| `type` | string | `svg` | Output format: `svg`, `png`, `webp`, `pdf`, `ps`, `xml`, `geojson`, `topojson`, `kml`, `geotiff`, `mvt`, `datatile`, or `cnf` for the expanded product JSON. |
 | `producer` | string | config default | Data producer (querydata model name). |
 | `time` | string | latest | Valid time in any format accepted by the MacGyver time parser (ISO 8601, SQL, epoch, offset from now). |
 | `time_offset` | int | 0 | Minutes added to `time`. |
@@ -4890,8 +5127,8 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `width` | int | 1000 | Image width in pixels (20–10000). |
-| `height` | int | 1000 | Image height in pixels (20–10000). |
+| `width` | int | – | Image width in pixels (20–10000). The image area may not exceed `max_image_size`. |
+| `height` | int | – | Image height in pixels (20–10000). |
 | `margin` | int | – | Sets both `xmargin` and `ymargin`. |
 | `xmargin` | int | 0 | X-margin for symbol clipping (pixels). |
 | `ymargin` | int | 0 | Y-margin for symbol clipping (pixels). |
@@ -4909,6 +5146,7 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 | `attributes` | JSON | Override the top-level `attributes` block. |
 | `animation` | JSON | Override the `animation` block. |
 | `png` | JSON | Override the `png` output options block. |
+| `webp` | JSON | Override the `webp` output options block. |
 | `svg_tmpl` | string | Select a CTPP2 template by name (see [Template selection](#template-selection)). |
 
 ## Product modification via querystring
@@ -5144,7 +5382,8 @@ or stripped by the allowed-parameter filter if not in the `allowed_keys` set.
 | `printhash=1` | Print the CTPP2 CDT object to the server console. |
 | `printparams=1` | Print the grid parameter list used by the product. |
 | `timer=1` | Print timing information per product generation stage. |
-| `stage=1`–`4` | Return the intermediate JSON at the given [pipeline stage](#processing-pipeline) instead of rendering. |
+| `type=cnf` | Return the expanded product JSON instead of rendering. |
+| `stage=1`–`4` | With `type=cnf`, return the intermediate JSON at the given [pipeline stage](#processing-pipeline). |
 | `debug=1` | Include exception/backtrace details in error responses instead of a terse message. |
 | `quiet=1` | Suppress server-side logging of the error when a request fails. |
 
@@ -5265,7 +5504,7 @@ A product definition may at the top level include the following settings which d
 | title        | _Text_            | -             | Obligatory title for the WMS layer                                                                 |
 | name         | string            | -             | Name of the WMS layer. By default the name is deduced from the path of the configuration file.     |
 | abstract     | (_Text_)          | -             | Abstract for the layer.                                                                            |
-| keywords     | (list of strings) | -             | Keywords for the layer.                                                                            |
+| keyword      | (string or list of strings) | -   | Keywords for the layer.                                                                            |
 | opaque       | (int)             | 0             | Is the WMS layer opaque.                                                                           |
 | queryable    | (int)             | 0             | Does the layer support GetFeatureInfo requests.                                                    |
 | cascaded     | (int)             | 0             | How many times the layer has been cascaded.                                                        |
@@ -5274,6 +5513,13 @@ A product definition may at the top level include the following settings which d
 | fixed_height | (int)             | 0             | Nonzero implies the size cannot be changed                                                         |
 | capabilities_start | (duration)  | -             | Limit start time of GetCapabilities                                                                |
 | capabilities_end   | (duration)  | -             | Limit end time of GetCapabilities                                                                  |
+| disable_wms_time_dimension | (bool) | false   | If true, the time dimension is not listed in GetCapabilities.                                      |
+| timestep     | (int)             | -             | List in GetCapabilities only the querydata valid times which are multiples of this many minutes counted from UTC midnight. |
+| level        | (int)             | -             | The default elevation of the layer.                                                                |
+| crs          | object            | -             | `enable` and/or `disable` lists of CRS references to be listed for the layer in GetCapabilities.   |
+| interval_start, interval_end | (int) | -        | An interval dimension for the layer in minutes.                                                    |
+| intervals    | array             | -             | Several interval dimensions, each an interval_start integer or an object with interval_start, interval_end and default. |
+| interval     | (int)             | -             | The interval_start of the default interval in the intervals array. By default the first one is the default. |
 
 The GetCapabilities list of available times occasionally needs to be limited. For example, one might have weather observations for more than one hunder years, and one would not want to generate a full many or time slider for all available times. Typically the observation engine provides metadata for observation producers which are more useful for example for time series requests than WMS requests.
 
@@ -5284,6 +5530,10 @@ The time duration can be
  * an integer string not starting with P, and ending with a time suffix such as "100d"
 
 Using ISO-8601 is recommended, the other syntaxes are supported mostly for backward compatibility as the same time duration parser is used in several other places.
+
+The geographic bounding box of a layer without forecast or observation data, such as a map
+layer, is the union of the bounding boxes of its map layers. If none of them returns a
+geometry, the global bounding box -180,-90,180,90 is advertised.
 
 
 ## WMS layer variants
@@ -5342,10 +5592,10 @@ In such cases one use the same JSON file for the product settings, and define ho
 }
 </code></pre>
 
+Variant settings are applied in two phases, exactly like query string options. Settings whose value is an include or a reference (<code>"json:..."</code> or <code>"ref:..."</code>) are substituted before the includes are expanded, so a variant may select for example a different isobands file with <code>"l1.isobands": "json:isobands/hires.json"</code>. All other settings are applied after the includes have been expanded, when the <code>qid</code>s inside the included files are visible. The same two phases are used for WMS GetMap, WMTS and OGC API Tiles requests and when building GetCapabilities.
+
 # Configuration 
 In order to use the Dali plugin you need to edit two configuration files. These files are the main configuration file of the SmartMet Server environment and the Dali plugin specific configuration file.
-
-Variant settings are applied in two phases, exactly like query string options. Settings whose value is an include or a reference (<code>"json:..."</code> or <code>"ref:..."</code>) are substituted before the includes are expanded, so a variant may select for example a different isobands file with <code>"l1.isobands": "json:isobands/hires.json"</code>. All other settings are applied after the includes have been expanded, when the <code>qid</code>s inside the included files are visible. The same two phases are used for WMS GetMap, WMTS and OGC API Tiles requests and when building GetCapabilities.
 
 ## Main configuration file
 
@@ -5390,6 +5640,8 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 |---------|-------------|
 | `root` | Root directory for Dali product files.  Customer-specific content lives under `<root>/customers/<customer>/`. |
 | `wms.root` | Root directory for WMS product files.  Separate from `root` to allow different access controls. |
+| `wms.supported_versions` | Comma-separated list of the supported WMS versions, for example `"1.3.0"`. |
+| `wms.supported_references` | The supported CRS references: an `epsg` array of EPSG codes and a `crs` list of other definitions (both are required). |
 | `templates` | Group mapping output type names to CTPP2 template base names (without `.c2t`).  A `default` entry is required. |
 | `regular_attributes` | Array of allowed SVG regular attribute names (see the SVG specification appendix). |
 | `presentation_attributes` | Array of allowed SVG presentation attribute names. |
@@ -5399,20 +5651,28 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `url` | `/dali` | URL path of the native Dali endpoint. |
-| `model` | – | Default querydata producer name. |
-| `language` | – | Default language code. |
-| `languages` | – | Comma-separated list of supported language codes. |
-| `customer` | – | Default customer name. |
-| `primaryForecastSource` | – | Default primary forecast source (`querydata` or `grid`). |
+| `model` | `pal_skandinavia` | Default querydata producer name. |
+| `language` | `en` | Default language code. |
+| `languages` | – | Comma-separated list of supported language codes. The default language is always included. |
+| `customer` | `fmi` | Default customer name. |
+| `primaryForecastSource` | `querydata` | Default primary forecast source (`querydata` or `grid`). If set to an empty string, `grid` is used for producers known to the grid engine. |
 | `template` | `svg` | Default CTPP2 template base name (deprecated in favour of `templates.default`). |
 | `templatedir` | `/usr/share/smartmet/wms` | Directory containing CTPP2 `.c2t` template files. |
 | `css_cache_size` | 1000 | Maximum number of cached CSS stylesheets. |
 | `flash_expiration_seconds` | 30 | Expiration time of images whose flash (lightning) observation window may still receive strokes. |
 | `flash_data_latency_seconds` | 120 | A flash observation window ending this long ago or earlier is considered closed. |
-| `max_image_size` | – | Maximum allowed image area in pixels (width × height). |
+| `max_image_size` | 20971520 | Maximum allowed image area in pixels (width × height). |
+| `featureinfo.location_search_radius` | 50 | Search radius in kilometers for the nearest place name in GetFeatureInfo responses. Zero disables the lookup. |
+| `contour.worker_threads` | 0 | Size of the contouring worker pool of the trax library, as a count or as a percentage of the cores (`"50%"`), capped to the number of cores. Zero disables the pool. |
 | `wms.url` | `/wms` | URL path of the WMS endpoint. |
 | `wms.max_layers` | 10 | Maximum number of WMS layers per GetMap request (DDoS protection). |
 | `wms.quiet` | `false` | If true, suppress WMS error stack traces in the log. Also suppresses the layer metadata update reports. |
+| `wms.margin` | 0 | Default `xmargin` and `ymargin` for WMS GetMap products which do not set them. |
+| `wms.get_capabilities.layout` | `flat` | Default layer hierarchy of GetCapabilities: `flat`, `recursive` or `recursivetimes`. |
+| `wms.get_capabilities.enableintervals` | `false` | List the interval dimensions in GetCapabilities by default. |
+| `wms.get_capabilities.update_interval` | 5 | Interval in seconds between the layer metadata updates. |
+| `wms.get_capabilities.disable_updates` | `false` | Disable the metadata updates after the initial scan. |
+| `wms.get_capabilities.expiration_time` | 60 | Expiration time in seconds of the GetCapabilities responses. |
 | `wms.report_metadata_updates` | `true` | If false, do not log the layer metadata update statistics (the first update, and later updates taking over 5 seconds with the slowest product files). |
 | `wmts.url` | `/wmts` | URL path of the WMTS endpoint. |
 | `wmts.tile_width` | 1024 | Default WMTS tile width. |
@@ -5424,10 +5684,11 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | `openapi.expand_collections` | `true` | Describe each Tiles collection with its own styles and levels, if there are at most `max_enum` collections. |
 | `openapi.max_enum` | 1000 | Longer value lists are left out of the definitions. |
 | `openapi.contact`, `openapi.license` | – | Optional OpenAPI contact (`name`, `url`, `email`) and license (`name`, `url`) groups. |
+| `openapi.map_tiles`, `openapi.map_tile_size`, `openapi.map_attribution` | –, 256, – | Background map of the location maps of the documentation pages. Only the EDR plugin's pages have such maps, so these have no effect here. |
 | `authenticate` | `true` | Enable API-key authentication (requires the authentication engine). |
 | `observation_disabled` | `false` | Disable the observation engine (for deployments without ObsEngine). |
 | `gridengine_disabled` | `false` | Disable the grid engine (for deployments without GridEngine). |
-| `heatmap.max_points` | – | Maximum number of points in a heatmap layer. |
+| `heatmap.max_points` | 4000000 | Maximum number of points in a heatmap layer. |
 
 ### `cache` group
 
@@ -5435,9 +5696,9 @@ Controls the image cache used for binary formats (PNG, WebP, PDF).
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `cache.directory` | – | Filesystem cache directory path. |
-| `cache.memory_bytes` | – | Maximum memory cache size in bytes. |
-| `cache.filesystem_bytes` | – | Maximum filesystem cache size in bytes. |
+| `cache.directory` | `/var/smartmet/imagecache` | Filesystem cache directory path. |
+| `cache.memory_bytes` | 104857600 | Maximum memory cache size in bytes. |
+| `cache.filesystem_bytes` | 209715200 | Maximum filesystem cache size in bytes. |
 
 Both sizes may be given either as an integer (`104857600L`) or as a string with an optional
 unit (`"100M"`, `"100MB"`, `"100 MiB"`).  The unit is case insensitive and all units are
@@ -5460,8 +5721,12 @@ templates:
 
 ### `precision` group
 
-Overrides the default SVG coordinate precision (number of decimal places) per layer type.
-The key `default` sets the fallback.
+Overrides the default SVG coordinate precision (number of decimal places) per output type or
+layer type. A key matching the output type (for example `geojson`) is used first, then a key
+matching the layer type (`isoband`, `isoline`, `map`, `wkt`, `stream`, `circle`, `frame`,
+`graticule`, `icemap`, and `topojson` for isobands in TopoJSON output). The key `default` sets
+the fallback, and without it the precision is 1.0. A layer level `precision` setting overrides
+these.
 
 ```
 precision:

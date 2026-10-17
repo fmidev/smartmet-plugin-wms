@@ -15,7 +15,7 @@ The WMS/Dali plugin offers a convenient way to fetch the
 meteorological, climatological and geographical images over the Web
 using the HTTP protocol. These images can be delivered in several
 formats such as Scalable Vector Graphics(SVG), Portable Network
-Graphics(PNG) and JPEG. As special cases GeoJSON and KML can be requested too, in which case all parts of the generated image apart from the actual geometries will be dropped from the response. The WMS/Dali plugin fetches the image data from the SmartMet Server engines such as QEngine, ObsEngine, GeoEngine, etc.
+Graphics(PNG), WebP and PDF. As special cases GeoJSON and KML can be requested too, in which case all parts of the generated image apart from the actual geometries will be dropped from the response. The WMS/Dali plugin fetches the image data from the SmartMet Server engines such as QEngine, ObsEngine, GeoEngine, etc.
 
 ## WMS plugin 
 
@@ -171,14 +171,25 @@ The WMS configuration root directory is defined in the plugin configuration. The
 ```
 wms:
 {
-   url          = "/wms";
-   root         = "/etc/smartmet/wms";
+   url                = "/wms";
+   root               = "/etc/smartmet/wms";
 
-   versions     = "1.3.0";
-   mapformats   = "image/svg+xml,image/png";
+   supported_versions = "1.3.0";
+
+   get_capabilities:
+   {
+      capability:
+      {
+         request:
+         {
+            getmap: { format = ["image/svg+xml", "image/png"]; ... };
+            ...
+         };
+      };
+   };
 };
 ```
-In `wms` block we define that SmartMet Server responds WMS queries at endpoint `/wms`. It also defines the root directory for WMS configuration at `/etc/smartmet/wms`. The directory structure is discussed at 
+In `wms` block we define that SmartMet Server responds WMS queries at endpoint `/wms`. It also defines the root directory for WMS configuration at `/etc/smartmet/wms`, the supported WMS versions and the supported GetMap output formats. The directory structure is discussed below.
 
 The WMS plugin uses extensive caching which is defined in `cache` block:
 ```
@@ -212,7 +223,7 @@ load that engine in a disabled (dummy) mode or tell the plugin not to use it:
 | Observation | Unless `observation_disabled = true` | Set `observation_disabled = true` in the plugin configuration, or use the engine's dummy mode, as for querydata. |
 | grid | Unless `gridengine_disabled = true` | Set `gridengine_disabled = true` in the plugin configuration. Alternatively, load the engine with `smartmet.engine.grid.enabled = false` in its configuration file. An empty configuration file name is not supported. |
 | Authentication | When `authenticate = true` (the default) | Set `authenticate = false` in the plugin configuration. |
-| Satellite, OSM | Never | Leave the engine out of the server configuration. Satellite layers and OSM map layers are then unavailable. |
+| Satellite, OSM | Never | Leave the engine out of the server configuration. Satellite layers and OSM map layers are then unavailable. The OSM layer is compiled out by default (`-DWITHOUT_OSM` in the Makefile), and the OSM engine is then not used at all. |
 
 Do not use `disabled = true` in the server's `engines` section for an engine the plugin
 requires. That setting stops the server from loading the engine at all, unlike the
@@ -220,7 +231,7 @@ dummy modes above. Each engine's README describes its dummy mode.
 
 ### Layer configuration and directory structure
 
-The layer configuration uses JSON and CSS to define the appearance and properties of the layer. See the [full reference manual](https://github.com/fmidev/smartmet-plugin-wms/wiki/Smartmet-plugin-WMS-(Dali-&-WMS)) for all supported configuration options.
+The layer configuration uses JSON and CSS to define the appearance and properties of the layer. See the [full reference manual](docs/reference.md) for all supported configuration options.
 
 The example configuration directory tree is arranged as follows. The root directory is the same which was defined in the plugin configuration earlier, i.e. `/etc/smartmet/wms`.
 
@@ -264,7 +275,7 @@ A very simple example layer configuration (`customers/ecmwf/products/era15/tempe
 }
 ```
 
-To keep the example straightforward, we are using only one view and layer which are defined in the product JSON in the `views->layers` section. Refer to [the manual](https://github.com/fmidev/smartmet-plugin-wms/wiki/Smartmet-plugin-WMS-(Dali-&-WMS)#views) to see all options for views. In our example we are using [isoband layer](https://github.com/fmidev/smartmet-plugin-wms/wiki/Smartmet-plugin-WMS-(Dali-&-WMS)#isobandlayer) to draw temperature contours from the data.
+To keep the example straightforward, we are using only one view and layer which are defined in the product JSON in the `views->layers` section. Refer to [the manual](docs/reference.md#views) to see all options for views. In our example we are using [isoband layer](docs/reference.md#isobandlayer) to draw temperature contours from the data.
 
 The temperature contour limits are defined in the JSON file defined by `isobands` keyword in the configuration file. Note that all paths in the layer configuration are relative to `customers/ecmwf/layers`. The contour limits are in the form
 

@@ -37,8 +37,8 @@ OGC WMS 1.3.0 compliance via `wms/wms/Handler.cpp`:
 - **GetFeatureInfo** — point-in-image queries returning JSON or HTML.
 - **GetLegendGraphic** — auto-generated legend images per layer.
 - **All proj.4 / proj CRS** supported via GDAL.
-- **Custom dimensions** — time, elevation, ensemble, and any
-  arbitrary named dimension declared in the config.
+- **Dimensions** — time, elevation, reference time (model run) and
+  observation time intervals.
 - **Authentication / authorisation hooks** when the upstream reactor
   enforces them.
 
@@ -83,11 +83,11 @@ and discovered via `LayerFactory`:
 ### Vector data
 - **WKTLayer** — arbitrary geometries from WKT strings.
 - **PostGISLayer** — features from a configured PostGIS database.
-- **OSMLayer** — OpenStreetMap-derived overlays.
+- **OSMLayer** — OpenStreetMap-derived overlays (optional, compiled out by default with `-DWITHOUT_OSM`).
 - **WeatherObjects** + **WeatherFronts** — synoptic objects.
 
 ### Grid / forecast data
-- **GridLayer** — color-mapped grid renderer.
+- **GridLayer** — outlines of the querydata grid cells.
 - **IsobandLayer** / **IsolineLayer** / **IsolabelLayer** — contouring.
 - **RasterLayer** — raw raster overlays.
 - **ArrowLayer** — wind / vector arrows.
@@ -96,6 +96,7 @@ and discovered via `LayerFactory`:
 - **WindRoseLayer** — wind rose diagrams.
 - **HovmoellerLayer** — Hovmöller diagram rendering.
 - **IceMapLayer**, **CloudCeilingLayer**.
+- **SatelliteLayer** — satellite imagery from the satellite engine.
 
 ### Observations
 - **ObservationLayer** — generic obs renderer.
@@ -105,8 +106,8 @@ and discovered via `LayerFactory`:
 
 ### Annotations / decorations
 - **LocationLayer**, **LegendLayer**, **CircleLabels**, **TimeLayer**.
-- **GeoTiffLayer** — embed external GeoTIFFs.
-- **AnimationEffects** — particle / fade animation overlays.
+- **GeoTiffLayer** — raw GeoTIFF output of grid data (no SVG).
+- **AnimationEffects** — hide layers during given animation loop steps.
 
 ## 7. Output formats
 
@@ -114,9 +115,10 @@ Selected via the request's `format` (or `FORMAT` for WMS):
 
 - **SVG** — `image/svg+xml` (the native pipeline).
 - **PNG** — `image/png` (via Cairo / Giza rasterisation of the SVG).
-- **WebP** — `image/webp` (animated WebP supported via `Animation.cpp`).
+- **WebP** — `image/webp` (animated WebP for WMS animations and for
+  observation time animation of flash symbols).
 - **PDF** — `application/pdf`.
-- **JPEG** — via Cairo.
+- **PostScript** — `application/postscript`.
 - **GeoJSON** — vector output (geometry-only, all styling dropped).
 - **KML** — Google Earth XML.
 - **TopoJSON** / **Raw GeoJSON / KML** — `tmpl/rawgeojson.tmpl`,
@@ -174,7 +176,7 @@ Multiple specialised colour painters, each tuned to a domain:
 
 ## 12. Engine integration
 
-The plugin wires to six SmartMet engines:
+The plugin wires to these SmartMet engines:
 
 - **querydata engine** — forecast data (required).
 - **observation engine** — station observations (optional).
@@ -183,6 +185,10 @@ The plugin wires to six SmartMet engines:
 - **contour engine** — isoband and isoline generation.
 - **gis engine** — PostGIS geometry storage and shapefile support.
 - **geonames engine** — place name / location resolution.
+- **avi engine** — METAR messages.
+- **authentication engine** — API keys (optional).
+- **satellite engine** — satellite imagery (optional).
+- **OSM engine** — OpenStreetMap data, only when built without `-DWITHOUT_OSM`.
 
 ## 13. Caching
 
@@ -198,8 +204,10 @@ Multiple caches inside the plugin:
 
 ## 14. Animation
 
-- **Animation.cpp** — frame-based animation pipeline.
-- **AnimationEffects** — particle effects and fade-in/out.
+- **Animation.cpp** — the product level `animation` settings of WMS
+  animations (time steps × loop steps, frame durations), rendered into an
+  animated WebP by the WMS handler.
+- **AnimationEffects** — hiding layers during given loop steps.
 - **WebP-based output** — animated WebP loops.
 - **DataTile animations** — client-side particle systems
   (`WeatherParticles.js`, `WeatherTimeline.js` in companion repos)
@@ -230,11 +238,12 @@ Multiple caches inside the plugin:
 
 Large integration-test suite under `test/`:
 
-- **~488 tests** total (`test/input/*.get`, `test/input/*.post`).
+- **~600 tests** total (`test/input/*.get`).
 - **Group runners**: `make test-dali`, `make test-wms`,
   `make test-wmts`, `make test-tiles`.
-- **Per-test selection**: `make test DALI_TESTS="input/foo.get"` (and
-  the same for `WMS_TESTS` / `WMTS_TESTS` / `TILES_TESTS`).
+- **Per-test selection**: `make test-dali DALI_TESTS="input/foo.get"` (and
+  likewise `test-wms WMS_TESTS=...`, `test-wmts WMTS_TESTS=...`,
+  `test-tiles TILES_TESTS=...`).
 - **Format-aware comparison** — ImageMagick for raster, xmllint for
   XML, jq for JSON, protoc-decode for MVT, rasterisation for SVG.
 - **Failure capture** — `test/failures/` keeps the actual output of
@@ -242,15 +251,18 @@ Large integration-test suite under `test/`:
 - **Bulk update** — `make update-outputs` accepts every failure
   output as the new expected.
 - **Skip list** — `test/input/.testignore`.
-- **Unit tests** — `test/unit/` (Boost.Test, currently label-
-  placement algorithms).
+- **Unit tests** — `test/unit/` (Boost.Test: label placement, isoline
+  filter validation, smoother options, Mapbox styles, MVT geometry etc).
 
 ## 18. Documentation
 
 - **`docs/reference.md`** — Dali product reference.
 - **`docs/labeling_algorithms.md`** — label-placement algorithm notes.
 - **`docs/isolabel_algorithms.md`** — isolabel algorithm notes.
-- **`docs/examples/`** — example product JSON files.
+- **`docs/tutorial.md`** — programmer's tutorial of the rendering pipeline.
+- **`docs/grid-support.md`** — grid engine data access.
+- **`docs/OGC-API-STYLES.md`** — OGC API Styles notes.
+- **`docs/examples/`** — illustrated example requests and outputs.
 - **`docs/images/`** — diagrams used in the documentation.
 
 ## 19. Build & integration

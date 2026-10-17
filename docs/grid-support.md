@@ -15,9 +15,9 @@ Every layer derives from `Properties`, which holds `paraminfo` (`source`, `produ
 
 1. the layer's `"source"` in the product JSON, if given;
 2. otherwise `"grid"` when the plugin configuration has `primaryForecastSource = "grid"`;
-3. otherwise, with no `primaryForecastSource`, `"grid"` if the producer is a grid
-   producer according to `Engine::isGridProducer()`;
-4. otherwise the configured `primaryForecastSource` (empty means querydata).
+3. otherwise, when `primaryForecastSource` is set to an empty string, `"grid"` if the
+   producer is a grid producer according to `Engine::isGridProducer()`;
+4. otherwise the configured `primaryForecastSource` (the default is `"querydata"`).
 
 Each data layer then branches on it, typically in `generate()`:
 
@@ -36,7 +36,8 @@ layers have grid variants too (`GridDataGeoTiff`, `DataTile`). Layers such as
 
 ## The grid path of a layer
 
-The pattern, taking `IsobandLayer::generate_gridEngine()` as the example:
+The pattern, taking `IsobandLayer::generate_gridEngine()` as the example. The repeated
+query blocks are shared helpers in `wms/GridQueryTools.{h,cpp}`:
 
 1. **Build a `QueryServer::Query`** with `QueryServer::QueryConfigurator`, from an
    attribute list of the parameter, producer, times and levels.

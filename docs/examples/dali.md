@@ -2793,7 +2793,7 @@ GET /dali?customer=test&product=graticule_num_edge_center HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `graticule_num_edge_center` | Product JSON: [`test/dali/customers/test/products/graticule_num_edge_center.json`](../../test/dali/customers/test/products/graticule_num_edge_center.json) |
 
-Graticule with `"layout": "edge_center"` — labels placed at the mid-point of each grid line where it intersects the map edge (frame), with a bordered rectangle background.
+Graticule with `"layout": "edge_center"` — each grid line is labelled at the outermost segment mid-points that are inside the map, i.e. next to the map edges, with a bordered rectangle background.
 
 **Output:**
 

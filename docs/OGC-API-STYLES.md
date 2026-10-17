@@ -22,9 +22,7 @@ parses the wms-conf CSS and `declarations(".Class")` returns the concrete
 - **Verified** by compiling against the real `StyleSheet.cpp` and running on a
   real wms-conf product (`weatherapp/Temperature`): **50 levels → 50 class→colour
   match pairs**, valid JSON, `source-layer:"l"`, `version:8`. (Test:
-  `test_mapboxstyle.cpp` in the session scratchpad.)
-- Compiles cleanly: `g++ -I wms test_mapboxstyle.cpp wms/MapboxStyle.cpp
-  wms/StyleSheet.cpp $(pkg-config --cflags --libs jsoncpp) -lboost_regex`.
+  `test/unit/test_mapboxstyle.cpp`.)
 
 ## Integration (wired into `wms/tiles/Handler.cpp`)
 The OGC API - Tiles handler dispatches these routes on `splitTilesPath()`:
@@ -65,8 +63,6 @@ need no styling at all.)
 
 ## Build / deploy / test (for the maintainer)
 ```bash
-# add MapboxStyle.cpp to the wms plugin sources (Makefile picks up wms/*.cpp),
-# wire the routes in tiles/Handler.cpp, then:
 make
 # deploy wms.so to a test server, then:
 curl '.../tiles/collections/fmi:pal:rawtemperature/styles/default?f=mapbox' \

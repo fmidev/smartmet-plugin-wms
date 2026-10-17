@@ -10,7 +10,7 @@ The WMS/Dali plugin for SmartMet Server. It implements OGC Web Map Service (WMS 
 
 ```bash
 make                    # Build wms.so plugin
-make test               # Run all ~520 integration tests (needs Redis + test databases)
+make test               # Run all ~600 integration tests (needs Redis + test databases)
 make test-dali          # Run only Dali tests (non-WMS/WMTS/tiles)
 make test-wms           # Run only WMS tests
 make test-wmts          # Run only WMTS tests
@@ -71,7 +71,8 @@ The generated OpenAPI definitions (`/tiles/api`, `/wmts/api`; `wms/tiles/ApiDefi
 request must match an operation with its enums and declared parameters, so new request
 parameters must be added to the definitions.
 
-Unit tests exist in `test/unit/` (Boost.Test, currently label placement algorithms only).
+Unit tests exist in `test/unit/` (Boost.Test: label placement, isoline filter validation, smoother
+options, subdivide gate, Mapbox styles, MVT geometry and empty layer hashes).
 
 ## Source layout
 
@@ -133,14 +134,15 @@ Required engines (loaded at runtime via SmartMet Server):
 - **Grid** -- grid data (GRIB/NetCDF via Redis)
 - **Contour** -- isoline/isoband generation
 - **GIS** -- PostGIS features, projections, DEM
-- **OSM** -- OpenStreetMap background data
+- **OSM** -- OpenStreetMap background data, optional: the `osm` layer is compiled out
+  (`-DWITHOUT_OSM` in the Makefile)
 - **Geonames** -- location/place name lookup
 
 Optional engines: **Observation**, **Avi** (aviation), **Authentication**
 
 ### Product definitions
 
-Products are JSON files organized as `{root}/customers/{customer}/products/{product}.json`. Layers can be defined inline or referenced via `"json:path/to/layer.json"`. A product contains views, each view contains layers. Layer types include: `isoband`, `isoline`, `isolabel`, `arrow`, `symbol`, `number`, `circle`, `stream`, `map`, `postGIS`, `location`, `time`, `background`, `legend`, `osm`, `raster`, `heatmap`, `weather_fronts`, `wind_rose`, and others.
+Products are JSON files organized as `{root}/customers/{customer}/products/{product}.json`. Layers can be defined inline or referenced via `"json:path/to/layer.json"`. A product contains views, each view contains layers. Layer types include: `isoband`, `isoline`, `isolabel`, `arrow`, `symbol`, `number`, `circle`, `stream`, `map`, `postgis`, `location`, `time`, `background`, `legend`, `raster`, `fronts`, `windrose`, `graticule`, `frame`, and others (see `LayerFactory.cpp`; `osm` only when built without `-DWITHOUT_OSM`).
 
 Dali requests: `?customer=X&product=Y&time=...&type=png`
 
@@ -156,4 +158,4 @@ Multi-level: in-memory image cache (hash-keyed), filesystem cache for templates/
 
 `REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2 configpp webp`
 
-SmartMet libraries linked: `grid-content`, `timeseries`, `spine`, `newbase`, `macgyver`, `gis`, `giza`, `locus`. Also: `heatmap`, `protobuf`, `boost_thread`, `boost_regex`, `boost_iostreams`.
+SmartMet libraries linked: `grid-content`, `grid-files`, `timeseries`, `spine`, `newbase`, `macgyver`, `trax`, `gis`, `giza`, `locus`, `dynlib`. Also: `heatmap`, `protobuf`, `boost_thread`, `boost_regex`, `boost_iostreams`.
