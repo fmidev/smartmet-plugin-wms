@@ -613,6 +613,70 @@ void emit_proj_delta(CTPP::CDT& capa, const ProjMap& pm, const InheritedState& i
   }
 }
 
+// Emit the attributes shared by the group members into the virtual node, and record them
+// in the inherited state of the children
+void emit_shared_attributes(CTPP::CDT& virtual_node,
+                            InheritedState& child_inh,
+                            const LayerGroup& grp,
+                            bool multiple_intervals,
+                            const std::optional<Fmi::DateTime>& starttime,
+                            const std::optional<Fmi::DateTime>& endtime,
+                            const std::optional<Fmi::DateTime>& reference_time,
+                            const InheritedState& inh)
+{
+  // Emit shared attributes into virtual_node. Only update child_inh after
+  // confirming the emit actually produced content — otherwise the children
+  // would inherit a key the virtual node never declared and suppress their
+  // own emission, dropping the dimension from the whole subtree.
+  if (grp.geoSource && !grp.geoKey.empty() && grp.geoKey != inh.geoKey)
+  {
+    emit_geo(virtual_node, *grp.geoSource, inh);
+    if (virtual_node.Exists("ex_geographic_bounding_box"))
+      child_inh.geoKey = grp.geoKey;
+  }
+  if (grp.timeSource && !grp.timeKey.empty() && grp.timeKey != inh.timeKey)
+  {
+    bool ref_time_children = false;  // virtual nodes never have reference_time sublayers directly
+    emit_time(virtual_node,
+              *grp.timeSource,
+              multiple_intervals,
+              starttime,
+              endtime,
+              reference_time,
+              ref_time_children,
+              inh);
+    if (virtual_node.Exists("time_dimension"))
+    {
+      child_inh.timeKey = grp.timeKey;
+      child_inh.timeDimLayer =
+          grp.timeSource->timeDimension ? grp.timeSource->timeDimension->getLayer() : nullptr;
+    }
+  }
+  if (grp.intervalSource && !grp.intervalKey.empty() && grp.intervalKey != inh.intervalKey)
+  {
+    emit_interval(virtual_node, *grp.intervalSource, inh);
+    if (virtual_node.Exists("interval_dimension"))
+      child_inh.intervalKey = grp.intervalKey;
+  }
+  if (grp.elevSource && !grp.elevKey.empty() && grp.elevKey != inh.elevKey)
+  {
+    emit_elev(virtual_node, *grp.elevSource, inh);
+    if (virtual_node.Exists("elevation_dimension"))
+    {
+      child_inh.elevKey = grp.elevKey;
+      child_inh.elevDimLayer = grp.elevSource->elevationDimension
+                                   ? grp.elevSource->elevationDimension->getLayer()
+                                   : nullptr;
+    }
+  }
+  if (!grp.sharedProj.empty())
+  {
+    emit_proj_delta(virtual_node, grp.sharedProj, inh);
+    for (const auto& [crs, val] : grp.sharedProj)
+      child_inh.projDeclared[crs] = val;
+  }
+}
+
 // ----------------------------------------------------------------------
 // VIRTUAL GROUP NODE OUTPUT
 //
@@ -644,57 +708,14 @@ void emit_group(bool multiple_intervals,
 
   if (need_virtual_node)
   {
-    // Emit shared attributes into virtual_node. Only update child_inh after
-    // confirming the emit actually produced content — otherwise the children
-    // would inherit a key the virtual node never declared and suppress their
-    // own emission, dropping the dimension from the whole subtree.
-    if (grp.geoSource && !grp.geoKey.empty() && grp.geoKey != inh.geoKey)
-    {
-      emit_geo(virtual_node, *grp.geoSource, inh);
-      if (virtual_node.Exists("ex_geographic_bounding_box"))
-        child_inh.geoKey = grp.geoKey;
-    }
-    if (grp.timeSource && !grp.timeKey.empty() && grp.timeKey != inh.timeKey)
-    {
-      bool ref_time_children = false;  // virtual nodes never have reference_time sublayers directly
-      emit_time(virtual_node,
-                *grp.timeSource,
-                multiple_intervals,
-                starttime,
-                endtime,
-                reference_time,
-                ref_time_children,
-                inh);
-      if (virtual_node.Exists("time_dimension"))
-      {
-        child_inh.timeKey = grp.timeKey;
-        child_inh.timeDimLayer =
-            grp.timeSource->timeDimension ? grp.timeSource->timeDimension->getLayer() : nullptr;
-      }
-    }
-    if (grp.intervalSource && !grp.intervalKey.empty() && grp.intervalKey != inh.intervalKey)
-    {
-      emit_interval(virtual_node, *grp.intervalSource, inh);
-      if (virtual_node.Exists("interval_dimension"))
-        child_inh.intervalKey = grp.intervalKey;
-    }
-    if (grp.elevSource && !grp.elevKey.empty() && grp.elevKey != inh.elevKey)
-    {
-      emit_elev(virtual_node, *grp.elevSource, inh);
-      if (virtual_node.Exists("elevation_dimension"))
-      {
-        child_inh.elevKey = grp.elevKey;
-        child_inh.elevDimLayer = grp.elevSource->elevationDimension
-                                     ? grp.elevSource->elevationDimension->getLayer()
-                                     : nullptr;
-      }
-    }
-    if (!grp.sharedProj.empty())
-    {
-      emit_proj_delta(virtual_node, grp.sharedProj, inh);
-      for (const auto& [crs, val] : grp.sharedProj)
-        child_inh.projDeclared[crs] = val;
-    }
+    emit_shared_attributes(virtual_node,
+                           child_inh,
+                           grp,
+                           multiple_intervals,
+                           starttime,
+                           endtime,
+                           reference_time,
+                           inh);
 
     bool has_content = virtual_node.Exists("ex_geographic_bounding_box") ||
                        virtual_node.Exists("time_dimension") ||
@@ -727,6 +748,68 @@ void emit_group(bool multiple_intervals,
                    child_inh);
 }
 
+// Base info and styles of a leaf layer
+void base_info(CTPP::CDT& capa,
+               const LayerHierarchy& lh,
+               const std::string& language,
+               const std::string& defaultLanguage)
+{
+  auto baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language, defaultLanguage);
+  if (baseInfo)
+  {
+    if (lh.reference_time)
+    {
+      std::string rt = lh.reference_time->to_iso_string();
+      (*baseInfo)["name"] = (*baseInfo)["name"].GetString() + ":origintime_" + rt;
+      (*baseInfo)["title"] = (*baseInfo)["title"].GetString() + " origintime " + rt;
+    }
+    capa = *baseInfo;
+    auto styles = lh.baseInfoLayer->getLayer()->getStyleInfo(language, defaultLanguage);
+    if (styles)
+      capa.MergeCDT(*styles);
+  }
+}
+
+// The inherited state of the children of a layer after emitting its attributes
+InheritedState children_inherited_state(const LayerHierarchy& lh, const InheritedState& inh)
+{
+  InheritedState child_inh = inh;
+  if (lh.geographicBoundingBox)
+  {
+    std::string k = geo_key(lh);
+    if (!k.empty() && k != inh.geoKey)
+      child_inh.geoKey = k;
+  }
+  if (lh.timeDimension)
+  {
+    std::string k = time_key(lh);
+    if (!k.empty() && k != inh.timeKey)
+    {
+      child_inh.timeKey = k;
+      child_inh.timeDimLayer = lh.timeDimension->getLayer();
+    }
+    std::string ik = interval_key(lh);
+    if (!ik.empty() && ik != inh.intervalKey)
+      child_inh.intervalKey = ik;
+  }
+  if (lh.elevationDimension)
+  {
+    std::string k = elev_key(lh);
+    if (!k.empty() && k != inh.elevKey)
+    {
+      child_inh.elevKey = k;
+      child_inh.elevDimLayer = lh.elevationDimension->getLayer();
+    }
+  }
+  if (lh.projectedBoundingBox)
+  {
+    ProjMap pm = proj_map(lh);
+    for (const auto& [crs, val] : pm)
+      child_inh.projDeclared[crs] = val;
+  }
+  return child_inh;
+}
+
 // ----------------------------------------------------------------------
 // MAIN OUTPUT FUNCTION
 // ----------------------------------------------------------------------
@@ -748,22 +831,7 @@ void add_layer_info(bool multiple_intervals,
 
   // ---- base info ----
   if (lh.sublayers.empty() && lh.baseInfoLayer)
-  {
-    auto baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language, defaultLanguage);
-    if (baseInfo)
-    {
-      if (lh.reference_time)
-      {
-        std::string rt = lh.reference_time->to_iso_string();
-        (*baseInfo)["name"] = (*baseInfo)["name"].GetString() + ":origintime_" + rt;
-        (*baseInfo)["title"] = (*baseInfo)["title"].GetString() + " origintime " + rt;
-      }
-      capa = *baseInfo;
-      auto styles = lh.baseInfoLayer->getLayer()->getStyleInfo(language, defaultLanguage);
-      if (styles)
-        capa.MergeCDT(*styles);
-    }
-  }
+    base_info(capa, lh, language, defaultLanguage);
   else
   {
     capa["title"] = lh.name;
@@ -813,40 +881,7 @@ void add_layer_info(bool multiple_intervals,
   CTPP::CDT& sublayer_target = ctpp[ctpp.Size() - 1]["sublayers"];
 
   // Build updated InheritedState for children based on what we just emitted
-  InheritedState child_inh = inh;
-  if (lh.geographicBoundingBox)
-  {
-    std::string k = geo_key(lh);
-    if (!k.empty() && k != inh.geoKey)
-      child_inh.geoKey = k;
-  }
-  if (lh.timeDimension)
-  {
-    std::string k = time_key(lh);
-    if (!k.empty() && k != inh.timeKey)
-    {
-      child_inh.timeKey = k;
-      child_inh.timeDimLayer = lh.timeDimension->getLayer();
-    }
-    std::string ik = interval_key(lh);
-    if (!ik.empty() && ik != inh.intervalKey)
-      child_inh.intervalKey = ik;
-  }
-  if (lh.elevationDimension)
-  {
-    std::string k = elev_key(lh);
-    if (!k.empty() && k != inh.elevKey)
-    {
-      child_inh.elevKey = k;
-      child_inh.elevDimLayer = lh.elevationDimension->getLayer();
-    }
-  }
-  if (lh.projectedBoundingBox)
-  {
-    ProjMap pm = proj_map(lh);
-    for (const auto& [crs, val] : pm)
-      child_inh.projDeclared[crs] = val;
-  }
+  const InheritedState child_inh = children_inherited_state(lh, inh);
 
   // Group children and emit, possibly with virtual group nodes
   auto groups = group_children(lh.sublayers);
