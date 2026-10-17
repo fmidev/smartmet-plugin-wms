@@ -30,6 +30,17 @@ class CloudCeilingLayer : public NumberLayer
   //  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
  private:
+  void addStations(Engine::Observation::Settings& settings,
+                   const State& state,
+                   const Fmi::SpatialReference& crs,
+                   const Fmi::Box& box) const;
+  std::optional<PointData> ceilingPoint(const TS::TimeSeriesVector& values,
+                                        std::size_t row,
+                                        double lon,
+                                        double lat,
+                                        const Fmi::SpatialReference& crs,
+                                        const Fmi::CoordinateTransformation& transformation,
+                                        const Fmi::Box& box) const;
   std::vector<PointData> readObservations(const State& state,
                                           const Fmi::SpatialReference& crs,
                                           const Fmi::Box& box,

@@ -24,6 +24,117 @@ namespace Dali
 {
 using PointValues = std::vector<PointData>;
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the stations by keyword, fmisids or the bounding box to the settings
+ */
+// ----------------------------------------------------------------------
+
+void CloudCeilingLayer::addStations(Engine::Observation::Settings& settings,
+                                    const State& state,
+                                    const Fmi::SpatialReference& crs,
+                                    const Fmi::Box& box) const
+{
+  auto& obsengine = state.getObsEngine();
+
+  // Check keyword
+  if (!itsKeyword.empty())
+  {
+    const auto& geoengine = state.getGeoEngine();
+    Locus::QueryOptions options;
+    auto locations = geoengine.keywordSearch(options, itsKeyword);
+
+    for (const auto& loc : locations)
+    {
+      if (loc->fmisid)
+      {
+        if (loc->longitude >= box.xmin() && loc->longitude <= box.xmax() &&
+            loc->latitude >= box.ymin() && loc->latitude <= box.ymax())
+          settings.taggedFMISIDs.emplace_back(Fmi::to_string(*loc->fmisid), *loc->fmisid);
+      }
+    }
+  }
+
+  // Check fmisid
+  if (settings.taggedFMISIDs.empty() && !itsFMISIDs.empty())
+  {
+    for (const auto& fmisid : itsFMISIDs)
+      settings.taggedFMISIDs.emplace_back(Fmi::to_string(fmisid), fmisid);
+  }
+
+  // Get stations using bounding box
+  if (settings.taggedFMISIDs.empty())
+  {
+    // Coordinates or bounding box
+    Engine::Observation::StationSettings stationSettings;
+    stationSettings.bounding_box_settings = getClipBoundingBox(box, crs);
+    settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief The point of the lowest cloud layer with at least 5/8 coverage, if any
+ */
+// ----------------------------------------------------------------------
+
+std::optional<PointData> CloudCeilingLayer::ceilingPoint(
+    const TS::TimeSeriesVector& values,
+    std::size_t row,
+    double lon,
+    double lat,
+    const Fmi::SpatialReference& crs,
+    const Fmi::CoordinateTransformation& transformation,
+    const Fmi::Box& box) const
+{
+  std::vector<double> cla_values;
+  std::vector<double> clhb_values;
+  cla_values.push_back(get_double(values.at(2).at(row)));
+  cla_values.push_back(get_double(values.at(3).at(row)));
+  cla_values.push_back(get_double(values.at(4).at(row)));
+  cla_values.push_back(get_double(values.at(5).at(row)));
+  cla_values.push_back(get_double(values.at(6).at(row)));
+  clhb_values.push_back(get_double(values.at(7).at(row)));
+  clhb_values.push_back(get_double(values.at(8).at(row)));
+  clhb_values.push_back(get_double(values.at(9).at(row)));
+  clhb_values.push_back(get_double(values.at(10).at(row)));
+  clhb_values.push_back(get_double(values.at(11).at(row)));
+  for (std::size_t i = 0; i < 5; i++)
+  {
+    auto cla_val = cla_values.at(i);
+    auto clhb_val = clhb_values.at(i);
+
+    if (clhb_val == kFloatMissing)
+      continue;
+    if (cla_val >= 5 && cla_val <= 9)
+    {
+      auto x = lon;
+      auto y = lat;
+
+      auto value = clhb_val;
+
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
+          break;
+
+      // To pixel coordinate
+      box.transform(x, y);
+
+      // Skip if not inside desired area
+      if (!inside(box, x, y))
+        break;
+
+      int xpos = lround(x);
+      int ypos = lround(y);
+
+      Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+      PointData pv{point, value};
+      return pv;
+    }
+  }
+  return std::nullopt;
+}
+
 PointValues CloudCeilingLayer::readObservations(const State& state,
                                                 const Fmi::SpatialReference& crs,
                                                 const Fmi::Box& box,
@@ -69,39 +180,7 @@ PointValues CloudCeilingLayer::readObservations(const State& state,
     settings.debug_options = (debug && Fmi::stoi(*debug) > 0);
 
     // GetFMISIDs
-    // Check keyword
-    if (!itsKeyword.empty())
-    {
-      const auto& geoengine = state.getGeoEngine();
-      Locus::QueryOptions options;
-      auto locations = geoengine.keywordSearch(options, itsKeyword);
-
-      for (const auto& loc : locations)
-      {
-        if (loc->fmisid)
-        {
-          if (loc->longitude >= box.xmin() && loc->longitude <= box.xmax() &&
-              loc->latitude >= box.ymin() && loc->latitude <= box.ymax())
-            settings.taggedFMISIDs.emplace_back(Fmi::to_string(*loc->fmisid), *loc->fmisid);
-        }
-      }
-    }
-
-    // Check fmisid
-    if (settings.taggedFMISIDs.empty() && !itsFMISIDs.empty())
-    {
-      for (const auto& fmisid : itsFMISIDs)
-        settings.taggedFMISIDs.emplace_back(Fmi::to_string(fmisid), fmisid);
-    }
-
-    // Get stations using bounding box
-    if (settings.taggedFMISIDs.empty())
-    {
-      // Coordinates or bounding box
-      Engine::Observation::StationSettings stationSettings;
-      stationSettings.bounding_box_settings = getClipBoundingBox(box, crs);
-      settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
-    }
+    addStations(settings, state, crs, box);
 
     auto result = obsengine.values(settings);
 
@@ -123,53 +202,9 @@ PointValues CloudCeilingLayer::readObservations(const State& state,
     {
       double lon = get_double(values.at(0).at(row));
       double lat = get_double(values.at(1).at(row));
-      std::vector<double> cla_values;
-      std::vector<double> clhb_values;
-      cla_values.push_back(get_double(values.at(2).at(row)));
-      cla_values.push_back(get_double(values.at(3).at(row)));
-      cla_values.push_back(get_double(values.at(4).at(row)));
-      cla_values.push_back(get_double(values.at(5).at(row)));
-      cla_values.push_back(get_double(values.at(6).at(row)));
-      clhb_values.push_back(get_double(values.at(7).at(row)));
-      clhb_values.push_back(get_double(values.at(8).at(row)));
-      clhb_values.push_back(get_double(values.at(9).at(row)));
-      clhb_values.push_back(get_double(values.at(10).at(row)));
-      clhb_values.push_back(get_double(values.at(11).at(row)));
-      for (std::size_t i = 0; i < 5; i++)
-      {
-        auto cla_val = cla_values.at(i);
-        auto clhb_val = clhb_values.at(i);
-
-        if (clhb_val == kFloatMissing)
-          continue;
-        if (cla_val >= 5 && cla_val <= 9)
-        {
-          auto x = lon;
-          auto y = lat;
-
-          auto value = clhb_val;
-
-          if (!crs.isGeographic())
-            if (!transformation.transform(x, y))
-              break;
-
-          // To pixel coordinate
-          box.transform(x, y);
-
-          // Skip if not inside desired area
-          if (!inside(box, x, y))
-            break;
-
-          int xpos = lround(x);
-          int ypos = lround(y);
-
-          Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-          PointData pv{point, value};
-
-          pointvalues.push_back(pv);
-          break;
-        }
-      }
+      auto point = ceilingPoint(values, row, lon, lat, crs, transformation, box);
+      if (point)
+        pointvalues.push_back(*point);
     }
 
     return pointvalues;
@@ -274,11 +309,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
@@ -311,97 +342,13 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Symbols first
 
-    for (const auto& pointvalue : pointvalues)
-    {
-      // Start generating the hash
-
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-
-      const auto& point = pointvalue.point();
-      float value = pointvalue[0];
-
-      if (value != kFloatMissing)
-        value = xmultiplier * value + xoffset;
-
-      std::string iri;
-      if (symbol)
-        iri = *symbol;
-
-      auto selection = Select::attribute(numbers, value);
-      if (selection && selection->symbol)
-        iri = *selection->symbol;
-
-      // librsvg cannot handle scale + transform, must move former into latter
-      std::optional<double> rescale;
-      if (selection)
-      {
-        auto scaleattr = selection->attributes.remove("scale");
-        if (scaleattr)
-          rescale = Fmi::stod(*scaleattr);
-      }
-
-      if (!iri.empty())
-      {
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        // Lack of CSS3 transform support forces us to use a direct transformation
-        // which may override user settings
-        tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
-
-        std::string tmp = fmt::sprintf("translate(%d,%d)", point.x, point.y);
-
-        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
-        if (newscale != 1.0)
-          tmp += fmt::sprintf(" scale(%g)", newscale);
-
-        tag_cdt["attributes"]["transform"] = tmp;
-
-        group_cdt["tags"].PushBack(tag_cdt);
-      }
-    }
+    addSymbols(theGlobals, group_cdt, theState, pointvalues, xmultiplier, xoffset);
     theLayersCdt.PushBack(group_cdt);
 
     // Then numbers
 
-    int valid_count = 0;
-    for (const auto& pointvalue : pointvalues)
-    {
-      const auto& point = pointvalue.point();
-      float value = pointvalue[0];
-
-      if (value != kFloatMissing)
-      {
-        ++valid_count;
-        value = xmultiplier * value + xoffset;
-      }
-
-      std::string txt = label.print(value);
-
-      if (!txt.empty())
-      {
-        // Generate a text tag
-        CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-        text_cdt["start"] = "<text";
-        text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = Fmi::safexmlescape(txt);
-
-        auto selection = Select::attribute(numbers, value);
-
-        if (selection)
-        {
-          selection->attributes.remove("scale");
-          theState.addAttributes(theGlobals, text_cdt, selection->attributes);
-        }
-
-        text_cdt["attributes"]["x"] = Fmi::to_string(point.x + point.dx + label.dx);
-        text_cdt["attributes"]["y"] = Fmi::to_string(point.y + point.dy + label.dy);
-        theLayersCdt.PushBack(text_cdt);
-      }
-    }
+    int valid_count =
+        addNumbers(theGlobals, theLayersCdt, theState, pointvalues, xmultiplier, xoffset);
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in number layer")

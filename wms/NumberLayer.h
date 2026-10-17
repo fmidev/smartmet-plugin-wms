@@ -67,7 +67,7 @@ class NumberLayer : public Layer
 
   std::vector<AttributeSelection> numbers;
 
- private:
+ protected:
   void addSymbols(CTPP::CDT& theGlobals,
                   CTPP::CDT& group_cdt,
                   State& theState,
@@ -80,6 +80,8 @@ class NumberLayer : public Layer
                  const std::vector<PointData>& pointvalues,
                  double xmultiplier,
                  double xoffset) const;
+
+ private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
