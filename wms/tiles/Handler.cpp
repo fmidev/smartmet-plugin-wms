@@ -1003,6 +1003,26 @@ namespace
 // Collect every styleable (isoband/isoline) Dali layer in the resolved product,
 // depth-first in document order, into MapboxStyleLayer specs. The MVT source-
 // layer is the Dali layer qid (falling back to the parameter, then "l").
+// Style layer specification of an isoband or isoline layer
+Dali::MapboxStyleLayer style_layer(const Json::Value& node, bool isoband, Dali::State& theState)
+{
+  Dali::MapboxStyleLayer spec;
+  spec.geometry = isoband ? Dali::MapboxStyleLayer::Geometry::Isoband
+                          : Dali::MapboxStyleLayer::Geometry::Isoline;
+  spec.levels = isoband ? node["isobands"] : node["isolines"];
+  if (node.isMember("parameter") && node["parameter"].isString())
+    spec.parameter = node["parameter"].asString();
+  if (node.isMember("qid") && node["qid"].isString() && !node["qid"].asString().empty())
+    spec.sourceLayer = node["qid"].asString();
+  else if (!spec.parameter.empty())
+    spec.sourceLayer = spec.parameter;
+  else
+    spec.sourceLayer = "l";
+  if (node.isMember("css") && node["css"].isString())
+    spec.css = theState.getStyle(node["css"].asString());
+  return spec;
+}
+
 void collectStyleLayers(const Json::Value& node,
                         Dali::State& theState,
                         std::vector<Dali::MapboxStyleLayer>& out)
@@ -1018,21 +1038,7 @@ void collectStyleLayers(const Json::Value& node,
         (type == "isoline" && node.isMember("isolines") && node["isolines"].isArray());
     if (isoband || isoline)
     {
-      Dali::MapboxStyleLayer spec;
-      spec.geometry = isoband ? Dali::MapboxStyleLayer::Geometry::Isoband
-                              : Dali::MapboxStyleLayer::Geometry::Isoline;
-      spec.levels = isoband ? node["isobands"] : node["isolines"];
-      if (node.isMember("parameter") && node["parameter"].isString())
-        spec.parameter = node["parameter"].asString();
-      if (node.isMember("qid") && node["qid"].isString() && !node["qid"].asString().empty())
-        spec.sourceLayer = node["qid"].asString();
-      else if (!spec.parameter.empty())
-        spec.sourceLayer = spec.parameter;
-      else
-        spec.sourceLayer = "l";
-      if (node.isMember("css") && node["css"].isString())
-        spec.css = theState.getStyle(node["css"].asString());
-      out.push_back(std::move(spec));
+      out.push_back(style_layer(node, isoband, theState));
       // An isoband/isoline layer has no styleable children — don't recurse into it.
       return;
     }
