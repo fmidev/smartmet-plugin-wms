@@ -80,6 +80,318 @@ bool isWeatherToken(const std::string& tok)
   return boost::regex_match(tok, re);
 }
 
+// Skip the type prefix, the station ICAO code and the time group
+std::size_t skip_metar_header(const std::vector<std::string>& tokens, MetarData& d)
+{
+  std::size_t idx = 0;
+
+  // Skip type prefix: METAR / SPECI / AUTO / COR
+  if (idx < tokens.size() && (tokens[idx] == "METAR" || tokens[idx] == "SPECI"))
+    ++idx;
+  while (idx < tokens.size() &&
+         (tokens[idx] == "AUTO" || tokens[idx] == "COR" || tokens[idx] == "NIL"))
+    ++idx;
+
+  // Station ICAO
+  if (idx < tokens.size() && tokens[idx].size() == 4 && std::isalpha(tokens[idx][0]))
+  {
+    d.icao = tokens[idx];
+    ++idx;
+  }
+
+  // Time group: DDHHMMz
+  if (idx < tokens.size())
+  {
+    static const boost::regex time_re(R"(^\d{6}Z$)");
+    if (boost::regex_match(tokens[idx], time_re))
+      ++idx;
+  }
+
+  // Possibly more AUTO/COR/NIL
+  while (idx < tokens.size() &&
+         (tokens[idx] == "AUTO" || tokens[idx] == "COR" || tokens[idx] == "NIL"))
+    ++idx;
+  return idx;
+}
+
+// Compiled regexes for token identification
+struct MetarRegexes
+{
+  boost::regex wind_re{R"(^(VRB|\d{3})(\d{2,3})(G(\d{2,3}))?KT$)"};
+  boost::regex vis4_re{R"(^(\d{4})$)"};
+  boost::regex rvr_re{R"(^R\d{2}[LCR]?/.+$)"};
+  boost::regex cloud_re{R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)"};
+  boost::regex vv_re{R"(^VV(\d{3}|///)$)"};
+  boost::regex tempdew_re{R"(^(M?\d{2})/(M?\d{2})$)"};
+  boost::regex qnh_re{R"(^Q(\d{4})$)"};
+  boost::regex alt_re{R"(^A(\d{4})$)"};
+  boost::regex varwind_re{R"(^\d{3}V\d{3}$)"};
+};
+
+const MetarRegexes& metar_regexes()
+{
+  static const MetarRegexes regexes;
+  return regexes;
+}
+
+// State machine states
+enum class ParseState
+{
+  Wind,
+  Vis,
+  RVR,
+  WX,
+  Clouds,
+  TempDew,
+  Done
+};
+
+// The token handlers below return true if the token was consumed, false if the
+// token should be passed on to the handler of the next state
+
+void set_cavok(MetarData& d, ParseState& state)
+{
+  d.is_cavok = true;
+  d.has_visibility = true;
+  d.visibility = 9999;
+  state = ParseState::TempDew;
+}
+
+// QNH or altimeter setting
+bool parse_pressure(const std::string& t, MetarData& d, const MetarRegexes& re)
+{
+  boost::smatch m;
+  if (boost::regex_match(t, m, re.qnh_re))
+  {
+    d.has_pressure = true;
+    d.pressure = std::stoi(m[1].str());
+    return true;
+  }
+  if (boost::regex_match(t, m, re.alt_re))
+  {
+    double inHg = std::stod(m[1].str()) / 100.0;
+    d.has_pressure = true;
+    d.pressure = static_cast<int>(std::round(inHg * 33.8639));
+    return true;
+  }
+  return false;
+}
+
+// Vertical visibility
+bool parse_vertical_visibility(const std::string& t,
+                               MetarData& d,
+                               ParseState& state,
+                               const MetarRegexes& re)
+{
+  boost::smatch m;
+  if (!boost::regex_match(t, m, re.vv_re))
+    return false;
+  const std::string& vv = m[1].str();
+  if (vv != "///")
+  {
+    d.has_vertical_vis = true;
+    d.vertical_vis_hft = std::stoi(vv);
+  }
+  state = ParseState::TempDew;
+  return true;
+}
+
+bool parse_cloud(const std::string& t, MetarData& d, const MetarRegexes& re)
+{
+  if (!boost::regex_match(t, re.cloud_re))
+    return false;
+  MetarData::CloudLayer cl;
+  parseCloudToken(t, cl);
+  d.clouds.push_back(cl);
+  return true;
+}
+
+bool is_skc(const std::string& t)
+{
+  return (t == "SKC" || t == "CLR" || t == "NSC" || t == "NCD");
+}
+
+bool handle_wind(const std::string& t, MetarData& d, ParseState& state, const MetarRegexes& re)
+{
+  if (t == "CAVOK")
+  {
+    set_cavok(d, state);
+    return true;
+  }
+  boost::smatch m;
+  if (boost::regex_match(t, m, re.wind_re))
+  {
+    d.has_wind = true;
+    d.wind_variable = (m[1].str() == "VRB");
+    if (!d.wind_variable)
+      d.wind_direction = std::stoi(m[1].str());
+    d.wind_speed = std::stoi(m[2].str());
+    if (m[4].matched)
+    {
+      d.has_gust = true;
+      d.wind_gust = std::stoi(m[4].str());
+    }
+    state = ParseState::Vis;
+    return true;
+  }
+  // wind direction variability group is skipped, otherwise the token
+  // doesn't look like wind – fall through to Vis
+  return boost::regex_match(t, re.varwind_re);
+}
+
+bool handle_visibility(const std::string& t,
+                       MetarData& d,
+                       ParseState& state,
+                       const MetarRegexes& re)
+{
+  if (t == "CAVOK")
+  {
+    set_cavok(d, state);
+    return true;
+  }
+  if (t == "9999")
+  {
+    d.has_visibility = true;
+    d.visibility = 9999;
+    state = ParseState::RVR;
+    return true;
+  }
+  boost::smatch m;
+  if (boost::regex_match(t, m, re.vis4_re))
+  {
+    d.has_visibility = true;
+    d.visibility = std::min(std::stoi(m[1].str()), 9999);
+    state = ParseState::RVR;
+    return true;
+  }
+  // Unrecognised visibility token; advance state and fall through
+  state = ParseState::RVR;
+  return false;
+}
+
+bool handle_rvr(const std::string& t, ParseState& state, const MetarRegexes& re)
+{
+  if (boost::regex_match(t, re.rvr_re))
+    return true;  // skip RVR groups
+  state = ParseState::WX;
+  return false;
+}
+
+bool handle_tempdew(const std::string& t, MetarData& d, ParseState& state, const MetarRegexes& re)
+{
+  boost::smatch m;
+  if (boost::regex_match(t, m, re.tempdew_re))
+  {
+    auto parse_td = [](const std::string& s) -> int
+    {
+      bool neg = (!s.empty() && s[0] == 'M');
+      int v = std::stoi(s.substr(neg ? 1 : 0));
+      return neg ? -v : v;
+    };
+    d.has_temperature = true;
+    d.temperature = parse_td(m[1].str());
+    d.has_dewpoint = true;
+    d.dewpoint = parse_td(m[2].str());
+    state = ParseState::Done;
+    return true;
+  }
+  parse_pressure(t, d, re);
+  return true;
+}
+
+bool handle_weather(const std::string& t, MetarData& d, ParseState& state, const MetarRegexes& re)
+{
+  if (is_skc(t))
+  {
+    d.is_skc = true;
+    state = ParseState::Clouds;
+    return true;
+  }
+  if (parse_vertical_visibility(t, d, state, re))
+    return true;
+  if (boost::regex_match(t, re.cloud_re))
+  {
+    state = ParseState::Clouds;
+    return parse_cloud(t, d, re);
+  }
+  if (boost::regex_match(t, re.tempdew_re))
+  {
+    state = ParseState::TempDew;
+    return handle_tempdew(t, d, state, re);
+  }
+  if (isWeatherToken(t) && d.weather_tokens.size() < 3)
+  {
+    d.weather_tokens.push_back(t);
+    return true;
+  }
+  // Might be a cloud or temp group appearing without expected WX
+  state = ParseState::Clouds;
+  return false;
+}
+
+bool handle_clouds(const std::string& t, MetarData& d, ParseState& state, const MetarRegexes& re)
+{
+  if (is_skc(t))
+  {
+    d.is_skc = true;
+    return true;
+  }
+  if (parse_vertical_visibility(t, d, state, re))
+    return true;
+  if (parse_cloud(t, d, re))
+    return true;
+  // Check for temp/dew appearing right after clouds
+  if (boost::regex_match(t, re.tempdew_re))
+  {
+    state = ParseState::TempDew;
+    return handle_tempdew(t, d, state, re);
+  }
+  // Try QNH too
+  if (parse_pressure(t, d, re))
+    return true;
+  state = ParseState::TempDew;
+  return false;
+}
+
+// Process one token. An unrecognised token is passed on to the handlers of the
+// subsequent states in order.
+void parse_metar_token(const std::string& t,
+                       MetarData& d,
+                       ParseState& state,
+                       const MetarRegexes& re)
+{
+  switch (state)
+  {
+    case ParseState::Wind:
+      if (handle_wind(t, d, state, re))
+        return;
+      [[fallthrough]];
+    case ParseState::Vis:
+      if (handle_visibility(t, d, state, re))
+        return;
+      [[fallthrough]];
+    case ParseState::RVR:
+      if (handle_rvr(t, state, re))
+        return;
+      [[fallthrough]];
+    case ParseState::WX:
+      if (handle_weather(t, d, state, re))
+        return;
+      [[fallthrough]];
+    case ParseState::Clouds:
+      if (handle_clouds(t, d, state, re))
+        return;
+      [[fallthrough]];
+    case ParseState::TempDew:
+      handle_tempdew(t, d, state, re);
+      return;
+    case ParseState::Done:
+      // Check for QNH that appears after temp/dew
+      parse_pressure(t, d, re);
+      return;
+  }
+}
+
 }  // namespace
 
 // ======================================================================
@@ -320,52 +632,11 @@ MetarData MetarLayer::parseTAC(const std::string& message,
   if (tokens.empty())
     return d;
 
-  std::size_t idx = 0;
+  std::size_t idx = skip_metar_header(tokens, d);
 
-  // Skip type prefix: METAR / SPECI / AUTO / COR
-  if (idx < tokens.size() &&
-      (tokens[idx] == "METAR" || tokens[idx] == "SPECI"))
-    ++idx;
-  while (idx < tokens.size() &&
-         (tokens[idx] == "AUTO" || tokens[idx] == "COR" || tokens[idx] == "NIL"))
-    ++idx;
+  const auto& re = metar_regexes();
 
-  // Station ICAO
-  if (idx < tokens.size() && tokens[idx].size() == 4 && std::isalpha(tokens[idx][0]))
-  {
-    d.icao = tokens[idx];
-    ++idx;
-  }
-
-  // Time group: DDHHMMz
-  if (idx < tokens.size())
-  {
-    static const boost::regex time_re(R"(^\d{6}Z$)");
-    if (boost::regex_match(tokens[idx], time_re))
-      ++idx;
-  }
-
-  // Possibly more AUTO/COR/NIL
-  while (idx < tokens.size() &&
-         (tokens[idx] == "AUTO" || tokens[idx] == "COR" || tokens[idx] == "NIL"))
-    ++idx;
-
-  // Compiled regexes for token identification
-  static const boost::regex wind_re(R"(^(VRB|\d{3})(\d{2,3})(G(\d{2,3}))?KT$)");
-  static const boost::regex vis4_re(R"(^(\d{4})$)");
-  static const boost::regex rvr_re(R"(^R\d{2}[LCR]?/.+$)");
-  static const boost::regex cloud_re(R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)");
-  static const boost::regex vv_re(R"(^VV(\d{3}|///)$)");
-  static const boost::regex tempdew_re(R"(^(M?\d{2})/(M?\d{2})$)");
-  static const boost::regex qnh_re(R"(^Q(\d{4})$)");
-  static const boost::regex alt_re(R"(^A(\d{4})$)");
-  static const boost::regex varwind_re(R"(^\d{3}V\d{3}$)");
-
-  // State machine
-  enum class S { Wind, Vis, RVR, WX, Clouds, TempDew, Done };
-  S state = S::Wind;
-
-  boost::smatch m;
+  ParseState state = ParseState::Wind;
 
   for (; idx < tokens.size(); ++idx)
   {
@@ -376,210 +647,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
         t == "INTER")
       break;
 
-    switch (state)
-    {
-      // ----------------------------------------------------------
-      case S::Wind:
-        if (t == "CAVOK")
-        {
-          d.is_cavok = true;
-          d.has_visibility = true;
-          d.visibility = 9999;
-          state = S::TempDew;
-          break;
-        }
-        if (boost::regex_match(t, m, wind_re))
-        {
-          d.has_wind = true;
-          d.wind_variable = (m[1].str() == "VRB");
-          if (!d.wind_variable)
-            d.wind_direction = std::stoi(m[1].str());
-          d.wind_speed = std::stoi(m[2].str());
-          if (m[4].matched)
-          {
-            d.has_gust = true;
-            d.wind_gust = std::stoi(m[4].str());
-          }
-          state = S::Vis;
-          break;
-        }
-        if (boost::regex_match(t, varwind_re))
-          break;  // wind direction variability group, skip
-        // Token doesn't look like wind – fall through to Vis
-        [[fallthrough]];
-
-      // ----------------------------------------------------------
-      case S::Vis:
-        if (t == "CAVOK")
-        {
-          d.is_cavok = true;
-          d.has_visibility = true;
-          d.visibility = 9999;
-          state = S::TempDew;
-          break;
-        }
-        if (t == "9999")
-        {
-          d.has_visibility = true;
-          d.visibility = 9999;
-          state = S::RVR;
-          break;
-        }
-        if (boost::regex_match(t, m, vis4_re))
-        {
-          d.has_visibility = true;
-          d.visibility = std::min(std::stoi(m[1].str()), 9999);
-          state = S::RVR;
-          break;
-        }
-        // Unrecognised visibility token; advance state and fall through
-        state = S::RVR;
-        [[fallthrough]];
-
-      // ----------------------------------------------------------
-      case S::RVR:
-        if (boost::regex_match(t, rvr_re))
-          break;  // skip RVR groups
-        state = S::WX;
-        [[fallthrough]];
-
-      // ----------------------------------------------------------
-      case S::WX:
-        if (t == "SKC" || t == "CLR" || t == "NSC" || t == "NCD")
-        {
-          d.is_skc = true;
-          state = S::Clouds;
-          break;
-        }
-        if (boost::regex_match(t, m, vv_re))
-        {
-          const std::string& vv = m[1].str();
-          if (vv != "///")
-          {
-            d.has_vertical_vis = true;
-            d.vertical_vis_hft = std::stoi(vv);
-          }
-          state = S::TempDew;
-          break;
-        }
-        if (boost::regex_match(t, cloud_re))
-        {
-          state = S::Clouds;
-          MetarData::CloudLayer cl;
-          parseCloudToken(t, cl);
-          d.clouds.push_back(cl);
-          break;
-        }
-        if (boost::regex_match(t, tempdew_re))
-        {
-          state = S::TempDew;
-          goto handle_tempdew;
-        }
-        if (isWeatherToken(t) && d.weather_tokens.size() < 3)
-        {
-          d.weather_tokens.push_back(t);
-          break;
-        }
-        // Might be a cloud or temp group appearing without expected WX
-        state = S::Clouds;
-        [[fallthrough]];
-
-      // ----------------------------------------------------------
-      case S::Clouds:
-        if (t == "SKC" || t == "CLR" || t == "NSC" || t == "NCD")
-        {
-          d.is_skc = true;
-          break;
-        }
-        if (boost::regex_match(t, m, vv_re))
-        {
-          const std::string& vv = m[1].str();
-          if (vv != "///")
-          {
-            d.has_vertical_vis = true;
-            d.vertical_vis_hft = std::stoi(vv);
-          }
-          state = S::TempDew;
-          break;
-        }
-        if (boost::regex_match(t, cloud_re))
-        {
-          MetarData::CloudLayer cl;
-          parseCloudToken(t, cl);
-          d.clouds.push_back(cl);
-          break;
-        }
-        // Check for temp/dew appearing right after clouds
-        if (boost::regex_match(t, tempdew_re))
-        {
-          state = S::TempDew;
-          goto handle_tempdew;
-        }
-        // Try QNH too
-        if (boost::regex_match(t, m, qnh_re))
-        {
-          d.has_pressure = true;
-          d.pressure = std::stoi(m[1].str());
-          break;
-        }
-        if (boost::regex_match(t, m, alt_re))
-        {
-          double inHg = std::stod(m[1].str()) / 100.0;
-          d.has_pressure = true;
-          d.pressure = static_cast<int>(std::round(inHg * 33.8639));
-          break;
-        }
-        state = S::TempDew;
-        [[fallthrough]];
-
-      // ----------------------------------------------------------
-      case S::TempDew:
-      handle_tempdew:
-        if (boost::regex_match(t, m, tempdew_re))
-        {
-          auto parse_td = [](const std::string& s) -> int {
-            bool neg = (!s.empty() && s[0] == 'M');
-            int v = std::stoi(s.substr(neg ? 1 : 0));
-            return neg ? -v : v;
-          };
-          d.has_temperature = true;
-          d.temperature = parse_td(m[1].str());
-          d.has_dewpoint = true;
-          d.dewpoint = parse_td(m[2].str());
-          state = S::Done;
-          break;
-        }
-        if (boost::regex_match(t, m, qnh_re))
-        {
-          d.has_pressure = true;
-          d.pressure = std::stoi(m[1].str());
-          break;
-        }
-        if (boost::regex_match(t, m, alt_re))
-        {
-          double inHg = std::stod(m[1].str()) / 100.0;
-          d.has_pressure = true;
-          d.pressure = static_cast<int>(std::round(inHg * 33.8639));
-          break;
-        }
-        break;
-
-      // ----------------------------------------------------------
-      case S::Done:
-        // Check for QNH that appears after temp/dew
-        if (boost::regex_match(t, m, qnh_re))
-        {
-          d.has_pressure = true;
-          d.pressure = std::stoi(m[1].str());
-        }
-        else if (boost::regex_match(t, m, alt_re))
-        {
-          double inHg = std::stod(m[1].str()) / 100.0;
-          d.has_pressure = true;
-          d.pressure = static_cast<int>(std::round(inHg * 33.8639));
-        }
-        break;
-    }
+    parse_metar_token(t, d, state, re);
   }
 
   // Final sweep for QNH in case it appeared in an unexpected position
@@ -587,19 +655,8 @@ MetarData MetarLayer::parseTAC(const std::string& message,
   {
     for (const auto& token : tokens)
     {
-      if (boost::regex_match(token, m, qnh_re))
-      {
-        d.has_pressure = true;
-        d.pressure = std::stoi(m[1].str());
+      if (parse_pressure(token, d, re))
         break;
-      }
-      if (boost::regex_match(token, m, alt_re))
-      {
-        double inHg = std::stod(m[1].str()) / 100.0;
-        d.has_pressure = true;
-        d.pressure = static_cast<int>(std::round(inHg * 33.8639));
-        break;
-      }
     }
   }
 
