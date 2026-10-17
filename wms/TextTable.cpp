@@ -68,6 +68,48 @@ text_dimension_t get_row_dimension(const RowCellInfo& rci)
 
   return ret;
 }
+// The cells column0, column1, ... of a table row until the first missing one (max 256)
+std::vector<std::string> table_row(const Json::Value& rowJson)
+{
+  Json::Value nulljson;
+  std::vector<std::string> row;
+  for (unsigned int i = 0; i < 256; i++)
+  {
+    Json::Value json = rowJson.get("column" + Fmi::to_string(i), nulljson);
+    if (json.isNull())
+      break;
+    row.push_back(json.asString());
+  }
+  return row;
+}
+
+// Add the non-null members of the JSON object as attributes
+void add_json_attributes(Attributes& theAttributes, const Json::Value& theJson)
+{
+  Json::Value nulljson;
+  Json::Value::Members members = theJson.getMemberNames();
+  for (const auto& name : members)
+  {
+    auto jsonValue = theJson.get(name, nulljson);
+    if (!jsonValue.isNull())
+      theAttributes.add(name, jsonValue.asString());
+  }
+}
+
+// The frame attributes of the table part, or nullptr for an unknown part
+Attributes* frame_attributes(TableAttributes& theAttributes, const std::string& tablePart)
+{
+  if (tablePart == "title")
+    return &theAttributes.title.frame;
+  if (tablePart == "footer")
+    return &theAttributes.footer.frame;
+  if (tablePart == "header")
+    return &theAttributes.header.frame;
+  if (tablePart == "columns")
+    return &theAttributes.columns.frame;
+  return nullptr;
+}
+
 }  // namespace
 
 text_style_t TableAttributes::titleTextStyle() const
@@ -104,79 +146,40 @@ void TextTable::addTableAttributes(const Json::Value& attributes, const std::str
 
   auto json = attributes.get(tablePart, nulljson);
 
-  if (!json.isNull())
-  {
-    auto frameJson = json.get("frame", nulljson);
-    if (!frameJson.isNull())
-    {
-      Json::Value::Members members = frameJson.getMemberNames();
-      for (const auto& name : members)
-      {
-        auto jsonValue = frameJson.get(name, nulljson);
-        if (!jsonValue.isNull())
-        {
-          if (tablePart == "title")
-            itsAttributes.title.frame.add(name, jsonValue.asString());
-          else if (tablePart == "footer")
-            itsAttributes.footer.frame.add(name, jsonValue.asString());
-          else if (tablePart == "header")
-            itsAttributes.header.frame.add(name, jsonValue.asString());
-          else if (tablePart == "columns")
-            itsAttributes.columns.frame.add(name, jsonValue.asString());
-        }
-      }
-    }
-    auto textJson = json.get("text", nulljson);
-    if (tablePart == "title" || tablePart == "footer")
-    {
-      if (!textJson.isNull())
-      {
-        Json::Value::Members members = textJson.getMemberNames();
-        for (const auto& name : members)
-        {
-          auto jsonValue = textJson.get(name, nulljson);
-          if (!jsonValue.isNull())
-          {
-            if (tablePart == "title")
-              itsAttributes.title.text.add(name, jsonValue.asString());
-            else
-              itsAttributes.footer.text.add(name, jsonValue.asString());
-          }
-        }
-      }
-    }
-    else if (tablePart == "header" || tablePart == "columns")
-    {
-      if (textJson.isArray())
-      {
-        if (tablePart == "header")
-          itsAttributes.header.text.clear();
-        else
-          itsAttributes.columns.text.clear();
+  if (json.isNull())
+    return;
 
-        for (const auto& textJs : textJson)
-        {
-          if (!textJs.isNull())
-          {
-            Json::Value::Members members = textJs.getMemberNames();
-            Attributes textAttributes;
-            for (const auto& name : members)
-            {
-              auto jsonValue = textJs.get(name, nulljson);
-              if (!jsonValue.isNull())
-                textAttributes.add(name, jsonValue.asString());
-            }
-            if (tablePart == "header")
-              itsAttributes.header.text.push_back(textAttributes);
-            else
-              itsAttributes.columns.text.push_back(textAttributes);
-          }
-        }
-      }
-      else
+  auto frameJson = json.get("frame", nulljson);
+  if (!frameJson.isNull())
+  {
+    Attributes* frame = frame_attributes(itsAttributes, tablePart);
+    if (frame != nullptr)
+      add_json_attributes(*frame, frameJson);
+  }
+
+  auto textJson = json.get("text", nulljson);
+  if (tablePart == "title" || tablePart == "footer")
+  {
+    if (!textJson.isNull())
+      add_json_attributes(
+          (tablePart == "title" ? itsAttributes.title.text : itsAttributes.footer.text), textJson);
+  }
+  else if (tablePart == "header" || tablePart == "columns")
+  {
+    if (!textJson.isArray())
+      throw Fmi::Exception(
+          BCP, "TextTable: Error: text-attribute of header and columns must be an array!");
+
+    auto& texts = (tablePart == "header" ? itsAttributes.header.text : itsAttributes.columns.text);
+    texts.clear();
+
+    for (const auto& textJs : textJson)
+    {
+      if (!textJs.isNull())
       {
-        throw Fmi::Exception(
-            BCP, "TextTable: Error: text-attribute of header and columns must be an array!");
+        Attributes textAttributes;
+        add_json_attributes(textAttributes, textJs);
+        texts.push_back(textAttributes);
       }
     }
   }
@@ -288,14 +291,7 @@ void TextTable::addContent(const Json::Value& tableDataJson)
   auto headerJson = tableDataJson.get("header", nulljson);
   if (!headerJson.isNull())
   {
-    TableRow header;
-    for (unsigned int i = 0; i < 256; i++)
-    {
-      json = headerJson.get("column" + Fmi::to_string(i), nulljson);
-      if (json.isNull())
-        break;
-      header.push_back(json.asString());
-    }
+    TableRow header = table_row(headerJson);
     if (!header.empty())
       addHeader(header);
   }
@@ -312,14 +308,7 @@ void TextTable::addContent(const Json::Value& tableDataJson)
     {
       if (!rowJson.isNull())
       {
-        TableRow dataRow;
-        for (unsigned int j = 0; j < 256; j++)
-        {
-          json = rowJson.get("column" + Fmi::to_string(j), nulljson);
-          if (json.isNull())
-            break;
-          dataRow.push_back(json.asString());
-        }
+        TableRow dataRow = table_row(rowJson);
         if (!dataRow.empty())
           addData(dataRow);
       }
