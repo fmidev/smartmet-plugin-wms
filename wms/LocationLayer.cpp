@@ -21,6 +21,7 @@
 #include <macgyver/StringConversion.h>
 #include <spine/Json.h>
 #include <algorithm>
+#include <functional>
 #include <ogr_spatialref.h>
 
 namespace SmartMet
@@ -302,6 +303,477 @@ void emitText(CTPP::CDT& theLayersCdt,
   theLayersCdt.PushBack(text);
 }
 
+// A WGS84 rectangle used to drop locations cheaply before projecting them
+struct LonLatPrefilter
+{
+  bool active = false;
+  double lon_min = 0;
+  double lon_max = 0;
+  double lat_min = 0;
+  double lat_max = 0;
+  bool lon_wraps = false;
+
+  // Cheap O(1) box check
+  bool rejects(double lon, double lat) const
+  {
+    if (!active)
+      return false;
+    if (lat < lat_min || lat > lat_max)
+      return true;
+    return (!lon_wraps && (lon < lon_min || lon > lon_max));
+  }
+};
+
+// WGS84 prefilter: inverse-project a few sample points along the
+// buffered image bbox edge to estimate a (possibly loose) WGS84
+// rectangle.  Then a cheap lon/lat box check can drop most of a
+// 200k-entry keyword list before we pay for the full projection.
+LonLatPrefilter wgs84_prefilter(const Fmi::SpatialReference& crs,
+                                const Fmi::Box& box,
+                                double bx1,
+                                double by1,
+                                double bx2,
+                                double by2)
+{
+  LonLatPrefilter filter;
+  Fmi::CoordinateTransformation invtransformation(crs, "WGS84");
+  // Sample 12 points around the buffered bbox boundary.  Four
+  // corners plus midpoints of each edge handles the bow-shaped
+  // distortion of most projections; doesn't cover poles correctly
+  // but does cover everything else with a slight overestimate
+  // that is fine for a prefilter.
+  std::vector<double> sx{bx1,
+                         bx2,
+                         bx1,
+                         bx2,
+                         (bx1 + bx2) / 2,
+                         (bx1 + bx2) / 2,
+                         bx1,
+                         bx2,
+                         (bx1 + 3 * bx2) / 4,
+                         (3 * bx1 + bx2) / 4,
+                         (bx1 + 3 * bx2) / 4,
+                         (3 * bx1 + bx2) / 4};
+  std::vector<double> sy{
+      by1, by1, by2, by2, by1, by2, (by1 + by2) / 2, (by1 + by2) / 2, by1, by1, by2, by2};
+  for (size_t i = 0; i < sx.size(); i++)
+    box.itransform(sx[i], sy[i]);       // image px → CRS
+  invtransformation.transform(sx, sy);  // CRS → WGS84
+  filter.lon_min = filter.lon_max = sx[0];
+  filter.lat_min = filter.lat_max = sy[0];
+  for (size_t i = 1; i < sx.size(); i++)
+  {
+    filter.lon_min = std::min(sx[i], filter.lon_min);
+    filter.lon_max = std::max(sx[i], filter.lon_max);
+    filter.lat_min = std::min(sy[i], filter.lat_min);
+    filter.lat_max = std::max(sy[i], filter.lat_max);
+  }
+  // If the buffered region spans more than ~180° of longitude we
+  // are most likely viewing a hemispheric / world projection where
+  // the four-corner inverse projects to a wrap-crossing rectangle.
+  // Disable longitude prefilter in that case.
+  filter.lon_wraps = (filter.lon_max - filter.lon_min) > 180.0;
+  filter.active = true;
+  return filter;
+}
+
+// Store only the fields needed for symbol selection and label placement;
+// this avoids taking a type dependency on the internal location list type.
+struct AcceptedLocation
+{
+  double x = 0;
+  double y = 0;
+  std::string name;
+  std::string feature;
+  std::string iso2;  // country code, for the optional country constraint
+  int population = 0;
+};
+
+// Filter the locations by the buffered image bbox and mindistance, collecting the accepted
+// locations and their pixel coordinates
+std::vector<AcceptedLocation> accept_locations(const Spine::LocationList& locations,
+                                               const LonLatPrefilter& prefilter,
+                                               const Fmi::CoordinateTransformation& transformation,
+                                               const Fmi::Box& box,
+                                               double bx1,
+                                               double by1,
+                                               double bx2,
+                                               double by2,
+                                               double mindistance)
+{
+  std::vector<AcceptedLocation> accepted;
+
+  Fmi::NearTree<XY> selected_coordinates;
+
+  for (const auto& location : locations)
+  {
+    // WGS84 prefilter (cheap O(1) box check; runs once per location).
+    if (prefilter.rejects(location->longitude, location->latitude))
+      continue;
+
+    double x = location->longitude;
+    double y = location->latitude;
+    transformation.transform(x, y);
+    box.transform(x, y);
+
+    // Buffered image bbox check.  When pan_invariant is off the
+    // margin is 0 and this is the original strict-bbox skip.
+    if (x < bx1 || x > bx2 || y < by1 || y > by2)
+      continue;
+
+    XY xy(x, y);
+    if (mindistance > 0)
+    {
+      if (selected_coordinates.nearest(xy, mindistance))
+        continue;
+      selected_coordinates.insert(xy);
+    }
+
+    accepted.push_back(
+        {x, y, location->name, location->feature, location->iso2, location->population});
+  }
+  return accepted;
+}
+
+// A country polygon with its id and envelope
+struct CountryPoly
+{
+  int id = -1;
+  OGRGeometryPtr geom;
+  OGREnvelope env;
+};
+
+// The country polygons indexed by a small integer id per iso2 code
+struct CountryPolygons
+{
+  std::map<std::string, int> iso2_to_id;
+  std::vector<CountryPoly> polys;
+};
+
+// Fetch the country polygons in WGS84 and index them by a small integer id per iso2 code
+CountryPolygons load_country_polygons(const State& theState,
+                                      const LabelConfig& label_config,
+                                      const Fmi::SpatialReference& wgs84)
+{
+  CountryPolygons countries;
+
+  Engine::Gis::MapOptions opts;
+  opts.pgname = label_config.country_pgname;
+  opts.schema = label_config.country_schema;
+  opts.table = label_config.country_table;
+  opts.fieldnames.insert(label_config.country_field);
+
+  const auto& gis = theState.getGisEngine();
+  const auto features = gis.getFeatures(wgs84, opts);
+  for (const auto& feature : features)
+  {
+    if (!feature->geom || feature->geom->IsEmpty() != 0)
+      continue;
+    const auto it = feature->attributes.find(label_config.country_field);
+    if (it == feature->attributes.end())
+      continue;
+    const auto* iso2 = std::get_if<std::string>(&it->second);
+    if (iso2 == nullptr || iso2->empty())
+      continue;
+
+    // Assign (or reuse) the id for this country.  A country may
+    // appear as several feature rows; they all share one id.
+    int id = 0;
+    const auto mit = countries.iso2_to_id.find(*iso2);
+    if (mit == countries.iso2_to_id.end())
+    {
+      id = static_cast<int>(countries.iso2_to_id.size());
+      countries.iso2_to_id.emplace(*iso2, id);
+    }
+    else
+      id = mit->second;
+
+    CountryPoly cp;
+    cp.id = id;
+    cp.geom = feature->geom;
+    cp.geom->getEnvelope(&cp.env);
+    countries.polys.push_back(std::move(cp));
+  }
+  return countries;
+}
+
+// True if the WGS84 point lies in a country other than the given one
+bool in_foreign_country(const std::vector<CountryPoly>& country_polys,
+                        int region_id,
+                        double wx,
+                        double wy)
+{
+  for (const auto& cp : country_polys)
+  {
+    if (cp.id == region_id)
+      continue;  // a label may always sit on its own country
+    if (wx < cp.env.MinX || wx > cp.env.MaxX || wy < cp.env.MinY || wy > cp.env.MaxY)
+      continue;  // cheap envelope reject before point-in-polygon
+    if (Fmi::OGR::inside(*cp.geom, wx, wy))
+      return true;  // a sampled point lies in a foreign country
+  }
+  return false;
+}
+
+// Feasibility predicate: reject a candidate box if any of its
+// representative points (centroid + corners) falls inside a country
+// polygon whose id differs from the location's own country id.  Sea,
+// unlabelled land and the home country are all allowed.
+FeasibilityFn country_feasibility(const Fmi::Box& box,
+                                  const Fmi::CoordinateTransformation& to_wgs84,
+                                  const std::vector<CountryPoly>& country_polys)
+{
+  return
+      [&box, &to_wgs84, &country_polys](const LabelCandidate& cand, const LabelBBox& bbox) -> bool
+  {
+    if (cand.region_id < 0)
+      return true;  // home country unknown → impose nothing
+
+    const double xs[5] = {(bbox.x1 + bbox.x2) / 2.0, bbox.x1, bbox.x2, bbox.x1, bbox.x2};
+    const double ys[5] = {(bbox.y1 + bbox.y2) / 2.0, bbox.y1, bbox.y1, bbox.y2, bbox.y2};
+    for (int p = 0; p < 5; p++)
+    {
+      double wx = xs[p];
+      double wy = ys[p];
+      box.itransform(wx, wy);  // image pixels → map CRS
+      if (!to_wgs84.transform(wx, wy))
+        continue;  // unprojectable point → can't judge, allow
+      if (in_foreign_country(country_polys, cand.region_id, wx, wy))
+        return false;
+    }
+    return true;
+  };
+}
+
+// Label placement candidate for an accepted location
+LabelCandidate make_label_candidate(const AcceptedLocation& al,
+                                    const LabelConfig& label_config,
+                                    const std::map<std::string, int>& iso2_to_id)
+{
+  // Marker is centered on the anchor with overflow=visible.  Symbol
+  // size is resolved per-candidate so different population classes
+  // can use different marker sizes (e.g. small dots for villages,
+  // larger dots for cities).
+  const unsigned int quantum = label_config.bbox_quantum;
+
+  LabelCandidate cand;
+  cand.anchor_x = al.x;
+  cand.anchor_y = al.y;
+  cand.text = al.name;
+  cand.population = static_cast<double>(al.population);
+  cand.font_size = label_config.effective_font_size(cand.population);
+  cand.font_weight = label_config.effective_font_weight(cand.population);
+  cand.fill = label_config.effective_fill(cand.population);
+
+  // Home country id for the constraint (-1 = unknown → unconstrained).
+  if (label_config.country_constraint)
+  {
+    const auto it = iso2_to_id.find(al.iso2);
+    cand.region_id = (it != iso2_to_id.end()) ? it->second : -1;
+  }
+
+  text_style_t style;
+  style.fontfamily = label_config.font_family;
+  style.fontsize = Fmi::to_string(lround(cand.font_size));
+  style.fontweight = cand.font_weight;
+  const auto dim = getTextDimension(al.name, style);
+  cand.label_w = dim.width;
+  cand.label_h = dim.height;
+  cand.y_bearing = dim.y_bearing;
+
+  // Round dimensions up to the next multiple of quantum.  This
+  // absorbs sub-pixel font-metric drift between platforms (Rocky10
+  // vs RHEL9 fontconfig substitution) so the first overlap test
+  // doesn't flip and cascade through the rest of the placement.
+  if (quantum > 1)
+  {
+    cand.label_w = ((cand.label_w + quantum - 1) / quantum) * quantum;
+    cand.label_h = ((cand.label_h + quantum - 1) / quantum) * quantum;
+  }
+
+  const double cand_sym_half_w =
+      label_config.effective_symbol_width(cand.population) / 2.0 + label_config.symbol_margin;
+  const double cand_sym_half_h =
+      label_config.effective_symbol_height(cand.population) / 2.0 + label_config.symbol_margin;
+  if (cand_sym_half_w > 0.0 && cand_sym_half_h > 0.0)
+  {
+    cand.obstacle = {al.x - cand_sym_half_w,
+                     al.y - cand_sym_half_h,
+                     al.x + cand_sym_half_w,
+                     al.y + cand_sym_half_h};
+  }
+  return cand;
+}
+
+// Position-aware baseline so the visible *letter body* touches
+// the marker on the side facing it (rather than the bbox, which
+// includes descender extent).  Descenders for above-labels then
+// hang into the empty area below the body without affecting how
+// the body's vertical position lines up across labels:
+//   - ABOVE the anchor (NE/NW/N/...): baseline = bbox.y2
+//     (body bottom at marker top edge; descender extends below)
+//   - BELOW the anchor (SE/SW/S/...): baseline = bbox.y1 + ascent
+//     (body top at marker bottom edge; descender extends below
+//     bbox into open space)
+//   - SIDE (E/W): body centred on the anchor (baseline = ay + ascent/2)
+// ascent is recovered from y_bearing (= -ascent in cairo).
+double label_baseline(const PlacedLabel& pl, double ay)
+{
+  const auto y_bearing = static_cast<double>(pl.y_bearing);
+  double text_y = ay - y_bearing / 2.0;
+  if (pl.bbox.y2 <= ay)
+    text_y = pl.bbox.y2;
+  else if (pl.bbox.y1 >= ay)
+    text_y = pl.bbox.y1 - y_bearing;
+  return text_y;
+}
+
+// The marker symbol of the location; selection attributes are added to the tag
+std::string marker_symbol(CTPP::CDT& theGlobals,
+                          CTPP::CDT& tag_cdt,
+                          const State& theState,
+                          const AcceptedLocation& al,
+                          const std::optional<std::string>& symbol,
+                          const std::map<std::string, std::vector<AttributeSelection>>& symbols)
+{
+  std::string iri;
+
+  if (symbol)
+    iri = *symbol;
+
+  if (!symbols.empty())
+  {
+    auto feature_selection = symbols.find(al.feature);
+    if (feature_selection == symbols.end())
+      feature_selection = symbols.find("default");
+    if (feature_selection != symbols.end())
+    {
+      auto selection =
+          Select::attribute(feature_selection->second, static_cast<double>(al.population));
+      if (selection)
+      {
+        if (selection->symbol)
+          iri = *selection->symbol;
+        theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
+      }
+    }
+  }
+  return iri;
+}
+
+// Run label placement on the accepted locations. Text dimensions are measured here so that
+// the pure placement algorithms in LabelPlacement.cpp have no TextUtility dependency.
+std::vector<PlacedLabel> place_labels(const std::vector<AcceptedLocation>& accepted,
+                                      const LabelConfig& label_config,
+                                      const Fmi::SpatialReference& crs,
+                                      const Fmi::Box& box,
+                                      const State& theState)
+{
+  // ----------------------------------------------------------------
+  // Country constraint dataset (optional).  Fetch the country polygons
+  // once and index them by a small integer id per iso2 code.  The
+  // feasibility predicate built below tests candidate label boxes
+  // against these polygons so that no label is placed inside a country
+  // other than its own.
+  //
+  // The polygons are fetched and tested in WGS84, NOT in the map CRS:
+  // the whole world's borders are loaded, and projecting far-away
+  // geometry (e.g. all of Russia) into a local CRS such as ETRS-TM35FIN
+  // produces degenerate coordinates that break the point-in-polygon
+  // test.  Working in lon/lat keeps every polygon well-formed; the
+  // predicate inverse-projects each sampled label pixel to WGS84.
+  // ----------------------------------------------------------------
+  Fmi::SpatialReference wgs84("WGS84");
+  Fmi::CoordinateTransformation to_wgs84(crs, wgs84);
+
+  CountryPolygons countries;
+  if (label_config.country_constraint)
+    countries = load_country_polygons(theState, label_config, wgs84);
+
+  // Feasibility predicate, empty when the constraint is off or no polygons were found
+  // → no restriction.
+  FeasibilityFn feasible;
+  if (label_config.country_constraint && !countries.polys.empty())
+    feasible = country_feasibility(box, to_wgs84, countries.polys);
+
+  std::vector<LabelCandidate> label_candidates;
+  label_candidates.reserve(accepted.size());
+
+  for (const auto& al : accepted)
+    label_candidates.push_back(make_label_candidate(al, label_config, countries.iso2_to_id));
+
+  return placeLabels(label_config,
+                     std::move(label_candidates),
+                     static_cast<double>(box.width()),
+                     static_cast<double>(box.height()),
+                     feasible);
+}
+
+// Add the marker of the location, returns true if a marker was added
+bool add_marker(CTPP::CDT& marker_cdt,
+                CTPP::CDT& theGlobals,
+                State& theState,
+                const AcceptedLocation& al,
+                const std::optional<std::string>& symbol,
+                const std::map<std::string, std::vector<AttributeSelection>>& symbols)
+{
+  CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+  tag_cdt["start"] = "<use";
+  tag_cdt["end"] = "/>";
+
+  std::string iri = marker_symbol(theGlobals, tag_cdt, theState, al, symbol, symbols);
+
+  if (!iri.empty())
+  {
+    if (theState.addId(iri))
+      theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+    tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+    tag_cdt["attributes"]["x"] = Fmi::to_string(lround(al.x));
+    tag_cdt["attributes"]["y"] = Fmi::to_string(lround(al.y));
+
+    marker_cdt["tags"].PushBack(tag_cdt);
+    return true;
+  }
+  return false;
+}
+
+// Automatic placement margin for pan invariant placement
+double auto_margin(double mindistance, const LabelConfig& label_config)
+{
+  double m = mindistance;
+  m = std::max(label_config.free_space_radius, m);
+  // Allow space for a wide label and the symbol obstacle.
+  // 256 px is a generous bound on label width; safety = 32 px.
+  m += 256.0;
+  m += label_config.symbol_width / 2.0 + label_config.symbol_margin;
+  m += 32.0;
+  return m;
+}
+
+// Emit the placed labels in reverse input order, skipping invisible anchors
+void emit_labels(CTPP::CDT& theLayersCdt,
+                 const std::vector<PlacedLabel>& placed_labels,
+                 const std::vector<AcceptedLocation>& accepted,
+                 const LabelConfig& label_config,
+                 const std::function<bool(size_t)>& anchorVisible)
+{
+  for (size_t i = placed_labels.size(); i-- > 0;)
+  {
+    const auto& pl = placed_labels[i];
+    if (!pl.placed)
+      continue;
+    if (!anchorVisible(i))
+      continue;
+
+    // Position-aware baseline so the visible *letter body* touches the marker
+    const double text_y = label_baseline(pl, accepted[i].y);
+
+    const double text_x = pl.bbox.x1;
+    emitText(theLayersCdt, pl, label_config, text_x, text_y);
+  }
+}
+
 }  // anonymous namespace
 
 // ======================================================================
@@ -414,11 +886,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     // Update the globals
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Read the data from geonames. We use autocomplete mode to get a good
     // prioritized sort for the locations.
@@ -453,122 +921,24 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Buffered image bbox (in image pixel coords).  When pan_invariant
     // is off, margin = 0 and this collapses to the existing strict bbox.
-    auto autoMargin = [&]() -> double {
-      double m = mindistance;
-      m = std::max(label_config.free_space_radius, m);
-      // Allow space for a wide label and the symbol obstacle.
-      // 256 px is a generous bound on label width; safety = 32 px.
-      m += 256.0;
-      m += label_config.symbol_width / 2.0 + label_config.symbol_margin;
-      m += 32.0;
-      return m;
-    };
     double margin = 0.0;
     if (pan_invariant)
-      margin = (placement_margin ? *placement_margin : autoMargin());
+      margin = (placement_margin ? *placement_margin : auto_margin(mindistance, label_config));
     const double bx1 = -margin;
     const double by1 = -margin;
     const double bx2 = static_cast<double>(box.width()) + margin;
     const double by2 = static_cast<double>(box.height()) + margin;
 
-    // WGS84 prefilter: inverse-project a few sample points along the
-    // buffered image bbox edge to estimate a (possibly loose) WGS84
-    // rectangle.  Then a cheap lon/lat box check can drop most of a
+    // WGS84 prefilter: a cheap lon/lat box check can drop most of a
     // 200k-entry keyword list before we pay for the full projection.
     // Disabled when pan_invariant is off (the existing strict-bbox
     // filter happens after projection like before).
-    bool wgs84_prefilter_active = false;
-    double lon_min = 0;
-    double lon_max = 0;
-    double lat_min = 0;
-    double lat_max = 0;
-    bool lon_wraps = false;
+    LonLatPrefilter prefilter;
     if (pan_invariant)
-    {
-      Fmi::CoordinateTransformation invtransformation(crs, "WGS84");
-      // Sample 12 points around the buffered bbox boundary.  Four
-      // corners plus midpoints of each edge handles the bow-shaped
-      // distortion of most projections; doesn't cover poles correctly
-      // but does cover everything else with a slight overestimate
-      // that is fine for a prefilter.
-      std::vector<double> sx{bx1, bx2, bx1, bx2,
-                             (bx1 + bx2) / 2, (bx1 + bx2) / 2,
-                             bx1, bx2,
-                             (bx1 + 3 * bx2) / 4, (3 * bx1 + bx2) / 4,
-                             (bx1 + 3 * bx2) / 4, (3 * bx1 + bx2) / 4};
-      std::vector<double> sy{by1, by1, by2, by2,
-                             by1, by2,
-                             (by1 + by2) / 2, (by1 + by2) / 2,
-                             by1, by1, by2, by2};
-      for (size_t i = 0; i < sx.size(); i++)
-        box.itransform(sx[i], sy[i]);  // image px → CRS
-      invtransformation.transform(sx, sy);  // CRS → WGS84
-      lon_min = lon_max = sx[0];
-      lat_min = lat_max = sy[0];
-      for (size_t i = 1; i < sx.size(); i++)
-      {
-        lon_min = std::min(sx[i], lon_min);
-        lon_max = std::max(sx[i], lon_max);
-        lat_min = std::min(sy[i], lat_min);
-        lat_max = std::max(sy[i], lat_max);
-      }
-      // If the buffered region spans more than ~180° of longitude we
-      // are most likely viewing a hemispheric / world projection where
-      // the four-corner inverse projects to a wrap-crossing rectangle.
-      // Disable longitude prefilter in that case.
-      lon_wraps = (lon_max - lon_min) > 180.0;
-      wgs84_prefilter_active = true;
-    }
+      prefilter = wgs84_prefilter(crs, box, bx1, by1, bx2, by2);
 
-    // Store only the fields needed for symbol selection and label placement;
-    // this avoids taking a type dependency on the internal location list type.
-    struct AcceptedLocation
-    {
-      double x = 0;
-      double y = 0;
-      std::string name;
-      std::string feature;
-      std::string iso2;  // country code, for the optional country constraint
-      int population = 0;
-    };
-
-    std::vector<AcceptedLocation> accepted;
-
-    Fmi::NearTree<XY> selected_coordinates;
-
-    for (const auto& location : locations)
-    {
-      // WGS84 prefilter (cheap O(1) box check; runs once per location).
-      if (wgs84_prefilter_active)
-      {
-        if (location->latitude < lat_min || location->latitude > lat_max)
-          continue;
-        if (!lon_wraps &&
-            (location->longitude < lon_min || location->longitude > lon_max))
-          continue;
-      }
-
-      double x = location->longitude;
-      double y = location->latitude;
-      transformation.transform(x, y);
-      box.transform(x, y);
-
-      // Buffered image bbox check.  When pan_invariant is off the
-      // margin is 0 and this is the original strict-bbox skip.
-      if (x < bx1 || x > bx2 || y < by1 || y > by2)
-        continue;
-
-      XY xy(x, y);
-      if (mindistance > 0)
-      {
-        if (selected_coordinates.nearest(xy, mindistance))
-          continue;
-        selected_coordinates.insert(xy);
-      }
-
-      accepted.push_back(
-          {x, y, location->name, location->feature, location->iso2, location->population});
-    }
+    std::vector<AcceptedLocation> accepted = accept_locations(
+        locations, prefilter, transformation, box, bx1, by1, bx2, by2, mindistance);
 
     // ----------------------------------------------------------------
     // PASS 2 (optional): run label placement on the accepted set.
@@ -579,177 +949,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     std::vector<PlacedLabel> placed_labels;
 
     if (!label_config.empty())
-    {
-      // ----------------------------------------------------------------
-      // Country constraint dataset (optional).  Fetch the country polygons
-      // once and index them by a small integer id per iso2 code.  The
-      // feasibility predicate built below tests candidate label boxes
-      // against these polygons so that no label is placed inside a country
-      // other than its own.
-      //
-      // The polygons are fetched and tested in WGS84, NOT in the map CRS:
-      // the whole world's borders are loaded, and projecting far-away
-      // geometry (e.g. all of Russia) into a local CRS such as ETRS-TM35FIN
-      // produces degenerate coordinates that break the point-in-polygon
-      // test.  Working in lon/lat keeps every polygon well-formed; the
-      // predicate inverse-projects each sampled label pixel to WGS84.
-      // ----------------------------------------------------------------
-      struct CountryPoly
-      {
-        int id = -1;
-        OGRGeometryPtr geom;
-        OGREnvelope env;
-      };
-      std::map<std::string, int> iso2_to_id;
-      std::vector<CountryPoly> country_polys;
-      Fmi::SpatialReference wgs84("WGS84");
-      Fmi::CoordinateTransformation to_wgs84(crs, wgs84);
-
-      if (label_config.country_constraint)
-      {
-        Engine::Gis::MapOptions opts;
-        opts.pgname = label_config.country_pgname;
-        opts.schema = label_config.country_schema;
-        opts.table = label_config.country_table;
-        opts.fieldnames.insert(label_config.country_field);
-
-        const auto& gis = theState.getGisEngine();
-        const auto features = gis.getFeatures(wgs84, opts);
-        for (const auto& feature : features)
-        {
-          if (!feature->geom || feature->geom->IsEmpty() != 0)
-            continue;
-          const auto it = feature->attributes.find(label_config.country_field);
-          if (it == feature->attributes.end())
-            continue;
-          const auto* iso2 = std::get_if<std::string>(&it->second);
-          if (iso2 == nullptr || iso2->empty())
-            continue;
-
-          // Assign (or reuse) the id for this country.  A country may
-          // appear as several feature rows; they all share one id.
-          int id = 0;
-          const auto mit = iso2_to_id.find(*iso2);
-          if (mit == iso2_to_id.end())
-          {
-            id = static_cast<int>(iso2_to_id.size());
-            iso2_to_id.emplace(*iso2, id);
-          }
-          else
-            id = mit->second;
-
-          CountryPoly cp;
-          cp.id = id;
-          cp.geom = feature->geom;
-          cp.geom->getEnvelope(&cp.env);
-          country_polys.push_back(std::move(cp));
-        }
-      }
-
-      // Feasibility predicate: reject a candidate box if any of its
-      // representative points (centroid + corners) falls inside a country
-      // polygon whose id differs from the location's own country id.  Sea,
-      // unlabelled land and the home country are all allowed.  Empty when
-      // the constraint is off or no polygons were found → no restriction.
-      FeasibilityFn feasible;
-      if (label_config.country_constraint && !country_polys.empty())
-      {
-        feasible = [&box, &to_wgs84, &country_polys](const LabelCandidate& cand,
-                                                     const LabelBBox& bbox) -> bool
-        {
-          if (cand.region_id < 0)
-            return true;  // home country unknown → impose nothing
-
-          const double xs[5] = {(bbox.x1 + bbox.x2) / 2.0, bbox.x1, bbox.x2, bbox.x1, bbox.x2};
-          const double ys[5] = {(bbox.y1 + bbox.y2) / 2.0, bbox.y1, bbox.y1, bbox.y2, bbox.y2};
-          for (int p = 0; p < 5; p++)
-          {
-            double wx = xs[p];
-            double wy = ys[p];
-            box.itransform(wx, wy);       // image pixels → map CRS
-            if (!to_wgs84.transform(wx, wy))
-              continue;                    // unprojectable point → can't judge, allow
-            for (const auto& cp : country_polys)
-            {
-              if (cp.id == cand.region_id)
-                continue;  // a label may always sit on its own country
-              if (wx < cp.env.MinX || wx > cp.env.MaxX || wy < cp.env.MinY || wy > cp.env.MaxY)
-                continue;  // cheap envelope reject before point-in-polygon
-              if (Fmi::OGR::inside(*cp.geom, wx, wy))
-                return false;  // a sampled point lies in a foreign country
-            }
-          }
-          return true;
-        };
-      }
-
-      std::vector<LabelCandidate> label_candidates;
-      label_candidates.reserve(accepted.size());
-
-      // Marker is centered on the anchor with overflow=visible.  Symbol
-      // size is resolved per-candidate so different population classes
-      // can use different marker sizes (e.g. small dots for villages,
-      // larger dots for cities).
-      const unsigned int quantum = label_config.bbox_quantum;
-
-      for (const auto& al : accepted)
-      {
-        LabelCandidate cand;
-        cand.anchor_x = al.x;
-        cand.anchor_y = al.y;
-        cand.text = al.name;
-        cand.population = static_cast<double>(al.population);
-        cand.font_size = label_config.effective_font_size(cand.population);
-        cand.font_weight = label_config.effective_font_weight(cand.population);
-        cand.fill = label_config.effective_fill(cand.population);
-
-        // Home country id for the constraint (-1 = unknown → unconstrained).
-        if (label_config.country_constraint)
-        {
-          const auto it = iso2_to_id.find(al.iso2);
-          cand.region_id = (it != iso2_to_id.end()) ? it->second : -1;
-        }
-
-        text_style_t style;
-        style.fontfamily = label_config.font_family;
-        style.fontsize = Fmi::to_string(lround(cand.font_size));
-        style.fontweight = cand.font_weight;
-        const auto dim = getTextDimension(al.name, style);
-        cand.label_w = dim.width;
-        cand.label_h = dim.height;
-        cand.y_bearing = dim.y_bearing;
-
-        // Round dimensions up to the next multiple of quantum.  This
-        // absorbs sub-pixel font-metric drift between platforms (Rocky10
-        // vs RHEL9 fontconfig substitution) so the first overlap test
-        // doesn't flip and cascade through the rest of the placement.
-        if (quantum > 1)
-        {
-          cand.label_w = ((cand.label_w + quantum - 1) / quantum) * quantum;
-          cand.label_h = ((cand.label_h + quantum - 1) / quantum) * quantum;
-        }
-
-        const double cand_sym_half_w =
-            label_config.effective_symbol_width(cand.population) / 2.0 +
-            label_config.symbol_margin;
-        const double cand_sym_half_h =
-            label_config.effective_symbol_height(cand.population) / 2.0 +
-            label_config.symbol_margin;
-        if (cand_sym_half_w > 0.0 && cand_sym_half_h > 0.0)
-        {
-          cand.obstacle = {al.x - cand_sym_half_w, al.y - cand_sym_half_h,
-                           al.x + cand_sym_half_w, al.y + cand_sym_half_h};
-        }
-
-        label_candidates.push_back(cand);
-      }
-
-      placed_labels = placeLabels(label_config,
-                                  std::move(label_candidates),
-                                  static_cast<double>(box.width()),
-                                  static_cast<double>(box.height()),
-                                  feasible);
-    }
+      placed_labels = place_labels(accepted, label_config, crs, box, theState);
 
     // ----------------------------------------------------------------
     // PASS 3: emit SVG.
@@ -800,37 +1000,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       return inside(box, accepted[i].x, accepted[i].y);
     };
 
-    for (size_t i = placed_labels.size(); i-- > 0;)
-    {
-      const auto& pl = placed_labels[i];
-      if (!pl.placed)
-        continue;
-      if (!anchorVisible(i))
-        continue;
-
-      // Position-aware baseline so the visible *letter body* touches
-      // the marker on the side facing it (rather than the bbox, which
-      // includes descender extent).  Descenders for above-labels then
-      // hang into the empty area below the body without affecting how
-      // the body's vertical position lines up across labels:
-      //   - ABOVE the anchor (NE/NW/N/...): baseline = bbox.y2
-      //     (body bottom at marker top edge; descender extends below)
-      //   - BELOW the anchor (SE/SW/S/...): baseline = bbox.y1 + ascent
-      //     (body top at marker bottom edge; descender extends below
-      //     bbox into open space)
-      //   - SIDE (E/W): body centred on the anchor (baseline = ay + ascent/2)
-      // ascent is recovered from y_bearing (= -ascent in cairo).
-      const double ay = accepted[i].y;
-      const auto y_bearing = static_cast<double>(pl.y_bearing);
-      double text_y = ay - y_bearing / 2.0;
-      if (pl.bbox.y2 <= ay)
-        text_y = pl.bbox.y2;
-      else if (pl.bbox.y1 >= ay)
-        text_y = pl.bbox.y1 - y_bearing;
-
-      const double text_x = pl.bbox.x1;
-      emitText(theLayersCdt, pl, label_config, text_x, text_y);
-    }
+    emit_labels(theLayersCdt, placed_labels, accepted, label_config, anchorVisible);
 
     // Then emit markers.  They MUST go through layer.tags (not as
     // top-level layer entries) because the SVG template hard-codes a `>`
@@ -853,61 +1023,18 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     const bool labels_active = !label_config.empty();
     for (size_t i = accepted.size(); i-- > 0;)
     {
-      if (labels_active)
-      {
-        // No label means no marker.  Two cases:
-        //   (a) i is past placed_labels.size() because max_labels truncated
-        //       the candidate set — this candidate was never processed
-        //   (b) i is in range but the algorithm could not place its label
-        // Without a label, an isolated marker is unreadable.
-        if (i >= placed_labels.size() || !placed_labels[i].placed)
-          continue;
-      }
+      // No label means no marker.  Two cases:
+      //   (a) i is past placed_labels.size() because max_labels truncated
+      //       the candidate set — this candidate was never processed
+      //   (b) i is in range but the algorithm could not place its label
+      // Without a label, an isolated marker is unreadable.
+      if (labels_active && (i >= placed_labels.size() || !placed_labels[i].placed))
+        continue;
       if (!anchorVisible(i))
         continue;
 
-      const auto& al = accepted[i];
-
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-
-      std::string iri;
-
-      if (symbol)
-        iri = *symbol;
-
-      if (!symbols.empty())
-      {
-        auto feature_selection = symbols.find(al.feature);
-        if (feature_selection == symbols.end())
-          feature_selection = symbols.find("default");
-        if (feature_selection != symbols.end())
-        {
-          auto selection =
-              Select::attribute(feature_selection->second,
-                                static_cast<double>(al.population));
-          if (selection)
-          {
-            if (selection->symbol)
-              iri = *selection->symbol;
-            theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
-          }
-        }
-      }
-
-      if (!iri.empty())
-      {
-        if (theState.addId(iri))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-        tag_cdt["attributes"]["x"] = Fmi::to_string(lround(al.x));
-        tag_cdt["attributes"]["y"] = Fmi::to_string(lround(al.y));
-
-        marker_cdt["tags"].PushBack(tag_cdt);
+      if (add_marker(marker_cdt, theGlobals, theState, accepted[i], symbol, symbols))
         any_marker = true;
-      }
     }
 
     if (any_marker)
