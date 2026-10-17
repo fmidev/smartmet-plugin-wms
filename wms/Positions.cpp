@@ -269,6 +269,142 @@ Positions::Layout parse_layout(const std::string& tmp)
   throw Fmi::Exception(BCP, "Unknown layout type for positions: '" + tmp + "'!");
 }
 
+// Collects graticule fill points rejecting points too close to the ones already selected
+struct FillPointCollector
+{
+  const Positions& positions;
+  const Fmi::CoordinateTransformation& transformation;
+  const Fmi::Box& box;
+  bool forecastMode;
+  double mindistance;
+  int deltax;
+  int deltay;
+  Positions::Points& points;
+  Fmi::NearTree<XY> selected_coordinates;
+
+  // Add a point in pixel coordinates unless it is too close to an earlier one
+  void addProjected(double newx, double newy, double newlon, double newlat)
+  {
+    XY xy(newx, newy);
+    auto match = selected_coordinates.nearest(xy, mindistance);
+    if (!match)
+    {
+      points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
+      selected_coordinates.insert(xy);
+    }
+  }
+
+  // Add a geographic point if it is inside the desired areas. Returns false if the
+  // point could not be projected.
+  bool add(double newlon, double newlat)
+  {
+    double newx = newlon;
+    double newy = newlat;
+
+    if (!transformation.transform(newx, newy))
+      return false;
+    box.transform(newx, newy);
+
+    // Skip if not inside desired areas
+    if (positions.inside(newlon, newlat, forecastMode))
+      addProjected(newx, newy, newlon, newlat);
+    return true;
+  }
+};
+
+// Project the corners of a graticule cell to pixel coordinates
+bool project_cell_corners(const Fmi::CoordinateTransformation& transformation,
+                          const Fmi::Box& box,
+                          double& x1,
+                          double& y1,
+                          double& x2,
+                          double& y2,
+                          double& x3,
+                          double& y3,
+                          double& x4,
+                          double& y4)
+{
+  // to projection coordinates
+  if (!transformation.transform(x1, y1))
+    return false;
+  if (!transformation.transform(x2, y2))
+    return false;
+  if (!transformation.transform(x3, y3))
+    return false;
+  if (!transformation.transform(x4, y4))
+    return false;
+
+  // to pixel coordinates
+  box.transform(x1, y1);
+  box.transform(x2, y2);
+  box.transform(x3, y3);
+  box.transform(x4, y4);
+  return true;
+}
+
+// Generate the points of a graticule cell. We output only the bottom and left edges and
+// the inner points.
+void add_graticule_cell_points(FillPointCollector& collector, int lon, int lat, int size)
+{
+  double x1 = lon;         // p3---p4
+  double y1 = lat;         // |    |
+  double x2 = lon + size;  // p1---p2
+  double y2 = lat;
+  double x3 = lon;
+  double y3 = lat + size;
+  double x4 = lon + size;
+  double y4 = lat + size;
+
+  if (!project_cell_corners(collector.transformation, collector.box, x1, y1, x2, y2, x3, y3, x4, y4))
+    return;
+
+  // We make the assumption that the bounding box very closely
+  // matches the bounding box formed by the graticule cell.
+  // One could use a margin-setting to allow positions slightly
+  // outside the box to fix that.
+
+  if (!overlaps(collector.box, x1, y1, x2, y2, x3, y3, x4, y4))
+    return;
+
+  const double mindistance = collector.mindistance;
+
+  double bottom = length(x1, y1, x2, y2);
+  double left = length(x1, y1, x3, y3);
+  double top = length(x3, y3, x4, y4);
+  double right = length(x2, y2, x4, y4);
+
+  int nbottom = std::floor(bottom / mindistance);
+  int nleft = std::floor(left / mindistance);
+  int ntop = std::floor(top / mindistance);
+  int nright = std::floor(right / mindistance);
+
+  int nparallel = std::min(nbottom, ntop);
+  int nmeridian = std::min(nleft, nright);
+
+  // Left edge
+
+  for (int j = 0; j < nleft; j++)
+    collector.add(lon, lat + 1.0 * j / nleft * size);
+
+  // Bottom edge
+  for (int i = 1; i < nbottom; i++)
+  {
+    double newlat = lat;
+    if (!collector.add(lon + 1.0 * i / nbottom * size, newlat))
+      continue;
+
+    // Handle the south pole only once
+    if (newlat == -90)
+      break;
+  }
+
+  // Inner points
+
+  for (int i = 1; i < nparallel; i++)
+    for (int j = 1; j < nmeridian; j++)
+      collector.add(lon + 1.0 * i / nparallel * size, lat + 1.0 * j / nmeridian * size);
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -906,161 +1042,20 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
 
     Points points;
 
+    int deltax = 0;
+    if (dx)
+      deltax += *dx;
+    int deltay = 0;
+    if (dy)
+      deltay += *dy;
+
     // Do not allow too close pixels
-    Fmi::NearTree<XY> selected_coordinates;
+    FillPointCollector collector{
+        *this, transformation, theBox, forecastMode, mindistance, deltax, deltay, points, {}};
 
     for (int lat = -90; lat < 90; lat += size)
       for (int lon = -180; lon < 180; lon += size)
-      {
-        double x1 = lon;         // p3---p4
-        double y1 = lat;         // |    |
-        double x2 = lon + size;  // p1---p2
-        double y2 = lat;
-        double x3 = lon;
-        double y3 = lat + size;
-        double x4 = lon + size;
-        double y4 = lat + size;
-
-        // to projection coordinates
-        if (!transformation.transform(x1, y1))
-          continue;
-        if (!transformation.transform(x2, y2))
-          continue;
-        if (!transformation.transform(x3, y3))
-          continue;
-        if (!transformation.transform(x4, y4))
-          continue;
-
-        // to pixel coordinates
-        theBox.transform(x1, y1);
-        theBox.transform(x2, y2);
-        theBox.transform(x3, y3);
-        theBox.transform(x4, y4);
-
-        // We make the assumption that the bounding box very closely
-        // matches the bounding box formed by the graticule cell.
-        // One could use a margin-setting to allow positions slightly
-        // outside the box to fix that.
-
-        if (!overlaps(theBox, x1, y1, x2, y2, x3, y3, x4, y4))
-          continue;
-
-        double bottom = length(x1, y1, x2, y2);
-        double left = length(x1, y1, x3, y3);
-        double top = length(x3, y3, x4, y4);
-        double right = length(x2, y2, x4, y4);
-
-        int nbottom = std::floor(bottom / mindistance);
-        int nleft = std::floor(left / mindistance);
-        int ntop = std::floor(top / mindistance);
-        int nright = std::floor(right / mindistance);
-
-        int nparallel = std::min(nbottom, ntop);
-        int nmeridian = std::min(nleft, nright);
-
-        // Left edge
-
-        for (int j = 0; j < nleft; j++)
-        {
-          double newlon = lon;
-          double newlat = lat + 1.0 * j / nleft * size;
-          double newx = newlon;
-          double newy = newlat;
-
-          if (!transformation.transform(newx, newy))
-            continue;
-          theBox.transform(newx, newy);
-
-          int deltax = 0;
-          if (dx)
-            deltax += *dx;
-          int deltay = 0;
-          if (dy)
-            deltay += *dy;
-
-          // Skip if not inside desired areas
-          if (inside(newlon, newlat, forecastMode))
-          {
-            XY xy(newx, newy);
-            auto match = selected_coordinates.nearest(xy, mindistance);
-            if (!match)
-            {
-              points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
-              selected_coordinates.insert(xy);
-            }
-          }
-        }
-
-        // Bottom edge
-        for (int i = 1; i < nbottom; i++)
-        {
-          double newlon = lon + 1.0 * i / nbottom * size;
-          double newlat = lat;
-          double newx = newlon;
-          double newy = newlat;
-
-          if (!transformation.transform(newx, newy))
-            continue;
-          theBox.transform(newx, newy);
-
-          int deltax = 0;
-          if (dx)
-            deltax += *dx;
-          int deltay = 0;
-          if (dy)
-            deltay += *dy;
-
-          // Skip if not inside desired shapes
-          if (inside(newlon, newlat, forecastMode))
-          {
-            XY xy(newx, newy);
-            auto match = selected_coordinates.nearest(xy, mindistance);
-            if (!match)
-            {
-              points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
-              selected_coordinates.insert(xy);
-            }
-          }
-
-          // Handle the south pole only once
-          if (newlat == -90)
-            break;
-        }
-
-        // Inner points
-
-        for (int i = 1; i < nparallel; i++)
-          for (int j = 1; j < nmeridian; j++)
-          {
-            double newlon = lon + 1.0 * i / nparallel * size;
-            double newlat = lat + 1.0 * j / nmeridian * size;
-            double newx = newlon;
-            double newy = newlat;
-
-            if (!transformation.transform(newx, newy))
-              continue;
-            theBox.transform(newx, newy);
-
-            int deltax = 0;
-            if (dx)
-              deltax += *dx;
-            int deltay = 0;
-            if (dy)
-              deltay += *dy;
-
-            // Skip if not inside desired area
-            if (inside(newlon, newlat, forecastMode))
-            {
-              XY xy(newx, newy);
-              auto match = selected_coordinates.nearest(xy, mindistance);
-              if (!match)
-              {
-                points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
-                selected_coordinates.insert(xy);
-              }
-            }
-          }
-      }
+        add_graticule_cell_points(collector, lon, lat, size);
 
     // All that remains is the north pole
     double newlon = 0;
@@ -1070,24 +1065,9 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
 
     if (!transformation.transform(newx, newy))
     {
-      int deltax = 0;
-      if (dx)
-        deltax += *dx;
-      int deltay = 0;
-      if (dy)
-        deltay += *dy;
-
       // Skip if not inside desired areas
       if (inside(newlon, newlat, forecastMode))
-      {
-        XY xy(newx, newy);
-        auto match = selected_coordinates.nearest(xy, mindistance);
-        if (!match)
-        {
-          points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
-          selected_coordinates.insert(xy);
-        }
-      }
+        collector.addProjected(newx, newy, newlon, newlat);
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
