@@ -366,9 +366,7 @@ void RasterLayer::generate(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State
  */
 // ----------------------------------------------------------------------
 
-void RasterLayer::paintSurface(const std::string &position,
-                               PaintContext &ctx,
-                               bool require_sea_shadings)
+void RasterLayer::paintSurface(const std::string &position, PaintContext &ctx)
 {
   // Painting sea
   if (sea_position == position && !ctx.land.empty())
@@ -393,8 +391,7 @@ void RasterLayer::paintSurface(const std::string &position,
                                ctx.landParameters);
 
   // Painting sea topography
-  if (sea_shading_position == position && (!require_sea_shadings || !ctx.sea_shadings.empty()) &&
-      ctx.coordinates)
+  if (sea_shading_position == position && ctx.coordinates)
   {
     if (ctx.sea_shadings.empty())
       SmartMet::Map::topography.getSeaShading(*ctx.coordinates, ctx.sea_shadings);
@@ -505,10 +502,8 @@ void RasterLayer::generate_image(int loopstep,
                      landParameters,
                      landBorderParameters};
 
-    // Painting the background layers below the data. Note that the sea shading here requires
-    // the shading data to have been fetched already.
-    const bool require_sea_shadings = true;
-    paintSurface("bottom", ctx, require_sea_shadings);
+    // Painting the background layers below the data
+    paintSurface("bottom", ctx);
 
     if (dataShadowPainter.getShadowCount())
       dataShadowPainter.setImageColors(
@@ -530,7 +525,7 @@ void RasterLayer::generate_image(int loopstep,
           width, height, loopstep, loopsteps, image, land, values1, emptyParameters);
 
     // Painting the background layers on top of the data
-    paintSurface("top", ctx, !require_sea_shadings);
+    paintSurface("top", ctx);
 
     std::ostringstream svgImage;
   }

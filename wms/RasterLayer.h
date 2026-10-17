@@ -100,7 +100,7 @@ class RasterLayer : public Layer
     Parameters& landBorderParameters;
   };
 
-  void paintSurface(const std::string& position, PaintContext& ctx, bool require_sea_shadings);
+  void paintSurface(const std::string& position, PaintContext& ctx);
   void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
   void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
   void generate_output(CTPP::CDT& theGlobals,
