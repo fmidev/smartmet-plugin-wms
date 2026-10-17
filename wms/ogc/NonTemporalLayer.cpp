@@ -84,7 +84,7 @@ MapLayer::MapLayer(const LayerConfig& config, const Json::Value& json)
   }
 
   // BBOX is read from geometry dimension (database),
-  geographicBoundingBox.xMin = (xMin ? *xMin : -90);
+  geographicBoundingBox.xMin = (xMin ? *xMin : -180);
   geographicBoundingBox.yMin = (yMin ? *yMin : -90);
   geographicBoundingBox.xMax = (xMax ? *xMax : 180);
   geographicBoundingBox.yMax = (yMax ? *yMax : 90);
