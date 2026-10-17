@@ -104,6 +104,71 @@ void apply_autoclass(std::vector<Isoline>& isolines, const std::string& pattern)
   }
 }
 
+// The isovalues to skip, given as a single number or an array
+std::vector<double> except_values(const Json::Value& json_except)
+{
+  std::vector<double> except_vector;
+  if (!json_except.isNull())
+  {
+    if (json_except.isArray())
+    {
+      for (const auto& e_json : json_except)
+        except_vector.push_back(e_json.asDouble());
+    }
+    else
+      except_vector.push_back(json_except.asDouble());
+  }
+  return except_vector;
+}
+
+// Generate isolines from startvalue, endvalue, interval and except settings
+void generate_isoline_range(Json::Value& json, std::string& autoqid, std::vector<Isoline>& isolines)
+{
+  std::optional<double> startvalue;
+  std::optional<double> endvalue;
+  std::optional<double> interval;
+
+  JsonTools::remove_double(startvalue, json, "startvalue");
+  JsonTools::remove_double(endvalue, json, "endvalue");
+  JsonTools::remove_double(interval, json, "interval");
+
+  if (!startvalue)
+    throw Fmi::Exception(BCP, "isolines startvalue missing");
+  if (!endvalue)
+    throw Fmi::Exception(BCP, "isolines endvalue missing");
+  if (!interval)
+    throw Fmi::Exception(BCP, "isolines interval missing");
+
+  if (*startvalue > *endvalue)
+    throw Fmi::Exception(BCP, "isolines startvalue > endvalue");
+  if (*interval <= 0)
+    throw Fmi::Exception(BCP, "isolines interval must be positive");
+
+  auto json_except = JsonTools::remove(json, "except");
+  std::vector<double> except_vector = except_values(json_except);
+
+  std::string qidprefix;
+  JsonTools::remove_string(qidprefix, json, "qidprefix");
+
+  if (autoqid.empty())  // use autoqid as is if it was given
+  {
+    if (!qidprefix.empty())
+      autoqid = qidprefix + "_{}";  // else use "qidprefix_{}" if qidprefix was given
+    else
+      autoqid = "isoline_{}";  // else use "isoline_{}"
+  }
+
+  if (!json.empty())
+  {
+    auto names = json.getMemberNames();
+    auto namelist = boost::algorithm::join(names, ",");
+    throw Fmi::Exception(
+        BCP, "Unknown member variables in Isoline layer isovalues setting: " + namelist);
+  }
+
+  generate_isolines(isolines, *startvalue, *endvalue, *interval, autoqid, except_vector);
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -143,61 +208,7 @@ void IsolineLayer::init(Json::Value& theJson,
       else if (!json.isObject())
         throw Fmi::Exception(BCP, "Isoline layer isolines setting must be an array or a group");
       else
-      {
-        std::optional<double> startvalue;
-        std::optional<double> endvalue;
-        std::optional<double> interval;
-
-        JsonTools::remove_double(startvalue, json, "startvalue");
-        JsonTools::remove_double(endvalue, json, "endvalue");
-        JsonTools::remove_double(interval, json, "interval");
-
-        if (!startvalue)
-          throw Fmi::Exception(BCP, "isolines startvalue missing");
-        if (!endvalue)
-          throw Fmi::Exception(BCP, "isolines endvalue missing");
-        if (!interval)
-          throw Fmi::Exception(BCP, "isolines interval missing");
-
-        if (*startvalue > *endvalue)
-          throw Fmi::Exception(BCP, "isolines startvalue > endvalue");
-        if (*interval <= 0)
-          throw Fmi::Exception(BCP, "isolines interval must be positive");
-
-        auto json_except = JsonTools::remove(json, "except");
-        std::vector<double> except_vector;
-        if (!json_except.isNull())
-        {
-          if (json_except.isArray())
-          {
-            for (const auto& e_json : json_except)
-              except_vector.push_back(e_json.asDouble());
-          }
-          else
-            except_vector.push_back(json_except.asDouble());
-        }
-
-        std::string qidprefix;
-        JsonTools::remove_string(qidprefix, json, "qidprefix");
-
-        if (autoqid.empty())  // use autoqid as is if it was given
-        {
-          if (!qidprefix.empty())
-            autoqid = qidprefix + "_{}";  // else use "qidprefix_{}" if qidprefix was given
-          else
-            autoqid = "isoline_{}";  // else use "isoline_{}"
-        }
-
-        if (!json.empty())
-        {
-          auto names = json.getMemberNames();
-          auto namelist = boost::algorithm::join(names, ",");
-          throw Fmi::Exception(
-              BCP, "Unknown member variables in Isoline layer isovalues setting: " + namelist);
-        }
-
-        generate_isolines(isolines, *startvalue, *endvalue, *interval, autoqid, except_vector);
-      }
+        generate_isoline_range(json, autoqid, isolines);
     }
 
     // Make sure everything has a unique qid
