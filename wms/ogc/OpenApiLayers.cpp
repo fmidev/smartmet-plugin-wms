@@ -65,6 +65,30 @@ void add_dimensions(CTPP::CDT& node, std::vector<std::string>& dimensions)
     add_dimension(node, dimensions);
 }
 
+// Selectable levels of all the elevation dimensions
+void add_all_elevations(CTPP::CDT& dim, std::vector<std::string>& elevations)
+{
+  if (dim.GetType() == CTPP::CDT::ARRAY_VAL)
+    for (std::size_t j = 0; j < dim.Size(); ++j)
+      add_elevations(dim[j], elevations);
+  else if (dim.GetType() == CTPP::CDT::HASH_VAL)
+    add_elevations(dim, elevations);
+}
+
+// Add the names of the styles in the capabilities style list, skipping duplicates
+void add_styles(CTPP::CDT& styles, std::vector<std::string>& names)
+{
+  if (styles.GetType() != CTPP::CDT::ARRAY_VAL)
+    return;
+  for (std::size_t j = 0; j < styles.Size(); ++j)
+    if (styles[j].Exists("name"))
+    {
+      auto name = styles[j].At("name").GetString();
+      if (std::find(names.begin(), names.end(), name) == names.end())
+        names.push_back(name);
+    }
+}
+
 }  // namespace
 
 std::vector<OpenApiLayer> openApiLayers(const WMS::Config& wmsConfig,
@@ -92,14 +116,7 @@ std::vector<OpenApiLayer> openApiLayers(const WMS::Config& wmsConfig,
         info.title = layer.At("title").GetString();
 
       if (layer.Exists("elevation_dimension"))
-      {
-        CTPP::CDT& dim = layer.At("elevation_dimension");
-        if (dim.GetType() == CTPP::CDT::ARRAY_VAL)
-          for (std::size_t j = 0; j < dim.Size(); ++j)
-            add_elevations(dim[j], info.elevations);
-        else if (dim.GetType() == CTPP::CDT::HASH_VAL)
-          add_elevations(dim, info.elevations);
-      }
+        add_all_elevations(layer.At("elevation_dimension"), info.elevations);
 
       // In the order of the WMTS ResourceURL template
       for (const char* name : {"time_dimension", "elevation_dimension"})
@@ -113,17 +130,7 @@ std::vector<OpenApiLayer> openApiLayers(const WMS::Config& wmsConfig,
       {
         auto style_info = layer_obj->getStyleInfo(language, language);
         if (style_info && style_info->Exists("style"))
-        {
-          CTPP::CDT& styles = (*style_info)["style"];
-          if (styles.GetType() == CTPP::CDT::ARRAY_VAL)
-            for (std::size_t j = 0; j < styles.Size(); ++j)
-              if (styles[j].Exists("name"))
-              {
-                auto name = styles[j].At("name").GetString();
-                if (std::find(info.styles.begin(), info.styles.end(), name) == info.styles.end())
-                  info.styles.push_back(name);
-              }
-        }
+          add_styles((*style_info)["style"], info.styles);
       }
 
       ret.push_back(std::move(info));
