@@ -20,6 +20,98 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+// Forward the opt-in Trax grid smoother as contour.smooth.* attributes that
+// grid-content parses back into Trax::SmoothOptions.
+void add_trax_smoother_attributes(T::AttributeList& attrs, const Trax::SmoothOptions& so)
+{
+  const char* method = nullptr;
+  switch (so.method)
+  {
+    case Trax::SmoothMethod::Box:
+      method = "box";
+      break;
+    case Trax::SmoothMethod::Median:
+      method = "median";
+      break;
+    case Trax::SmoothMethod::Morphology:
+      method = "morphology";
+      break;
+    default:
+      break;  // None / Pyramid: nothing to send
+  }
+  if (method != nullptr)
+  {
+    attrs.addAttribute("contour.smooth.method", method);
+    attrs.addAttribute("contour.smooth.radius", Fmi::to_string(so.radius));
+    attrs.addAttribute("contour.smooth.passes", Fmi::to_string(so.passes));
+    const char* boundary = "normalized";
+    if (so.boundary == Trax::SmoothBoundary::Replicate)
+      boundary = "replicate";
+    else if (so.boundary == Trax::SmoothBoundary::Reflect)
+      boundary = "reflect";
+    attrs.addAttribute("contour.smooth.boundary", boundary);
+    if (so.method == Trax::SmoothMethod::Morphology)
+    {
+      const char* op = "openclose";
+      if (so.morphology == Trax::MorphologyOp::Open)
+        op = "open";
+      else if (so.morphology == Trax::MorphologyOp::Close)
+        op = "close";
+      attrs.addAttribute("contour.smooth.morphology", op);
+    }
+    attrs.addAttribute("contour.smooth.preserve_missing", so.preserve_missing ? "1" : "0");
+  }
+}
+
+// Parse the interpolation method name
+std::optional<Trax::InterpolationType> parse_interpolation(const std::string& interpolation)
+{
+  if (interpolation == "linear")
+    return Trax::InterpolationType::Linear;
+  if (interpolation == "nearest" || interpolation == "discrete" || interpolation == "midpoint")
+    return Trax::InterpolationType::Midpoint;
+  if (interpolation == "logarithmic")
+    return Trax::InterpolationType::Logarithmic;
+  return std::nullopt;
+}
+
+// Convert the WKB isobands returned by the grid query into OGRGeometry objects
+std::vector<OGRGeometryPtr> wkb_geometries(const QueryServer::Query& query)
+{
+  std::vector<OGRGeometryPtr> isobands;
+  for (const auto& p : query.mQueryParameterList)
+  {
+    for (const auto& val : p.mValueList)
+    {
+      if (!val->mValueData.empty())
+      {
+        for (const auto& wkb : val->mValueData)
+        {
+          const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
+          OGRGeometry* geom = nullptr;
+          OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
+          auto geomPtr = OGRGeometryPtr(geom);
+          isobands.push_back(geomPtr);
+        }
+      }
+    }
+  }
+  return isobands;
+}
+
+// Select the level, throws if it is not available
+void select_level(const Engine::Querydata::Q& q, double level)
+{
+  bool match = false;
+  for (q->resetLevel(); !match && q->nextLevel();)
+    match = (q->levelValue() == level);
+  if (!match)
+    throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(level) + " is not available");
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -271,59 +363,13 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     // grid-content parses back into Trax::SmoothOptions. Independent of the
     // legacy size/degree above.
     if (smoother.trax_options)
-    {
-      const auto& so = *smoother.trax_options;
-      const char* method = nullptr;
-      switch (so.method)
-      {
-        case Trax::SmoothMethod::Box:
-          method = "box";
-          break;
-        case Trax::SmoothMethod::Median:
-          method = "median";
-          break;
-        case Trax::SmoothMethod::Morphology:
-          method = "morphology";
-          break;
-        default:
-          break;  // None / Pyramid: nothing to send
-      }
-      if (method != nullptr)
-      {
-        auto& attrs = originalGridQuery->mAttributeList;
-        attrs.addAttribute("contour.smooth.method", method);
-        attrs.addAttribute("contour.smooth.radius", Fmi::to_string(so.radius));
-        attrs.addAttribute("contour.smooth.passes", Fmi::to_string(so.passes));
-        const char* boundary = "normalized";
-        if (so.boundary == Trax::SmoothBoundary::Replicate)
-          boundary = "replicate";
-        else if (so.boundary == Trax::SmoothBoundary::Reflect)
-          boundary = "reflect";
-        attrs.addAttribute("contour.smooth.boundary", boundary);
-        if (so.method == Trax::SmoothMethod::Morphology)
-        {
-          const char* op = "openclose";
-          if (so.morphology == Trax::MorphologyOp::Open)
-            op = "open";
-          else if (so.morphology == Trax::MorphologyOp::Close)
-            op = "close";
-          attrs.addAttribute("contour.smooth.morphology", op);
-        }
-        attrs.addAttribute("contour.smooth.preserve_missing", so.preserve_missing ? "1" : "0");
-      }
-    }
-    if (interpolation == "linear")
-      originalGridQuery->mAttributeList.addAttribute(
-          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
-    else if (interpolation == "nearest" || interpolation == "discrete" ||
-             interpolation == "midpoint")
-      originalGridQuery->mAttributeList.addAttribute(
-          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Midpoint));
-    else if (interpolation == "logarithmic")
-      originalGridQuery->mAttributeList.addAttribute(
-          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
-    else
+      add_trax_smoother_attributes(originalGridQuery->mAttributeList, *smoother.trax_options);
+
+    auto interpolation_type = parse_interpolation(interpolation);
+    if (!interpolation_type)
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
+    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",
+                                                   Fmi::to_string((int)*interpolation_type));
 
     if (offset)
       originalGridQuery->mAttributeList.addAttribute("contour.offset", Fmi::to_string(*offset));
@@ -345,24 +391,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
 
     // Converting the returned WKB-isolines into OGRGeometry objects.
 
-    std::vector<OGRGeometryPtr> isobands;
-    for (const auto& p : query->mQueryParameterList)
-    {
-      for (const auto& val : p.mValueList)
-      {
-        if (!val->mValueData.empty())
-        {
-          for (const auto& wkb : val->mValueData)
-          {
-            const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
-            OGRGeometry* geom = nullptr;
-            OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
-            auto geomPtr = OGRGeometryPtr(geom);
-            isobands.push_back(geomPtr);
-          }
-        }
-      }
-    }
+    std::vector<OGRGeometryPtr> isobands = wkb_geometries(*query);
     if (!isobands.empty())
       isoband = isobands[0];
 
@@ -413,13 +442,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     // Establish the level
 
     if (level)
-    {
-      bool match = false;
-      for (q->resetLevel(); !match && q->nextLevel();)
-        match = (q->levelValue() == *level);
-      if (!match)
-        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
-    }
+      select_level(q, *level);
 
     // Establish the projection from the geometry to be clipped
 
@@ -448,15 +471,10 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     options.filter_degree = smoother.degree;
     options.smoother = smoother.trax_options;
 
-    if (interpolation == "linear")
-      options.interpolation = Trax::InterpolationType::Linear;
-    else if (interpolation == "nearest" || interpolation == "discrete" ||
-             interpolation == "midpoint")
-      options.interpolation = Trax::InterpolationType::Midpoint;
-    else if (interpolation == "logarithmic")
-      options.interpolation = Trax::InterpolationType::Logarithmic;
-    else
+    auto interpolation_type = parse_interpolation(interpolation);
+    if (!interpolation_type)
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
+    options.interpolation = *interpolation_type;
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
