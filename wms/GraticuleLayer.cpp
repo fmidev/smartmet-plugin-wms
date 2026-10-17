@@ -888,6 +888,118 @@ GraticuleLines generate_grid(const Graticule& g,
   }
 }
 
+// Add the ticks of the meridian at the top and bottom edges
+void add_meridian_ticks(OGRMultiLineString& labeled,
+                        OGRMultiLineString& unlabeled,
+                        const Graticule& g,
+                        int lon,
+                        double linestep,
+                        const Fmi::CoordinateTransformation& transformation,
+                        const Fmi::Box& box)
+{
+  std::vector<double> x;
+  std::vector<double> y;
+
+  // latlon coordinates
+  for (int i = 0;; i++)
+  {
+    auto lat = -90.0 + i * linestep;
+    if (lat > 90)
+      break;
+    x.push_back(lon);
+    y.push_back(lat);
+  }
+
+  // CRS coordinates
+  transformation.transform(x, y);
+
+  // Find intersections with bbox
+
+  std::vector<double> xcoord;
+  std::vector<double> ycoord;
+
+  OGRLineString* line = nullptr;
+  for (auto i = 0UL; i < x.size() - 1; i++)
+  {
+    if (y[i] <= box.ymin() && y[i + 1] >= box.ymin())
+      line = tick(y[i], y[i + 1], x[i], x[i + 1], box.ymin(), box, false, g.length);
+    else if (y[i] <= box.ymax() && y[i + 1] >= box.ymax())
+      line = tick(y[i + 1], y[i], x[i + 1], x[i], box.ymax(), box, false, g.length);
+#if 0
+    // We do not wish to draw meridians at the left/right edges
+    else if (x[i] <= box.xmin() && x[i + 1] >= box.xmin())
+      line = tick(x[i], x[i + 1], y[i], y[i + 1], box.xmin(), box, true, g.length);
+    else if (x[i] <= box.xmax() && x[i + 1] >= box.xmax())
+      line = tick(x[i + 1], x[i], y[i + 1], y[i], box.xmax(), box, true, g.length);
+#endif
+
+    if (line)
+    {
+      if (is_labeled(lon, g))
+        labeled.addGeometryDirectly(line);
+      else
+        unlabeled.addGeometryDirectly(line);
+    }
+    line = nullptr;
+  }
+}
+
+// Add the ticks of the parallel at the left and right edges
+void add_parallel_ticks(OGRMultiLineString& labeled,
+                        OGRMultiLineString& unlabeled,
+                        const Graticule& g,
+                        int lat,
+                        double linestep,
+                        const Fmi::CoordinateTransformation& transformation,
+                        const Fmi::Box& box)
+{
+  std::vector<double> x;
+  std::vector<double> y;
+
+  // latlon coordinates
+  for (int i = 0;; i++)
+  {
+    auto lon = -180 + i * linestep;
+    if (lon > 180)
+      break;
+    x.push_back(lon);
+    y.push_back(lat);
+  }
+
+  // CRS coordinates
+  transformation.transform(x, y);
+
+  // Find intersections with bbox
+
+  std::vector<double> xcoord;
+  std::vector<double> ycoord;
+
+  OGRLineString* line = nullptr;
+  for (auto i = 0UL; i < x.size() - 1; i++)
+  {
+    if (x[i] <= box.xmin() && x[i + 1] >= box.xmin())
+      line = tick(x[i], x[i + 1], y[i], y[i + 1], box.xmin(), box, true, g.length);
+    else if (x[i] <= box.xmax() && x[i + 1] >= box.xmax())
+      line = tick(x[i + 1], x[i], y[i + 1], y[i], box.xmax(), box, true, g.length);
+#if 0
+    // We do not wish to draw latitudes at the bottom/top edges
+    else if (y[i] <= box.ymin() && y[i + 1] >= box.ymin())
+      line = tick(y[i], y[i + 1], x[i], x[i + 1], box.ymin(), box, false, g.length);
+    else if (y[i] <= box.ymax() && y[i + 1] >= box.ymax())
+      line = tick(y[i + 1], y[i], x[i + 1], x[i], box.ymax(), box, false, g.length);
+#endif
+
+    if (line)
+    {
+      if (is_labeled(lat, g))
+        labeled.addGeometryDirectly(line);
+      else
+        unlabeled.addGeometryDirectly(line);
+    }
+    line = nullptr;
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate graticule ticks in image coordinates
@@ -913,59 +1025,13 @@ GraticuleLines generate_ticks(const Graticule& g,
     // produce ~1 km errors
     const double linestep = 1.0;
 
-    std::vector<double> x;
-    std::vector<double> y;
-
     // Add vertical ticks only at top and bottom edges
     for (int lon = -180; lon <= 180; lon += g.step)
     {
       if (skip_value(lon, g.except))
         continue;
 
-      // latlon coordinates
-      for (int i = 0;; i++)
-      {
-        auto lat = -90.0 + i * linestep;
-        if (lat > 90)
-          break;
-        x.push_back(lon);
-        y.push_back(lat);
-      }
-
-      // CRS coordinates
-      transformation.transform(x, y);
-
-      // Find intersections with bbox
-
-      std::vector<double> xcoord;
-      std::vector<double> ycoord;
-
-      OGRLineString* line = nullptr;
-      for (auto i = 0UL; i < x.size() - 1; i++)
-      {
-        if (y[i] <= box.ymin() && y[i + 1] >= box.ymin())
-          line = tick(y[i], y[i + 1], x[i], x[i + 1], box.ymin(), box, false, g.length);
-        else if (y[i] <= box.ymax() && y[i + 1] >= box.ymax())
-          line = tick(y[i + 1], y[i], x[i + 1], x[i], box.ymax(), box, false, g.length);
-#if 0
-        // We do not wish to draw meridians at the left/right edges
-        else if (x[i] <= box.xmin() && x[i + 1] >= box.xmin())
-          line = tick(x[i], x[i + 1], y[i], y[i + 1], box.xmin(), box, true, g.length);
-        else if (x[i] <= box.xmax() && x[i + 1] >= box.xmax())
-          line = tick(x[i + 1], x[i], y[i + 1], y[i], box.xmax(), box, true, g.length);
-#endif
-
-        if (line)
-        {
-          if (is_labeled(lon, g))
-            labeled->addGeometryDirectly(line);
-          else
-            unlabeled->addGeometryDirectly(line);
-        }
-        line = nullptr;
-      }
-      x.clear();
-      y.clear();
+      add_meridian_ticks(*labeled, *unlabeled, g, lon, linestep, transformation, box);
     }
 
     // Add horizontal ticks only at left and right edges
@@ -974,50 +1040,7 @@ GraticuleLines generate_ticks(const Graticule& g,
       if (skip_value(lat, g.except))
         continue;
 
-      // latlon coordinates
-      for (int i = 0;; i++)
-      {
-        auto lon = -180 + i * linestep;
-        if (lon > 180)
-          break;
-        x.push_back(lon);
-        y.push_back(lat);
-      }
-
-      // CRS coordinates
-      transformation.transform(x, y);
-
-      // Find intersections with bbox
-
-      std::vector<double> xcoord;
-      std::vector<double> ycoord;
-
-      OGRLineString* line = nullptr;
-      for (auto i = 0UL; i < x.size() - 1; i++)
-      {
-        if (x[i] <= box.xmin() && x[i + 1] >= box.xmin())
-          line = tick(x[i], x[i + 1], y[i], y[i + 1], box.xmin(), box, true, g.length);
-        else if (x[i] <= box.xmax() && x[i + 1] >= box.xmax())
-          line = tick(x[i + 1], x[i], y[i + 1], y[i], box.xmax(), box, true, g.length);
-#if 0
-        // We do not wish to draw latitudes at the bottom/top edges
-        else if (y[i] <= box.ymin() && y[i + 1] >= box.ymin())
-          line = tick(y[i], y[i + 1], x[i], x[i + 1], box.ymin(), box, false, g.length);
-        else if (y[i] <= box.ymax() && y[i + 1] >= box.ymax())
-          line = tick(y[i + 1], y[i], x[i + 1], x[i], box.ymax(), box, false, g.length);
-#endif
-
-        if (line)
-        {
-          if (is_labeled(lat, g))
-            labeled->addGeometryDirectly(line);
-          else
-            unlabeled->addGeometryDirectly(line);
-        }
-        line = nullptr;
-      }
-      x.clear();
-      y.clear();
+      add_parallel_ticks(*labeled, *unlabeled, g, lat, linestep, transformation, box);
     }
 
     labeled->assignSpatialReference(OGRSpatialReference::GetWGS84SRS());
