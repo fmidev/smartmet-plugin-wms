@@ -187,6 +187,208 @@ void add_time_parameter(Spine::HTTP::Request& thisRequest,
   }
 }
 
+// Capitalized WMTS dimension identifier (time -> Time, reference_time -> Reference_time)
+std::string dimension_identifier(const std::string& name)
+{
+  std::string identifier = name;
+  identifier[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(identifier[0])));
+  for (std::size_t k = 1; k < identifier.size(); ++k)
+    identifier[k] = static_cast<char>(std::tolower(static_cast<unsigned char>(identifier[k])));
+  return identifier;
+}
+
+// Reshape one WMS dimension entry (a HASH with name/default/value) into a
+// WMTS <Dimension> and its RESTful ResourceURL placeholder.
+void add_dimension(CTPP::CDT& e,
+                   CTPP::CDT& wl,
+                   const WMS::Config& wmsConfig,
+                   CTPP::CDT& dims,
+                   std::string& dim_path)
+{
+  if (!e.Exists("name"))
+    return;
+  std::string name = e.At("name").GetString();
+  if (name.empty())
+    return;
+  const std::string identifier = dimension_identifier(name);
+
+  CTPP::CDT dim(CTPP::CDT::HASH_VAL);
+  dim["identifier"] = identifier;
+  if (e.Exists("units") && !e.At("units").GetString().empty())
+    dim["uom"] = e.At("units").GetString();
+  if (e.Exists("unit_symbol") && !e.At("unit_symbol").GetString().empty())
+    dim["unit_symbol"] = e.At("unit_symbol").GetString();
+  if (e.Exists("default"))
+    dim["default"] = e.At("default");
+  else if (name == "time" && wl.Exists("name"))
+  {
+    // The same time a KVP GetTile without TIME renders (see handleGetTile):
+    // latest for observations, nearest to the wall clock for forecasts,
+    // the first time for forecasts entirely in the past.
+    auto t = wmsConfig.mostCurrentTime(wl.At("name").GetString(), {});
+    if (!t.is_not_a_date_time())
+      dim["default"] = Fmi::to_iso_extended_string(t) + "Z";
+  }
+  // WMS says current="1" when the keyword "current" is accepted as a value;
+  // GetTile resolves it for the time dimension (resolveCurrentTime).
+  if (name == "time" && e.Exists("current") && e.At("current").GetInt() == 1)
+    dim["current"] = 1;
+  // WMS packs the values into one comma separated attribute; WMTS has one
+  // <Value> element per value. An ISO 8601 start/end/period range stays
+  // one value, as GeoServer and ADAGUC emit it.
+  if (e.Exists("value"))
+  {
+    CTPP::CDT values(CTPP::CDT::ARRAY_VAL);
+    std::vector<std::string> parts;
+    // Boost 1.69 (RHEL8) split() takes the input by reference, no temporaries
+    const std::string value = e.At("value").GetString();
+    boost::algorithm::split(parts, value, boost::is_any_of(","));
+    for (const auto& v : parts)
+      if (!v.empty())
+        values.PushBack(v);
+    dim["values"] = values;
+  }
+  dims.PushBack(dim);
+  dim_path += "/{" + identifier + "}";
+}
+
+// WGS84 bounding box of the layer
+void add_layer_bbox(CTPP::CDT& layer, CTPP::CDT& wl)
+{
+  if (wl.Exists("ex_geographic_bounding_box"))
+  {
+    CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
+    if (bb.Exists("west_bound_longitude"))  layer["bbox_min_x"] = bb.At("west_bound_longitude");
+    if (bb.Exists("east_bound_longitude"))  layer["bbox_max_x"] = bb.At("east_bound_longitude");
+    if (bb.Exists("south_bound_latitude"))  layer["bbox_min_y"] = bb.At("south_bound_latitude");
+    if (bb.Exists("north_bound_latitude"))  layer["bbox_max_y"] = bb.At("north_bound_latitude");
+  }
+}
+
+// Styles — carry over from WMS layer, ensuring at least 'default' exists.
+void add_layer_styles(CTPP::CDT& layer, CTPP::CDT& wl)
+{
+  // The WMS capabilities hash names a style with "name" (<Name> in WMS
+  // 1.3.0) but the WMTS template reads "identifier" (<ows:Identifier>), so
+  // the key has to be translated. Copying the hash verbatim published an
+  // empty <ows:Identifier> for every style, leaving clients no style name
+  // to put in the ResourceURL {Style} segment.
+  if (wl.Exists("style"))
+  {
+    CTPP::CDT& wms_styles = wl.At("style");
+    std::size_t si = 0;
+    for (std::size_t i = 0; i < wms_styles.Size(); ++i)
+    {
+      CTPP::CDT& src = wms_styles[i];
+      CTPP::CDT style(CTPP::CDT::HASH_VAL);
+      if (src.Exists("name")) style["identifier"] = src.At("name");
+      if (src.Exists("title")) style["title"] = src.At("title");
+      if (src.Exists("abstract")) style["abstract"] = src.At("abstract");
+      if (src.Exists("legend_url")) style["legend_url"] = src.At("legend_url");
+      layer["styles"][si++] = style;
+    }
+  }
+
+  if (!layer.Exists("styles"))
+  {
+    CTPP::CDT default_style(CTPP::CDT::HASH_VAL);
+    default_style["identifier"] = "default";
+    default_style["title"] = "Default";
+    layer["styles"][0] = default_style;
+  }
+}
+
+// Time / elevation / reference-time dimensions.
+//
+// The WMS layer CDT already carries the temporal and elevation dimensions
+// (time_dimension[]/elevation_dimension[]); the WMTS capabilities used to
+// drop them, leaving clients unable to request anything but the latest
+// time. Reshape them into WMTS <Dimension> elements and build the matching
+// RESTful ResourceURL placeholders. Identifiers are capitalized
+// (time -> Time, elevation -> Elevation, reference_time -> Reference_time)
+// to match what the GeoWeb OpenLayers client substitutes into the tile
+// URL template (WMTSDimensionsFromDimensions upper-cases the first letter).
+void add_layer_dimensions(CTPP::CDT& layer, CTPP::CDT& wl, const WMS::Config& wmsConfig)
+{
+  CTPP::CDT dims(CTPP::CDT::ARRAY_VAL);
+  std::string dim_path;
+  // time_dimension is a list ([time, reference_time]); elevation_dimension may
+  // be either a list or a single dimension hash — handle both shapes.
+  for (const char* src : {"time_dimension", "elevation_dimension"})
+  {
+    if (!wl.Exists(src))
+      continue;
+    CTPP::CDT& node = wl.At(src);
+    if (node.GetType() == CTPP::CDT::ARRAY_VAL)
+    {
+      for (std::size_t d = 0; d < node.Size(); ++d)
+        add_dimension(node[d], wl, wmsConfig, dims, dim_path);
+    }
+    else if (node.GetType() == CTPP::CDT::HASH_VAL)
+    {
+      add_dimension(node, wl, wmsConfig, dims, dim_path);
+    }
+  }
+  if (dims.Size() > 0)
+    layer["dimensions"] = dims;
+  // Always defined so the ResourceURL template can interpolate it
+  // unconditionally (empty for non-temporal layers).
+  layer["dim_path"] = dim_path;
+}
+
+// WMTS capabilities of a WMS capabilities layer
+CTPP::CDT layer_capabilities(CTPP::CDT& wl, const Config& wmtsConfig)
+{
+  const auto& wmsConfig = wmtsConfig.wmsConfig();
+  CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+  if (wl.Exists("name"))     layer["identifier"] = wl.At("name");
+  if (wl.Exists("title"))    layer["title"]      = wl.At("title");
+  if (wl.Exists("abstract")) layer["abstract"]   = wl.At("abstract");
+
+  add_layer_bbox(layer, wl);
+  add_layer_styles(layer, wl);
+
+  // Supported tile formats
+  std::size_t fmti = 0;
+  for (const auto& fmt : wmtsConfig.supportedFormats())
+    layer["formats"][fmti++] = fmt;
+
+  // TileMatrixSet links — all standard TMS
+  std::size_t tmsi = 0;
+  for (const auto& tms : wmtsConfig.tileMatrixSets())
+    layer["tile_matrix_set_links"][tmsi++] = tms.identifier;
+
+  add_layer_dimensions(layer, wl, wmsConfig);
+  return layer;
+}
+
+// Capabilities of a tile matrix set
+CTPP::CDT tile_matrix_set_cdt(const TileMatrixSet& tms)
+{
+  CTPP::CDT tms_cdt(CTPP::CDT::HASH_VAL);
+  tms_cdt["identifier"] = tms.identifier;
+  tms_cdt["crs"]        = tms.crs;
+  if (!tms.well_known_scale_set.empty())
+    tms_cdt["well_known_scale_set"] = tms.well_known_scale_set;
+
+  for (std::size_t tm_i = 0; tm_i < tms.tile_matrices.size(); ++tm_i)
+  {
+    const auto& tm = tms.tile_matrices[tm_i];
+    CTPP::CDT tm_cdt(CTPP::CDT::HASH_VAL);
+    tm_cdt["identifier"]       = tm.identifier;
+    tm_cdt["scale_denominator"] = fmt::format("{:.10g}", tm.scale_denominator);
+    tm_cdt["top_left_corner"]  = fmt::format("{} {}", tm.top_left_corner_x,
+                                                       tm.top_left_corner_y);
+    tm_cdt["tile_width"]   = tm.tile_width;
+    tm_cdt["tile_height"]  = tm.tile_height;
+    tm_cdt["matrix_width"] = tm.matrix_width;
+    tm_cdt["matrix_height"] = tm.matrix_height;
+    tms_cdt["tile_matrices"][tm_i] = tm_cdt;
+  }
+  return tms_cdt;
+}
+
 }  // namespace
 
 Handler::Handler(const Dali::Config& daliConfig) : itsDaliConfig(daliConfig) {}
@@ -500,181 +702,14 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
     for (std::size_t i = 0; i < layer_list.Size(); ++i)
     {
       // CTPP2 CDT::At() has no const overload — use non-const access
-      CTPP::CDT& wl = layer_list[i];
-      CTPP::CDT layer(CTPP::CDT::HASH_VAL);
-
-      if (wl.Exists("name"))     layer["identifier"] = wl.At("name");
-      if (wl.Exists("title"))    layer["title"]      = wl.At("title");
-      if (wl.Exists("abstract")) layer["abstract"]   = wl.At("abstract");
-
-      // WGS84 bounding box
-      if (wl.Exists("ex_geographic_bounding_box"))
-      {
-        CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
-        if (bb.Exists("west_bound_longitude"))  layer["bbox_min_x"] = bb.At("west_bound_longitude");
-        if (bb.Exists("east_bound_longitude"))  layer["bbox_max_x"] = bb.At("east_bound_longitude");
-        if (bb.Exists("south_bound_latitude"))  layer["bbox_min_y"] = bb.At("south_bound_latitude");
-        if (bb.Exists("north_bound_latitude"))  layer["bbox_max_y"] = bb.At("north_bound_latitude");
-      }
-
-      // Styles — carry over from WMS layer, ensuring at least 'default' exists.
-      // The WMS capabilities hash names a style with "name" (<Name> in WMS
-      // 1.3.0) but the WMTS template reads "identifier" (<ows:Identifier>), so
-      // the key has to be translated. Copying the hash verbatim published an
-      // empty <ows:Identifier> for every style, leaving clients no style name
-      // to put in the ResourceURL {Style} segment.
-      if (wl.Exists("style"))
-      {
-        CTPP::CDT& wms_styles = wl.At("style");
-        std::size_t si = 0;
-        for (std::size_t i = 0; i < wms_styles.Size(); ++i)
-        {
-          CTPP::CDT& src = wms_styles[i];
-          CTPP::CDT style(CTPP::CDT::HASH_VAL);
-          if (src.Exists("name")) style["identifier"] = src.At("name");
-          if (src.Exists("title")) style["title"] = src.At("title");
-          if (src.Exists("abstract")) style["abstract"] = src.At("abstract");
-          if (src.Exists("legend_url")) style["legend_url"] = src.At("legend_url");
-          layer["styles"][si++] = style;
-        }
-      }
-
-      if (!layer.Exists("styles"))
-      {
-        CTPP::CDT default_style(CTPP::CDT::HASH_VAL);
-        default_style["identifier"] = "default";
-        default_style["title"] = "Default";
-        layer["styles"][0] = default_style;
-      }
-
-      // Supported tile formats
-      std::size_t fmti = 0;
-      for (const auto& fmt : itsWMTSConfig->supportedFormats())
-        layer["formats"][fmti++] = fmt;
-
-      // TileMatrixSet links — all standard TMS
-      std::size_t tmsi = 0;
-      for (const auto& tms : itsWMTSConfig->tileMatrixSets())
-        layer["tile_matrix_set_links"][tmsi++] = tms.identifier;
-
-      // Time / elevation / reference-time dimensions.
-      //
-      // The WMS layer CDT already carries the temporal and elevation dimensions
-      // (time_dimension[]/elevation_dimension[]); the WMTS capabilities used to
-      // drop them, leaving clients unable to request anything but the latest
-      // time. Reshape them into WMTS <Dimension> elements and build the matching
-      // RESTful ResourceURL placeholders. Identifiers are capitalized
-      // (time -> Time, elevation -> Elevation, reference_time -> Reference_time)
-      // to match what the GeoWeb OpenLayers client substitutes into the tile
-      // URL template (WMTSDimensionsFromDimensions upper-cases the first letter).
-      CTPP::CDT dims(CTPP::CDT::ARRAY_VAL);
-      std::string dim_path;
-      // Reshape one WMS dimension entry (a HASH with name/default/value) into a
-      // WMTS <Dimension> and its RESTful ResourceURL placeholder.
-      auto add_dimension = [&](CTPP::CDT& e) {
-        if (!e.Exists("name"))
-          return;
-        std::string name = e.At("name").GetString();
-        if (name.empty())
-          return;
-        std::string identifier = name;
-        identifier[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(identifier[0])));
-        for (std::size_t k = 1; k < identifier.size(); ++k)
-          identifier[k] =
-              static_cast<char>(std::tolower(static_cast<unsigned char>(identifier[k])));
-
-        CTPP::CDT dim(CTPP::CDT::HASH_VAL);
-        dim["identifier"] = identifier;
-        if (e.Exists("units") && !e.At("units").GetString().empty())
-          dim["uom"] = e.At("units").GetString();
-        if (e.Exists("unit_symbol") && !e.At("unit_symbol").GetString().empty())
-          dim["unit_symbol"] = e.At("unit_symbol").GetString();
-        if (e.Exists("default"))
-          dim["default"] = e.At("default");
-        else if (name == "time" && wl.Exists("name"))
-        {
-          // The same time a KVP GetTile without TIME renders (see handleGetTile):
-          // latest for observations, nearest to the wall clock for forecasts,
-          // the first time for forecasts entirely in the past.
-          auto t = wmsConfig.mostCurrentTime(wl.At("name").GetString(), {});
-          if (!t.is_not_a_date_time())
-            dim["default"] = Fmi::to_iso_extended_string(t) + "Z";
-        }
-        // WMS says current="1" when the keyword "current" is accepted as a value;
-        // GetTile resolves it for the time dimension (resolveCurrentTime).
-        if (name == "time" && e.Exists("current") && e.At("current").GetInt() == 1)
-          dim["current"] = 1;
-        // WMS packs the values into one comma separated attribute; WMTS has one
-        // <Value> element per value. An ISO 8601 start/end/period range stays
-        // one value, as GeoServer and ADAGUC emit it.
-        if (e.Exists("value"))
-        {
-          CTPP::CDT values(CTPP::CDT::ARRAY_VAL);
-          std::vector<std::string> parts;
-          // Boost 1.69 (RHEL8) split() takes the input by reference, no temporaries
-          const std::string value = e.At("value").GetString();
-          boost::algorithm::split(parts, value, boost::is_any_of(","));
-          for (const auto& v : parts)
-            if (!v.empty())
-              values.PushBack(v);
-          dim["values"] = values;
-        }
-        dims.PushBack(dim);
-        dim_path += "/{" + identifier + "}";
-      };
-      // time_dimension is a list ([time, reference_time]); elevation_dimension may
-      // be either a list or a single dimension hash — handle both shapes.
-      for (const char* src : {"time_dimension", "elevation_dimension"})
-      {
-        if (!wl.Exists(src))
-          continue;
-        CTPP::CDT& node = wl.At(src);
-        if (node.GetType() == CTPP::CDT::ARRAY_VAL)
-        {
-          for (std::size_t d = 0; d < node.Size(); ++d)
-            add_dimension(node[d]);
-        }
-        else if (node.GetType() == CTPP::CDT::HASH_VAL)
-        {
-          add_dimension(node);
-        }
-      }
-      if (dims.Size() > 0)
-        layer["dimensions"] = dims;
-      // Always defined so the ResourceURL template can interpolate it
-      // unconditionally (empty for non-temporal layers).
-      layer["dim_path"] = dim_path;
-
-      layers_cdt.PushBack(layer);
+      layers_cdt.PushBack(layer_capabilities(layer_list[i], *itsWMTSConfig));
     }
     hash["layers"] = layers_cdt;
 
     // --- TileMatrixSets ---
     std::size_t tms_i = 0;
     for (const auto& tms : itsWMTSConfig->tileMatrixSets())
-    {
-      CTPP::CDT tms_cdt(CTPP::CDT::HASH_VAL);
-      tms_cdt["identifier"] = tms.identifier;
-      tms_cdt["crs"]        = tms.crs;
-      if (!tms.well_known_scale_set.empty())
-        tms_cdt["well_known_scale_set"] = tms.well_known_scale_set;
-
-      for (std::size_t tm_i = 0; tm_i < tms.tile_matrices.size(); ++tm_i)
-      {
-        const auto& tm = tms.tile_matrices[tm_i];
-        CTPP::CDT tm_cdt(CTPP::CDT::HASH_VAL);
-        tm_cdt["identifier"]       = tm.identifier;
-        tm_cdt["scale_denominator"] = fmt::format("{:.10g}", tm.scale_denominator);
-        tm_cdt["top_left_corner"]  = fmt::format("{} {}", tm.top_left_corner_x,
-                                                           tm.top_left_corner_y);
-        tm_cdt["tile_width"]   = tm.tile_width;
-        tm_cdt["tile_height"]  = tm.tile_height;
-        tm_cdt["matrix_width"] = tm.matrix_width;
-        tm_cdt["matrix_height"] = tm.matrix_height;
-        tms_cdt["tile_matrices"][tm_i] = tm_cdt;
-      }
-      hash["tile_matrix_sets"][tms_i++] = tms_cdt;
-    }
+      hash["tile_matrix_sets"][tms_i++] = tile_matrix_set_cdt(tms);
 
     const bool print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
     if (print_hash)
