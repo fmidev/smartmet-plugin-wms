@@ -191,6 +191,22 @@ LayerType determine_product_type(const LayerConfig& wmsconfig,
   }
 }
 
+// Add an interval given as an object with interval_start, interval_end and default settings
+void add_object_interval(Json::Value& json, std::vector<interval_dimension_item>& intervals)
+{
+  std::optional<int> interval_start;
+  std::optional<int> interval_end;
+  bool interval_default = false;
+  remove_int(interval_start, json, "interval_start");
+  remove_int(interval_end, json, "interval_end");
+  remove_bool(interval_default, json, "default");
+
+  if (interval_start || interval_end)
+    intervals.emplace_back(interval_start ? *interval_start : 0,
+                           interval_end ? *interval_end : 0,
+                           interval_default);
+}
+
 std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
 {
   try
@@ -217,19 +233,7 @@ std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
               (interval_default ? (*interval_default == interval_start) : i == 0));
         }
         else if (json[i].isObject())
-        {
-          std::optional<int> interval_start;
-          std::optional<int> interval_end;
-          bool interval_default = false;
-          remove_int(interval_start, json[i], "interval_start");
-          remove_int(interval_end, json[i], "interval_end");
-          remove_bool(interval_default, json[i], "default");
-
-          if (interval_start || interval_end)
-            intervals.emplace_back(interval_start ? *interval_start : 0,
-                                   interval_end ? *interval_end : 0,
-                                   interval_default);
-        }
+          add_object_interval(json[i], intervals);
       }
     }
     else
