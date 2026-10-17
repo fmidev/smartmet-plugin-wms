@@ -6,6 +6,7 @@
 #include "LonLatToXYTransformation.h"
 #include "State.h"
 #include "TextUtility.h"
+#include <cmath>
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
 #include <macgyver/Exception.h>
@@ -83,6 +84,12 @@ OGRGeometryPtr createFrameGeometry(const FrameDimension& inner, std::optional<Fr
 
   return pFrameGeom;
 }
+// True if the value is at a tic of the given (optional) tic type
+bool at_tic(double v, const std::optional<TicInfo>& tic)
+{
+  return tic && std::abs(std::remainder(v, tic->step)) <= 0.01;
+}
+
 // Collect the long, intermediate and small tics strictly inside the given range.
 // An intermediate tic is added only if there is no long tic at the same position,
 // a small tic only if there is no long or intermediate tic.
@@ -107,7 +114,7 @@ std::map<double, TicInfo> collect_tics(
     double v = vMin + scale.intermediateTic->step;
     while (v < vMax)
     {
-      if (scale.longTic && fmod(v, scale.longTic->step) > 0.01 && v > lowLimit && v < highLimit)
+      if (!at_tic(v, scale.longTic) && v > lowLimit && v < highLimit)
         tics.insert(std::make_pair(v, *(scale.intermediateTic)));
       v += scale.intermediateTic->step;
     }
@@ -118,8 +125,8 @@ std::map<double, TicInfo> collect_tics(
     double v = vMin + scale.smallTic->step;
     while (v < vMax)
     {
-      if (scale.longTic && fmod(v, scale.longTic->step) > 0.01 && scale.intermediateTic &&
-          fmod(v, scale.intermediateTic->step) > 0.01 && v > lowLimit && v < highLimit)
+      if (!at_tic(v, scale.longTic) && !at_tic(v, scale.intermediateTic) && v > lowLimit &&
+          v < highLimit)
         tics.insert(std::make_pair(v, *(scale.smallTic)));
       v += scale.smallTic->step;
     }
