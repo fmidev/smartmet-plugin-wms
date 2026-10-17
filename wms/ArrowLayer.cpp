@@ -322,6 +322,23 @@ PointValues read_forecasts(const ArrowLayer& layer,
  */
 // ----------------------------------------------------------------------
 
+// Transformation for rotating grid-relative U/V components to true north, if needed
+std::shared_ptr<Fmi::CoordinateTransformation> query_uv_transformation(
+    const QueryServer::Query& query)
+{
+  int relativeUV = 0;
+  const char* relativeUVStr = query.mAttributeList.getAttributeValue("grid.original.relativeUV");
+  const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
+
+  if (relativeUVStr)
+    relativeUV = Fmi::stoi(relativeUVStr);
+
+  std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
+  if (relativeUV && originalCrs)
+    uvtransformation = std::make_shared<Fmi::CoordinateTransformation>("WGS84", originalCrs);
+  return uvtransformation;
+}
+
 // Point values from grid direction and optional speed values, the speed defaults to 10
 PointValues direction_speed_values(const Positions::Points& points,
                                    T::GridValueList& dirValues,
@@ -360,16 +377,7 @@ PointValues uv_values(const Positions::Points& points,
                       const QueryServer::Query& query)
 {
   PointValues pointvalues;
-  int relativeUV = 0;
-  const char* relativeUVStr = query.mAttributeList.getAttributeValue("grid.original.relativeUV");
-  const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
-
-  if (relativeUVStr)
-    relativeUV = Fmi::stoi(relativeUVStr);
-
-  std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
-  if (relativeUV && originalCrs)
-    uvtransformation = std::make_shared<Fmi::CoordinateTransformation>("WGS84", originalCrs);
+  auto uvtransformation = query_uv_transformation(query);
 
   uint len = vValues.getLength();
   for (uint t = 0; t < len; t++)
@@ -601,6 +609,46 @@ void convert_uv_observations(PointValues& pointvalues)
   }
 }
 #endif
+
+// Single point query results of the direction, speed, u and v parameters
+struct PointWindValues
+{
+  T::ParamValue dirValue = ParamValueMissing;
+  T::ParamValue speedValue = ParamValueMissing;
+  T::ParamValue uValue = ParamValueMissing;
+  T::ParamValue vValue = ParamValueMissing;
+};
+
+PointWindValues single_point_values(const QueryServer::Query& query,
+                                    const std::optional<std::string>& direction,
+                                    const std::optional<std::string>& speed,
+                                    const std::optional<std::string>& u,
+                                    const std::optional<std::string>& v)
+{
+  PointWindValues values;
+  for (const auto& param : query.mQueryParameterList)
+  {
+    for (const auto& val : param.mValueList)
+    {
+      if (val->mValueList.getLength() != 1)
+        continue;
+
+      T::GridValue* rec = val->mValueList.getGridValuePtrByIndex(0);
+      if (!rec)
+        continue;
+
+      if (direction && param.mParam == *direction)
+        values.dirValue = rec->mValue;
+      else if (speed && param.mParam == *speed)
+        values.speedValue = rec->mValue;
+      else if (u && param.mParam == *u)
+        values.uValue = rec->mValue;
+      else if (v && param.mParam == *v)
+        values.vValue = rec->mValue;
+    }
+  }
+  return values;
+}
 
 }  // namespace
 
@@ -1397,32 +1445,11 @@ void ArrowLayer::getGridValue(CTPP::CDT& theInfo, const State& theState)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
 
     // Extract the single-point results per parameter
-    T::ParamValue dirValue = ParamValueMissing;
-    T::ParamValue speedValue = ParamValueMissing;
-    T::ParamValue uValue = ParamValueMissing;
-    T::ParamValue vValue = ParamValueMissing;
-
-    for (const auto& param : query->mQueryParameterList)
-    {
-      for (const auto& val : param.mValueList)
-      {
-        if (val->mValueList.getLength() != 1)
-          continue;
-
-        T::GridValue* rec = val->mValueList.getGridValuePtrByIndex(0);
-        if (!rec)
-          continue;
-
-        if (direction && param.mParam == *direction)
-          dirValue = rec->mValue;
-        else if (speed && param.mParam == *speed)
-          speedValue = rec->mValue;
-        else if (u && param.mParam == *u)
-          uValue = rec->mValue;
-        else if (v && param.mParam == *v)
-          vValue = rec->mValue;
-      }
-    }
+    const auto values = single_point_values(*query, direction, speed, u, v);
+    const T::ParamValue dirValue = values.dirValue;
+    const T::ParamValue speedValue = values.speedValue;
+    const T::ParamValue uValue = values.uValue;
+    const T::ParamValue vValue = values.vValue;
 
     double wspd = ParamValueMissing;
     double wdir = ParamValueMissing;
@@ -1430,17 +1457,7 @@ void ArrowLayer::getGridValue(CTPP::CDT& theInfo, const State& theState)
     if (u && v)
     {
       // Check whether U/V are grid-relative and need rotating to true north
-      int relativeUV = 0;
-      const char* relativeUVStr =
-          query->mAttributeList.getAttributeValue("grid.original.relativeUV");
-      const char* originalCrs = query->mAttributeList.getAttributeValue("grid.original.crs");
-
-      if (relativeUVStr)
-        relativeUV = Fmi::stoi(relativeUVStr);
-
-      std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
-      if (relativeUV && originalCrs)
-        uvtransformation = std::make_shared<Fmi::CoordinateTransformation>("WGS84", originalCrs);
+      auto uvtransformation = query_uv_transformation(*query);
 
       auto result = uv_to_speed_and_direction(uValue, vValue, uvtransformation, lon, lat);
       if (!result)
