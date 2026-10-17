@@ -684,6 +684,49 @@ void assign_label_coordinates(Candidates& candidates, const Label& label)
   }
 }
 
+// Append the isovalues defined by start, stop and step settings
+void append_isovalue_range(Json::Value& json, std::vector<double>& isovalues)
+{
+  std::optional<double> start;
+  std::optional<double> stop;
+  double step = 1.0;
+  JsonTools::remove_double(start, json, "start");
+  JsonTools::remove_double(stop, json, "stop");
+  JsonTools::remove_double(step, json, "step");
+
+  if (!start || !stop)
+    throw Fmi::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
+
+  if (!json.empty())
+  {
+    auto names = json.getMemberNames();
+    auto namelist = boost::algorithm::join(names, ",");
+    throw Fmi::Exception(
+        BCP, "Unknown member variables in Isolabel layer isovalues setting: " + namelist);
+  }
+
+  double iso1 = *start;
+  double iso2 = *stop;
+
+  if (iso2 < iso1)
+    throw Fmi::Exception(
+        BCP, "Isolabel-layer isovalues stop value must be greater than the start value");
+  if (step < 0)
+    throw Fmi::Exception(BCP, "Isolabel-layer step value must be greater than zero");
+  if ((iso2 - iso1) / step > 1000)
+    throw Fmi::Exception(BCP, "Isolabel-layer generates to many isovalues (> 1000)");
+
+  // The end condition is used to make sure we do not get both 999.99999 and 1000.000 due to
+  // numerical inaccuracies.
+  double value = iso1;
+  while (value < iso2 - step / 2)
+  {
+    isovalues.push_back(value);
+    value += step;
+  }
+  isovalues.push_back(iso2);
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -754,45 +797,7 @@ void IsolabelLayer::init(Json::Value& theJson,
       else if (json.isObject())
       {
         // { start, stop, step=1 }
-
-        std::optional<double> start;
-        std::optional<double> stop;
-        double step = 1.0;
-        JsonTools::remove_double(start, json, "start");
-        JsonTools::remove_double(stop, json, "stop");
-        JsonTools::remove_double(step, json, "step");
-
-        if (!start || !stop)
-          throw Fmi::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
-
-        if (!json.empty())
-        {
-          auto names = json.getMemberNames();
-          auto namelist = boost::algorithm::join(names, ",");
-          throw Fmi::Exception(
-              BCP, "Unknown member variables in Isolabel layer isovalues setting: " + namelist);
-        }
-
-        double iso1 = *start;
-        double iso2 = *stop;
-
-        if (iso2 < iso1)
-          throw Fmi::Exception(
-              BCP, "Isolabel-layer isovalues stop value must be greater than the start value");
-        if (step < 0)
-          throw Fmi::Exception(BCP, "Isolabel-layer step value must be greater than zero");
-        if ((iso2 - iso1) / step > 1000)
-          throw Fmi::Exception(BCP, "Isolabel-layer generates to many isovalues (> 1000)");
-
-        // The end condition is used to make sure we do not get both 999.99999 and 1000.000 due to
-        // numerical inaccuracies.
-        double value = iso1;
-        while (value < iso2 - step / 2)
-        {
-          isovalues.push_back(value);
-          value += step;
-        }
-        isovalues.push_back(iso2);
+        append_isovalue_range(json, isovalues);
       }
       else
         throw Fmi::Exception(
