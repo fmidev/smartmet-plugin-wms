@@ -108,6 +108,22 @@ OGRGeometryPtr despeckle_contour(const OGRGeometryPtr& geomPtr,
                                  const Fmi::Box& box,
                                  const Fmi::SpatialReference& crs);
 
+// Set the area, time and level interpolation methods of a vector query parameter
+void set_vector_interpolation(QueryServer::QueryParameter& param, const std::string& interpolation);
+
+// The first non-empty value vector in the query result, and its coordinates if available
+std::shared_ptr<QueryServer::ParameterValues> first_value_vector(
+    const QueryServer::Query& query, const T::Coordinate_vec*& coordinates);
+
+// True if the grid rows are ordered from south to north based on the returned coordinates
+bool is_south_up(const T::Coordinate_vec* coordinates, int width);
+
+// The values in north-up row order
+std::vector<float> north_up_values(const T::ParamValue_vec& values,
+                                   const T::Coordinate_vec* coordinates,
+                                   int width,
+                                   int height);
+
 // Update the projection size from the query result unless an explicit size was requested
 void update_projection_size(Projection& projection, const QueryServer::Query& query);
 

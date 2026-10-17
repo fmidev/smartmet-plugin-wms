@@ -335,6 +335,86 @@ OGRGeometryPtr despeckle_contour(const OGRGeometryPtr& geomPtr,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Set the interpolation methods of a vector query parameter
+ */
+// ----------------------------------------------------------------------
+
+void set_vector_interpolation(QueryServer::QueryParameter& param, const std::string& interpolation)
+{
+  if (interpolation == "nearest")
+    param.mAreaInterpolationMethod = T::AreaInterpolationMethod::Nearest;
+  else if (interpolation == "linear" || interpolation == "transfer")
+  {
+    param.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
+    param.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
+    param.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief The first non-empty value vector in the query result
+ */
+// ----------------------------------------------------------------------
+
+std::shared_ptr<QueryServer::ParameterValues> first_value_vector(
+    const QueryServer::Query& query, const T::Coordinate_vec*& coordinates)
+{
+  for (const auto& qp : query.mQueryParameterList)
+  {
+    for (const auto& val : qp.mValueList)
+    {
+      if (!val->mValueVector.empty())
+      {
+        if (!qp.mCoordinates.empty())
+          coordinates = &qp.mCoordinates;
+        return val;
+      }
+    }
+  }
+  return {};
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Detect row order: if first-row Y < row-10 Y, data is south-up
+ */
+// ----------------------------------------------------------------------
+
+bool is_south_up(const T::Coordinate_vec* coordinates, int width)
+{
+  return (coordinates && static_cast<int>(coordinates->size()) > 10 * width &&
+          (*coordinates)[0].y() < (*coordinates)[10 * width].y());
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Normalise the values to north-up row order
+ */
+// ----------------------------------------------------------------------
+
+std::vector<float> north_up_values(const T::ParamValue_vec& values,
+                                   const T::Coordinate_vec* coordinates,
+                                   int width,
+                                   int height)
+{
+  std::vector<float> ordered;
+  if (is_south_up(coordinates, width))
+  {
+    ordered.resize(values.size());
+    for (int row = 0; row < height; ++row)
+      for (int col = 0; col < width; ++col)
+        ordered[row * width + col] = values[(height - 1 - row) * width + col];
+  }
+  else
+  {
+    ordered = values;
+  }
+  return ordered;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Update the projection size from the query result
  */
 // ----------------------------------------------------------------------

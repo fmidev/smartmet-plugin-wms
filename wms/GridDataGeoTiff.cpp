@@ -187,16 +187,14 @@ std::string gridDataGeoTiff(Layer& layer,
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
 
     // Parameter with optional unit conversion
-    {
-      add_grid_parameter(*gridEngine,
-                         producerName,
-                         parameterName,
-                         layer.multiplier,
-                         layer.offset,
-                         layer.projection,
-                         attributeList,
-                         *originalGridQuery);
-    }
+    add_grid_parameter(*gridEngine,
+                       producerName,
+                       parameterName,
+                       layer.multiplier,
+                       layer.offset,
+                       layer.projection,
+                       attributeList,
+                       *originalGridQuery);
 
     // Time
     add_time_attributes(attributeList, layer.getValidTime(), layer.origintime);
@@ -209,37 +207,8 @@ std::string gridDataGeoTiff(Layer& layer,
       p.mType = QueryServer::QueryParameter::Type::Vector;
       p.mFlags |= QueryServer::QueryParameter::Flags::ReturnCoordinates;
 
-      if (interpolation == "nearest")
-        p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Nearest;
-      else if (interpolation == "linear" || interpolation == "transfer")
-      {
-        p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
-        p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
-        p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
-      }
-
-      if (layer.paraminfo.geometryId)
-        p.mGeometryId = *layer.paraminfo.geometryId;
-      if (layer.paraminfo.levelId)
-        p.mParameterLevelId = *layer.paraminfo.levelId;
-      if (layer.paraminfo.level)
-        p.mParameterLevel = C_INT(*layer.paraminfo.level);
-      else if (layer.paraminfo.pressure)
-      {
-        p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        p.mParameterLevel = C_INT(*layer.paraminfo.pressure);
-      }
-      if (layer.paraminfo.elevation_unit)
-      {
-        if (*layer.paraminfo.elevation_unit == "m")
-          p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-        if (*layer.paraminfo.elevation_unit == "p")
-          p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-      if (layer.paraminfo.forecastType)
-        p.mForecastType = C_INT(*layer.paraminfo.forecastType);
-      if (layer.paraminfo.forecastNumber)
-        p.mForecastNumber = C_INT(*layer.paraminfo.forecastNumber);
+      set_vector_interpolation(p, interpolation);
+      set_query_parameter_selections(p, layer.paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -260,24 +229,8 @@ std::string gridDataGeoTiff(Layer& layer,
       throw Fmi::Exception(BCP, "Grid size is unknown after query");
 
     // Extract the first non-empty value set
-    std::shared_ptr<QueryServer::ParameterValues> pval;
     const T::Coordinate_vec* coordinates = nullptr;
-
-    for (const auto& qp : query->mQueryParameterList)
-    {
-      for (const auto& val : qp.mValueList)
-      {
-        if (!val->mValueVector.empty())
-        {
-          pval = val;
-          if (!qp.mCoordinates.empty())
-            coordinates = &qp.mCoordinates;
-          break;
-        }
-      }
-      if (pval)
-        break;
-    }
+    auto pval = first_value_vector(*query, coordinates);
 
     if (!pval || pval->mValueVector.empty())
       throw Fmi::Exception(BCP, "No data returned for GeoTiff generation");
@@ -291,24 +244,8 @@ std::string gridDataGeoTiff(Layer& layer,
                            "Value vector size mismatch: got " + Fmi::to_string(values.size()) +
                                " expected " + Fmi::to_string(width * height));
 
-    // Detect row order: if first-row Y < row-10 Y, data is south-up (needs flip)
-    const bool south_up = (coordinates &&
-                           static_cast<int>(coordinates->size()) > 10 * width &&
-                           (*coordinates)[0].y() < (*coordinates)[10 * width].y());
-
     // Normalise to north-up row order
-    std::vector<float> ordered;
-    if (south_up)
-    {
-      ordered.resize(values.size());
-      for (int row = 0; row < height; ++row)
-        for (int col = 0; col < width; ++col)
-          ordered[row * width + col] = values[(height - 1 - row) * width + col];
-    }
-    else
-    {
-      ordered = values;
-    }
+    std::vector<float> ordered = north_up_values(values, coordinates, width, height);
 
     return writeGeoTiffBands(layer.projection, wkt, {ordered});
   }
