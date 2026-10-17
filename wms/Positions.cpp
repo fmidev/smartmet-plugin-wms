@@ -201,6 +201,54 @@ void apply_direction_offsets(Positions::Points& thePoints,
   }
 }
 
+// Search the station from geonames, reporting stations which are not found
+Spine::LocationList search_station(const Engine::Geonames::Engine& geonames,
+                                   Locus::QueryOptions& options,
+                                   const Station& station)
+{
+  Spine::LocationList places;
+
+  if (station.fmisid)
+  {
+    options.SetLanguage("fmisid");
+    places = geonames.nameSearch(options, Fmi::to_string(*station.fmisid));
+    if (places.empty())
+      std::cerr << Spine::log_time_str() << " WMS could not find fmisid " << *station.fmisid
+                << '\n';
+  }
+  else if (station.wmo)
+  {
+    options.SetLanguage("wmo");
+    places = geonames.nameSearch(options, Fmi::to_string(*station.wmo));
+    if (places.empty())
+      std::cerr << Spine::log_time_str() << " WMS could not find wmo " << *station.wmo << '\n';
+  }
+  else if (station.lpnn)
+  {
+    options.SetLanguage("lpnn");
+    places = geonames.nameSearch(options, Fmi::to_string(*station.lpnn));
+    if (places.empty())
+      std::cerr << Spine::log_time_str() << " WMS could not find lpnn " << *station.lpnn
+                << '\n';
+  }
+  else if (station.geoid)
+  {
+    places = geonames.idSearch(options, *station.geoid);
+    if (places.empty())
+      std::cerr << Spine::log_time_str() << " WMS could not find geoid " << *station.geoid
+                << '\n';
+  }
+  else if (station.longitude || station.latitude)
+  {
+    throw Fmi::Exception(
+        BCP, "Use latlon instead of station layout for forecast data when listing coordinates");
+  }
+  else
+    throw Fmi::Exception(BCP, "Station ID not set in the configuration");
+
+  return places;
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -1223,45 +1271,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
     for (const auto& station : stations.stations)
     {
       options.SetFeatures("SYNOP");
-      Spine::LocationList places;
-
-      if (station.fmisid)
-      {
-        options.SetLanguage("fmisid");
-        places = geonames->nameSearch(options, Fmi::to_string(*station.fmisid));
-        if (places.empty())
-          std::cerr << Spine::log_time_str() << " WMS could not find fmisid " << *station.fmisid
-                    << '\n';
-      }
-      else if (station.wmo)
-      {
-        options.SetLanguage("wmo");
-        places = geonames->nameSearch(options, Fmi::to_string(*station.wmo));
-        if (places.empty())
-          std::cerr << Spine::log_time_str() << " WMS could not find wmo " << *station.wmo << '\n';
-      }
-      else if (station.lpnn)
-      {
-        options.SetLanguage("lpnn");
-        places = geonames->nameSearch(options, Fmi::to_string(*station.lpnn));
-        if (places.empty())
-          std::cerr << Spine::log_time_str() << " WMS could not find lpnn " << *station.lpnn
-                    << '\n';
-      }
-      else if (station.geoid)
-      {
-        places = geonames->idSearch(options, *station.geoid);
-        if (places.empty())
-          std::cerr << Spine::log_time_str() << " WMS could not find geoid " << *station.geoid
-                    << '\n';
-      }
-      else if (station.longitude || station.latitude)
-      {
-        throw Fmi::Exception(
-            BCP, "Use latlon instead of station layout for forecast data when listing coordinates");
-      }
-      else
-        throw Fmi::Exception(BCP, "Station ID not set in the configuration");
+      Spine::LocationList places = search_station(*geonames, options, station);
 
       if (places.empty())
         continue;
