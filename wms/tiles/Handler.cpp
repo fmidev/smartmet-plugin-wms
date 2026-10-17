@@ -20,6 +20,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <algorithm>
+#include <functional>
 #include <cmath>
 #include <optional>
 #include <fmt/format.h>
@@ -148,6 +149,146 @@ double roundCorner(double value, bool up, double limit)
   return std::max(limit, std::floor(value * steps + tolerance) / steps);
 }
 
+// Split a comma separated list
+std::vector<std::string> split_csv(const std::string& s)
+{
+  std::vector<std::string> out;
+  boost::algorithm::split(out, s, boost::is_any_of(","));
+  return out;
+}
+
+// Split an ISO 8601 "start/end/period" range into its parts
+std::vector<std::string> slash_parts(const std::string& item)
+{
+  std::vector<std::string> parts;
+  boost::algorithm::split(parts, item, boost::is_any_of("/"));
+  return parts;
+}
+
+// Spatial extent from the geographic bounding box
+void add_spatial_extent(Json::Value& doc, CTPP::CDT& bb)
+{
+  Json::Value spatial;
+  Json::Value bboxArr(Json::arrayValue);
+  // The schema requires numbers, not the strings CTPP would render.
+  auto corner = [&](const char* key, double dflt)
+  { return bb.Exists(key) ? bb.At(key).GetFloat() : dflt; };
+  Json::Value corners(Json::arrayValue);
+  corners.append(roundCorner(corner("west_bound_longitude", -180), false, -180));
+  corners.append(roundCorner(corner("south_bound_latitude", -90), false, -90));
+  corners.append(roundCorner(corner("east_bound_longitude", 180), true, 180));
+  corners.append(roundCorner(corner("north_bound_latitude", 90), true, 90));
+  bboxArr.append(corners);
+  spatial["bbox"] = bboxArr;
+  spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
+  doc["extent"]["spatial"] = spatial;
+}
+
+// Temporal extent of one time dimension entry
+void add_temporal_extent(Json::Value& doc, CTPP::CDT& e)
+{
+  if (!e.Exists("name") || e.At("name").GetString() != "time" || !e.Exists("value"))
+    return;
+
+  auto items = split_csv(e.At("value").GetString());
+  if (items.empty())
+    return;
+
+  std::vector<std::string> instants;
+  std::string resolution;
+  bool has_range = false;
+
+  for (const auto& item : items)
+  {
+    auto parts = slash_parts(item);
+    if (parts.size() >= 2)
+    {
+      has_range = true;
+      if (parts.size() >= 3 && resolution.empty())
+        resolution = parts[2];
+    }
+    else
+      instants.push_back(item);
+  }
+
+  const auto first_parts = slash_parts(items.front());
+  const auto last_parts = slash_parts(items.back());
+
+  Json::Value pair(Json::arrayValue);
+  pair.append(first_parts.front());
+  pair.append(last_parts.size() >= 2 ? last_parts[1] : last_parts.front());
+  Json::Value interval(Json::arrayValue);
+  interval.append(pair);
+  doc["extent"]["temporal"]["interval"] = interval;
+  doc["extent"]["temporal"]["trs"] = "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
+
+  // Only a pure list of instants can be enumerated exactly; a range is
+  // described by its period instead.
+  if (!has_range && !instants.empty())
+  {
+    Json::Value values(Json::arrayValue);
+    for (const auto& v : instants)
+      values.append(v);
+    doc["extent"]["temporal"]["values"] = values;
+  }
+  if (!resolution.empty())
+    doc["extent"]["temporal"]["resolution"] = resolution;
+}
+
+// True for a single level 0, which surface-level data carries
+bool is_trivial_levels(const std::vector<std::string>& vals)
+{
+  if (vals.size() != 1)
+    return false;
+  try
+  {
+    return Fmi::stod(vals.front()) == 0.0;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+// Vertical extent of one elevation dimension entry
+void add_vertical_extent(Json::Value& doc, CTPP::CDT& e)
+{
+  if (!e.Exists("value"))
+    return;
+  auto vals = split_csv(e.At("value").GetString());
+  if (vals.empty() || is_trivial_levels(vals))
+    return;
+  Json::Value values(Json::arrayValue);
+  for (const auto& v : vals)
+    values.append(v);
+  Json::Value pair(Json::arrayValue);
+  pair.append(vals.front());
+  pair.append(vals.back());
+  Json::Value interval(Json::arrayValue);
+  interval.append(pair);
+  doc["extent"]["vertical"]["interval"] = interval;
+  doc["extent"]["vertical"]["values"] = values;
+  // The schema requires a vrs for every additional dimension. Levels
+  // without a unit symbol (hybrid, sounding, ...) are named by type.
+  std::string vrs;
+  if (e.Exists("units"))
+    vrs = e.At("units").GetString();
+  if (vrs.empty() && e.Exists("level_name"))
+    vrs = e.At("level_name").GetString();
+  if (!vrs.empty())
+    doc["extent"]["vertical"]["vrs"] = vrs;
+}
+
+// Apply the function to each element of an array, or to a hash
+void for_each_entry(CTPP::CDT& node, const std::function<void(CTPP::CDT&)>& fun)
+{
+  if (node.GetType() == CTPP::CDT::ARRAY_VAL)
+    for (std::size_t i = 0; i < node.Size(); ++i)
+      fun(node[i]);
+  else if (node.GetType() == CTPP::CDT::HASH_VAL)
+    fun(node);
+}
+
 // -----------------------------------------------------------------------
 /*!
  * \brief Add the OGC API - Common Part 2 extent (spatial, temporal, vertical)
@@ -162,30 +303,7 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
 {
   // Spatial extent
   if (wl.Exists("ex_geographic_bounding_box"))
-  {
-    CTPP::CDT& bb = wl.At("ex_geographic_bounding_box");
-    Json::Value spatial;
-    Json::Value bboxArr(Json::arrayValue);
-    // The schema requires numbers, not the strings CTPP would render.
-    auto corner = [&](const char* key, double dflt)
-    { return bb.Exists(key) ? bb.At(key).GetFloat() : dflt; };
-    Json::Value corners(Json::arrayValue);
-    corners.append(roundCorner(corner("west_bound_longitude", -180), false, -180));
-    corners.append(roundCorner(corner("south_bound_latitude", -90), false, -90));
-    corners.append(roundCorner(corner("east_bound_longitude", 180), true, 180));
-    corners.append(roundCorner(corner("north_bound_latitude", 90), true, 90));
-    bboxArr.append(corners);
-    spatial["bbox"] = bboxArr;
-    spatial["crs"] = "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
-    doc["extent"]["spatial"] = spatial;
-  }
-
-  // Temporal and vertical (elevation) extents from the layer's dimensions.
-  auto splitCsv = [](const std::string& s) {
-    std::vector<std::string> out;
-    boost::algorithm::split(out, s, boost::is_any_of(","));
-    return out;
-  };
+    add_spatial_extent(doc, wl.At("ex_geographic_bounding_box"));
 
   // Temporal extent (OGC API - Common Part 2): interval [[start, end]].
   //
@@ -197,123 +315,15 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
   // the discrete instants (as "vertical" already does) and the period --
   // the interval alone gives a client no cadence to step a time slider by.
   if (wl.Exists("time_dimension"))
-  {
-    CTPP::CDT& td = wl.At("time_dimension");
-
-    auto emitTime = [&](CTPP::CDT& e) {
-      if (!e.Exists("name") || e.At("name").GetString() != "time" || !e.Exists("value"))
-        return;
-
-      auto items = splitCsv(e.At("value").GetString());
-      if (items.empty())
-        return;
-
-      auto slashParts = [](const std::string& item) {
-        std::vector<std::string> parts;
-        boost::algorithm::split(parts, item, boost::is_any_of("/"));
-        return parts;
-      };
-
-      std::vector<std::string> instants;
-      std::string resolution;
-      bool has_range = false;
-
-      for (const auto& item : items)
-      {
-        auto parts = slashParts(item);
-        if (parts.size() >= 2)
-        {
-          has_range = true;
-          if (parts.size() >= 3 && resolution.empty())
-            resolution = parts[2];
-        }
-        else
-          instants.push_back(item);
-      }
-
-      const auto first_parts = slashParts(items.front());
-      const auto last_parts = slashParts(items.back());
-
-      Json::Value pair(Json::arrayValue);
-      pair.append(first_parts.front());
-      pair.append(last_parts.size() >= 2 ? last_parts[1] : last_parts.front());
-      Json::Value interval(Json::arrayValue);
-      interval.append(pair);
-      doc["extent"]["temporal"]["interval"] = interval;
-      doc["extent"]["temporal"]["trs"] =
-          "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian";
-
-      // Only a pure list of instants can be enumerated exactly; a range is
-      // described by its period instead.
-      if (!has_range && !instants.empty())
-      {
-        Json::Value values(Json::arrayValue);
-        for (const auto& v : instants)
-          values.append(v);
-        doc["extent"]["temporal"]["values"] = values;
-      }
-      if (!resolution.empty())
-        doc["extent"]["temporal"]["resolution"] = resolution;
-    };
-
-    if (td.GetType() == CTPP::CDT::ARRAY_VAL)
-      for (std::size_t i = 0; i < td.Size(); ++i)
-        emitTime(td[i]);
-    else if (td.GetType() == CTPP::CDT::HASH_VAL)
-      emitTime(td);
-  }
+    for_each_entry(wl.At("time_dimension"), [&](CTPP::CDT& e) { add_temporal_extent(doc, e); });
 
   // Vertical (elevation) extent — discrete levels the layer offers.
   //
   // Surface-level data carries a single level 0 with no units. That is not a
   // vertical extent a client could select anything from, so it is not emitted.
   if (wl.Exists("elevation_dimension"))
-  {
-    CTPP::CDT& ed = wl.At("elevation_dimension");
-    auto isTrivial = [](const std::vector<std::string>& vals) {
-      if (vals.size() != 1)
-        return false;
-      try
-      {
-        return Fmi::stod(vals.front()) == 0.0;
-      }
-      catch (...)
-      {
-        return false;
-      }
-    };
-    auto emitElevation = [&](CTPP::CDT& e) {
-      if (!e.Exists("value"))
-        return;
-      auto vals = splitCsv(e.At("value").GetString());
-      if (vals.empty() || isTrivial(vals))
-        return;
-      Json::Value values(Json::arrayValue);
-      for (const auto& v : vals)
-        values.append(v);
-      Json::Value pair(Json::arrayValue);
-      pair.append(vals.front());
-      pair.append(vals.back());
-      Json::Value interval(Json::arrayValue);
-      interval.append(pair);
-      doc["extent"]["vertical"]["interval"] = interval;
-      doc["extent"]["vertical"]["values"] = values;
-      // The schema requires a vrs for every additional dimension. Levels
-      // without a unit symbol (hybrid, sounding, ...) are named by type.
-      std::string vrs;
-      if (e.Exists("units"))
-        vrs = e.At("units").GetString();
-      if (vrs.empty() && e.Exists("level_name"))
-        vrs = e.At("level_name").GetString();
-      if (!vrs.empty())
-        doc["extent"]["vertical"]["vrs"] = vrs;
-    };
-    if (ed.GetType() == CTPP::CDT::ARRAY_VAL)
-      for (std::size_t i = 0; i < ed.Size(); ++i)
-        emitElevation(ed[i]);
-    else if (ed.GetType() == CTPP::CDT::HASH_VAL)
-      emitElevation(ed);
-  }
+    for_each_entry(wl.At("elevation_dimension"),
+                   [&](CTPP::CDT& e) { add_vertical_extent(doc, e); });
 }
 
 }  // namespace
