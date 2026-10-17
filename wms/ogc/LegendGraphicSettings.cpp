@@ -49,6 +49,125 @@ void set_if_given(T& target, const T& source)
   if (source)
     target = source;
 }
+
+// Set the value from the configuration if the setting exists
+template <typename T>
+void lookup_if_exists(const libconfig::Config& config, const char* path, T& value)
+{
+  if (config.exists(path))
+    value = config.lookup(path);
+}
+
+// Add the translations of the parameters
+void add_parameter_translations(const libconfig::Setting& translation,
+                                const std::vector<std::string>& param_names,
+                                std::map<std::string, LegendGraphicParameter>& parameters)
+{
+  for (const auto& language_code : language_codes)
+  {
+    if (translation.exists(language_code))
+    {
+      std::string tr = translation[language_code.c_str()];
+      for (const auto& p : param_names)
+      {
+        LegendGraphicParameter& lgp = parameters[p];
+        lgp.translations.insert(std::make_pair(language_code, tr));
+      }
+    }
+  }
+}
+
+// Parse the parameter settings
+void parse_parameters(const libconfig::Setting& parameter_settings,
+                      std::map<std::string, LegendGraphicParameter>& parameters)
+{
+  for (int i = 0; i < parameter_settings.getLength(); i++)
+  {
+    const auto& param = parameter_settings[i];
+
+    std::string data_name = (param.exists("data_name") ? param["data_name"] : "");
+    std::string name = (param.exists("name") ? param["name"] : "");
+    std::string unit = (param.exists("unit") ? param["unit"] : "");
+    bool hide_title = (param.exists("hide_title") ? (bool)param["hide_title"] : false);
+    std::vector<std::string> param_names;
+
+    if (!data_name.empty())
+    {
+      boost::algorithm::split(param_names, data_name, boost::algorithm::is_any_of(","));
+
+      for (const auto& param_name : param_names)
+      {
+        parameters.insert(
+            std::make_pair(param_name, LegendGraphicParameter(data_name, name, unit, hide_title)));
+      }
+    }
+
+    if (param.exists("translation"))
+      add_parameter_translations(param["translation"], param_names, parameters);
+  }
+}
+
+// Parse the symbol settings
+void parse_symbols(const libconfig::Setting& symbol_settings,
+                   std::map<std::string, LegendGraphicSymbol>& symbols)
+{
+  for (int i = 0; i < symbol_settings.getLength(); i++)
+  {
+    const auto& symbol = symbol_settings[i];
+
+    std::string symbol_name = (symbol.exists("name") ? symbol["name"] : "");
+
+    if (symbol_name.empty())
+      continue;
+
+    symbols.insert(std::make_pair(symbol_name, LegendGraphicSymbol(symbol_name)));
+
+    if (symbol.exists("translation"))
+    {
+      const auto& translation = symbol["translation"];
+      for (const auto& language_code : language_codes)
+      {
+        if (translation.exists(language_code))
+        {
+          std::string tr = translation[language_code.c_str()];
+          LegendGraphicSymbol& lgs = symbols[symbol_name];
+          lgs.translations.insert(std::make_pair(language_code, tr));
+        }
+      }
+    }
+  }
+}
+
+// Parse the layout settings
+void parse_layout(const libconfig::Config& config, LegendGraphicLayout& layout)
+{
+  lookup_if_exists(
+      config, "wms.get_legend_graphic.layout.param_name_xoffset", layout.param_name_xoffset);
+  lookup_if_exists(
+      config, "wms.get_legend_graphic.layout.param_name_yoffset", layout.param_name_yoffset);
+  lookup_if_exists(
+      config, "wms.get_legend_graphic.layout.param_unit_xoffset", layout.param_unit_xoffset);
+  lookup_if_exists(
+      config, "wms.get_legend_graphic.layout.param_unit_yoffset", layout.param_unit_yoffset);
+  lookup_if_exists(config, "wms.get_legend_graphic.layout.legend_xoffset", layout.legend_xoffset);
+  lookup_if_exists(config, "wms.get_legend_graphic.layout.legend_yoffset", layout.legend_yoffset);
+  lookup_if_exists(config, "wms.get_legend_graphic.layout.legend_width", layout.legend_width);
+  lookup_if_exists(config,
+                   "wms.get_legend_graphic.layout.symbol_group_x_padding",
+                   layout.symbol_group_x_padding);
+  lookup_if_exists(config,
+                   "wms.get_legend_graphic.layout.symbol_group_y_padding",
+                   layout.symbol_group_y_padding);
+  lookup_if_exists(
+      config, "wms.get_legend_graphic.layout.symbol_text_xoffset", layout.symbol_text_xoffset);
+  lookup_if_exists(
+      config, "wms.get_legend_graphic.layout.symbol_text_yoffset", layout.symbol_text_yoffset);
+  lookup_if_exists(
+      config, "wms.get_legend_graphic.layout.output_document_width", layout.output_document_width);
+  lookup_if_exists(config,
+                   "wms.get_legend_graphic.layout.output_document_height",
+                   layout.output_document_height);
+}
 }  // namespace
 
 LegendGraphicSettings::LegendGraphicSettings(bool initDefaults /*= false*/)
@@ -77,144 +196,48 @@ LegendGraphicSettings::LegendGraphicSettings(const libconfig::Config& config) : 
 {
   // No caching
 
-  if (config.exists("wms.get_legend_graphic"))
+  if (!config.exists("wms.get_legend_graphic"))
+    return;
+
+  const auto& legend_graphic_config = config.lookup("wms.get_legend_graphic");
+  if (!legend_graphic_config.isGroup())
+    return;
+
+  // symbols to ignore
+  if (config.exists("wms.get_legend_graphic.symbols_to_ignore"))
   {
-    const auto& legend_graphic_config = config.lookup("wms.get_legend_graphic");
-    if (legend_graphic_config.isGroup())
-    {
-      // symbols to ignore
-      if (config.exists("wms.get_legend_graphic.symbols_to_ignore"))
-      {
-        std::string symbolNames = config.lookup("wms.get_legend_graphic.symbols_to_ignore");
-        boost::algorithm::split(symbolsToIgnore, symbolNames, boost::algorithm::is_any_of(","));
-      }
-
-      // Control cache expiration
-      if (config.exists("wms.get_legend_graphic.expire"))
-        expires = config.lookup("wms.get_legend_graphic.expire");
-
-      if (config.exists("wms.get_legend_graphic.parameters"))
-      {
-        // parameter settings
-        const auto& parameter_settings = config.lookup("wms.get_legend_graphic.parameters");
-
-        if (!parameter_settings.isList())
-          throw Fmi::Exception(BCP, "wms.get_legend_graphic.parameters must be a list");
-
-        for (int i = 0; i < parameter_settings.getLength(); i++)
-        {
-          const auto& param = parameter_settings[i];
-
-          std::string data_name = (param.exists("data_name") ? param["data_name"] : "");
-          std::string name = (param.exists("name") ? param["name"] : "");
-          std::string unit = (param.exists("unit") ? param["unit"] : "");
-          bool hide_title = (param.exists("hide_title") ? (bool)param["hide_title"] : false);
-          std::vector<std::string> param_names;
-
-          if (!data_name.empty())
-          {
-            boost::algorithm::split(param_names, data_name, boost::algorithm::is_any_of(","));
-
-            for (const auto& param_name : param_names)
-            {
-              parameters.insert(std::make_pair(
-                  param_name, LegendGraphicParameter(data_name, name, unit, hide_title)));
-            }
-          }
-
-          if (param.exists("translation"))
-          {
-            const auto& translation = param["translation"];
-            for (const auto& language_code : language_codes)
-            {
-              if (translation.exists(language_code))
-              {
-                std::string tr = translation[language_code.c_str()];
-                for (const auto& p : param_names)
-                {
-                  LegendGraphicParameter& lgp = parameters[p];
-                  lgp.translations.insert(std::make_pair(language_code, tr));
-                }
-              }
-            }
-          }
-        }
-      }
-
-      if (config.exists("wms.get_legend_graphic.symbols"))
-      {
-        // symbol settings
-        const auto& symbol_settings = config.lookup("wms.get_legend_graphic.symbols");
-
-        if (!symbol_settings.isList())
-          throw Fmi::Exception(BCP, "wms.get_legend_graphic.symbols must be a list");
-
-        for (int i = 0; i < symbol_settings.getLength(); i++)
-        {
-          const auto& symbol = symbol_settings[i];
-
-          std::string symbol_name = (symbol.exists("name") ? symbol["name"] : "");
-
-          if (symbol_name.empty())
-            continue;
-
-          symbols.insert(std::make_pair(symbol_name, LegendGraphicSymbol(symbol_name)));
-
-          if (symbol.exists("translation"))
-          {
-            const auto& translation = symbol["translation"];
-            for (const auto& language_code : language_codes)
-            {
-              if (translation.exists(language_code))
-              {
-                std::string tr = translation[language_code.c_str()];
-                LegendGraphicSymbol& lgs = symbols[symbol_name];
-                lgs.translations.insert(std::make_pair(language_code, tr));
-              }
-            }
-          }
-        }
-      }
-
-      // Overwritten from configuration
-      if (config.exists("wms.get_legend_graphic.layout.param_name_xoffset"))
-        layout.param_name_xoffset =
-            config.lookup("wms.get_legend_graphic.layout.param_name_xoffset");
-      if (config.exists("wms.get_legend_graphic.layout.param_name_yoffset"))
-        layout.param_name_yoffset =
-            config.lookup("wms.get_legend_graphic.layout.param_name_yoffset");
-      if (config.exists("wms.get_legend_graphic.layout.param_unit_xoffset"))
-        layout.param_unit_xoffset =
-            config.lookup("wms.get_legend_graphic.layout.param_unit_xoffset");
-      if (config.exists("wms.get_legend_graphic.layout.param_unit_yoffset"))
-        layout.param_unit_yoffset =
-            config.lookup("wms.get_legend_graphic.layout.param_unit_yoffset");
-      if (config.exists("wms.get_legend_graphic.layout.legend_xoffset"))
-        layout.legend_xoffset = config.lookup("wms.get_legend_graphic.layout.legend_xoffset");
-      if (config.exists("wms.get_legend_graphic.layout.legend_yoffset"))
-        layout.legend_yoffset = config.lookup("wms.get_legend_graphic.layout.legend_yoffset");
-      if (config.exists("wms.get_legend_graphic.layout.legend_width"))
-        layout.legend_width = config.lookup("wms.get_legend_graphic.layout.legend_width");
-      if (config.exists("wms.get_legend_graphic.layout.symbol_group_x_padding"))
-        layout.symbol_group_x_padding =
-            config.lookup("wms.get_legend_graphic.layout.symbol_group_x_padding");
-      if (config.exists("wms.get_legend_graphic.layout.symbol_group_y_padding"))
-        layout.symbol_group_y_padding =
-            config.lookup("wms.get_legend_graphic.layout.symbol_group_y_padding");
-      if (config.exists("wms.get_legend_graphic.layout.symbol_text_xoffset"))
-        layout.symbol_text_xoffset =
-            config.lookup("wms.get_legend_graphic.layout.symbol_text_xoffset");
-      if (config.exists("wms.get_legend_graphic.layout.symbol_text_yoffset"))
-        layout.symbol_text_yoffset =
-            config.lookup("wms.get_legend_graphic.layout.symbol_text_yoffset");
-      if (config.exists("wms.get_legend_graphic.layout.output_document_width"))
-        layout.output_document_width =
-            config.lookup("wms.get_legend_graphic.layout.output_document_width");
-      if (config.exists("wms.get_legend_graphic.layout.output_document_height"))
-        layout.output_document_height =
-            config.lookup("wms.get_legend_graphic.layout.output_document_height");
-    }
+    std::string symbolNames = config.lookup("wms.get_legend_graphic.symbols_to_ignore");
+    boost::algorithm::split(symbolsToIgnore, symbolNames, boost::algorithm::is_any_of(","));
   }
+
+  // Control cache expiration
+  if (config.exists("wms.get_legend_graphic.expire"))
+    expires = config.lookup("wms.get_legend_graphic.expire");
+
+  if (config.exists("wms.get_legend_graphic.parameters"))
+  {
+    // parameter settings
+    const auto& parameter_settings = config.lookup("wms.get_legend_graphic.parameters");
+
+    if (!parameter_settings.isList())
+      throw Fmi::Exception(BCP, "wms.get_legend_graphic.parameters must be a list");
+
+    parse_parameters(parameter_settings, parameters);
+  }
+
+  if (config.exists("wms.get_legend_graphic.symbols"))
+  {
+    // symbol settings
+    const auto& symbol_settings = config.lookup("wms.get_legend_graphic.symbols");
+
+    if (!symbol_settings.isList())
+      throw Fmi::Exception(BCP, "wms.get_legend_graphic.symbols must be a list");
+
+    parse_symbols(symbol_settings, symbols);
+  }
+
+  // Overwritten from configuration
+  parse_layout(config, layout);
 }
 
 void LegendGraphicSettings::merge(const LegendGraphicSettings& settings)
