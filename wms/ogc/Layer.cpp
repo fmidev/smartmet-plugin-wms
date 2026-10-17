@@ -1864,6 +1864,39 @@ Layer::getLimitedCapabilitiesInterval(const std::optional<Fmi::DateTime>& startt
   return {t1, t2};
 }
 
+namespace
+{
+// The time dimension of a layer in capabilities
+CTPP::CDT time_dimension_cdt(const TimeDimension& td, const std::string& dim_string)
+{
+  CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+  layer_dimension["name"] = "time";
+  layer_dimension["units"] = "ISO8601";
+  layer_dimension["multiple_values"] = 0;
+  layer_dimension["nearest_value"] = 0;
+  layer_dimension["current"] = (td.currentValue() ? 1 : 0);
+  layer_dimension["value"] = dim_string;
+  return layer_dimension;
+}
+
+// The reference time dimension listing the available origin times
+CTPP::CDT origintimes_dimension_cdt(const std::vector<Fmi::DateTime>& origintimes)
+{
+  CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
+  StepTimeDimension orgintimesDimension(origintimes);
+  reference_time_dimension["name"] = "reference_time";
+  reference_time_dimension["units"] = "ISO8601";
+  reference_time_dimension["multiple_values"] = 0;
+  reference_time_dimension["nearest_value"] = 0;
+  reference_time_dimension["current"] = 1;
+  reference_time_dimension["default"] =
+      (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
+  std::optional<Fmi::DateTime> t;
+  reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
+  return reference_time_dimension;
+}
+}  // namespace
+
 std::optional<CTPP::CDT> Layer::getTimeDimensionInfo(
     bool multiple_intervals,
     const std::optional<Fmi::DateTime>& starttime,
@@ -1893,13 +1926,7 @@ std::optional<CTPP::CDT> Layer::getTimeDimensionInfo(
           if (dim_string.empty())
             return {};
 
-          CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
-          layer_dimension["name"] = "time";
-          layer_dimension["units"] = "ISO8601";
-          layer_dimension["multiple_values"] = 0;
-          layer_dimension["nearest_value"] = 0;
-          layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-          layer_dimension["value"] = dim_string;
+          CTPP::CDT layer_dimension = time_dimension_cdt(td, dim_string);
           CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
           reference_time_dimension["name"] = "reference_time";
           reference_time_dimension["units"] = "ISO8601";
@@ -1917,32 +1944,11 @@ std::optional<CTPP::CDT> Layer::getTimeDimensionInfo(
         if (dim_string.empty())
           return {};
 
-        CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
-        layer_dimension["name"] = "time";
-        layer_dimension["units"] = "ISO8601";
-        layer_dimension["multiple_values"] = 0;
-        layer_dimension["nearest_value"] = 0;
-        layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-        layer_dimension["value"] = dim_string;
-        CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
+        layer_dimension_list.PushBack(time_dimension_cdt(td, dim_string));
         const std::vector<Fmi::DateTime>& origintimes = timeDimensions->getOrigintimes();
         bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
         if (showOrigintimes)
-        {
-          StepTimeDimension orgintimesDimension(timeDimensions->getOrigintimes());
-          reference_time_dimension["name"] = "reference_time";
-          reference_time_dimension["units"] = "ISO8601";
-          reference_time_dimension["multiple_values"] = 0;
-          reference_time_dimension["nearest_value"] = 0;
-          reference_time_dimension["current"] = 1;
-          reference_time_dimension["default"] =
-              (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
-          std::optional<Fmi::DateTime> t;
-          reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
-        }
-        layer_dimension_list.PushBack(layer_dimension);
-        if (showOrigintimes)
-          layer_dimension_list.PushBack(reference_time_dimension);
+          layer_dimension_list.PushBack(origintimes_dimension_cdt(origintimes));
       }
     }
 
