@@ -724,22 +724,11 @@ void get_translations(const Json::Value& translationJson,
   }
 }
 
-void get_legend_graphic_settings(const Json::Value& root, LegendGraphicSettings& settings)
+// Symbol settings of the legend graphics
+void add_legend_symbols(const Json::Value& symbolsJson, LegendGraphicSettings& settings)
 {
   Json::Value nulljson;
-
-  auto json = root.get("defs", nulljson);
-
-  if (json.isNull())
-    return;
-
-  auto legendGraphicJson = json.get("get_legend_graphic", nulljson);
-
-  if (legendGraphicJson.isNull())
-    return;
-
-  auto symbolsJson = legendGraphicJson.get("symbols", nulljson);
-  // symbols
+  Json::Value json;
   for (const auto& symbolJson : symbolsJson)
   {
     json = symbolJson.get("name", nulljson);
@@ -761,60 +750,68 @@ void get_legend_graphic_settings(const Json::Value& root, LegendGraphicSettings&
       }
     }
   }
+}
 
-  auto parametersJson = legendGraphicJson.get("parameters", nulljson);
-  // parameters
-  for (const auto& parameterJson : parametersJson)
+// Settings for a parameter of the legend graphics
+void add_legend_parameter(const Json::Value& parameterJson, LegendGraphicSettings& settings)
+{
+  Json::Value nulljson;
+  Json::Value json;
+  std::string data_name;
+  std::string name;
+  std::string unit;
+  bool hide_title = false;
+
+  json = parameterJson.get("data_name", nulljson);
+  if (!json.isNull())
+    data_name = json.asString();
+  json = parameterJson.get("name", nulljson);
+  if (!json.isNull())
+    name = json.asString();
+  json = parameterJson.get("unit", nulljson);
+  if (!json.isNull())
+    unit = json.asString();
+  json = parameterJson.get("hide_title", nulljson);
+  if (!json.isNull())
+    hide_title = json.asBool();
+
+  if (!data_name.empty())
   {
-    std::string data_name;
-    std::string name;
-    std::string unit;
-    bool hide_title = false;
-
-    json = parameterJson.get("data_name", nulljson);
-    if (!json.isNull())
-      data_name = json.asString();
-    json = parameterJson.get("name", nulljson);
-    if (!json.isNull())
-      name = json.asString();
-    json = parameterJson.get("unit", nulljson);
-    if (!json.isNull())
-      unit = json.asString();
-    json = parameterJson.get("hide_title", nulljson);
-    if (!json.isNull())
-      hide_title = json.asBool();
-
-    if (!data_name.empty())
+    std::vector<std::string> param_names;
+    boost::algorithm::split(param_names, data_name, boost::algorithm::is_any_of(","));
+    // Language support
+    Json::Value translationJson = parameterJson.get("translation", nulljson);
+    std::map<std::string, std::string> translations;
+    get_translations(translationJson, translations);
+    for (const auto& item : translations)
+      settings.languages.insert(item.first);
+    for (const auto& param_name : param_names)
     {
-      std::vector<std::string> param_names;
-      boost::algorithm::split(param_names, data_name, boost::algorithm::is_any_of(","));
-      // Language support
-      Json::Value translationJson = parameterJson.get("translation", nulljson);
-      std::map<std::string, std::string> translations;
-      get_translations(translationJson, translations);
+      settings.parameters.insert(
+          std::make_pair(param_name, LegendGraphicParameter(param_name, name, unit, hide_title)));
+      if (!translations.empty())
+        settings.parameters[param_name].translations = translations;
       for (const auto& item : translations)
-        settings.languages.insert(item.first);
-      for (const auto& param_name : param_names)
       {
-        settings.parameters.insert(
-            std::make_pair(param_name, LegendGraphicParameter(param_name, name, unit, hide_title)));
-        if (!translations.empty())
-          settings.parameters[param_name].translations = translations;
-        for (const auto& item : translations)
-        {
-          Dali::text_dimension_t tdim = Dali::getTextDimension(item.second, Dali::text_style_t());
-          settings.parameters[param_name].text_lengths[item.first] = (tdim.width * 1.6);
-        }
+        Dali::text_dimension_t tdim = Dali::getTextDimension(item.second, Dali::text_style_t());
+        settings.parameters[param_name].text_lengths[item.first] = (tdim.width * 1.6);
       }
     }
   }
+}
 
-  // layout
-  auto layoutJson = legendGraphicJson.get("layout", nulljson);
+// Parameter settings of the legend graphics
+void add_legend_parameters(const Json::Value& parametersJson, LegendGraphicSettings& settings)
+{
+  for (const auto& parameterJson : parametersJson)
+    add_legend_parameter(parameterJson, settings);
+}
 
-  if (layoutJson.isNull())
-    return;
-
+// Layout settings of the legend graphics
+void set_legend_layout(const Json::Value& layoutJson, LegendGraphicSettings& settings)
+{
+  Json::Value nulljson;
+  Json::Value json;
   json = layoutJson.get("param_name_xoffset", nulljson);
   if (!json.isNull())
     settings.layout.param_name_xoffset = json.asInt();
@@ -861,6 +858,37 @@ void get_legend_graphic_settings(const Json::Value& root, LegendGraphicSettings&
       settings.layout.legend_width_per_language.insert(std::make_pair(language, l_width));
     }
   }
+}
+
+void get_legend_graphic_settings(const Json::Value& root, LegendGraphicSettings& settings)
+{
+  Json::Value nulljson;
+
+  auto json = root.get("defs", nulljson);
+
+  if (json.isNull())
+    return;
+
+  auto legendGraphicJson = json.get("get_legend_graphic", nulljson);
+
+  if (legendGraphicJson.isNull())
+    return;
+
+  auto symbolsJson = legendGraphicJson.get("symbols", nulljson);
+  // symbols
+  add_legend_symbols(symbolsJson, settings);
+
+  auto parametersJson = legendGraphicJson.get("parameters", nulljson);
+  // parameters
+  add_legend_parameters(parametersJson, settings);
+
+  // layout
+  auto layoutJson = legendGraphicJson.get("layout", nulljson);
+
+  if (layoutJson.isNull())
+    return;
+
+  set_legend_layout(layoutJson, settings);
 }
 
 unsigned int isoband_legend_width(const Json::Value& json, unsigned int def)
