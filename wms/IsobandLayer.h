@@ -16,6 +16,7 @@
 #include "ParameterInfo.h"
 #include "Sampling.h"
 #include "Smoother.h"
+#include <engines/contour/Engine.h>
 #include <optional>
 #include <vector>
 
@@ -93,6 +94,17 @@ class IsobandLayer : public Layer
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
+  void selectLevel(const Engine::Querydata::Q& q) const;
+  Engine::Querydata::Q sampleData(Engine::Querydata::Q q,
+                                  const Spine::Parameter& param,
+                                  const Fmi::DateTime& valid_time,
+                                  const Fmi::SpatialReference& crs,
+                                  const Fmi::Box& box,
+                                  const std::optional<double>& sampleresolution,
+                                  const State& theState);
+  Engine::Contour::Options contourOptions(const Spine::Parameter& param,
+                                          const Fmi::DateTime& valid_time,
+                                          const Fmi::Box& box) const;
   void getMapShapes(const Engine::Gis::Engine& gis,
                     const Fmi::SpatialReference& crs,
                     const Fmi::Box& clipbox,

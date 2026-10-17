@@ -666,26 +666,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   // cache key gets salted with the TFP options so different TFP configs
   // don't share cache entries.
   if (tfp_mode && matrix)
-  {
-    static const Fmi::SpatialReference wgs84("WGS84");
-    auto coords_wgs84 = qEngine.getWorldCoordinates(q, wgs84);
-    if (coords_wgs84)
-    {
-      auto smoothed = ComputedFields::smoothScalar(*matrix, tfp->smoothing_passes);
-      auto tfp_field = ComputedFields::computeTFP(smoothed, *coords_wgs84, tfp->min_gradient);
-      if (tfp->scale != 1.0)
-      {
-        const auto s = static_cast<float>(tfp->scale);
-        for (std::size_t j = 0; j < tfp_field.NY(); ++j)
-          for (std::size_t i = 0; i < tfp_field.NX(); ++i)
-            if (tfp_field[i][j] != kFloatMissing)
-              tfp_field[i][j] *= s;
-      }
-      matrix = std::make_shared<NFmiDataMatrix<float>>(std::move(tfp_field));
-      Fmi::hash_combine(qhash, Fmi::hash_value(std::string("TFP")));
-      ComputedFields::hashTfpOptions(qhash, *tfp);
-    }
-  }
+    ComputedFields::applyTfp(matrix, qhash, q, qEngine, *tfp);
 
   // Gate bilinear subdivision on output pixel density: if the projected data
   // cells are sub-pixel the interior samples cannot possibly be visible, so

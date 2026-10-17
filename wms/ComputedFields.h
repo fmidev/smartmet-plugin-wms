@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <engines/querydata/Engine.h>
 #include <gis/Types.h>
 #include <newbase/NFmiDataMatrix.h>
 #include <json/json.h>
@@ -86,6 +87,15 @@ NFmiDataMatrix<float> smoothScalar(const NFmiDataMatrix<float>& field, int passe
 NFmiDataMatrix<float> computeTFP(const NFmiDataMatrix<float>& field,
                                  const Fmi::CoordinateMatrix& coordsWgs84,
                                  double min_gradient);
+
+// Replace the fetched underlying field with its Thermal Front Parameter derivative and salt
+// the contour cache key with the TFP options so different TFP configs don't share cache
+// entries. Does nothing if the WGS84 coordinates of the data are not available.
+void applyTfp(::ValuesPtr& matrix,
+              std::size_t& qhash,
+              const Engine::Querydata::Q& q,
+              const Engine::Querydata::Engine& qEngine,
+              const TfpOptions& tfp);
 
 }  // namespace ComputedFields
 }  // namespace Dali
