@@ -322,6 +322,53 @@ Labels generate_labels_center(const Graticule& g,
   }
 }
 
+// Project the label positions to pixels and add labels at the outermost positions along the
+// given coordinate (x or y) which are inside the image. Note that the first position is
+// never used.
+void add_edge_labels(Labels& labels,
+                     const std::string& txt,
+                     const std::vector<double>& lons,
+                     const std::vector<double>& lats,
+                     std::vector<double>& x,
+                     std::vector<double>& y,
+                     const std::vector<double>& coord,
+                     const Fmi::CoordinateTransformation& transformation,
+                     const Fmi::Box& box)
+{
+  // Convert to world coordinates
+  transformation.transform(x, y);
+
+  // Convert to pixel coordinates
+  for (auto i = 0UL; i < x.size(); i++)
+    box.transform(x[i], y[i]);
+
+  auto minpos = std::string::npos;
+  auto maxpos = std::string::npos;
+  for (auto i = 1UL; i < coord.size(); i++)
+  {
+    // discard points outside the box
+    if (x[i] > 0 && x[i] < box.width() && y[i] > 0 && y[i] < box.height())
+    {
+      if (minpos == std::string::npos || coord[i] < coord[minpos])
+        minpos = i;
+      if (maxpos == std::string::npos || coord[i] > coord[maxpos])
+        maxpos = i;
+    }
+  }
+
+  if (minpos != std::string::npos)
+  {
+    auto angle = get_angle(lons[minpos], lats[minpos], transformation);
+    labels.emplace_back(txt, x[minpos], y[minpos], angle);
+
+    if (minpos != maxpos)
+    {
+      angle = get_angle(lons[maxpos], lats[maxpos], transformation);
+      labels.emplace_back(txt, x[maxpos], y[maxpos], angle);
+    }
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate graticule labels at the outermost centers of graticule lines
@@ -359,39 +406,7 @@ Labels generate_labels_edge_center(const Graticule& g,
         y.push_back(lat + label.step / 2.0);
       }
 
-      // Convert to world coordinates
-      transformation.transform(x, y);
-
-      // Convert to pixel coordinates
-      for (auto i = 0UL; i < x.size(); i++)
-        box.transform(x[i], y[i]);
-
-      auto minpos = std::string::npos;
-      auto maxpos = std::string::npos;
-      for (auto i = 1UL; i < y.size(); i++)
-      {
-        // discard points outside the box
-        if (x[i] > 0 && x[i] < box.width() && y[i] > 0 && y[i] < box.height())
-        {
-          if (minpos == std::string::npos || y[i] < y[minpos])
-            minpos = i;
-          if (maxpos == std::string::npos || y[i] > y[maxpos])
-            maxpos = i;
-        }
-      }
-
-      if (minpos != std::string::npos)
-      {
-        auto txt = get_lon_label(label, lon);
-        auto angle = get_angle(lons[minpos], lats[minpos], transformation);
-        labels.emplace_back(txt, x[minpos], y[minpos], angle);
-
-        if (minpos != maxpos)
-        {
-          angle = get_angle(lons[maxpos], lats[maxpos], transformation);
-          labels.emplace_back(txt, x[maxpos], y[maxpos], angle);
-        }
-      }
+      add_edge_labels(labels, get_lon_label(label, lon), lons, lats, x, y, y, transformation, box);
 
       lons.clear();
       lats.clear();
@@ -410,39 +425,7 @@ Labels generate_labels_edge_center(const Graticule& g,
         y.push_back(lat);
       }
 
-      // Convert to world coordinates
-      transformation.transform(x, y);
-
-      // Convert to pixel coordinates
-      for (auto i = 0UL; i < x.size(); i++)
-        box.transform(x[i], y[i]);
-
-      auto minpos = std::string::npos;
-      auto maxpos = std::string::npos;
-      for (auto i = 1UL; i < x.size(); i++)
-      {
-        // discard points outside the box
-        if (x[i] > 0 && x[i] < box.width() && y[i] > 0 && y[i] < box.height())
-        {
-          if (minpos == std::string::npos || x[i] < x[minpos])
-            minpos = i;
-          if (maxpos == std::string::npos || x[i] > x[maxpos])
-            maxpos = i;
-        }
-      }
-
-      if (minpos != std::string::npos)
-      {
-        auto txt = get_lat_label(label, lat);
-        auto angle = get_angle(lons[minpos], lats[minpos], transformation);
-        labels.emplace_back(txt, x[minpos], y[minpos], angle);
-
-        if (minpos != maxpos)
-        {
-          angle = get_angle(lons[maxpos], lats[maxpos], transformation);
-          labels.emplace_back(txt, x[maxpos], y[maxpos], angle);
-        }
-      }
+      add_edge_labels(labels, get_lat_label(label, lat), lons, lats, x, y, x, transformation, box);
 
       lons.clear();
       lats.clear();
