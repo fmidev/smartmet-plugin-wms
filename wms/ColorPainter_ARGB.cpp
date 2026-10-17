@@ -104,41 +104,9 @@ void ColorPainter_ARGB::setImageColors(uint width, uint height, uint /* loop_ste
         {
           uint valcol = colormap->getColor(val, smooth_colors);
           if (landval > 0.9)
-          {
-            if (opacity_land != 1.0)
-            {
-              uint op = (uint) ((double) ((valcol & 0xFF000000) >> 24) * opacity_land);
-              if (op > 255)
-                op = 0xFF000000;
-              else
-                op = (op & 0xFF) << 24;
-
-              uint nv = op + (valcol & 0x00FFFFFF);
-              image[c] = merge_ARGB(nv, oldcol);
-            }
-            else
-            {
-              image[c] = merge_ARGB(valcol, oldcol);
-            }
-          }
+            image[c] = merge_ARGB(color_with_opacity(valcol, opacity_land), oldcol);
           else
-          {
-            if (opacity_sea != 1.0)
-            {
-              uint op = (uint) ((double) ((valcol & 0xFF000000) >> 24) * opacity_sea);
-              if (op > 255)
-                op = 0xFF000000;
-              else
-                op = (op & 0xFF) << 24;
-
-              uint nv = op + (valcol & 0x00FFFFFF);
-              image[c] = merge_ARGB(nv, oldcol);
-            }
-            else
-            {
-              image[c] = merge_ARGB(valcol, oldcol);
-            }
-          }
+            image[c] = merge_ARGB(color_with_opacity(valcol, opacity_sea), oldcol);
         }
         c++;
       }

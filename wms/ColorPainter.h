@@ -38,6 +38,21 @@ class ColorPainter
     double opacity_sea;
 };
 
+// Scale the alpha of the color by the opacity unless the opacity is 1
+inline uint color_with_opacity(uint valcol,double opacity)
+{
+  if (opacity == 1.0)
+    return valcol;
+
+  uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity);
+  if (op > 255)
+    op = 0xFF000000;
+  else
+    op = (op & 0xFF) << 24;
+
+  return op + (valcol & 0x00FFFFFF);
+}
+
 using ColorPainter_sptr = std::shared_ptr<ColorPainter>;
 using ColorPainter_sptr_map = std::map<std::string, ColorPainter_sptr>;
 

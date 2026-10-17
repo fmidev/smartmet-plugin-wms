@@ -44,21 +44,6 @@ void flip_rows(const std::vector<float>& values,float *out,uint width,uint heigh
   }
 }
 
-// Scale the alpha of the color by the opacity unless the opacity is 1
-inline uint with_opacity(uint valcol,double opacity)
-{
-  if (opacity == 1.0)
-    return valcol;
-
-  uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity);
-  if (op > 255)
-    op = 0xFF000000;
-  else
-    op = (op & 0xFF) << 24;
-
-  return op + (valcol & 0x00FFFFFF);
-}
-
 }  // namespace
 
 
@@ -295,9 +280,9 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
         {
           int stp = (step+val) % line_length;
           if (landval > 0.9)
-            image[c] = merge_ARGB(with_opacity(color_land[stp],opacity_land),oldcol);
+            image[c] = merge_ARGB(color_with_opacity(color_land[stp],opacity_land),oldcol);
           else
-            image[c] = merge_ARGB(with_opacity(color_sea[stp],opacity_sea),oldcol);
+            image[c] = merge_ARGB(color_with_opacity(color_sea[stp],opacity_sea),oldcol);
         }
         c++;
       }
