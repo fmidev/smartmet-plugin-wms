@@ -98,6 +98,72 @@ std::vector<float> sample_values(const Engine::Querydata::Q &q,
     }
   return values;
 }
+
+// Set the interpolation methods of a raster query parameter
+void set_raster_interpolation(QueryServer::QueryParameter &p, const std::string &interpolation)
+{
+  if (interpolation == "nearest")
+    p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Nearest;
+  else if (interpolation == "linear")
+  {
+    p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
+    p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
+    p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
+  }
+
+  if (interpolation == "transfer")
+  {
+    p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
+    p.mTimeInterpolationMethod = 15;
+    p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
+  }
+}
+
+// Add the direction and speed parameters to the query
+void add_direction_speed_parameters(const Engine::Grid::Engine &gridEngine,
+                                    const std::string &producerName,
+                                    const std::string &direction,
+                                    const std::string &speed,
+                                    Projection &projection,
+                                    T::AttributeList &attributeList,
+                                    QueryServer::Query &query)
+{
+  std::string dir = gridEngine.getParameterString(producerName, direction);
+  std::string sp = gridEngine.getParameterString(producerName, speed);
+
+  attributeList.addAttribute("param", dir + "," + sp);
+
+  if (!projection.projectionParameter)
+    projection.projectionParameter = dir;
+
+  if (dir == direction && query.mProducerNameList.empty())
+  {
+    gridEngine.getProducerNameList(producerName, query.mProducerNameList);
+    if (query.mProducerNameList.empty())
+      query.mProducerNameList.push_back(producerName);
+  }
+}
+
+// The first two non-empty value vectors and the coordinates of the last of them
+void first_two_value_vectors(const QueryServer::Query &query,
+                             std::shared_ptr<SmartMet::QueryServer::ParameterValues> (&p)[2],
+                             const T::Coordinate_vec *&coordinates)
+{
+  uint c = 0;
+  for (const auto &query_param : query.mQueryParameterList)
+  {
+    for (const auto &val : query_param.mValueList)
+    {
+      if (!val->mValueVector.empty() && c < 2)
+      {
+        p[c] = val;
+        if (!query_param.mCoordinates.empty())
+          coordinates = &query_param.mCoordinates;
+        c++;
+      }
+    }
+  }
+}
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -632,31 +698,16 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
     }
     else if (direction && speed)
     {
-      std::string dir = gridEngine->getParameterString(producerName, *direction);
-      std::string sp = gridEngine->getParameterString(producerName, *speed);
-
-      attributeList.addAttribute("param", dir + "," + sp);
-
-      if (!projection.projectionParameter)
-        projection.projectionParameter = dir;
-
-      if (dir == *direction && originalGridQuery->mProducerNameList.empty())
-      {
-        gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-        if (originalGridQuery->mProducerNameList.empty())
-          originalGridQuery->mProducerNameList.push_back(producerName);
-      }
+      add_direction_speed_parameters(*gridEngine,
+                                     producerName,
+                                     *direction,
+                                     *speed,
+                                     projection,
+                                     attributeList,
+                                     *originalGridQuery);
     }
 
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    // printf("FORECAST TIME %s\n",forecastTime.c_str());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
@@ -669,21 +720,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
       p.mType = QueryServer::QueryParameter::Type::Vector;
       p.mFlags |= QueryServer::QueryParameter::Flags::ReturnCoordinates;
 
-      if (interpolation == "nearest")
-        p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Nearest;
-      else if (interpolation == "linear")
-      {
-        p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
-        p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
-        p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
-      }
-
-      if (interpolation == "transfer")
-      {
-        p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
-        p.mTimeInterpolationMethod = 15;
-        p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
-      }
+      set_raster_interpolation(p, interpolation);
 
       set_query_parameter_selections(p, paraminfo);
     }
@@ -693,18 +730,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
 
     add_grid_size_attributes(*originalGridQuery, projection);
 
-    if (projection.bboxcrs)
-      originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
-
-    if (projection.cx)
-      originalGridQuery->mAttributeList.addAttribute("grid.cx", Fmi::to_string(*projection.cx));
-
-    if (projection.cy)
-      originalGridQuery->mAttributeList.addAttribute("grid.cy", Fmi::to_string(*projection.cy));
-
-    if (projection.resolution)
-      originalGridQuery->mAttributeList.addAttribute("grid.resolution",
-                                                     Fmi::to_string(*projection.resolution));
+    add_projection_attributes(*originalGridQuery, projection);
 
     if (wkt == "data")
       add_data_bbox_attribute(*originalGridQuery, projection);
@@ -733,20 +759,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
     const T::Coordinate_vec *coordinates = nullptr;
     std::shared_ptr<SmartMet::QueryServer::ParameterValues> p[2];
 
-    uint c = 0;
-    for (const auto &query_param : query->mQueryParameterList)
-    {
-      for (const auto &val : query_param.mValueList)
-      {
-        if (!val->mValueVector.empty() && c < 2)
-        {
-          p[c] = val;
-          if (!query_param.mCoordinates.empty())
-            coordinates = &query_param.mCoordinates;
-          c++;
-        }
-      }
-    }
+    first_two_value_vectors(*query, p, coordinates);
 
     // *********************  DATA SOURCE INDEPENDNT PAINTING *********
 
