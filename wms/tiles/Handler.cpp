@@ -1152,6 +1152,69 @@ QueryStatus Handler::handleStyle(const std::string& base,
   }
 }
 
+namespace
+{
+// A style of a collection
+struct StyleEntry
+{
+  std::string id;
+  std::string title;
+};
+
+// The named styles in the capabilities style list
+std::vector<StyleEntry> style_entries(CTPP::CDT& style_list)
+{
+  std::vector<StyleEntry> entries;
+  if (style_list.GetType() == CTPP::CDT::ARRAY_VAL)
+  {
+    for (std::size_t i = 0; i < style_list.Size(); ++i)
+    {
+      if (!style_list[i].Exists("name"))
+        continue;
+      StyleEntry e;
+      e.id = style_list[i].At("name").GetString();
+      if (style_list[i].Exists("title"))
+        e.title = style_list[i].At("title").GetString();
+      entries.push_back(std::move(e));
+    }
+  }
+  return entries;
+}
+// Copy the dimension query parameters (OGC API - Common Part 2) to the Dali request:
+//   datetime  — time instant (OGC-standard spelling; TIME accepted for parity)
+//   elevation — vertical level (already present in thisRequest as a copied
+//               query parameter; Dali reads it directly by that name)
+//   reference_time — model analysis/origin time
+// Returns true if the request carried dimension parameters.
+bool add_dimension_parameters(const Spine::HTTP::Request& theRequest,
+                              Spine::HTTP::Request& thisRequest,
+                              const WMS::Config& wmsConfig,
+                              const std::string& collId)
+{
+  auto datetime_param = theRequest.getParameter("datetime");
+  auto time_param = theRequest.getParameter("TIME");
+  auto elevation_param = theRequest.getParameter("elevation");
+  auto reftime_param = theRequest.getParameter("reference_time");
+  const bool has_dimension = (datetime_param && !datetime_param->empty()) ||
+                             (elevation_param && !elevation_param->empty()) ||
+                             (reftime_param && !reftime_param->empty());
+
+  if (datetime_param && !datetime_param->empty())
+    thisRequest.addParameter("time", *datetime_param);
+  else if (time_param && !time_param->empty())
+    thisRequest.addParameter("time", *time_param);
+  else if (wmsConfig.isTemporal(collId))
+  {
+    Fmi::DateTime current_time = wmsConfig.mostCurrentTime(collId, {});
+    if (!current_time.is_not_a_date_time())
+      thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
+  }
+  if (reftime_param && !reftime_param->empty())
+    thisRequest.addParameter("origintime", *reftime_param);
+  return has_dimension;
+}
+}  // namespace
+
 // -----------------------------------------------------------------------
 /*!
  * \brief GET /tiles/collections/{id}/styles  — Styles for a collection
@@ -1182,11 +1245,6 @@ QueryStatus Handler::handleCollectionStyles(const std::string& base,
     // publish — instead of just the implicit default. Every style name here is
     // accepted by /styles/{styleId} (resolveStyleLayers folds the named variant
     // into the render tree with useStyle()).
-    struct StyleEntry
-    {
-      std::string id;
-      std::string title;
-    };
     std::vector<StyleEntry> entries;
 
     const auto& wmsConfig = itsTilesConfig->wmsConfig();
@@ -1195,22 +1253,7 @@ QueryStatus Handler::handleCollectionStyles(const std::string& base,
     {
       auto style_info = layer_obj->getStyleInfo(language, dali.defaultLanguage());
       if (style_info && style_info->Exists("style"))
-      {
-        CTPP::CDT& style_list = (*style_info)["style"];
-        if (style_list.GetType() == CTPP::CDT::ARRAY_VAL)
-        {
-          for (std::size_t i = 0; i < style_list.Size(); ++i)
-          {
-            if (!style_list[i].Exists("name"))
-              continue;
-            StyleEntry e;
-            e.id = style_list[i].At("name").GetString();
-            if (style_list[i].Exists("title"))
-              e.title = style_list[i].At("title").GetString();
-            entries.push_back(std::move(e));
-          }
-        }
-      }
+        entries = style_entries((*style_info)["style"]);
     }
 
     // The default style is always available even when the capabilities list is
@@ -1400,31 +1443,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     thisRequest.addParameter("type", demimetype(format));
     thisRequest.addParameter("customer", wmsConfig.layerCustomer(collId));
 
-    // Dimension query parameters (OGC API - Common Part 2):
-    //   datetime  — time instant (OGC-standard spelling; TIME accepted for parity)
-    //   elevation — vertical level (already present in thisRequest as a copied
-    //               query parameter; Dali reads it directly by that name)
-    //   reference_time — model analysis/origin time
-    auto datetime_param = theRequest.getParameter("datetime");
-    auto time_param = theRequest.getParameter("TIME");
-    auto elevation_param = theRequest.getParameter("elevation");
-    auto reftime_param = theRequest.getParameter("reference_time");
-    const bool has_dimension = (datetime_param && !datetime_param->empty()) ||
-                               (elevation_param && !elevation_param->empty()) ||
-                               (reftime_param && !reftime_param->empty());
-
-    if (datetime_param && !datetime_param->empty())
-      thisRequest.addParameter("time", *datetime_param);
-    else if (time_param && !time_param->empty())
-      thisRequest.addParameter("time", *time_param);
-    else if (wmsConfig.isTemporal(collId))
-    {
-      Fmi::DateTime current_time = wmsConfig.mostCurrentTime(collId, {});
-      if (!current_time.is_not_a_date_time())
-        thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
-    }
-    if (reftime_param && !reftime_param->empty())
-      thisRequest.addParameter("origintime", *reftime_param);
+    const bool has_dimension = add_dimension_parameters(theRequest, thisRequest, wmsConfig, collId);
 
     // Use default style (OGC API Tiles does not require a style in the URL)
     const std::string style = Spine::optional_string(theRequest.getParameter("style"), "default");
