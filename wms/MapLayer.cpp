@@ -289,6 +289,135 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
   }
 }
 
+namespace
+{
+// Clip lines or polygons to the clipping box
+void clip_geometry(OGRGeometryPtr& geom, const Fmi::Box& clipbox, bool lines)
+{
+  if (lines)
+    geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
+  else
+    geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+}
+
+// Convert feature field value to MVTValue
+MVTValue mvt_value(const Fmi::Attribute& fval)
+{
+  MVTValue attrVal;
+  if (fval.index() == 0)
+    attrVal = static_cast<int64_t>(std::get<int>(fval));
+  else if (fval.index() == 1)
+    attrVal = std::get<double>(fval);
+  else if (fval.index() == 2)
+    attrVal = std::get<std::string>(fval);
+  else
+    attrVal = std::string{};  // time or unknown: skip or empty
+  return attrVal;
+}
+
+// Establish the station to pick from querydata for the feature. Returns false if the
+// feature is not mapped to a station.
+bool feature_station(const Fmi::Attribute& feature_value,  // <int,double,string,time>
+                     const MapStyles& styles,
+                     std::optional<std::string>& station_name,
+                     int& station_number)
+{
+  if (styles.features.empty())
+  {
+    // Assume feature value matches station number
+    if (feature_value.index() == 0)
+      station_number = std::get<int>(feature_value);
+    else
+      throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
+    return true;
+  }
+
+  auto station_pos = styles.features.end();
+
+  if (feature_value.index() == 2)
+    station_pos = styles.features.find(std::get<std::string>(feature_value));
+  else if (feature_value.index() == 0)
+    station_pos = styles.features.find(Fmi::to_string(std::get<int>(feature_value)));
+  else
+    throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
+
+  if (station_pos == styles.features.end())
+    return false;
+  station_name = station_pos->first;
+  station_number = station_pos->second;
+  return true;
+}
+
+// The attributes of the use-element of a styled feature
+Attributes feature_use_attributes(const std::string& iri,
+                                  const MapStyles& styles,
+                                  const std::optional<std::string>& station_name,
+                                  float value)
+{
+  // Cannot call addAttributes two times or style will be messed up, better
+  // create one Attributes object and add everything once
+  Attributes attrs;
+  attrs.add("xlink:href", "#" + iri);
+
+  // Add feature specific attributes
+  if (!styles.features.empty() && station_name)
+  {
+    const auto& feature_attrs = styles.feature_attributes.find(*station_name);
+    if (feature_attrs != styles.feature_attributes.end())
+      attrs.add(feature_attrs->second);
+  }
+
+  // Add data specific attributes. These will overide feature specific settings
+  auto selection = Select::attribute(styles.data_attributes, value);
+  if (selection)
+    attrs.add(selection->attributes);
+  return attrs;
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish the point data for styling with the parameter and time set
+ */
+// ----------------------------------------------------------------------
+
+Engine::Querydata::Q MapLayer::getStylingData(const State& theState)
+{
+  if (!paraminfo.producer)
+    throw Fmi::Exception(BCP, "MapLayer producer not set for styling");
+
+  if (theState.isObservation(paraminfo.producer))
+    throw Fmi::Exception(BCP, "Observations not supported in MapLayer")
+        .addParameter("producer", *paraminfo.producer);
+
+  // Establish data
+
+  auto q = getModel(theState);
+
+  if (!q)
+    throw Fmi::Exception(BCP, "MapLayer querydata undefined");
+
+  if (q->isGrid())
+    throw Fmi::Exception(BCP, "MapLayer querydata must be point data, not gridded");
+
+  // Set the parameter and time
+
+  if (styles->parameter.empty())
+    throw Fmi::Exception(BCP, "MapLayer styling parameter not set");
+  auto param = TS::ParameterFactory::instance().parse(styles->parameter);
+
+  if (!q->param(param.number()))
+    throw Fmi::Exception(BCP, "MapLayer parameter not available in querydata")
+        .addParameter("parameter", styles->parameter);
+
+  auto valid_time = getValidTime();
+  if (!q->time(valid_time))
+    throw Fmi::Exception(BCP, "Selected MapLayer time not available in querydata")
+        .addParameter("time", Fmi::to_iso_string(valid_time));
+
+  return q;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate a map with feature specific styling
@@ -301,37 +430,9 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 {
   try
   {
-    if (!paraminfo.producer)
-      throw Fmi::Exception(BCP, "MapLayer producer not set for styling");
+    // Establish data with the styling parameter and time set
 
-    if (theState.isObservation(paraminfo.producer))
-      throw Fmi::Exception(BCP, "Observations not supported in MapLayer")
-          .addParameter("producer", *paraminfo.producer);
-
-    // Establish data
-
-    auto q = getModel(theState);
-
-    if (!q)
-      throw Fmi::Exception(BCP, "MapLayer querydata undefined");
-
-    if (q->isGrid())
-      throw Fmi::Exception(BCP, "MapLayer querydata must be point data, not gridded");
-
-    // Set the parameter and time
-
-    if (styles->parameter.empty())
-      throw Fmi::Exception(BCP, "MapLayer styling parameter not set");
-    auto param = TS::ParameterFactory::instance().parse(styles->parameter);
-
-    if (!q->param(param.number()))
-      throw Fmi::Exception(BCP, "MapLayer parameter not available in querydata")
-          .addParameter("parameter", styles->parameter);
-
-    auto valid_time = getValidTime();
-    if (!q->time(valid_time))
-      throw Fmi::Exception(BCP, "Selected MapLayer time not available in querydata")
-          .addParameter("time", Fmi::to_iso_string(valid_time));
+    auto q = getStylingData(theState);
 
     // Establish projection, bbox and optional clipping bbox
 
@@ -391,12 +492,9 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
       if (feature->geom == nullptr || feature->geom->IsEmpty() == 1)
         continue;
 
-      // Clip the geometry
+      // Clip the geometry (fast and hence not cached in gisengine)
       OGRGeometryPtr geom = feature->geom;
-      if (map.lines)
-        geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-      else
-        geom.reset(Fmi::OGR::polyclip(*geom, clipbox));  // fast and hence not cached in gisengine
+      clip_geometry(geom, clipbox, map.lines);
 
       if (!geom)
         continue;
@@ -418,33 +516,9 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
       std::optional<std::string> station_name;
       int station_number = -1;
 
-      const auto& feature_value =
-          feature->attributes.at(styles->field);  // <int,double,string,time>
-
-      if (styles->features.empty())
-      {
-        // Assume feature value matches station number
-        if (feature_value.index() == 0)
-          station_number = std::get<int>(feature_value);
-        else
-          throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
-      }
-      else
-      {
-        auto station_pos = styles->features.end();
-
-        if (feature_value.index() == 2)
-          station_pos = styles->features.find(std::get<std::string>(feature_value));
-        else if (feature_value.index() == 0)
-          station_pos = styles->features.find(Fmi::to_string(std::get<int>(feature_value)));
-        else
-          throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
-
-        if (station_pos == styles->features.end())
-          continue;
-        station_name = station_pos->first;
-        station_number = station_pos->second;
-      }
+      if (!feature_station(
+              feature->attributes.at(styles->field), *styles, station_name, station_number))
+        continue;
 
       auto info = q->info();
       if (!info->Location(station_number))
@@ -462,23 +536,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
         tag_cdt["start"] = "<use";
         tag_cdt["end"] = "/>";
 
-        // Cannot call addAttributes two times or style will be messed up, better
-        // create one Attributes object and add everything once
-        Attributes attrs;
-        attrs.add("xlink:href", "#" + iri);
-
-        // Add feature specific attributes
-        if (!styles->features.empty() && station_name)
-        {
-          const auto& feature_attrs = styles->feature_attributes.find(*station_name);
-          if (feature_attrs != styles->feature_attributes.end())
-            attrs.add(feature_attrs->second);
-        }
-
-        // Add data specific attributes. These will overide feature specific settings
-        auto selection = Select::attribute(styles->data_attributes, value);
-        if (selection)
-          attrs.add(selection->attributes);
+        Attributes attrs = feature_use_attributes(iri, *styles, station_name, value);
 
         // And this will generate a single style-setting joining all styles set above
         theState.addAttributes(theGlobals, tag_cdt, attrs);
@@ -495,33 +553,6 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
-namespace
-{
-// Clip lines or polygons to the clipping box
-void clip_geometry(OGRGeometryPtr& geom, const Fmi::Box& clipbox, bool lines)
-{
-  if (lines)
-    geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-  else
-    geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
-}
-
-// Convert feature field value to MVTValue
-MVTValue mvt_value(const Fmi::Attribute& fval)
-{
-  MVTValue attrVal;
-  if (fval.index() == 0)
-    attrVal = static_cast<int64_t>(std::get<int>(fval));
-  else if (fval.index() == 1)
-    attrVal = std::get<double>(fval);
-  else if (fval.index() == 2)
-    attrVal = std::get<std::string>(fval);
-  else
-    attrVal = std::string{};  // time or unknown: skip or empty
-  return attrVal;
-}
-}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

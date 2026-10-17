@@ -44,6 +44,7 @@ class MapLayer : public Layer
  private:
   void generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   void generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
+  Engine::Querydata::Q getStylingData(const State& theState);
 
 };  // class MapLayer
 
