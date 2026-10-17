@@ -5418,7 +5418,7 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | `wmts.tile_width` | 1024 | Default WMTS tile width. |
 | `wmts.tile_height` | 1024 | Default WMTS tile height. |
 | `tiles.url` | `/tiles` | URL path of the native tile endpoint. |
-| `openapi.enabled` | `true` | Serve the generated OpenAPI definitions at `/tiles/api` and `/wmts/api`. Like the capabilities, they list only the layers the apikey of the client has access to; they are generated for each apikey and regenerated when the capabilities change. |
+| `openapi.enabled` | `true` | Serve the generated OpenAPI definitions at `/tiles/api` and `/wmts/api`, and list them (kinds `tiles` and `wmts`) in the API catalog of the server at `/api`. Like the capabilities, they list only the layers the apikey of the client has access to; they are generated for each apikey and regenerated when the capabilities change. |
 | `openapi.ui` | `true` | Serve the documentation pages at `/tiles/api/docs` and `/wmts/api/docs`, rendered by Swagger UI. The pages show the executed request with its URL and as bash, Python, R and JavaScript snippets, and as scripts looping over time periods when the request has a time window. JSON and XML responses are shown as a collapsible tree. |
 | `openapi.swagger_ui_dir` | `/usr/share/smartmet/swagger-ui` | Directory of the Swagger UI files (package `smartmet-swagger-ui`); no CDN is used. |
 | `openapi.expand_collections` | `true` | Describe each Tiles collection with its own styles and levels, if there are at most `max_enum` collections. |
