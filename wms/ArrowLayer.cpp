@@ -322,6 +322,71 @@ PointValues read_forecasts(const ArrowLayer& layer,
  */
 // ----------------------------------------------------------------------
 
+// Point values from grid direction and optional speed values, the speed defaults to 10
+PointValues direction_speed_values(const Positions::Points& points,
+                                   T::GridValueList& dirValues,
+                                   T::GridValueList* speedValues)
+{
+  PointValues pointvalues;
+  uint len = dirValues.getLength();
+  for (uint t = 0; t < len; t++)
+  {
+    auto point = points[t];
+    T::GridValue* rec = dirValues.getGridValuePtrByIndex(t);
+    T::ParamValue wdir = rec->mValue;
+
+    if (wdir == ParamValueMissing)
+      continue;
+
+    T::ParamValue wspeed = 0;
+    if (speedValues)
+    {
+      T::GridValue* srec = speedValues->getGridValuePtrByIndex(t);
+      wspeed = (srec ? srec->mValue : 10);
+    }
+    else
+      wspeed = 10;
+
+    if (wspeed != ParamValueMissing)
+      pointvalues.emplace_back(point, wspeed, wdir);
+  }
+  return pointvalues;
+}
+
+// Point values from grid U and V components
+PointValues uv_values(const Positions::Points& points,
+                      T::GridValueList& uValues,
+                      T::GridValueList& vValues,
+                      const QueryServer::Query& query)
+{
+  PointValues pointvalues;
+  int relativeUV = 0;
+  const char* relativeUVStr = query.mAttributeList.getAttributeValue("grid.original.relativeUV");
+  const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
+
+  if (relativeUVStr)
+    relativeUV = Fmi::stoi(relativeUVStr);
+
+  std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
+  if (relativeUV && originalCrs)
+    uvtransformation = std::make_shared<Fmi::CoordinateTransformation>("WGS84", originalCrs);
+
+  uint len = vValues.getLength();
+  for (uint t = 0; t < len; t++)
+  {
+    auto point = points[t];
+    T::GridValue* urec = uValues.getGridValuePtrByIndex(t);
+    T::GridValue* vrec = vValues.getGridValuePtrByIndex(t);
+
+    auto result = uv_to_speed_and_direction(
+        urec->mValue, vrec->mValue, uvtransformation, point.latlon.X(), point.latlon.Y());
+
+    if (result)
+      pointvalues.emplace_back(point, result->speed, result->direction);
+  }
+  return pointvalues;
+}
+
 PointValues read_gridForecasts(const ArrowLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
                                const QueryServer::Query& query,
@@ -367,61 +432,10 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     }
 
     if (dirValues && dirValues->getLength())
-    {
-      uint len = dirValues->getLength();
-      for (uint t = 0; t < len; t++)
-      {
-        auto point = points[t];
-        T::GridValue* rec = dirValues->getGridValuePtrByIndex(t);
-        T::ParamValue wdir = rec->mValue;
-
-        if (wdir == ParamValueMissing)
-          continue;
-
-        T::ParamValue wspeed = 0;
-        if (speedValues)
-        {
-          T::GridValue* srec = speedValues->getGridValuePtrByIndex(t);
-          wspeed = (srec ? srec->mValue : 10);
-        }
-        else
-          wspeed = 10;
-
-        if (wspeed != ParamValueMissing)
-          pointvalues.emplace_back(point, wspeed, wdir);
-      }
-      return pointvalues;
-    }
+      return direction_speed_values(points, *dirValues, speedValues);
 
     if (uValues && vValues && uValues->getLength() && vValues->getLength())
-    {
-      int relativeUV = 0;
-      const char* relativeUVStr =
-          query.mAttributeList.getAttributeValue("grid.original.relativeUV");
-      const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
-
-      if (relativeUVStr)
-        relativeUV = Fmi::stoi(relativeUVStr);
-
-      std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
-      if (relativeUV && originalCrs)
-        uvtransformation = std::make_shared<Fmi::CoordinateTransformation>("WGS84", originalCrs);
-
-      uint len = vValues->getLength();
-      for (uint t = 0; t < len; t++)
-      {
-        auto point = points[t];
-        T::GridValue* urec = uValues->getGridValuePtrByIndex(t);
-        T::GridValue* vrec = vValues->getGridValuePtrByIndex(t);
-
-        auto result = uv_to_speed_and_direction(
-            urec->mValue, vrec->mValue, uvtransformation, point.latlon.X(), point.latlon.Y());
-
-        if (result)
-          pointvalues.emplace_back(point, result->speed, result->direction);
-      }
-      return pointvalues;
-    }
+      return uv_values(points, *uValues, *vValues, query);
 
     return pointvalues;
   }
