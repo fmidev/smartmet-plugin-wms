@@ -453,6 +453,80 @@ std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
   return result;
 }
 
+// Free direction of candidate i: the normalized sum of inverse distance weighted
+// directions away from the markers of the candidates which have not been dropped
+// and from the centroids of the labels already placed
+std::pair<double, double> freeDirection(size_t i,
+                                        const std::vector<LabelCandidate>& candidates,
+                                        const std::vector<bool>& dropped,
+                                        const std::vector<std::pair<double, double>>& placed_centroids,
+                                        double fs_radius)
+{
+  const size_t n = candidates.size();
+  const double fs_radius2 = fs_radius * fs_radius;
+  double fx = 0.0;
+  double fy = 0.0;
+  auto accumulate = [&](double ox, double oy) {
+    const double dx = candidates[i].anchor_x - ox;
+    const double dy = candidates[i].anchor_y - oy;
+    const double d2 = dx * dx + dy * dy;
+    if (d2 < 1e-9)
+      return;
+    if (fs_radius > 0.0 && d2 > fs_radius2)
+      return;
+    fx += dx / d2;
+    fy += dy / d2;
+  };
+  for (size_t j = 0; j < n; j++)
+    if (j != i && !dropped[j])
+      accumulate(candidates[j].anchor_x, candidates[j].anchor_y);
+  for (const auto& c : placed_centroids)
+    accumulate(c.first, c.second);
+  const double mag = std::sqrt(fx * fx + fy * fy);
+  if (mag <= 1e-9)
+    return {0.0, 0.0};
+  return {fx / mag, fy / mag};
+}
+
+// True if the bbox overlaps any of the placed bboxes
+bool overlapsAny(const LabelBBox& test, const std::vector<LabelBBox>& placed_bboxes)
+{
+  for (const auto& pb : placed_bboxes)
+  {
+    if (test.overlaps(pb))
+      return true;
+  }
+  return false;
+}
+
+// Test against every other candidate's marker, but never
+// against the label's own marker — the candidate position
+// was deliberately laid out to clear it, and applying padding
+// there would push the label uselessly far from its own
+// anchor.  Also skip markers of higher-priority candidates
+// whose labels have been dropped: those markers won't be
+// rendered, so they shouldn't constrain placement either.
+bool overlapsOtherMarker(const LabelBBox& test,
+                         size_t i,
+                         const std::vector<LabelCandidate>& candidates,
+                         const std::vector<bool>& dropped)
+{
+  const size_t n = candidates.size();
+  for (size_t j = 0; j < n; j++)
+  {
+    if (j == i)
+      continue;
+    if (j < i && dropped[j])
+      continue;
+    const auto& ob = candidates[j].obstacle;
+    if (!ob.valid())
+      continue;
+    if (test.overlaps(ob))
+      return true;
+  }
+  return false;
+}
+
 // ------------------------------------------------------------------
 // GREEDY core — tries candidate positions in Imhof preference order
 // and takes the first one that does not overlap any already-placed
@@ -475,7 +549,6 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
   const double pad = config.bbox_padding;
   const bool fs_on = config.free_space_weight > 0.0;
   const double fs_radius = config.free_space_radius;
-  const double fs_radius2 = fs_radius * fs_radius;
 
   // Centroids of labels already placed in this run.  Greedy is one-pass
   // in priority order, so when candidate i is being placed, every label
@@ -497,33 +570,6 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
   // candidates' markers.
   std::vector<bool> dropped(n, false);
 
-  auto computeFreeDir = [&](size_t i) -> std::pair<double, double> {
-    if (!fs_on)
-      return {0.0, 0.0};
-    double fx = 0.0;
-    double fy = 0.0;
-    auto accumulate = [&](double ox, double oy) {
-      const double dx = candidates[i].anchor_x - ox;
-      const double dy = candidates[i].anchor_y - oy;
-      const double d2 = dx * dx + dy * dy;
-      if (d2 < 1e-9)
-        return;
-      if (fs_radius > 0.0 && d2 > fs_radius2)
-        return;
-      fx += dx / d2;
-      fy += dy / d2;
-    };
-    for (size_t j = 0; j < n; j++)
-      if (j != i && !dropped[j])
-        accumulate(candidates[j].anchor_x, candidates[j].anchor_y);
-    for (const auto& c : placed_centroids)
-      accumulate(c.first, c.second);
-    const double mag = std::sqrt(fx * fx + fy * fy);
-    if (mag <= 1e-9)
-      return {0.0, 0.0};
-    return {fx / mag, fy / mag};
-  };
-
   for (size_t i = 0; i < n; i++)
   {
     const auto& cand = candidates[i];
@@ -532,7 +578,9 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
                                   cand.label_w, cand.label_h,
                                   config.offset, config.candidates,
                                   sym_half_w, sym_half_h);
-    const std::pair<double, double> free_dir = computeFreeDir(i);
+    const std::pair<double, double> free_dir =
+        fs_on ? freeDirection(i, candidates, dropped, placed_centroids, fs_radius)
+              : std::pair<double, double>{0.0, 0.0};
     const std::vector<int> order =
         orderedPositionIndices(static_cast<int>(bboxes.size()), free_dir,
                                config.free_space_weight);
@@ -554,40 +602,8 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
       // variation between systems and gives a small visual breathing space.
       const LabelBBox test = (pad > 0.0) ? bbox.inflated(pad) : bbox;
 
-      bool overlap = false;
-      for (const auto& pb : placed_bboxes)
-      {
-        if (test.overlaps(pb))
-        {
-          overlap = true;
-          break;
-        }
-      }
-      if (!overlap)
-      {
-        // Test against every other candidate's marker, but never
-        // against the label's own marker — the candidate position
-        // was deliberately laid out to clear it, and applying padding
-        // there would push the label uselessly far from its own
-        // anchor.  Also skip markers of higher-priority candidates
-        // whose labels have been dropped: those markers won't be
-        // rendered, so they shouldn't constrain placement either.
-        for (size_t j = 0; j < n; j++)
-        {
-          if (j == i)
-            continue;
-          if (j < i && dropped[j])
-            continue;
-          const auto& ob = candidates[j].obstacle;
-          if (!ob.valid())
-            continue;
-          if (test.overlaps(ob))
-          {
-            overlap = true;
-            break;
-          }
-        }
-      }
+      const bool overlap = overlapsAny(test, placed_bboxes) ||
+                           overlapsOtherMarker(test, i, candidates, dropped);
       if (!overlap)
       {
         result.push_back(makePlaced(cand, bbox));
