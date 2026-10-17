@@ -8,6 +8,7 @@
 #include <macgyver/StringConversion.h>
 #include <timeseries/ParameterTools.h>
 #include <timeseries/TimeSeriesInclude.h>
+#include <map>
 
 namespace SmartMet
 {
@@ -110,45 +111,29 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
 
 int FinnishRoadObservationLayer::get_symbol(int r, int rform) const
 {
-  if (r == 1)
-  {
-    if (rform == 9)
-      return 51;  // drizzle, not freezing, intermittent, slight
-    if (rform == 10)
-      return 52;  // rain, not freezing, intermittent, slight
-    if (rform == 11)
-      return 53;  // intermittent fall of snowflakes, slight
-    if (rform == 18)
-      return 213;  // drizzle, freezing, slight
-    if (rform == 19)
-      return 223;  // rain, freezing, slight
-  }
-  if (r == 2)
-  {
-    if (rform == 9)
-      return 209;  // drizzle, not freezing, intermittent, moderate
-    if (rform == 10)
-      return 219;  // rain, not freezing, intermittent, moderate
-    if (rform == 11)
-      return 229;  // intermittent fall of snowflakes, moderate
-    if (rform == 18)
-      return 214;  // drizzle, freezing, moderate or heavy
-    if (rform == 19)
-      return 224;  // rain, freezing, moderate or heavy
-  }
-  if (r == 3)
-  {
-    if (rform == 9)
-      return 212;  // drizzle, not freezing, continous, heavy
-    if (rform == 10)
-      return 222;  // rain, not freezing, continous, heavy
-    if (rform == 11)
-      return 232;  // continous flall of snowflakes, heavy
-    if (rform == 18)
-      return 214;  // drizzle, freezing, moderate or heavy
-    if (rform == 19)
-      return 224;  // rain, freezing, moderate or heavy
-  }
+  // Symbols for drizzle, rain and snow of intensity 1-3
+  static const std::map<std::pair<int, int>, int> intensity_symbols{
+      {{1, 9}, 51},    // drizzle, not freezing, intermittent, slight
+      {{1, 10}, 52},   // rain, not freezing, intermittent, slight
+      {{1, 11}, 53},   // intermittent fall of snowflakes, slight
+      {{1, 18}, 213},  // drizzle, freezing, slight
+      {{1, 19}, 223},  // rain, freezing, slight
+      {{2, 9}, 209},   // drizzle, not freezing, intermittent, moderate
+      {{2, 10}, 219},  // rain, not freezing, intermittent, moderate
+      {{2, 11}, 229},  // intermittent fall of snowflakes, moderate
+      {{2, 18}, 214},  // drizzle, freezing, moderate or heavy
+      {{2, 19}, 224},  // rain, freezing, moderate or heavy
+      {{3, 9}, 212},   // drizzle, not freezing, continous, heavy
+      {{3, 10}, 222},  // rain, not freezing, continous, heavy
+      {{3, 11}, 232},  // continous flall of snowflakes, heavy
+      {{3, 18}, 214},  // drizzle, freezing, moderate or heavy
+      {{3, 19}, 224}   // rain, freezing, moderate or heavy
+  };
+
+  auto pos = intensity_symbols.find({r, rform});
+  if (pos != intensity_symbols.end())
+    return pos->second;
+
   if (rform == 13)
     return 225;  // rain or drizzle and snow, slight
   if (rform == 14)
