@@ -116,6 +116,77 @@ std::string resolveCurrentTime(const WMS::Config& wmsConfig,
   return t.is_not_a_date_time() ? value : Fmi::to_iso_string(t);
 }
 
+// Append the names of the dimensions in the array, or of a single dimension hash if allowed
+void append_dimension_names(CTPP::CDT& dims, bool allow_hash, std::vector<std::string>& names)
+{
+  if (dims.GetType() == CTPP::CDT::ARRAY_VAL)
+  {
+    for (std::size_t d = 0; d < dims.Size(); ++d)
+      if (dims[d].Exists("name"))
+        names.push_back(dims[d].At("name").GetString());
+  }
+  else if (allow_hash && dims.GetType() == CTPP::CDT::HASH_VAL && dims.Exists("name"))
+  {
+    names.push_back(dims.At("name").GetString());
+  }
+}
+
+// Dimension values given in a RESTful path
+struct PathDimensions
+{
+  std::string time;
+  std::string origintime;
+  std::string elevation;
+};
+
+// Map the RESTful path dimension values positionally to the ordered dimension names
+PathDimensions path_dimensions(const std::vector<std::string>& dimensionValues,
+                               const std::vector<std::string>& dim_names)
+{
+  PathDimensions dims;
+  for (std::size_t i = 0; i < dimensionValues.size() && i < dim_names.size(); ++i)
+  {
+    const std::string& nm = dim_names[i];
+    const std::string& v = dimensionValues[i];
+    if (v.empty())
+      continue;
+    if (nm == "time")
+      dims.time = v;
+    else if (nm == "reference_time")
+      dims.origintime = v;
+    else if (nm == "elevation")
+      dims.elevation = v;
+  }
+  return dims;
+}
+
+// Time: RESTful path dimension > TIME query parameter > most current time.
+void add_time_parameter(Spine::HTTP::Request& thisRequest,
+                        const Spine::HTTP::Request& theRequest,
+                        const WMS::Config& wmsConfig,
+                        const std::string& layer,
+                        const std::string& path_time,
+                        const std::string& path_origintime)
+{
+  auto time_param = theRequest.getParameter("TIME");
+  if (!path_time.empty())
+  {
+    thisRequest.addParameter("time",
+                             resolveCurrentTime(wmsConfig, layer, path_time, path_origintime));
+  }
+  else if (time_param && !time_param->empty())
+  {
+    thisRequest.addParameter("time",
+                             resolveCurrentTime(wmsConfig, layer, *time_param, path_origintime));
+  }
+  else if (wmsConfig.isTemporal(layer))
+  {
+    Fmi::DateTime current_time = wmsConfig.mostCurrentTime(layer, {});
+    if (!current_time.is_not_a_date_time())
+      thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
+  }
+}
+
 }  // namespace
 
 Handler::Handler(const Dali::Config& daliConfig) : itsDaliConfig(daliConfig) {}
@@ -661,28 +732,10 @@ const std::vector<std::string>& Handler::orderedDimensionNames(const std::string
     {
       auto ti = layer_obj->getTimeDimensionInfo(false, {}, {}, {});
       if (ti && ti->Exists("time_dimension"))
-      {
-        CTPP::CDT& a = (*ti)["time_dimension"];
-        if (a.GetType() == CTPP::CDT::ARRAY_VAL)
-          for (std::size_t d = 0; d < a.Size(); ++d)
-            if (a[d].Exists("name"))
-              names.push_back(a[d].At("name").GetString());
-      }
+        append_dimension_names((*ti)["time_dimension"], false, names);
       auto ei = layer_obj->getElevationDimensionInfo();
       if (ei && ei->Exists("elevation_dimension"))
-      {
-        CTPP::CDT& e = (*ei)["elevation_dimension"];
-        if (e.GetType() == CTPP::CDT::ARRAY_VAL)
-        {
-          for (std::size_t d = 0; d < e.Size(); ++d)
-            if (e[d].Exists("name"))
-              names.push_back(e[d].At("name").GetString());
-        }
-        else if (e.GetType() == CTPP::CDT::HASH_VAL && e.Exists("name"))
-        {
-          names.push_back(e.At("name").GetString());
-        }
-      }
+        append_dimension_names((*ei)["elevation_dimension"], true, names);
     }
   }
   catch (...)
@@ -794,46 +847,15 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     // precedence over query parameters. They arrive as bare values in
     // capabilities order, so resolve the layer's ordered dimension identifiers
     // from the very same source GetCapabilities used and map them positionally.
-    std::string path_time;
-    std::string path_origintime;
-    std::string path_elevation;
+    PathDimensions path_dims;
     if (!dimensionValues.empty())
-    {
-      const auto& dim_names = orderedDimensionNames(layer);
-
-      for (std::size_t i = 0; i < dimensionValues.size() && i < dim_names.size(); ++i)
-      {
-        const std::string& nm = dim_names[i];
-        const std::string& v = dimensionValues[i];
-        if (v.empty())
-          continue;
-        if (nm == "time")
-          path_time = v;
-        else if (nm == "reference_time")
-          path_origintime = v;
-        else if (nm == "elevation")
-          path_elevation = v;
-      }
-    }
+      path_dims = path_dimensions(dimensionValues, orderedDimensionNames(layer));
+    const std::string& path_time = path_dims.time;
+    const std::string& path_origintime = path_dims.origintime;
+    const std::string& path_elevation = path_dims.elevation;
 
     // Time: RESTful path dimension > TIME query parameter > most current time.
-    auto time_param = theRequest.getParameter("TIME");
-    if (!path_time.empty())
-    {
-      thisRequest.addParameter("time",
-                               resolveCurrentTime(wmsConfig, layer, path_time, path_origintime));
-    }
-    else if (time_param && !time_param->empty())
-    {
-      thisRequest.addParameter("time",
-                               resolveCurrentTime(wmsConfig, layer, *time_param, path_origintime));
-    }
-    else if (wmsConfig.isTemporal(layer))
-    {
-      Fmi::DateTime current_time = wmsConfig.mostCurrentTime(layer, {});
-      if (!current_time.is_not_a_date_time())
-        thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
-    }
+    add_time_parameter(thisRequest, theRequest, wmsConfig, layer, path_time, path_origintime);
 
     // Reference (analysis/model-run) time and elevation supplied via the path.
     if (!path_origintime.empty())
