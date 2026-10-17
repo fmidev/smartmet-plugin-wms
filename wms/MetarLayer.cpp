@@ -392,6 +392,121 @@ void parse_metar_token(const std::string& t,
   }
 }
 
+// A station plot in pixel coordinates
+struct StationPlot
+{
+  int x = 0;
+  int y = 0;
+  MetarData data;
+};
+
+// Extract the coordinates, the message and the ICAO code of a station. Returns false
+// if a required value is missing.
+bool station_message(const Engine::Avi::QueryValues& vals,
+                     double& lon,
+                     double& lat,
+                     std::string& raw_message,
+                     std::string& icao_str)
+{
+  if (vals.find("longitude") == vals.end() || vals.find("latitude") == vals.end() ||
+      vals.find("message") == vals.end())
+    return false;
+
+  if (vals.at("longitude").empty() || vals.at("latitude").empty() || vals.at("message").empty())
+    return false;
+
+  lon = std::get<double>(*vals.at("longitude").cbegin());
+  lat = std::get<double>(*vals.at("latitude").cbegin());
+
+  const auto& msg_val = *vals.at("message").cbegin();
+  if (!std::holds_alternative<std::string>(msg_val))
+    return false;
+  raw_message = std::get<std::string>(msg_val);
+
+  if (vals.count("icao") && !vals.at("icao").empty())
+  {
+    const auto& iv = *vals.at("icao").cbegin();
+    if (std::holds_alternative<std::string>(iv))
+      icao_str = std::get<std::string>(iv);
+  }
+  return true;
+}
+
+// Drop stations closer than min_dist pixels to an already accepted station
+std::vector<StationPlot> declutter(const std::vector<StationPlot>& plots, int min_dist)
+{
+  std::vector<StationPlot> rendered;
+  rendered.reserve(plots.size());
+  for (const auto& p : plots)
+  {
+    bool too_close = false;
+    for (const auto& r : rendered)
+    {
+      if (std::abs(p.x - r.x) < min_dist && std::abs(p.y - r.y) < min_dist)
+      {
+        too_close = true;
+        break;
+      }
+    }
+    if (!too_close)
+      rendered.push_back(p);
+  }
+  return rendered;
+}
+
+// Compute geographic-north direction in screen coordinates for
+// true-north correction of the wind barb.
+std::pair<double, double> north_direction(const MetarData& d,
+                                          const Fmi::SpatialReference& crs,
+                                          const Fmi::CoordinateTransformation& trans,
+                                          const Fmi::Box& box)
+{
+  double north_dx = 0.0;
+  double north_dy = -1.0;
+  double x1 = d.longitude;
+  double y1 = d.latitude;
+  double x2 = d.longitude;
+  double y2 = d.latitude + 0.1;
+  bool ok = true;
+  if (!crs.isGeographic())
+    ok = trans.transform(x1, y1) && trans.transform(x2, y2);
+  if (ok)
+  {
+    box.transform(x1, y1);
+    box.transform(x2, y2);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double len = std::sqrt(dx * dx + dy * dy);
+    if (len > 1e-6)
+    {
+      north_dx = dx / len;
+      north_dy = dy / len;
+    }
+  }
+  return {north_dx, north_dy};
+}
+
+// Push a single <text> CDT
+void push_text(CTPP::CDT& theLayersCdt,
+               const std::string& text_val,
+               int x,
+               int y,
+               const std::string& anchor,
+               int font_size,
+               const std::string& txt_color)
+{
+  CTPP::CDT tc(CTPP::CDT::HASH_VAL);
+  tc["start"] = "<text";
+  tc["end"] = "</text>";
+  tc["cdata"] = Fmi::safexmlescape(text_val);
+  tc["attributes"]["x"] = Fmi::to_string(x);
+  tc["attributes"]["y"] = Fmi::to_string(y);
+  tc["attributes"]["text-anchor"] = anchor;
+  tc["attributes"]["font-size"] = Fmi::to_string(font_size);
+  tc["attributes"]["fill"] = txt_color;
+  theLayersCdt.PushBack(tc);
+}
+
 }  // namespace
 
 // ======================================================================
@@ -754,6 +869,152 @@ void MetarLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theSta
 {
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the status box and the wind barb of a station
+ */
+// ----------------------------------------------------------------------
+
+void MetarLayer::addStationSymbols(CTPP::CDT& theLayersCdt,
+                                   int sx,
+                                   int sy,
+                                   const MetarData& d,
+                                   double north_dx,
+                                   double north_dy,
+                                   int B) const
+{
+  const std::string txt_color = color.empty() ? "black" : color;
+  const double shaft_len = B * 0.32;
+  const double barb_len = B * 0.14;
+  const int box_sz = std::max(4, font_size - 2);
+
+  // Container for the self-closing status box and wind barb tags
+  CTPP::CDT symbols_cdt(CTPP::CDT::HASH_VAL);
+  symbols_cdt["start"] = "";
+  symbols_cdt["end"] = "";
+
+  // -- Status colour box (centred on station) --
+  std::string sc = (show_status ? statusColor(d) : std::string());
+  if (!sc.empty())
+  {
+    CTPP::CDT r(CTPP::CDT::HASH_VAL);
+    r["start"] = "<rect";
+    r["end"] = "/>";
+    r["attributes"]["x"] = Fmi::to_string(sx - box_sz / 2);
+    r["attributes"]["y"] = Fmi::to_string(sy - box_sz / 2);
+    r["attributes"]["width"] = Fmi::to_string(box_sz);
+    r["attributes"]["height"] = Fmi::to_string(box_sz);
+    r["attributes"]["fill"] = (color.empty() ? sc : color);
+    r["attributes"]["stroke"] = "black";
+    r["attributes"]["stroke-width"] = "0.5";
+    symbols_cdt["tags"].PushBack(r);
+  }
+
+  // -- Wind barb --
+  if (show_wind && d.has_wind)
+  {
+    int spd = d.wind_variable ? 0 : d.wind_speed;
+    int dir = d.wind_variable ? 0 : d.wind_direction;
+    std::string bp = windBarbPath(dir,
+                                  spd,
+                                  north_dx,
+                                  north_dy,
+                                  static_cast<double>(sx),
+                                  static_cast<double>(sy),
+                                  shaft_len,
+                                  barb_len);
+    if (!bp.empty())
+    {
+      CTPP::CDT pc(CTPP::CDT::HASH_VAL);
+      pc["start"] = "<path";
+      pc["end"] = "/>";
+      pc["attributes"]["d"] = bp;
+      pc["attributes"]["stroke"] = txt_color;
+      pc["attributes"]["stroke-width"] = "1.5";
+      pc["attributes"]["fill"] = txt_color;
+      pc["attributes"]["stroke-linecap"] = "round";
+      symbols_cdt["tags"].PushBack(pc);
+    }
+  }
+
+  // Self-closing tags must be output as tags of a layer, layer-level
+  // elements are always terminated with '>' by the template
+  if (symbols_cdt.Exists("tags"))
+    theLayersCdt.PushBack(symbols_cdt);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the texts of a station
+ */
+// ----------------------------------------------------------------------
+
+void MetarLayer::addStationTexts(
+    CTPP::CDT& theLayersCdt, int sx, int sy, const MetarData& d, int B) const
+{
+  const std::string txt_color = color.empty() ? "black" : color;
+  const int line_h = static_cast<int>(font_size * 1.25);
+
+  // Plot-layout offsets (from PDF, relative coords 0-1, station at 0.5,0.5):
+  //   T:       (0.35, 0.9)  → dx = -0.15*B, dy = -0.40*B  right-aligned
+  //   Vis:     (0.35, 0.675)→ dx = -0.15*B, dy = -0.175*B right-aligned
+  //   Td:      (0.35, 0.45) → dx = -0.15*B, dy = +0.05*B  right-aligned
+  //   Status+Wind at centre (0, 0)
+  //   P:       (0.6,  0.9)  → dx = +0.10*B, dy = -0.40*B  left-aligned
+  //   Gust:    (0.6,  0.675)→ dx = +0.10*B, dy = -0.175*B left-aligned
+  //   Weather: (0.6,  0.45) → dx = +0.10*B, dy = +0.05*B  left-aligned
+  //   Sky:     (0.5,  0.25) → dx = 0,        dy = +0.25*B  centre-aligned
+
+  auto ox = [&](double rel) { return sx + static_cast<int>(std::lround(rel * B)); };
+  auto oy = [&](double rel) { return sy + static_cast<int>(std::lround(rel * B)); };
+
+  auto text = [&](const std::string& text_val, int x, int y, const std::string& anchor)
+  { push_text(theLayersCdt, text_val, x, y, anchor, font_size, txt_color); };
+
+  // -- Temperature (upper left, right-aligned) --
+  if (show_temperature && d.has_temperature)
+    text(formatTemp(d.temperature), ox(-0.15), oy(-0.40), "end");
+
+  // -- Visibility (middle left, right-aligned) --
+  if (show_visibility && d.has_visibility && !d.is_cavok && !d.is_skc)
+    text(Fmi::to_string(d.visibility), ox(-0.15), oy(-0.175), "end");
+
+  // -- Dew point (lower left, right-aligned) --
+  if (show_dewpoint && d.has_dewpoint)
+    text(formatTemp(d.dewpoint), ox(-0.15), oy(+0.05), "end");
+
+  // -- QNH pressure (upper right, left-aligned) --
+  if (show_pressure && d.has_pressure)
+    text(Fmi::to_string(d.pressure), ox(+0.10), oy(-0.40), "start");
+
+  // -- Wind gust (middle right, left-aligned) --
+  if (show_gust && d.has_gust)
+    text("G" + Fmi::to_string(d.wind_gust), ox(+0.10), oy(-0.175), "start");
+
+  // -- Present weather (lower right, left-aligned) --
+  const std::string wx =
+      (show_weather && !d.weather_tokens.empty()) ? weatherString(d) : std::string();
+  if (!wx.empty())
+    text(wx, ox(+0.10), oy(+0.05), "start");
+
+  // -- Sky info (below centre, centre-aligned, one line per layer) --
+  const std::string sky = (show_sky_info ? skyInfoString(d) : std::string());
+  if (!sky.empty())
+  {
+    int tx = sx;
+    int ty = oy(+0.25);
+    std::istringstream sky_ss(sky);
+    std::string line;
+    int n = 0;
+    while (std::getline(sky_ss, line))
+    {
+      if (!line.empty())
+        text(line, tx, ty + n * line_h, "middle");
+      ++n;
+    }
+  }
+}
+
 // ======================================================================
 // generate
 // ======================================================================
@@ -839,13 +1100,6 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // ----------------------------------------------------------------
     // Parse messages and transform to pixel coordinates
     // ----------------------------------------------------------------
-    struct StationPlot
-    {
-      int x = 0;
-      int y = 0;
-      MetarData data;
-    };
-
     std::vector<StationPlot> plots;
     plots.reserve(aviData.itsStationIds.size());
 
@@ -853,30 +1107,12 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     {
       auto& vals = aviData.itsValues[stationId];
 
-      if (vals.find("longitude") == vals.end() ||
-          vals.find("latitude") == vals.end() ||
-          vals.find("message") == vals.end())
-        continue;
-
-      if (vals.at("longitude").empty() || vals.at("latitude").empty() ||
-          vals.at("message").empty())
-        continue;
-
-      double lon = std::get<double>(*vals.at("longitude").cbegin());
-      double lat = std::get<double>(*vals.at("latitude").cbegin());
-
-      const auto& msg_val = *vals.at("message").cbegin();
-      if (!std::holds_alternative<std::string>(msg_val))
-        continue;
-      const auto& raw_message = std::get<std::string>(msg_val);
-
+      double lon = 0;
+      double lat = 0;
+      std::string raw_message;
       std::string icao_str;
-      if (vals.count("icao") && !vals.at("icao").empty())
-      {
-        const auto& iv = *vals.at("icao").cbegin();
-        if (std::holds_alternative<std::string>(iv))
-          icao_str = std::get<std::string>(iv);
-      }
+      if (!station_message(vals, lon, lat, raw_message, icao_str))
+        continue;
 
       // Transform to pixel
       double px = lon;
@@ -906,31 +1142,12 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     const int B = (plot_size > 0) ? plot_size : 6 * font_size;
     const int min_dist = (mindistance > 0) ? mindistance : B;
 
-    std::vector<StationPlot> rendered;
-    rendered.reserve(plots.size());
-    for (auto& p : plots)
-    {
-      bool too_close = false;
-      for (const auto& r : rendered)
-      {
-        if (std::abs(p.x - r.x) < min_dist && std::abs(p.y - r.y) < min_dist)
-        {
-          too_close = true;
-          break;
-        }
-      }
-      if (!too_close)
-        rendered.push_back(p);
-    }
+    std::vector<StationPlot> rendered = declutter(plots, min_dist);
 
     // ----------------------------------------------------------------
     // CSS
     // ----------------------------------------------------------------
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // ----------------------------------------------------------------
     // SVG generation
@@ -944,12 +1161,6 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     theState.addAttributes(theGlobals, group_cdt, attributes);
     theLayersCdt.PushBack(group_cdt);
 
-    const std::string txt_color = color.empty() ? "black" : color;
-    const double shaft_len = B * 0.32;
-    const double barb_len  = B * 0.14;
-    const int    box_sz    = std::max(4, font_size - 2);
-    const int    line_h    = static_cast<int>(font_size * 1.25);
-
     for (const auto& p : rendered)
     {
       const int sx = p.x;
@@ -958,162 +1169,10 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
       // Compute geographic-north direction in screen coordinates for
       // true-north correction of the wind barb.
-      double north_dx = 0.0;
-      double north_dy = -1.0;
-      {
-        double x1 = d.longitude;
-        double y1 = d.latitude;
-        double x2 = d.longitude;
-        double y2 = d.latitude + 0.1;
-        bool ok = true;
-        if (!crs.isGeographic())
-          ok = trans.transform(x1, y1) && trans.transform(x2, y2);
-        if (ok)
-        {
-          box.transform(x1, y1);
-          box.transform(x2, y2);
-          double dx = x2 - x1;
-          double dy = y2 - y1;
-          double len = std::sqrt(dx * dx + dy * dy);
-          if (len > 1e-6)
-          {
-            north_dx = dx / len;
-            north_dy = dy / len;
-          }
-        }
-      }
+      const auto [north_dx, north_dy] = north_direction(d, crs, trans, box);
 
-      // Plot-layout offsets (from PDF, relative coords 0-1, station at 0.5,0.5):
-      //   T:       (0.35, 0.9)  → dx = -0.15*B, dy = -0.40*B  right-aligned
-      //   Vis:     (0.35, 0.675)→ dx = -0.15*B, dy = -0.175*B right-aligned
-      //   Td:      (0.35, 0.45) → dx = -0.15*B, dy = +0.05*B  right-aligned
-      //   Status+Wind at centre (0, 0)
-      //   P:       (0.6,  0.9)  → dx = +0.10*B, dy = -0.40*B  left-aligned
-      //   Gust:    (0.6,  0.675)→ dx = +0.10*B, dy = -0.175*B left-aligned
-      //   Weather: (0.6,  0.45) → dx = +0.10*B, dy = +0.05*B  left-aligned
-      //   Sky:     (0.5,  0.25) → dx = 0,        dy = +0.25*B  centre-aligned
-
-      auto ox = [&](double rel) { return sx + static_cast<int>(std::lround(rel * B)); };
-      auto oy = [&](double rel) { return sy + static_cast<int>(std::lround(rel * B)); };
-
-      // Container for the self-closing status box and wind barb tags
-      CTPP::CDT symbols_cdt(CTPP::CDT::HASH_VAL);
-      symbols_cdt["start"] = "";
-      symbols_cdt["end"] = "";
-
-      // -- Status colour box (centred on station) --
-      if (show_status)
-      {
-        std::string sc = statusColor(d);
-        if (!sc.empty())
-        {
-          CTPP::CDT r(CTPP::CDT::HASH_VAL);
-          r["start"] = "<rect";
-          r["end"] = "/>";
-          r["attributes"]["x"] = Fmi::to_string(sx - box_sz / 2);
-          r["attributes"]["y"] = Fmi::to_string(sy - box_sz / 2);
-          r["attributes"]["width"] = Fmi::to_string(box_sz);
-          r["attributes"]["height"] = Fmi::to_string(box_sz);
-          r["attributes"]["fill"] = (color.empty() ? sc : color);
-          r["attributes"]["stroke"] = "black";
-          r["attributes"]["stroke-width"] = "0.5";
-          symbols_cdt["tags"].PushBack(r);
-        }
-      }
-
-      // -- Wind barb --
-      if (show_wind && d.has_wind)
-      {
-        int spd = d.wind_variable ? 0 : d.wind_speed;
-        int dir = d.wind_variable ? 0 : d.wind_direction;
-        std::string bp =
-            windBarbPath(dir, spd, north_dx, north_dy,
-                         static_cast<double>(sx), static_cast<double>(sy),
-                         shaft_len, barb_len);
-        if (!bp.empty())
-        {
-          CTPP::CDT pc(CTPP::CDT::HASH_VAL);
-          pc["start"] = "<path";
-          pc["end"] = "/>";
-          pc["attributes"]["d"] = bp;
-          pc["attributes"]["stroke"] = txt_color;
-          pc["attributes"]["stroke-width"] = "1.5";
-          pc["attributes"]["fill"] = txt_color;
-          pc["attributes"]["stroke-linecap"] = "round";
-          symbols_cdt["tags"].PushBack(pc);
-        }
-      }
-
-      // Self-closing tags must be output as tags of a layer, layer-level
-      // elements are always terminated with '>' by the template
-      if (symbols_cdt.Exists("tags"))
-        theLayersCdt.PushBack(symbols_cdt);
-
-      // Helper: push a single <text> CDT
-      auto push_text = [&](const std::string& text_val,
-                           int x,
-                           int y,
-                           const std::string& anchor)
-      {
-        CTPP::CDT tc(CTPP::CDT::HASH_VAL);
-        tc["start"] = "<text";
-        tc["end"] = "</text>";
-        tc["cdata"] = Fmi::safexmlescape(text_val);
-        tc["attributes"]["x"] = Fmi::to_string(x);
-        tc["attributes"]["y"] = Fmi::to_string(y);
-        tc["attributes"]["text-anchor"] = anchor;
-        tc["attributes"]["font-size"] = Fmi::to_string(font_size);
-        tc["attributes"]["fill"] = txt_color;
-        theLayersCdt.PushBack(tc);
-      };
-
-      // -- Temperature (upper left, right-aligned) --
-      if (show_temperature && d.has_temperature)
-        push_text(formatTemp(d.temperature), ox(-0.15), oy(-0.40), "end");
-
-      // -- Visibility (middle left, right-aligned) --
-      if (show_visibility && d.has_visibility && !d.is_cavok && !d.is_skc)
-        push_text(Fmi::to_string(d.visibility), ox(-0.15), oy(-0.175), "end");
-
-      // -- Dew point (lower left, right-aligned) --
-      if (show_dewpoint && d.has_dewpoint)
-        push_text(formatTemp(d.dewpoint), ox(-0.15), oy(+0.05), "end");
-
-      // -- QNH pressure (upper right, left-aligned) --
-      if (show_pressure && d.has_pressure)
-        push_text(Fmi::to_string(d.pressure), ox(+0.10), oy(-0.40), "start");
-
-      // -- Wind gust (middle right, left-aligned) --
-      if (show_gust && d.has_gust)
-        push_text("G" + Fmi::to_string(d.wind_gust), ox(+0.10), oy(-0.175), "start");
-
-      // -- Present weather (lower right, left-aligned) --
-      if (show_weather && !d.weather_tokens.empty())
-      {
-        const std::string wx = weatherString(d);
-        if (!wx.empty())
-          push_text(wx, ox(+0.10), oy(+0.05), "start");
-      }
-
-      // -- Sky info (below centre, centre-aligned, one line per layer) --
-      if (show_sky_info)
-      {
-        const std::string sky = skyInfoString(d);
-        if (!sky.empty())
-        {
-          int tx = sx;
-          int ty = oy(+0.25);
-          std::istringstream sky_ss(sky);
-          std::string line;
-          int n = 0;
-          while (std::getline(sky_ss, line))
-          {
-            if (!line.empty())
-              push_text(line, tx, ty + n * line_h, "middle");
-            ++n;
-          }
-        }
-      }
+      addStationSymbols(theLayersCdt, sx, sy, d, north_dx, north_dy, B);
+      addStationTexts(theLayersCdt, sx, sy, d, B);
     }  // for each rendered station
 
     // Close the outer <g> by appending to the last CDT's "end" field

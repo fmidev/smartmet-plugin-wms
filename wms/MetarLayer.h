@@ -148,6 +148,18 @@ class MetarLayer : public Layer
                              double lat,
                              const std::string& icao_hint);
 
+  // Add the status box and the wind barb of a station
+  void addStationSymbols(CTPP::CDT& theLayersCdt,
+                         int sx,
+                         int sy,
+                         const MetarData& d,
+                         double north_dx,
+                         double north_dy,
+                         int B) const;
+
+  // Add the texts of a station
+  void addStationTexts(CTPP::CDT& theLayersCdt, int sx, int sy, const MetarData& d, int B) const;
+
   // Format integer temperature/dewpoint: -12→"M12", 3→"03"
   static std::string formatTemp(int t);
 
