@@ -1058,17 +1058,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
         add_graticule_cell_points(collector, lon, lat, size);
 
     // All that remains is the north pole
-    double newlon = 0;
-    double newlat = 90;
-    double newx = newlon;
-    double newy = newlat;
-
-    if (!transformation.transform(newx, newy))
-    {
-      // Skip if not inside desired areas
-      if (inside(newlon, newlat, forecastMode))
-        collector.addProjected(newx, newy, newlon, newlat);
-    }
+    collector.add(0, 90);
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
 
