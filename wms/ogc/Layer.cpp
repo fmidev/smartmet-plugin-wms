@@ -353,6 +353,160 @@ void process_template_layers(Json::Value& layersJson,
   }
 }
 
+// Update the header or the unit text layer of an isoband legend
+void update_isoband_legend_layer(Json::Value& layerJson,
+                                 const std::string& legendHeader,
+                                 const std::string& unit,
+                                 const LegendGraphicSettings& lgs,
+                                 unsigned int xpos,
+                                 unsigned int ypos)
+{
+  Json::Value& cdataJson = layerJson["cdata"];
+  if (!cdataJson.isNull())
+  {
+    bool isHeader = (cdataJson.asString() == "isoband_header");
+    Json::Value& attributesJson = layerJson["attributes"];
+    if (isHeader)
+    {
+      cdataJson = Json::Value(legendHeader);
+      Json::Value& headerXPosJson = attributesJson["x"];
+      headerXPosJson = Json::Value(xpos + *lgs.layout.param_name_xoffset);
+      Json::Value& headerYPosJson = attributesJson["y"];
+      headerYPosJson = Json::Value(ypos + *lgs.layout.param_name_yoffset);
+    }
+    else
+    {
+      cdataJson = Json::Value(unit);
+      Json::Value& headerXPosJson = attributesJson["x"];
+      headerXPosJson = Json::Value(xpos + *lgs.layout.param_unit_xoffset);
+      Json::Value& headerYPosJson = attributesJson["y"];
+      headerYPosJson = Json::Value(ypos + *lgs.layout.param_unit_yoffset);
+    }
+  }
+}
+
+// Update an isoband legend
+void update_isoband_legend(Json::Value& legendJson,
+                           const std::string& legendId,
+                           const std::string& legendHeader,
+                           const std::string& unit,
+                           const LegendGraphicSettings& lgs,
+                           const LegendGraphicInfoItem& lgi,
+                           unsigned int xpos,
+                           unsigned int ypos)
+{
+  Json::Value& isobandsJson = legendJson["isobands"];
+  isobandsJson = lgi.asJsonValue("isobands");
+  Json::Value& symbolsJson = legendJson["symbols"];
+  Json::Value& cssJson = symbolsJson["css"];
+  Json::Value& idJson = symbolsJson["symbol"];
+  cssJson = lgi.asJsonValue("css");
+  idJson = Json::Value(legendId);
+
+  Json::Value& layersJson = legendJson["layers"];
+  if (!layersJson.isNull() && layersJson.isArray())
+  {
+    for (auto& layerJson : layersJson)
+    {
+      if (!layerJson.isNull())
+      {
+        update_isoband_legend_layer(layerJson, legendHeader, unit, lgs, xpos, ypos);
+      }
+    }
+  }
+}
+
+// Update an isoline legend
+void update_isoline_legend(Json::Value& legendJson,
+                           const std::string& legendId,
+                           const std::string& legendHeader,
+                           const LegendGraphicSettings& lgs,
+                           unsigned int xpos,
+                           unsigned int ypos)
+{
+  Json::Value& layersJson = legendJson["layers"];
+  if (!layersJson.isNull() && layersJson.isArray())
+  {
+    for (auto& layerJson : layersJson)
+    {
+      if (!layerJson.isNull())
+      {
+        Json::Value& symbolJson = layerJson["symbol"];
+        if (!symbolJson.isNull())
+          symbolJson = Json::Value(legendId);
+        Json::Value& positionsJson = layerJson["positions"];
+
+        if (!positionsJson.isNull())
+        {
+          Json::Value& xPosJson = positionsJson["x"];
+          Json::Value& yPosJson = positionsJson["y"];
+          xPosJson = Json::Value(xpos + *lgs.layout.legend_xoffset);
+          yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset - 5);
+        }
+        Json::Value& cdataJson = layerJson["cdata"];
+
+        if (!cdataJson.isNull())
+        {
+          // cdataJson = Json::Value(legendHeader + " isoline"); // no translations for isoline!
+          cdataJson = Json::Value(legendHeader);
+          Json::Value& attributesJson = layerJson["attributes"];
+          if (!attributesJson.isNull())
+          {
+            Json::Value& xPosJson = attributesJson["x"];
+            Json::Value& yPosJson = attributesJson["y"];
+            xPosJson = Json::Value(xpos + *lgs.layout.param_name_xoffset);
+            yPosJson = Json::Value(ypos + *lgs.layout.param_name_yoffset);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Update a symbol legend
+void update_symbol_legend(Json::Value& legendJson,
+                          const std::string& parameterName,
+                          const LegendGraphicSettings& lgs,
+                          const LegendGraphicInfoItem& lgi,
+                          unsigned int xpos,
+                          unsigned int ypos)
+{
+  Json::Value& yPosLegendJson = legendJson["y"];
+  Json::Value& xPosLegendJson = legendJson["x"];
+  xPosLegendJson = Json::Value(xpos);
+  yPosLegendJson = Json::Value(ypos);
+  Json::Value& layersJson = legendJson["layers"];
+  Json::Value& headerLayerJson = layersJson[0];
+  Json::Value& cdataJson = headerLayerJson["cdata"];
+  cdataJson = Json::Value(parameterName);
+  Json::Value& attributesHeaderJson = headerLayerJson["attributes"];
+  Json::Value& xPosHeaderJson = attributesHeaderJson["x"];
+  Json::Value& yPosHeaderJson = attributesHeaderJson["y"];
+  xPosHeaderJson = Json::Value(xpos);
+  yPosHeaderJson = Json::Value(ypos);
+
+  Json::Value& symbolLayerJson = layersJson[1];
+  Json::Value& textLayerJson = layersJson[2];
+  Json::Value& symbolJson = symbolLayerJson["symbol"];
+  symbolJson = lgi.asJsonValue("symbol");
+  Json::Value& positionsJson = symbolLayerJson["positions"];
+  Json::Value& xPosSymbolJson = positionsJson["x"];
+  Json::Value& yPosSymbolJson = positionsJson["y"];
+  unsigned int symbol_xpos = (xpos + *lgs.layout.legend_xoffset);
+  unsigned int symbol_ypos = (ypos + *lgs.layout.legend_yoffset);
+  xPosSymbolJson = Json::Value(symbol_xpos);
+  yPosSymbolJson = Json::Value(symbol_ypos);
+
+  Json::Value& cdataTextJson = textLayerJson["cdata"];
+  cdataTextJson = lgi.asJsonValue("symbol");
+
+  Json::Value& attributesTextJson = textLayerJson["attributes"];
+  Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
+  Json::Value& yPosSymbolTextJson = attributesTextJson["y"];
+  xPosSymbolTextJson = Json::Value(symbol_xpos + *lgs.layout.symbol_text_xoffset);
+  yPosSymbolTextJson = Json::Value(symbol_ypos + *lgs.layout.symbol_text_yoffset);
+}
+
 Json::Value process_legend_json(const Json::Value& jsonTemplate,
                                 const std::string& legendType,
                                 const std::string& parameterName,
@@ -395,125 +549,11 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
   }
 
   if (legendType == "isoband")
-  {
-    Json::Value& isobandsJson = legendJson["isobands"];
-    isobandsJson = lgi.asJsonValue("isobands");
-    Json::Value& symbolsJson = legendJson["symbols"];
-    Json::Value& cssJson = symbolsJson["css"];
-    Json::Value& idJson = symbolsJson["symbol"];
-    cssJson = lgi.asJsonValue("css");
-    idJson = Json::Value(legendId);
-
-    Json::Value& layersJson = legendJson["layers"];
-    if (!layersJson.isNull() && layersJson.isArray())
-    {
-      for (auto& layerJson : layersJson)
-      {
-        if (!layerJson.isNull())
-        {
-          Json::Value& cdataJson = layerJson["cdata"];
-          if (!cdataJson.isNull())
-          {
-            bool isHeader = (cdataJson.asString() == "isoband_header");
-            Json::Value& attributesJson = layerJson["attributes"];
-            if (isHeader)
-            {
-              cdataJson = Json::Value(legendHeader);
-              Json::Value& headerXPosJson = attributesJson["x"];
-              headerXPosJson = Json::Value(xpos + *lgs.layout.param_name_xoffset);
-              Json::Value& headerYPosJson = attributesJson["y"];
-              headerYPosJson = Json::Value(ypos + *lgs.layout.param_name_yoffset);
-            }
-            else
-            {
-              cdataJson = Json::Value(unit);
-              Json::Value& headerXPosJson = attributesJson["x"];
-              headerXPosJson = Json::Value(xpos + *lgs.layout.param_unit_xoffset);
-              Json::Value& headerYPosJson = attributesJson["y"];
-              headerYPosJson = Json::Value(ypos + *lgs.layout.param_unit_yoffset);
-            }
-          }
-        }
-      }
-    }
-  }
+    update_isoband_legend(legendJson, legendId, legendHeader, unit, lgs, lgi, xpos, ypos);
   else if (legendType == "isoline")
-  {
-    Json::Value& layersJson = legendJson["layers"];
-    if (!layersJson.isNull() && layersJson.isArray())
-    {
-      for (auto& layerJson : layersJson)
-      {
-        if (!layerJson.isNull())
-        {
-          Json::Value& symbolJson = layerJson["symbol"];
-          if (!symbolJson.isNull())
-            symbolJson = Json::Value(legendId);
-          Json::Value& positionsJson = layerJson["positions"];
-
-          if (!positionsJson.isNull())
-          {
-            Json::Value& xPosJson = positionsJson["x"];
-            Json::Value& yPosJson = positionsJson["y"];
-            xPosJson = Json::Value(xpos + *lgs.layout.legend_xoffset);
-            yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset - 5);
-          }
-          Json::Value& cdataJson = layerJson["cdata"];
-
-          if (!cdataJson.isNull())
-          {
-            // cdataJson = Json::Value(legendHeader + " isoline"); // no translations for isoline!
-            cdataJson = Json::Value(legendHeader);
-            Json::Value& attributesJson = layerJson["attributes"];
-            if (!attributesJson.isNull())
-            {
-              Json::Value& xPosJson = attributesJson["x"];
-              Json::Value& yPosJson = attributesJson["y"];
-              xPosJson = Json::Value(xpos + *lgs.layout.param_name_xoffset);
-              yPosJson = Json::Value(ypos + *lgs.layout.param_name_yoffset);
-            }
-          }
-        }
-      }
-    }
-  }
+    update_isoline_legend(legendJson, legendId, legendHeader, lgs, xpos, ypos);
   else if (legendType == "symbol")
-  {
-    Json::Value& yPosLegendJson = legendJson["y"];
-    Json::Value& xPosLegendJson = legendJson["x"];
-    xPosLegendJson = Json::Value(xpos);
-    yPosLegendJson = Json::Value(ypos);
-    Json::Value& layersJson = legendJson["layers"];
-    Json::Value& headerLayerJson = layersJson[0];
-    Json::Value& cdataJson = headerLayerJson["cdata"];
-    cdataJson = Json::Value(parameterName);
-    Json::Value& attributesHeaderJson = headerLayerJson["attributes"];
-    Json::Value& xPosHeaderJson = attributesHeaderJson["x"];
-    Json::Value& yPosHeaderJson = attributesHeaderJson["y"];
-    xPosHeaderJson = Json::Value(xpos);
-    yPosHeaderJson = Json::Value(ypos);
-
-    Json::Value& symbolLayerJson = layersJson[1];
-    Json::Value& textLayerJson = layersJson[2];
-    Json::Value& symbolJson = symbolLayerJson["symbol"];
-    symbolJson = lgi.asJsonValue("symbol");
-    Json::Value& positionsJson = symbolLayerJson["positions"];
-    Json::Value& xPosSymbolJson = positionsJson["x"];
-    Json::Value& yPosSymbolJson = positionsJson["y"];
-    unsigned int symbol_xpos = (xpos + *lgs.layout.legend_xoffset);
-    unsigned int symbol_ypos = (ypos + *lgs.layout.legend_yoffset);
-    xPosSymbolJson = Json::Value(symbol_xpos);
-    yPosSymbolJson = Json::Value(symbol_ypos);
-
-    Json::Value& cdataTextJson = textLayerJson["cdata"];
-    cdataTextJson = lgi.asJsonValue("symbol");
-
-    Json::Value& attributesTextJson = textLayerJson["attributes"];
-    Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
-    Json::Value& yPosSymbolTextJson = attributesTextJson["y"];
-    xPosSymbolTextJson = Json::Value(symbol_xpos + *lgs.layout.symbol_text_xoffset);
-    yPosSymbolTextJson = Json::Value(symbol_ypos + *lgs.layout.symbol_text_yoffset);
-  }
+    update_symbol_legend(legendJson, parameterName, lgs, lgi, xpos, ypos);
 
   return legendJson;
 }
