@@ -63,6 +63,41 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+// Sample one parameter onto the output grid. Values are stored bottom-up to
+// match the coordinates, and the newbase missing sentinel is mapped to
+// the grid-files sentinel the painters test against.
+std::vector<float> sample_values(const Engine::Querydata::Q &q,
+                                 const std::string &name,
+                                 const Fmi::CoordinateMatrix &llmatrix,
+                                 const NFmiMetTime &met_time,
+                                 int width,
+                                 int height)
+{
+  const std::size_t sz = static_cast<std::size_t>(width) * static_cast<std::size_t>(height);
+
+  auto param = TS::ParameterFactory::instance().parse(name);
+  if (!q->param(param.number()))
+    throw Fmi::Exception(
+        BCP, "Parameter '" + name + "' is not available in the raster-layer querydata!");
+
+  auto matrix = q->values(llmatrix, met_time);
+  if (matrix.NX() != static_cast<unsigned int>(width) ||
+      matrix.NY() != static_cast<unsigned int>(height))
+    return {};
+
+  std::vector<float> values(sz);
+  for (int j = 0; j < height; j++)
+    for (int i = 0; i < width; i++)
+    {
+      const float v = matrix[i][j];
+      values[static_cast<std::size_t>(j) * width + i] =
+          (v == kFloatMissing ? static_cast<float>(ParamValueMissing) : v);
+    }
+  return values;
+}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -892,43 +927,17 @@ void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals,
       for (int i = 0; i < width; i++)
         coordinates.emplace_back(llmatrix.x(i, j), llmatrix.y(i, j));
 
-    // Sample one parameter onto the output grid. Values are stored bottom-up to
-    // match the coordinates above, and the newbase missing sentinel is mapped to
-    // the grid-files sentinel the painters test against.
-    auto sample = [&](const std::string& name) -> std::vector<float>
-    {
-      auto param = TS::ParameterFactory::instance().parse(name);
-      if (!q->param(param.number()))
-        throw Fmi::Exception(
-            BCP, "Parameter '" + name + "' is not available in the raster-layer querydata!");
-
-      auto matrix = q->values(llmatrix, met_time);
-      if (matrix.NX() != static_cast<unsigned int>(width) ||
-          matrix.NY() != static_cast<unsigned int>(height))
-        return {};
-
-      std::vector<float> values(sz);
-      for (int j = 0; j < height; j++)
-        for (int i = 0; i < width; i++)
-        {
-          const float v = matrix[i][j];
-          values[static_cast<std::size_t>(j) * width + i] =
-              (v == kFloatMissing ? static_cast<float>(ParamValueMissing) : v);
-        }
-      return values;
-    };
-
     // 4. Fetch the values (parameter => values1; or direction => values1,
     //    speed => values2) and paint.
 
     std::vector<float> values1;
     std::vector<float> values2;
     if (have_param)
-      values1 = sample(paraminfo.parameter);
+      values1 = sample_values(q, paraminfo.parameter, llmatrix, met_time, width, height);
     else
     {
-      values1 = sample(*direction);
-      values2 = sample(*speed);
+      values1 = sample_values(q, *direction, llmatrix, met_time, width, height);
+      values2 = sample_values(q, *speed, llmatrix, met_time, width, height);
     }
 
     generate_output(theGlobals, theLayersCdt, theState, &coordinates, values1, values2);
