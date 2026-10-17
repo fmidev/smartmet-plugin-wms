@@ -144,6 +144,165 @@ Json::Value getJsonValue(const std::string& param_name,
   }
 }
 
+// Location of the label names, x is negative if no name should be added
+struct NamePosition
+{
+  double x = -1.0;
+  double y_first = -1.0;
+  double y_second = -1.0;
+};
+
+// Pekko Ilvessalo 20151106: Labelin sijainti
+// (vasen/ylävasen/ylä/yläoikea/oikea/alaoikea/ala/alavasen) (0,6,1,7,2,4,3,5)
+NamePosition location_name_position(int thePosition,
+                                    double theXPos,
+                                    double theYPos,
+                                    unsigned int x_offset,
+                                    unsigned int y_offset,
+                                    const text_dimension_t& text_dimension_first,
+                                    bool first_empty,
+                                    bool second_empty)
+{
+  NamePosition pos;
+  switch (thePosition)
+  {
+    case 0:  // vasen
+    {
+      pos.x = theXPos - x_offset - 5;
+      pos.y_first = theYPos - (y_offset * 0.53);
+      pos.y_second = theYPos + (y_offset * 0.53);
+
+      if (first_empty)
+        pos.y_second = theYPos + (text_dimension_first.height * 0.1);
+      if (second_empty)
+        pos.y_first = theYPos + (text_dimension_first.height * 0.1);
+      break;
+    }
+    case 1:  // oikea
+    {
+      pos.x = theXPos + 5;
+      pos.y_first = theYPos - (y_offset * 0.53) + 2;
+      pos.y_second = theYPos + (y_offset * 0.53) + 2;
+
+      if (first_empty)
+        pos.y_second = theYPos + (text_dimension_first.height * 0.3);
+      if (second_empty)
+        pos.y_first = theYPos + (text_dimension_first.height * 0.3);
+      break;
+    }
+    case 2:  // ylä
+    {
+      pos.x = theXPos - (x_offset * 0.5);
+      pos.y_first = theYPos - (y_offset * 2.0);
+      pos.y_second = theYPos - y_offset;
+
+      if (second_empty)
+        pos.y_first = pos.y_second;
+      break;
+    }
+    case 3:  // ala
+    {
+      pos.x = theXPos - (x_offset * 0.5);
+      pos.y_first = theYPos + (y_offset * 1.6);
+      pos.y_second = pos.y_first + y_offset;
+
+      if (first_empty)
+        pos.y_second = pos.y_first;
+      break;
+    }
+    case 4:  // alaoikea
+    {
+      pos.x = theXPos + 3.0;
+      pos.y_first = theYPos + y_offset;
+      pos.y_second = theYPos + (y_offset * 2.0);
+
+      if (first_empty)
+        pos.y_second = pos.y_first;
+      break;
+    }
+    case 5:  // alavasen
+    {
+      pos.x = theXPos - x_offset;
+      pos.y_first = theYPos + y_offset;
+      pos.y_second = theYPos + (y_offset * 2.0);
+
+      if (first_empty)
+        pos.y_second = pos.y_first;
+      break;
+    }
+    case 6:  // ylävasen
+    {
+      pos.x = theXPos - x_offset;
+      pos.y_first = theYPos - (y_offset * 2.0);
+      pos.y_second = theYPos - y_offset;
+
+      if (second_empty)
+        pos.y_first = pos.y_second;
+      break;
+    }
+    case 7:  // yläoikea
+    {
+      pos.x = theXPos + 3;
+      pos.y_first = theYPos - (y_offset * 2.0);
+      pos.y_second = theYPos - y_offset;
+
+      if (second_empty)
+        pos.y_first = pos.y_second;
+      break;
+    }
+    case 8:  // dont add name
+    default:
+      break;
+  }
+  return pos;
+}
+
+// Include the markers, symbols and patterns used by ice maps
+void add_ice_map_includes(CTPP::CDT& includes, State& theState)
+{
+  std::vector<std::string> markers{"spearhead"};
+
+  std::vector<std::string> symbols{"strips_and_patches",
+                                   "jmdbrr",
+                                   "icelea",
+                                   "icefra",
+                                   "icefra_zone",
+                                   "flobrg",
+                                   "ice_edge",
+                                   "estimated_ice_edge",
+                                   "icedft",
+                                   "icerdg",
+                                   "icerft",
+                                   "sea_surface_mean_temperature",
+                                   "icecom",
+                                   "watertemperature_isotherm",
+                                   "ice_thickness",
+                                   "lighthouse"};
+
+  std::vector<std::string> patterns{"close_ice",
+                                    "consolidated_ice",
+                                    "fast_ice",
+                                    "grey_ice",
+                                    "new_ice",
+                                    "open_ice",
+                                    "open_water",
+                                    "rotten_fast_ice",
+                                    "very_close_ice",
+                                    "very_open_ice"};
+
+  for (const auto& marker : markers)
+    if (theState.addId(marker))
+      includes[marker] = theState.getMarker(marker);
+
+  for (const auto& symbol : symbols)
+    if (theState.addId(symbol))
+      includes[symbol] = theState.getSymbol(symbol);
+
+  for (const auto& pattern : patterns)
+    if (theState.addId(pattern))
+      includes[pattern] = theState.getPattern(pattern);
+}
+
 }  // anonymous namespace
 
 // ----------------------------------------------------------------------
@@ -311,47 +470,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     auto& includes = theGlobals["includes"];
 
-    std::vector<std::string> markers{"spearhead"};
-
-    std::vector<std::string> symbols{"strips_and_patches",
-                                     "jmdbrr",
-                                     "icelea",
-                                     "icefra",
-                                     "icefra_zone",
-                                     "flobrg",
-                                     "ice_edge",
-                                     "estimated_ice_edge",
-                                     "icedft",
-                                     "icerdg",
-                                     "icerft",
-                                     "sea_surface_mean_temperature",
-                                     "icecom",
-                                     "watertemperature_isotherm",
-                                     "ice_thickness",
-                                     "lighthouse"};
-
-    std::vector<std::string> patterns{"close_ice",
-                                      "consolidated_ice",
-                                      "fast_ice",
-                                      "grey_ice",
-                                      "new_ice",
-                                      "open_ice",
-                                      "open_water",
-                                      "rotten_fast_ice",
-                                      "very_close_ice",
-                                      "very_open_ice"};
-
-    for (const auto& marker : markers)
-      if (theState.addId(marker))
-        includes[marker] = theState.getMarker(marker);
-
-    for (const auto& symbol : symbols)
-      if (theState.addId(symbol))
-        includes[symbol] = theState.getSymbol(symbol);
-
-    for (const auto& pattern : patterns)
-      if (theState.addId(pattern))
-        includes[pattern] = theState.getPattern(pattern);
+    add_ice_map_includes(includes, theState);
 
     // const auto& crs = projection.getCRS();
 
@@ -1036,10 +1155,6 @@ void IceMapLayer::addLocationName(double theXPos,
     boost::replace_all(second_name, "<", "&#60;");
     boost::replace_all(second_name, ">", "&#62;");
 
-    double x_coord = -1.0;
-    double y_coord_first = -1.0;
-    double y_coord_second = -1.0;
-
     unsigned int x_offset =
         (text_dimension_first.width >= text_dimension_second.width ? text_dimension_first.width
                                                                    : text_dimension_second.width);
@@ -1047,96 +1162,17 @@ void IceMapLayer::addLocationName(double theXPos,
                                  ? text_dimension_first.height
                                  : text_dimension_second.height);
 
-    switch (thePosition)
-    {
-      case 0:  // vasen
-      {
-        x_coord = theXPos - x_offset - 5;
-        y_coord_first = theYPos - (y_offset * 0.53);
-        y_coord_second = theYPos + (y_offset * 0.53);
-
-        if (first_name.empty())
-          y_coord_second = theYPos + (text_dimension_first.height * 0.1);
-        if (second_name.empty())
-          y_coord_first = theYPos + (text_dimension_first.height * 0.1);
-        break;
-      }
-      case 1:  // oikea
-      {
-        x_coord = theXPos + 5;
-        y_coord_first = theYPos - (y_offset * 0.53) + 2;
-        y_coord_second = theYPos + (y_offset * 0.53) + 2;
-
-        if (first_name.empty())
-          y_coord_second = theYPos + (text_dimension_first.height * 0.3);
-        if (second_name.empty())
-          y_coord_first = theYPos + (text_dimension_first.height * 0.3);
-        break;
-      }
-      case 2:  // ylä
-      {
-        x_coord = theXPos - (x_offset * 0.5);
-        y_coord_first = theYPos - (y_offset * 2.0);
-        y_coord_second = theYPos - y_offset;
-
-        if (second_name.empty())
-          y_coord_first = y_coord_second;
-        break;
-      }
-      case 3:  // ala
-      {
-        x_coord = theXPos - (x_offset * 0.5);
-        y_coord_first = theYPos + (y_offset * 1.6);
-        y_coord_second = y_coord_first + y_offset;
-
-        if (first_name.empty())
-          y_coord_second = y_coord_first;
-        break;
-      }
-      case 4:  // alaoikea
-      {
-        x_coord = theXPos + 3.0;
-        y_coord_first = theYPos + y_offset;
-        y_coord_second = theYPos + (y_offset * 2.0);
-
-        if (first_name.empty())
-          y_coord_second = y_coord_first;
-        break;
-      }
-      case 5:  // alavasen
-      {
-        x_coord = theXPos - x_offset;
-        y_coord_first = theYPos + y_offset;
-        y_coord_second = theYPos + (y_offset * 2.0);
-
-        if (first_name.empty())
-          y_coord_second = y_coord_first;
-        break;
-      }
-      case 6:  // ylävasen
-      {
-        x_coord = theXPos - x_offset;
-        y_coord_first = theYPos - (y_offset * 2.0);
-        y_coord_second = theYPos - y_offset;
-
-        if (second_name.empty())
-          y_coord_first = y_coord_second;
-        break;
-      }
-      case 7:  // yläoikea
-      {
-        x_coord = theXPos + 3;
-        y_coord_first = theYPos - (y_offset * 2.0);
-        y_coord_second = theYPos - y_offset;
-
-        if (second_name.empty())
-          y_coord_first = y_coord_second;
-        break;
-      }
-      case 8:  // dont add name
-      default:
-        break;
-    }
+    const auto pos = location_name_position(thePosition,
+                                            theXPos,
+                                            theYPos,
+                                            x_offset,
+                                            y_offset,
+                                            text_dimension_first,
+                                            first_name.empty(),
+                                            second_name.empty());
+    const double x_coord = pos.x;
+    const double y_coord_first = pos.y_first;
+    const double y_coord_second = pos.y_second;
 
     if (x_coord < 0)
       return;
