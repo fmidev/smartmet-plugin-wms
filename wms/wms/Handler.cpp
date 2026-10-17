@@ -285,10 +285,60 @@ void relocate_producer_to_view(const std::string & /* layername */, Json::Value 
   }
 }
 
-Json::Value merge_layers(const std::vector<Json::Value> &layers)
+// Add the suffix to the qid and id settings of the view and its layers and sublayers
+void rename_view_ids(const Json::Value &view, const std::string &suffixString)
 {
-  Json::Value nulljson;
+  rename_json_element(view, "qid", suffixString);
+  rename_json_element(view, "attributes.id", suffixString);
 
+  const auto &viewlayers = view["layers"];
+  if (viewlayers.isNull() || !viewlayers.isArray())
+    return;
+
+  for (const auto &viewlayer : viewlayers)
+  {
+    rename_json_element(viewlayer, "qid", suffixString);
+    rename_json_element(viewlayer, "attributes.id", suffixString);
+
+    const auto &viewsublayers = viewlayer["layers"];
+    if (!viewsublayers.isNull() && viewsublayers.isArray())
+    {
+      for (const auto &viewsublayer : viewsublayers)
+      {
+        rename_json_element(viewsublayer, "qid", suffixString);
+        rename_json_element(viewsublayer, "attributes.id", suffixString);
+      }
+    }
+  }
+}
+
+// Merge defs: arrays are appended, objects are merged (first-seen wins), scalars use first-seen
+void merge_defs(Json::Value &retDefs, const Json::Value &fromDefs)
+{
+  for (const auto &key : fromDefs.getMemberNames())
+  {
+    const auto &fromVal = fromDefs[key];
+    if (!retDefs.isMember(key))
+    {
+      retDefs[key] = fromVal;
+    }
+    else if (fromVal.isArray() && retDefs[key].isArray())
+    {
+      for (const auto &item : fromVal)
+        retDefs[key].append(item);
+    }
+    else if (fromVal.isObject() && retDefs[key].isObject())
+    {
+      for (const auto &subkey : fromVal.getMemberNames())
+        if (!retDefs[key].isMember(subkey))
+          retDefs[key][subkey] = fromVal[subkey];
+    }
+  }
+}
+
+// Add unique suffixes to the qid and id settings of the views of all the layers
+void rename_layer_ids(const std::vector<Json::Value> &layers)
+{
   unsigned int suffix = 1;
 
   for (const auto &layer : layers)
@@ -300,32 +350,19 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
       {
         std::string suffixString = "_" + Fmi::to_string(suffix);
 
-        rename_json_element(view, "qid", suffixString);
-        rename_json_element(view, "attributes.id", suffixString);
-
-        const auto &viewlayers = view["layers"];
-        if (!viewlayers.isNull() && viewlayers.isArray())
-        {
-          for (const auto& viewlayer : viewlayers)
-          {
-            rename_json_element(viewlayer, "qid", suffixString);
-            rename_json_element(viewlayer, "attributes.id", suffixString);
-
-            const auto &viewsublayers = viewlayer["layers"];
-            if (!viewsublayers.isNull() && viewsublayers.isArray())
-            {
-              for (const auto& viewsublayer : viewsublayers)
-              {
-                rename_json_element(viewsublayer, "qid", suffixString);
-                rename_json_element(viewsublayer, "attributes.id", suffixString);
-              }
-            }
-          }
-        }
+        rename_view_ids(view, suffixString);
         suffix++;
       }
     }
   }
+}
+
+Json::Value merge_layers(const std::vector<Json::Value> &layers)
+{
+  Json::Value nulljson;
+
+  // Make the ids unique
+  rename_layer_ids(layers);
 
   Json::Value ret;
   ret["views"] = Json::Value(Json::arrayValue);
@@ -364,28 +401,7 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
     // Merge defs: arrays are appended, objects are merged (first-seen wins), scalars use first-seen
     const auto &fromDefs = layer.get("defs", nulljson);
     if (!fromDefs.isNull() && fromDefs.isObject())
-    {
-      auto &retDefs = ret["defs"];
-      for (const auto &key : fromDefs.getMemberNames())
-      {
-        const auto &fromVal = fromDefs[key];
-        if (!retDefs.isMember(key))
-        {
-          retDefs[key] = fromVal;
-        }
-        else if (fromVal.isArray() && retDefs[key].isArray())
-        {
-          for (const auto &item : fromVal)
-            retDefs[key].append(item);
-        }
-        else if (fromVal.isObject() && retDefs[key].isObject())
-        {
-          for (const auto &subkey : fromVal.getMemberNames())
-            if (!retDefs[key].isMember(subkey))
-              retDefs[key][subkey] = fromVal[subkey];
-        }
-      }
-    }
+      merge_defs(ret["defs"], fromDefs);
   }
 
   return ret;
