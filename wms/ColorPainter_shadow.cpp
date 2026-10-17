@@ -130,8 +130,8 @@ inline void interpolate_channels(const uchar *a,const uchar *b,uchar *n,double v
   }
 }
 
-// Paint one shadow. Returns false if the shadow has no offset, which ends the painting.
-bool paint_shadow(const ColorPainter_shadow::Shadow& shadow,uint width,uint height,int sz,uint *image,const std::vector<float>& values)
+// Paint one shadow. A shadow without an offset paints nothing.
+void paint_shadow(const ColorPainter_shadow::Shadow& shadow,uint width,uint height,int sz,uint *image,const std::vector<float>& values)
 {
   double minVal = shadow.value_min;
   double maxVal = shadow.value_max;
@@ -143,7 +143,7 @@ bool paint_shadow(const ColorPainter_shadow::Shadow& shadow,uint width,uint heig
   double dv = maxVal - minVal;
 
   if (dx == 0 && dy == 0)
-    return false;
+    return;
 
   auto* a = (uchar*)&minCol;
   auto* b = (uchar*)&maxCol;
@@ -186,7 +186,6 @@ bool paint_shadow(const ColorPainter_shadow::Shadow& shadow,uint width,uint heig
       c++;
     }
   }
-  return true;
 }
 
 }  // namespace
@@ -212,10 +211,7 @@ void ColorPainter_shadow::setImageColors(uint width,uint height,uint /* loop_ste
     }
 
     for (auto& shadow : shadows)
-    {
-      if (!paint_shadow(shadow,width,height,sz,image,values))
-        return;
-    }
+      paint_shadow(shadow,width,height,sz,image,values);
   }
   catch (...)
   {
