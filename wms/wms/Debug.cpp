@@ -73,7 +73,7 @@ std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPR
                      {"FORMAT", "format"},
                      {"WIDTH", "width"},
                      {"HEIGHT", "height"},
-                     {"EXCEPIONS", "exceptions"},
+                     {"EXCEPTIONS", "exceptions"},
                      {"SLD_VERSION", "sld_version"}});
     }
 
