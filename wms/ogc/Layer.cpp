@@ -1005,6 +1005,75 @@ std::map<std::string, Json::Value> get_substitutions(const Json::Value& root,
   return ret;
 }
 
+// Add a style from the styles configuration. Returns true if the style is the default style.
+// Note that the style settings are inherited from the previous styles.
+bool add_configured_style(const Json::Value& style_json,
+                          LayerStyle& layerStyle,
+                          std::map<std::string, LayerStyle>& ret,
+                          std::map<std::string, std::string>& legendFiles,
+                          const std::string& layerName,
+                          const LayerConfig& config)
+{
+  Json::Value nulljson;
+  auto json_value = style_json.get("name", nulljson);
+  if (json_value.isNull())
+    throw Fmi::Exception(BCP, "Layer styles must have a name");
+
+  layerStyle.name = json_value.asString();
+
+  json_value = style_json.get("title", nulljson);
+  if (!json_value.isNull())
+  {
+    layerStyle.title = Dali::Text("Style Title");
+    layerStyle.title->init(json_value, config.getDaliConfig());
+  }
+  json_value = style_json.get("abstract", nulljson);
+  if (!json_value.isNull())
+  {
+    layerStyle.abstract = Dali::Text("Style Abstract");
+    layerStyle.abstract->init(json_value, config.getDaliConfig());
+  }
+
+  auto legend_url_json = style_json.get("legend_url", nulljson);
+  if (!legend_url_json.isNull())
+  {
+    json_value = legend_url_json.get("format", nulljson);
+    if (!json_value.isNull())
+      layerStyle.legend_url.format = json_value.asString();
+    json_value = legend_url_json.get("online_resource", nulljson);
+    if (!json_value.isNull())
+      layerStyle.legend_url.online_resource = json_value.asString();
+
+    ret.insert(std::make_pair(layerStyle.name, layerStyle));
+  }
+  else
+  {
+    auto legend_url_layer_json = style_json.get("legend_url_layer", nulljson);
+    if (!legend_url_layer_json.isNull())
+    {
+      auto legendLayerName = legend_url_layer_json.asString();
+      auto legendLayerStyleName = std::string("default");
+      auto legend_url_layer_style_json = style_json.get("legend_url_layer_style", nulljson);
+      if (!legend_url_layer_style_json.isNull())
+        legendLayerStyleName = legend_url_layer_style_json.asString();
+      layerStyle.legend_url.online_resource =
+          get_online_resource_string(legendLayerStyleName, legendLayerName, layerName);
+      legendFiles.insert(make_pair(layerStyle.name, legendLayerName));
+      ret.insert(std::make_pair(layerStyle.name, layerStyle));
+    }
+    else
+    {
+      layerStyle.legend_url.online_resource =
+          get_online_resource_string(layerStyle.name, layerName);
+      ret.insert(std::make_pair(layerStyle.name, layerStyle));
+    }
+    CaseInsensitiveComparator cicomp;
+    if (cicomp(layerStyle.name, "default"))
+      return true;
+  }
+  return false;
+}
+
 std::map<std::string, LayerStyle> get_styles(const Json::Value& root,
                                                 const std::string& layerName,
                                                 std::map<std::string, std::string>& legendFiles,
@@ -1043,62 +1112,8 @@ std::map<std::string, LayerStyle> get_styles(const Json::Value& root,
 
     for (const auto& style_json : json)
     {
-      auto json_value = style_json.get("name", nulljson);
-      if (json_value.isNull())
-        throw Fmi::Exception(BCP, "Layer styles must have a name");
-
-      layerStyle.name = json_value.asString();
-
-      json_value = style_json.get("title", nulljson);
-      if (!json_value.isNull())
-      {
-        layerStyle.title = Dali::Text("Style Title");
-        layerStyle.title->init(json_value, config.getDaliConfig());
-      }
-      json_value = style_json.get("abstract", nulljson);
-      if (!json_value.isNull())
-      {
-        layerStyle.abstract = Dali::Text("Style Abstract");
-        layerStyle.abstract->init(json_value, config.getDaliConfig());
-      }
-
-      auto legend_url_json = style_json.get("legend_url", nulljson);
-      if (!legend_url_json.isNull())
-      {
-        json_value = legend_url_json.get("format", nulljson);
-        if (!json_value.isNull())
-          layerStyle.legend_url.format = json_value.asString();
-        json_value = legend_url_json.get("online_resource", nulljson);
-        if (!json_value.isNull())
-          layerStyle.legend_url.online_resource = json_value.asString();
-
-        ret.insert(std::make_pair(layerStyle.name, layerStyle));
-      }
-      else
-      {
-        auto legend_url_layer_json = style_json.get("legend_url_layer", nulljson);
-        if (!legend_url_layer_json.isNull())
-        {
-          auto legendLayerName = legend_url_layer_json.asString();
-          auto legendLayerStyleName = std::string("default");
-          auto legend_url_layer_style_json = style_json.get("legend_url_layer_style", nulljson);
-          if (!legend_url_layer_style_json.isNull())
-            legendLayerStyleName = legend_url_layer_style_json.asString();
-          layerStyle.legend_url.online_resource =
-              get_online_resource_string(legendLayerStyleName, legendLayerName, layerName);
-          legendFiles.insert(make_pair(layerStyle.name, legendLayerName));
-          ret.insert(std::make_pair(layerStyle.name, layerStyle));
-        }
-        else
-        {
-          layerStyle.legend_url.online_resource =
-              get_online_resource_string(layerStyle.name, layerName);
-          ret.insert(std::make_pair(layerStyle.name, layerStyle));
-        }
-        CaseInsensitiveComparator cicomp;
-        if (cicomp(layerStyle.name, "default"))
-          addDefaultStyle = false;
-      }
+      if (add_configured_style(style_json, layerStyle, ret, legendFiles, layerName, config))
+        addDefaultStyle = false;
     }
     if (addDefaultStyle)
     {
