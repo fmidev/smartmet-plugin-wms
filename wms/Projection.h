@@ -56,6 +56,14 @@ class Engine;
 }
 }  // namespace Engine
 
+namespace Spine
+{
+namespace HTTP
+{
+class Request;
+}
+}  // namespace Spine
+
 namespace Plugin
 {
 namespace Dali
@@ -113,8 +121,17 @@ class Projection
   void setTopRight(double x, double y) { itsTopRight.Set(x, y); }
 
  private:
+  void initSize(Json::Value& theJson, const Spine::HTTP::Request& request);
+  void initCenter(Json::Value& theJson, const State& theState);
+  void parseBBox(const std::string& bbox);
+
   // Cached results
   void prepareCRS() const;
+  bool validateBBox() const;
+  std::shared_ptr<Fmi::Box> rectBox(
+      const Fmi::SpatialReference& srs, double& XMIN, double& YMIN, double& XMAX, double& YMAX) const;
+  std::shared_ptr<Fmi::Box> centeredBox(
+      const Fmi::SpatialReference& srs, double& XMIN, double& YMIN, double& XMAX, double& YMAX) const;
 
   // The following are initialized lazily
   mutable std::shared_ptr<Fmi::SpatialReference> ogr_crs;

@@ -29,6 +29,132 @@ namespace Dali
 {
 // ----------------------------------------------------------------------
 /*!
+ * \brief Initialize the image size from JSON and the request
+ */
+// ----------------------------------------------------------------------
+
+void Projection::initSize(Json::Value& theJson, const Spine::HTTP::Request& request)
+{
+  std::optional<std::string> v;
+
+  if (crs && *crs == "data")
+  {
+    JsonTools::remove_double(size, theJson, "size");
+
+    v = request.getParameter("size");
+    if (v)
+      size = toDouble(*v);
+  }
+
+  if (!size || *size <= 0)
+  {
+    JsonTools::remove_int(xsize, theJson, "xsize");
+    JsonTools::remove_int(ysize, theJson, "ysize");
+
+    v = request.getParameter("xsize");
+    if (v)
+      xsize = toInt32(*v);
+
+    v = request.getParameter("ysize");
+    if (v)
+      ysize = toInt32(*v);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize the center from a geoid or a place name
+ */
+// ----------------------------------------------------------------------
+
+void Projection::initCenter(Json::Value& theJson, const State& theState)
+{
+  auto json = JsonTools::remove(theJson, "geoid");
+  if (!json.isNull())
+  {
+    const auto& engine = theState.getGeoEngine();
+    // TODO(mheiskan): Make the language configurable
+    int id = json.asInt();
+    auto loc = engine.idSearch(id, "fi");
+    if (!loc)
+      throw Fmi::Exception(BCP,
+                           "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
+    latlon_center = true;
+    cx = loc->longitude;
+    cy = loc->latitude;
+  }
+
+  json = JsonTools::remove(theJson, "place");
+  if (!json.isNull())
+  {
+    const auto& engine = theState.getGeoEngine();
+    // TODO(mheiskan): Make the language configurable
+    std::string name = json.asString();
+    auto loc = engine.nameSearch(name, "fi");
+    if (!loc)
+      throw Fmi::Exception(BCP, "Unable to find coordinates for location '" + name + "'");
+
+    latlon_center = true;
+    cx = loc->longitude;
+    cy = loc->latitude;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse the bounding box, the axis order depends on the CRS
+ */
+// ----------------------------------------------------------------------
+
+void Projection::parseBBox(const std::string& bbox)
+{
+  std::vector<std::string> parts;
+  boost::algorithm::split(parts, bbox, boost::algorithm::is_any_of(","));
+  if (parts.size() != 4)
+    throw Fmi::Exception(BCP, "bbox should contain 4 comma separated doubles");
+
+  // for example in EPSG:4326 order of coordinates is changed in WMS
+  // for more info: https://trac.osgeo.org/gdal/wiki/rfc20_srs_axes
+
+  OGRSpatialReference spatref;
+  if (bboxcrs)
+  {
+    // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
+    if (boost::algorithm::starts_with(*bboxcrs, "EPSG:"))
+      boost::algorithm::replace_first(*bboxcrs, "EPSG:", "EPSGA:");
+
+    spatref.SetFromUserInput(bboxcrs->c_str());
+    spatref.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+  }
+  else
+  {
+    // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
+    if (boost::algorithm::starts_with(*crs, "EPSG:"))
+      boost::algorithm::replace_first(*crs, "EPSG:", "EPSGA:");
+
+    spatref.SetFromUserInput(crs->c_str());
+  }
+
+  bool latLonOrder = spatref.EPSGTreatsAsLatLong() != 0;
+
+  if (latLonOrder)
+  {
+    y1 = Fmi::stod(parts[0]);
+    x1 = Fmi::stod(parts[1]);
+    y2 = Fmi::stod(parts[2]);
+    x2 = Fmi::stod(parts[3]);
+  }
+  else
+  {
+    x1 = Fmi::stod(parts[0]);
+    y1 = Fmi::stod(parts[1]);
+    x2 = Fmi::stod(parts[2]);
+    y2 = Fmi::stod(parts[3]);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize the projection from JSON
  */
 // ----------------------------------------------------------------------
@@ -49,7 +175,6 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
     // Extract all the members
 
     const auto& request = theState.getRequest();
-    std::optional<std::string> v;
 
     // No longer needed here, querystring has been processed
     std::string qid;
@@ -58,28 +183,7 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
     JsonTools::remove_string(crs, theJson, "crs");
     JsonTools::remove_string(bboxcrs, theJson, "bboxcrs");
 
-    if (crs && *crs == "data")
-    {
-      JsonTools::remove_double(size, theJson, "size");
-
-      v = request.getParameter("size");
-      if (v)
-        size = toDouble(*v);
-    }
-
-    if (!size || *size <= 0)
-    {
-      JsonTools::remove_int(xsize, theJson, "xsize");
-      JsonTools::remove_int(ysize, theJson, "ysize");
-
-      v = request.getParameter("xsize");
-      if (v)
-        xsize = toInt32(*v);
-
-      v = request.getParameter("ysize");
-      if (v)
-        ysize = toInt32(*v);
-    }
+    initSize(theJson, request);
 
     // Bound the projection image size. These are separate from the width/height
     // request parameters (which the plugin already caps), so without an upper limit
@@ -99,86 +203,13 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
 
     // Note: intentionally after cx,cy parsing to enable name overrides
 
-    auto json = JsonTools::remove(theJson, "geoid");
-    if (!json.isNull())
-    {
-      const auto& engine = theState.getGeoEngine();
-      // TODO(mheiskan): Make the language configurable
-      int id = json.asInt();
-      auto loc = engine.idSearch(id, "fi");
-      if (!loc)
-        throw Fmi::Exception(BCP,
-                             "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
-      latlon_center = true;
-      cx = loc->longitude;
-      cy = loc->latitude;
-    }
-
-    json = JsonTools::remove(theJson, "place");
-    if (!json.isNull())
-    {
-      const auto& engine = theState.getGeoEngine();
-      // TODO(mheiskan): Make the language configurable
-      std::string name = json.asString();
-      auto loc = engine.nameSearch(name, "fi");
-      if (!loc)
-        throw Fmi::Exception(BCP, "Unable to find coordinates for location '" + name + "'");
-
-      latlon_center = true;
-      cx = loc->longitude;
-      cy = loc->latitude;
-    }
+    initCenter(theJson, theState);
 
     // Note: this must be handled after the CRS variables!
 
-    json = JsonTools::remove(theJson, "bbox");
+    auto json = JsonTools::remove(theJson, "bbox");
     if (!json.isNull())
-    {
-      std::string bbox = json.asString();
-      std::vector<std::string> parts;
-      boost::algorithm::split(parts, bbox, boost::algorithm::is_any_of(","));
-      if (parts.size() != 4)
-        throw Fmi::Exception(BCP, "bbox should contain 4 comma separated doubles");
-
-      // for example in EPSG:4326 order of coordinates is changed in WMS
-      // for more info: https://trac.osgeo.org/gdal/wiki/rfc20_srs_axes
-
-      OGRSpatialReference spatref;
-      if (bboxcrs)
-      {
-        // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
-        if (boost::algorithm::starts_with(*bboxcrs, "EPSG:"))
-          boost::algorithm::replace_first(*bboxcrs, "EPSG:", "EPSGA:");
-
-        spatref.SetFromUserInput(bboxcrs->c_str());
-        spatref.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-      }
-      else
-      {
-        // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
-        if (boost::algorithm::starts_with(*crs, "EPSG:"))
-          boost::algorithm::replace_first(*crs, "EPSG:", "EPSGA:");
-
-        spatref.SetFromUserInput(crs->c_str());
-      }
-
-      bool latLonOrder = spatref.EPSGTreatsAsLatLong() != 0;
-
-      if (latLonOrder)
-      {
-        y1 = Fmi::stod(parts[0]);
-        x1 = Fmi::stod(parts[1]);
-        y2 = Fmi::stod(parts[2]);
-        x2 = Fmi::stod(parts[3]);
-      }
-      else
-      {
-        x1 = Fmi::stod(parts[0]);
-        y1 = Fmi::stod(parts[1]);
-        x2 = Fmi::stod(parts[2]);
-        y2 = Fmi::stod(parts[3]);
-      }
-    }
+      parseBBox(json.asString());
 
     if (!theJson.empty())
     {
@@ -318,6 +349,188 @@ const Fmi::Box& Projection::getBox() const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Validate the bounding box settings, returns true for a full rectangle definition
+ */
+// ----------------------------------------------------------------------
+
+bool Projection::validateBBox() const
+{
+  // Are subdefinitions complete?
+  bool full_rect_bbox = (x1 && y1 && x2 && y2);
+  bool full_center_bbox = (cx && cy && resolution);
+
+  // Are they partial?
+  bool partial_rect_bbox = !full_rect_bbox && (x1 || y1 || x2 || y2);
+  bool partial_center_bbox = !full_center_bbox && (cx || cy || resolution);
+
+  // Disallow partial definitions
+  if (partial_rect_bbox)
+    throw Fmi::Exception(BCP, "Partial CRS bounding box given: x1,y1,x2,y2 are needed");
+  if (partial_center_bbox)
+    throw Fmi::Exception(BCP, "Partial CRS bounding box given: cx,cy,resolution are needed");
+
+  // bbox definition missing completely?
+  if (!full_rect_bbox && !full_center_bbox)
+    throw Fmi::Exception(BCP,
+                         "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
+
+// two conflicting definitions is OK, since we create the corners from centered bbox
+#if 0
+      if(full_rect_bbox && full_center_bbox)
+    throw Fmi::Exception(BCP,"CRS bounding box overdefined: use only x1,y2,x2,y2 or cx,cy,resolution");
+#endif
+
+  // must give both width and height if centered bbox is given
+  if (!full_rect_bbox && full_center_bbox && (!xsize || !ysize))
+    throw Fmi::Exception(BCP,
+                         "CRS xsize and ysize are required when a centered bounding box is used");
+
+  return full_rect_bbox;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create the box for a rectangular bounding box, and set the resolution
+ */
+// ----------------------------------------------------------------------
+
+std::shared_ptr<Fmi::Box> Projection::rectBox(
+    const Fmi::SpatialReference& srs, double& XMIN, double& YMIN, double& XMAX, double& YMAX) const
+{
+  std::shared_ptr<Fmi::Box> new_box;
+
+  // rect bounding box
+
+  XMIN = *x1;
+  YMIN = *y1;
+  XMAX = *x2;
+  YMAX = *y2;
+
+  if (bboxcrs)
+  {
+    // Reproject corners coordinates from bboxcrs to crs
+    Fmi::CoordinateTransformation transformation(*bboxcrs, srs);
+    transformation.transform(XMIN, YMIN);
+    transformation.transform(XMAX, YMAX);
+
+    // Projecting some longitudes is not safe with PROJ since we cannot express the intent of
+    // the BBOX when projecting multiple coordinates. For example -180...180 or 0...360 may
+    // lead to xmin==xmax.
+
+    if (XMIN == XMAX && *x1 != *x2)
+    {
+      XMIN = *x1;
+      YMIN = *y1;
+      XMAX = *x2;
+      YMAX = *y2;
+      // kludge to avoid wraparounds with hopefully unnoticeable effects
+      XMAX *= 0.99999;
+
+      transformation.transform(XMIN, YMIN);
+      transformation.transform(XMAX, YMAX);
+    }
+  }
+
+  if (XMIN == XMAX || YMIN == YMAX)
+    throw Fmi::Exception(BCP, "Bounding box size is zero!")
+        .addParameter("bbox x1", Fmi::to_string(*x1))
+        .addParameter("bbox x2", Fmi::to_string(*x2))
+        .addParameter("bbox y1", Fmi::to_string(*y1))
+        .addParameter("bbox y2", Fmi::to_string(*y2))
+        .addParameter("projected x1", Fmi::to_string(XMIN))
+        .addParameter("projected x2", Fmi::to_string(XMAX))
+        .addParameter("projected y1", Fmi::to_string(YMIN))
+        .addParameter("projected y2", Fmi::to_string(YMAX));
+
+  if (!xsize)
+  {
+    // Preserve aspect by calculating xsize
+    int w = boost::numeric_cast<int>((*ysize) * (XMAX - XMIN) / (YMAX - YMIN));
+    new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
+  }
+  else if (!ysize)
+  {
+    // Preserve aspect by calculating ysize
+    int h = boost::numeric_cast<int>((*xsize) * (YMAX - YMIN) / (XMAX - XMIN));
+    new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
+  }
+  else
+  {
+    new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+  }
+
+  if (srs.isGeographic() != 0)
+  {
+    // Substract equations 5 and 4, subsititute equation 3 and solve resolution
+    double pi = boost::math::constants::pi<double>();
+    double circumference = 2 * pi * 6371.220;
+    resolution = (YMAX - YMIN) * circumference / (360 * (*ysize));
+  }
+  else
+  {
+    // Substract equations 1 and 2 to eliminate and solve resolution
+    resolution = (XMAX - XMIN) / ((*xsize) * 1000);
+  }
+
+  return new_box;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create the box for a centered bounding box
+ */
+// ----------------------------------------------------------------------
+
+std::shared_ptr<Fmi::Box> Projection::centeredBox(
+    const Fmi::SpatialReference& srs, double& XMIN, double& YMIN, double& XMAX, double& YMAX) const
+{
+  std::shared_ptr<Fmi::Box> new_box;
+
+  // centered bounding box
+  if (!xsize || !ysize)
+    throw Fmi::Exception(BCP, "xsize and ysize are required when a centered bounding box is used");
+
+  double CX = *cx;
+  double CY = *cy;
+
+  if (latlon_center || (bboxcrs && *crs != *bboxcrs))
+  {
+    // Reproject center coordinates from latlon/bboxcrs to crs
+    Fmi::CoordinateTransformation transformation(latlon_center ? "WGS84" : bboxcrs->c_str(), srs);
+    transformation.transform(CX, CY);
+  }
+
+  if (srs.isGeographic() != 0)
+  {
+    double pi = boost::math::constants::pi<double>();
+    double circumference = 2 * pi * 6371.220;
+
+    // This will work well, since we move along an isocircle
+    double dy = 360 * (*ysize) / 2.0 * (*resolution) / circumference;  // Equation 3.
+    YMIN = CY - dy;                                                    // Equation 4.
+    YMAX = CY + dy;                                                    // Equation 5
+
+    // Distances will become distorted the further away we are from the equator
+    double dx = 360 * (*xsize) / 2.0 * (*resolution) / circumference / cos(CX * pi / 180.0);
+    XMIN = CX - dx;
+    XMAX = CX + dx;
+
+    new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+  }
+  else
+  {
+    XMIN = CX - (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 1.
+    XMAX = CX + (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 2.
+    YMIN = CY - (*ysize) / 2.0 * (*resolution) * 1000;
+    YMAX = CY + (*ysize) / 2.0 * (*resolution) * 1000;
+    new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+  }
+
+  return new_box;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Create OGR spatial reference from the settings
  */
 // ----------------------------------------------------------------------
@@ -344,35 +557,8 @@ void Projection::prepareCRS() const
       throw Fmi::Exception(BCP, "CRS xsize and ysize are both missing");
     }
 
-    // Are subdefinitions complete?
-    bool full_rect_bbox = (x1 && y1 && x2 && y2);
-    bool full_center_bbox = (cx && cy && resolution);
-
-    // Are they partial?
-    bool partial_rect_bbox = !full_rect_bbox && (x1 || y1 || x2 || y2);
-    bool partial_center_bbox = !full_center_bbox && (cx || cy || resolution);
-
-    // Disallow partial definitions
-    if (partial_rect_bbox)
-      throw Fmi::Exception(BCP, "Partial CRS bounding box given: x1,y1,x2,y2 are needed");
-    if (partial_center_bbox)
-      throw Fmi::Exception(BCP, "Partial CRS bounding box given: cx,cy,resolution are needed");
-
-    // bbox definition missing completely?
-    if (!full_rect_bbox && !full_center_bbox)
-      throw Fmi::Exception(BCP,
-                           "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
-
-// two conflicting definitions is OK, since we create the corners from centered bbox
-#if 0
-        if(full_rect_bbox && full_center_bbox)
-      throw Fmi::Exception(BCP,"CRS bounding box overdefined: use only x1,y2,x2,y2 or cx,cy,resolution");
-#endif
-
-    // must give both width and height if centered bbox is given
-    if (!full_rect_bbox && full_center_bbox && (!xsize || !ysize))
-      throw Fmi::Exception(BCP,
-                           "CRS xsize and ysize are required when a centered bounding box is used");
+    // Validate the bounding box settings
+    const bool full_rect_bbox = validateBBox();
 
     // Create the CRS and the box into locals; they are published only once both exist
     auto new_ogr_crs = std::make_shared<Fmi::SpatialReference>(*crs);
@@ -394,125 +580,9 @@ void Projection::prepareCRS() const
     // Create the Contour::Area object
 
     if (full_rect_bbox)
-    {
-      // rect bounding box
-
-      XMIN = *x1;
-      YMIN = *y1;
-      XMAX = *x2;
-      YMAX = *y2;
-
-      if (bboxcrs)
-      {
-        // Reproject corners coordinates from bboxcrs to crs
-        Fmi::CoordinateTransformation transformation(*bboxcrs, *new_ogr_crs);
-        transformation.transform(XMIN, YMIN);
-        transformation.transform(XMAX, YMAX);
-
-        // Projecting some longitudes is not safe with PROJ since we cannot express the intent of
-        // the BBOX when projecting multiple coordinates. For example -180...180 or 0...360 may
-        // lead to xmin==xmax.
-
-        if (XMIN == XMAX && *x1 != *x2)
-        {
-          XMIN = *x1;
-          YMIN = *y1;
-          XMAX = *x2;
-          YMAX = *y2;
-          // kludge to avoid wraparounds with hopefully unnoticeable effects
-          XMAX *= 0.99999;
-
-          transformation.transform(XMIN, YMIN);
-          transformation.transform(XMAX, YMAX);
-        }
-      }
-
-      if (XMIN == XMAX || YMIN == YMAX)
-        throw Fmi::Exception(BCP, "Bounding box size is zero!")
-            .addParameter("bbox x1", Fmi::to_string(*x1))
-            .addParameter("bbox x2", Fmi::to_string(*x2))
-            .addParameter("bbox y1", Fmi::to_string(*y1))
-            .addParameter("bbox y2", Fmi::to_string(*y2))
-            .addParameter("projected x1", Fmi::to_string(XMIN))
-            .addParameter("projected x2", Fmi::to_string(XMAX))
-            .addParameter("projected y1", Fmi::to_string(YMIN))
-            .addParameter("projected y2", Fmi::to_string(YMAX));
-
-      if (!xsize)
-      {
-        // Preserve aspect by calculating xsize
-        int w = boost::numeric_cast<int>((*ysize) * (XMAX - XMIN) / (YMAX - YMIN));
-        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
-      }
-      else if (!ysize)
-      {
-        // Preserve aspect by calculating ysize
-        int h = boost::numeric_cast<int>((*xsize) * (YMAX - YMIN) / (XMAX - XMIN));
-        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
-      }
-      else
-      {
-        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
-      }
-
-      if (new_ogr_crs->isGeographic() != 0)
-      {
-        // Substract equations 5 and 4, subsititute equation 3 and solve resolution
-        double pi = boost::math::constants::pi<double>();
-        double circumference = 2 * pi * 6371.220;
-        resolution = (YMAX - YMIN) * circumference / (360 * (*ysize));
-      }
-      else
-      {
-        // Substract equations 1 and 2 to eliminate and solve resolution
-        resolution = (XMAX - XMIN) / ((*xsize) * 1000);
-      }
-    }
-
+      new_box = rectBox(*new_ogr_crs, XMIN, YMIN, XMAX, YMAX);
     else
-    {
-      // centered bounding box
-      if (!xsize || !ysize)
-        throw Fmi::Exception(BCP,
-                             "xsize and ysize are required when a centered bounding box is used");
-
-      double CX = *cx;
-      double CY = *cy;
-
-      if (latlon_center || (bboxcrs && *crs != *bboxcrs))
-      {
-        // Reproject center coordinates from latlon/bboxcrs to crs
-        Fmi::CoordinateTransformation transformation(latlon_center ? "WGS84" : bboxcrs->c_str(),
-                                                     *new_ogr_crs);
-        transformation.transform(CX, CY);
-      }
-
-      if (new_ogr_crs->isGeographic() != 0)
-      {
-        double pi = boost::math::constants::pi<double>();
-        double circumference = 2 * pi * 6371.220;
-
-        // This will work well, since we move along an isocircle
-        double dy = 360 * (*ysize) / 2.0 * (*resolution) / circumference;  // Equation 3.
-        YMIN = CY - dy;                                                    // Equation 4.
-        YMAX = CY + dy;                                                    // Equation 5
-
-        // Distances will become distorted the further away we are from the equator
-        double dx = 360 * (*xsize) / 2.0 * (*resolution) / circumference / cos(CX * pi / 180.0);
-        XMIN = CX - dx;
-        XMAX = CX + dx;
-
-        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
-      }
-      else
-      {
-        XMIN = CX - (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 1.
-        XMAX = CX + (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 2.
-        YMIN = CY - (*ysize) / 2.0 * (*resolution) * 1000;
-        YMAX = CY + (*ysize) / 2.0 * (*resolution) * 1000;
-        new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
-      }
-    }
+      new_box = centeredBox(*new_ogr_crs, XMIN, YMIN, XMAX, YMAX);
 
 #if 0
     if (*crs == "EPSG:3857" || *crs == "epsg:3857" || *crs == "EPSGA:3857" || *crs == "epsga:3857")
