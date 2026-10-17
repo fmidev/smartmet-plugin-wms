@@ -13,6 +13,39 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+// Parse the label conversions, which are either strings or maps from languages to strings
+void parse_conversions(const Json::Value& json, std::map<std::string, std::string>& conversions)
+{
+  if (!json.isObject())
+    throw Fmi::Exception(BCP, "legend-layer conversions setting in a must be a map");
+  const auto convmembers = json.getMemberNames();
+  for (const auto& convname : convmembers)
+  {
+    const Json::Value& label_json = json[convname];
+    if (label_json.isString())
+      conversions[convname] = label_json.asString();
+    else if (label_json.isObject())
+    {
+      const auto languages = label_json.getMemberNames();
+      for (const auto& lang : languages)
+      {
+        const Json::Value& lang_json = label_json[lang];
+        if (!lang_json.isString())
+          throw Fmi::Exception(BCP,
+                               "Legend layer conversion '" + convname +
+                                   "' value for a language must be a string");
+        conversions[lang + ":" + convname] = lang_json.asString();
+      }
+    }
+    else
+      throw Fmi::Exception(
+          BCP, "Legend layer conversion '" + convname + "' value must be a string or a map");
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -49,33 +82,7 @@ void LegendLabels::init(Json::Value& theJson, const Config& theConfig)
       else if (name == "attributes")
         attributes.init(json, theConfig);
       else if (name == "conversions")
-      {
-        if (!json.isObject())
-          throw Fmi::Exception(BCP, "legend-layer conversions setting in a must be a map");
-        const auto convmembers = json.getMemberNames();
-        for (const auto& convname : convmembers)
-        {
-          const Json::Value& label_json = json[convname];
-          if (label_json.isString())
-            conversions[convname] = label_json.asString();
-          else if (label_json.isObject())
-          {
-            const auto languages = label_json.getMemberNames();
-            for (const auto& lang : languages)
-            {
-              const Json::Value& lang_json = label_json[lang];
-              if (!lang_json.isString())
-                throw Fmi::Exception(BCP,
-                                     "Legend layer conversion '" + convname +
-                                         "' value for a language must be a string");
-              conversions[lang + ":" + convname] = lang_json.asString();
-            }
-          }
-          else
-            throw Fmi::Exception(
-                BCP, "Legend layer conversion '" + convname + "' value must be a string or a map");
-        }
-      }
+        parse_conversions(json, conversions);
       else
         throw Fmi::Exception(BCP, "Legend-layer labels do not have a setting named '" + name + "'");
     }
