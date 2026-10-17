@@ -572,6 +572,132 @@ Labels generate_labels_cross(const Graticule& g,
   }
 }
 
+// Add the labels at the ticks of the meridian at the top and bottom edges
+void add_meridian_tick_labels(Labels& labels,
+                              const Graticule& g,
+                              int lon,
+                              double linestep,
+                              const Fmi::CoordinateTransformation& transformation,
+                              const Fmi::Box& box)
+{
+  const auto& label = g.labels;
+
+  std::vector<double> lons;
+  std::vector<double> lats;
+  std::vector<double> x;
+  std::vector<double> y;
+
+  // latlon coordinates
+  for (int i = 0;; i++)
+  {
+    auto lat = -90.0 + i * linestep;
+    if (lat > 90)
+      break;
+    lons.push_back(lon);
+    lats.push_back(lat);
+  }
+
+  // CRS coordinates
+  x = lons;
+  y = lats;
+  transformation.transform(x, y);
+
+  // Find intersections with bbox
+
+  OGRLineString* line = nullptr;
+  for (auto i = 0UL; i < x.size() - 1; i++)
+  {
+    bool bottom = (y[i] <= box.ymin() && y[i + 1] >= box.ymin());
+
+    if (bottom)
+      line = tick(y[i], y[i + 1], x[i], x[i + 1], box.ymin(), box, false, g.length);
+    else if (y[i] <= box.ymax() && y[i + 1] >= box.ymax())
+      line = tick(y[i + 1], y[i], x[i + 1], x[i], box.ymax(), box, false, g.length);
+
+    if (line)
+    {
+      auto txt = get_lon_label(label, lon);
+      auto x1 = line->getX(0);
+      auto y1 = line->getY(0);
+      auto x2 = line->getX(1);
+      auto y2 = line->getY(1);
+      box.transform(x1, y1);
+      box.transform(x2, y2);
+
+      if (bottom)  // because baseline setting does not work properly at least in librsvg
+        y2 -= label.dy;
+      else
+        y2 += label.dy;
+
+      auto angle = get_angle(lons[i], lats[i], transformation);
+      labels.emplace_back(txt, x2, y2, angle);
+      delete line;
+      line = nullptr;
+    }
+  }
+}
+
+// Add the labels at the ticks of the parallel at the left and right edges
+void add_parallel_tick_labels(Labels& labels,
+                              const Graticule& g,
+                              int lat,
+                              double linestep,
+                              const Fmi::CoordinateTransformation& transformation,
+                              const Fmi::Box& box)
+{
+  const auto& label = g.labels;
+
+  std::vector<double> lons;
+  std::vector<double> lats;
+  std::vector<double> x;
+  std::vector<double> y;
+
+  // latlon coordinates
+  for (int i = 0;; i++)
+  {
+    auto lon = -180 + i * linestep;
+    if (lon > 180)
+      break;
+    lons.push_back(lon);
+    lats.push_back(lat);
+  }
+
+  // CRS coordinates
+  x = lons;
+  y = lats;
+  transformation.transform(x, y);
+
+  // Find intersections with bbox
+
+  OGRLineString* line = nullptr;
+  for (auto i = 0UL; i < x.size() - 1; i++)
+  {
+    bool left = (x[i] <= box.xmin() && x[i + 1] >= box.xmin());
+    if (left)
+      line = tick(x[i], x[i + 1], y[i], y[i + 1], box.xmin(), box, true, g.length);
+    else if (x[i] <= box.xmax() && x[i + 1] >= box.xmax())
+      line = tick(x[i + 1], x[i], y[i + 1], y[i], box.xmax(), box, true, g.length);
+
+    if (line)
+    {
+      auto txt = get_lat_label(label, lat);
+      auto x1 = line->getX(0);
+      auto y1 = line->getY(0);
+      auto x2 = line->getX(1);
+      auto y2 = line->getY(1);
+      box.transform(x1, y1);
+      box.transform(x2, y2);
+
+      y2 -= label.dy;  // because baseline setting does not work properly at least in librsvg
+
+      auto angle = get_angle(lons[i], lats[i], transformation);
+      labels.emplace_back(txt, x2, y2, angle);
+      delete line;
+      line = nullptr;
+    }
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate graticule labels at tick end points
@@ -585,7 +711,6 @@ Labels generate_labels_ticks(const Graticule& g,
   try
   {
     Labels labels;
-    const auto& label = g.labels;
 
     // Similar code as in generate_ticks, we just shift the label based on dx,dy
 
@@ -595,11 +720,6 @@ Labels generate_labels_ticks(const Graticule& g,
     // produce ~1 km errors
     const double linestep = 1.0;
 
-    std::vector<double> lons;
-    std::vector<double> lats;
-    std::vector<double> x;
-    std::vector<double> y;
-
     // Add vertical ticks only at top and bottom edges
     for (int lon = -180; lon <= 180; lon += g.step)
     {
@@ -608,56 +728,7 @@ Labels generate_labels_ticks(const Graticule& g,
       if (!is_labeled(lon, g))
         continue;
 
-      // latlon coordinates
-      for (int i = 0;; i++)
-      {
-        auto lat = -90.0 + i * linestep;
-        if (lat > 90)
-          break;
-        lons.push_back(lon);
-        lats.push_back(lat);
-      }
-
-      // CRS coordinates
-      x = lons;
-      y = lats;
-      transformation.transform(x, y);
-
-      // Find intersections with bbox
-
-      OGRLineString* line = nullptr;
-      for (auto i = 0UL; i < x.size() - 1; i++)
-      {
-        bool bottom = (y[i] <= box.ymin() && y[i + 1] >= box.ymin());
-
-        if (bottom)
-          line = tick(y[i], y[i + 1], x[i], x[i + 1], box.ymin(), box, false, g.length);
-        else if (y[i] <= box.ymax() && y[i + 1] >= box.ymax())
-          line = tick(y[i + 1], y[i], x[i + 1], x[i], box.ymax(), box, false, g.length);
-
-        if (line)
-        {
-          auto txt = get_lon_label(label, lon);
-          auto x1 = line->getX(0);
-          auto y1 = line->getY(0);
-          auto x2 = line->getX(1);
-          auto y2 = line->getY(1);
-          box.transform(x1, y1);
-          box.transform(x2, y2);
-
-          if (bottom)  // because baseline setting does not work properly at least in librsvg
-            y2 -= label.dy;
-          else
-            y2 += label.dy;
-
-          auto angle = get_angle(lons[i], lats[i], transformation);
-          labels.emplace_back(txt, x2, y2, angle);
-          delete line;
-          line = nullptr;
-        }
-      }
-      lons.clear();
-      lats.clear();
+      add_meridian_tick_labels(labels, g, lon, linestep, transformation, box);
     }
 
     // Add horizontal ticks only at left and right edges
@@ -668,52 +739,7 @@ Labels generate_labels_ticks(const Graticule& g,
       if (!is_labeled(lat, g))
         continue;
 
-      // latlon coordinates
-      for (int i = 0;; i++)
-      {
-        auto lon = -180 + i * linestep;
-        if (lon > 180)
-          break;
-        lons.push_back(lon);
-        lats.push_back(lat);
-      }
-
-      // CRS coordinates
-      x = lons;
-      y = lats;
-      transformation.transform(x, y);
-
-      // Find intersections with bbox
-
-      OGRLineString* line = nullptr;
-      for (auto i = 0UL; i < x.size() - 1; i++)
-      {
-        bool left = (x[i] <= box.xmin() && x[i + 1] >= box.xmin());
-        if (left)
-          line = tick(x[i], x[i + 1], y[i], y[i + 1], box.xmin(), box, true, g.length);
-        else if (x[i] <= box.xmax() && x[i + 1] >= box.xmax())
-          line = tick(x[i + 1], x[i], y[i + 1], y[i], box.xmax(), box, true, g.length);
-
-        if (line)
-        {
-          auto txt = get_lat_label(label, lat);
-          auto x1 = line->getX(0);
-          auto y1 = line->getY(0);
-          auto x2 = line->getX(1);
-          auto y2 = line->getY(1);
-          box.transform(x1, y1);
-          box.transform(x2, y2);
-
-          y2 -= label.dy;  // because baseline setting does not work properly at least in librsvg
-
-          auto angle = get_angle(lons[i], lats[i], transformation);
-          labels.emplace_back(txt, x2, y2, angle);
-          delete line;
-          line = nullptr;
-        }
-      }
-      lons.clear();
-      lats.clear();
+      add_parallel_tick_labels(labels, g, lat, linestep, transformation, box);
     }
 
     return labels;
