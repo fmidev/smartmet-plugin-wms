@@ -1,0 +1,1 @@
+GET /tiles/collections/test:osm:meteo-light/styles/default HTTP/1.0

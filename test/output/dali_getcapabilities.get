@@ -3288,6 +3288,72 @@
         {
           "image" : 
           {
+            "height" : 600,
+            "width" : 500
+          },
+          "name" : "osm",
+          "path" : 
+          [
+            "test",
+            "osm"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 500,
+            "ysize" : 600
+          },
+          "title" : "OpenStreetMap background",
+          "url_template" : "/dali?customer=test&product=osm&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 500
+          },
+          "name" : "osm_overlay",
+          "path" : 
+          [
+            "test",
+            "osm_overlay"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 500,
+            "ysize" : 600
+          },
+          "title" : "Weather data between an OpenStreetMap background and its labels",
+          "url_template" : "/dali?customer=test&product=osm_overlay&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 500
+          },
+          "name" : "osmdata",
+          "path" : 
+          [
+            "test",
+            "osmdata"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 500,
+            "ysize" : 600
+          },
+          "title" : "OpenStreetMap background from real data",
+          "url_template" : "/dali?customer=test&product=osmdata&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 500,
             "width" : 500
           },

@@ -196,6 +196,8 @@ rm -rf $RPM_BUILD_ROOT
   for the WebMercatorQuad tiling, tiles beyond the available zoom levels are cut
   from their ancestors
 - OSM layers are non-temporal WMS layers
+- OGC API Styles returns the MapLibre style of OSM dataset collections with the
+  vector source pointing at the collection's tiles
 - Tests with a synthetic OSM dataset, and with real OpenStreetMap data when
   it is installed (OSM_DATA_DIR, default /smartmet/data/osm)
 

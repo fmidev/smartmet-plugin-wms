@@ -2979,7 +2979,7 @@ Weather data is best drawn between the background and its labels, which is done 
 ]
 ```
 
-The OGC API - Tiles interface returns the vector tiles of the dataset directly for `f=mvt` requests in the WebMercatorQuad tiling (`EPSG:3857`), cutting tiles beyond the available zoom levels from their ancestors. Raster tiles are rendered in any tiling.
+The OGC API - Tiles interface returns the vector tiles of the dataset directly for `f=mvt` requests in the WebMercatorQuad tiling (`EPSG:3857`), cutting tiles beyond the available zoom levels from their ancestors. Raster tiles are rendered in any tiling. The OGC API - Styles resource of such a collection (`/tiles/collections/{id}/styles/default`) returns the MapLibre style of the layer with its vector source pointing at the tiles of the collection, so that clients such as MapLibre GL JS can render the same basemap themselves.
 
 <a id="osm-postgis-data"></a>
 ##### PostGIS data
