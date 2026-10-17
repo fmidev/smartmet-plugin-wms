@@ -178,8 +178,16 @@ Roots solve_cubic(double c0, double c1, double c2, double c3)
   return result;
 }
 
-// Depressed cubic dominant root (for quartic factoring)
-double depressed_cubic_dominant(double g, double h)
+// Scaled discriminant used for huge coefficients to avoid overflow
+double depressed_cubic_k(double q, double r)
+{
+  if (std::abs(q) < std::abs(r))
+    return 1.0 - q * (q / r) * (q / r);
+  return std::copysign(1.0, q) * ((r / q) * (r / q) / q - 1.0);
+}
+
+// Initial estimate of the dominant root of the depressed cubic x^3 + g*x + h
+double depressed_cubic_initial(double g, double h)
 {
   double q = (-1.0 / 3.0) * g;
   double r = 0.5 * h;
@@ -190,10 +198,7 @@ double depressed_cubic_dominant(double g, double h)
   bool k_neg = false;
   if (use_k)
   {
-    if (std::abs(q) < std::abs(r))
-      k = 1.0 - q * (q / r) * (q / r);
-    else
-      k = std::copysign(1.0, q) * ((r / q) * (r / q) / q - 1.0);
+    k = depressed_cubic_k(q, r);
     k_neg = (k < 0.0);
   }
 
@@ -229,8 +234,12 @@ double depressed_cubic_dominant(double g, double h)
     phi_0 = a_val + b_val;
   }
 
-  // Newton refinement
-  double x = phi_0;
+  return phi_0;
+}
+
+// Newton refinement of a root of the depressed cubic x^3 + g*x + h
+double depressed_cubic_refine(double x, double g, double h)
+{
   double f = (x * x + g) * x + h;
   constexpr double EPS_M = 2.22045e-16;
   double threshold = EPS_M * std::max({std::abs(x * x * x), std::abs(g * x), std::abs(h)});
@@ -254,6 +263,15 @@ double depressed_cubic_dominant(double g, double h)
   return x;
 }
 
+// Depressed cubic dominant root (for quartic factoring)
+double depressed_cubic_dominant(double g, double h)
+{
+  double phi_0 = depressed_cubic_initial(g, h);
+
+  // Newton refinement
+  return depressed_cubic_refine(phi_0, g, h);
+}
+
 // Factor quartic into two quadratics: (x^2 + a1*x + b1)(x^2 + a2*x + b2)
 // Returns the two quadratic coefficient pairs, or nullopt on failure.
 struct QuadPair
@@ -261,18 +279,167 @@ struct QuadPair
   double a1, b1, a2, b2;
 };
 
+// Relative error of the a, b and c coefficients of the factored quartic
+double quartic_eps_q(double a1, double b1, double a2, double b2, double a, double b, double c)
+{
+  double eps_a = eps_rel(a1 + a2, a);
+  double eps_b = eps_rel(b1 + a1 * a2 + b2, b);
+  double eps_c = eps_rel(b1 * a2 + a1 * b2, c);
+  return eps_a + eps_b + eps_c;
+}
+
+// Relative error of all the coefficients of the factored quartic
+double quartic_eps_t(
+    double a1, double b1, double a2, double b2, double a, double b, double c, double d)
+{
+  return quartic_eps_q(a1, b1, a2, b2, a, b, c) + eps_rel(b1 * b2, d);
+}
+
+// Select the (d_2, l_2) candidate pair with the smallest error
+std::pair<double, double> best_d2_l2(double d_2_cand_1,
+                                     double l_2_cand_1,
+                                     double d_2_cand_2,
+                                     double l_2_cand_2,
+                                     double l_1,
+                                     double l_3,
+                                     double b,
+                                     double c,
+                                     double d)
+{
+  double d_2_best = 0;
+  double l_2_best = 0;
+  double eps_l_best = 0;
+  struct Cand
+  {
+    double d2, l2;
+  };
+  Cand cands[3] = {{d_2_cand_1, l_2_cand_1}, {d_2_cand_2, l_2_cand_2}, {d_2_cand_1, l_2_cand_2}};
+
+  for (int i = 0; i < 3; i++)
+  {
+    double d2 = cands[i].d2;
+    double l2 = cands[i].l2;
+    double eps_0 = eps_rel(d2 + l_1 * l_1 + 2.0 * l_3, b);
+    double eps_1 = eps_rel(2.0 * (d2 * l2 + l_1 * l_3), c);
+    double eps_2 = eps_rel(d2 * l2 * l2 + l_3 * l_3, d);
+    double eps_l = eps_0 + eps_1 + eps_2;
+    if (i == 0 || eps_l < eps_l_best)
+    {
+      d_2_best = d2;
+      l_2_best = l2;
+      eps_l_best = eps_l;
+    }
+  }
+
+  return {d_2_best, l_2_best};
+}
+
+// Choose the most accurate alpha coefficients for the quadratic factors
+void refine_alphas(
+    double& alpha_1, double& alpha_2, double beta_1, double beta_2, double a, double b, double c)
+{
+  struct ACand
+  {
+    double a1, a2;
+  };
+  ACand acands[3];
+
+  if (std::abs(alpha_1) < std::abs(alpha_2))
+  {
+    double a1_c1 = (beta_2 != 0.0) ? (c - beta_1 * alpha_2) / beta_2 : alpha_1;
+    double a1_c2 = (alpha_2 != 0.0) ? (b - beta_2 - beta_1) / alpha_2 : alpha_1;
+    double a1_c3 = a - alpha_2;
+    acands[0] = {a1_c3, alpha_2};
+    acands[1] = {a1_c1, alpha_2};
+    acands[2] = {a1_c2, alpha_2};
+  }
+  else
+  {
+    double a2_c1 = (beta_1 != 0.0) ? (c - alpha_1 * beta_2) / beta_1 : alpha_2;
+    double a2_c2 = (alpha_1 != 0.0) ? (b - beta_2 - beta_1) / alpha_1 : alpha_2;
+    double a2_c3 = a - alpha_1;
+    acands[0] = {alpha_1, a2_c3};
+    acands[1] = {alpha_1, a2_c1};
+    acands[2] = {alpha_1, a2_c2};
+  }
+
+  double eps_q_best = 0;
+  for (int i = 0; i < 3; i++)
+  {
+    if (std::isfinite(acands[i].a1) && std::isfinite(acands[i].a2))
+    {
+      double eps_q = quartic_eps_q(acands[i].a1, beta_1, acands[i].a2, beta_2, a, b, c);
+      if (i == 0 || eps_q < eps_q_best)
+      {
+        alpha_1 = acands[i].a1;
+        alpha_2 = acands[i].a2;
+        eps_q_best = eps_q;
+      }
+    }
+  }
+}
+
+// Newton refinement of the quartic factorization
+QuadPair quartic_newton_refine(QuadPair q, double a, double b, double c, double d)
+{
+  double alpha_1 = q.a1;
+  double beta_1 = q.b1;
+  double alpha_2 = q.a2;
+  double beta_2 = q.b2;
+
+  double eps_t = quartic_eps_t(alpha_1, beta_1, alpha_2, beta_2, a, b, c, d);
+  for (int iter = 0; iter < 8; iter++)
+  {
+    if (eps_t == 0.0)
+      break;
+
+    double f_0 = beta_1 * beta_2 - d;
+    double f_1 = beta_1 * alpha_2 + alpha_1 * beta_2 - c;
+    double f_2 = beta_1 + alpha_1 * alpha_2 + beta_2 - b;
+    double f_3 = alpha_1 + alpha_2 - a;
+
+    double c_1 = alpha_1 - alpha_2;
+    double det_j = beta_1 * beta_1 - beta_1 * (alpha_2 * c_1 + 2.0 * beta_2) +
+                   beta_2 * (alpha_1 * c_1 + beta_2);
+    if (det_j == 0.0)
+      break;
+
+    double inv = 1.0 / det_j;
+    double c_2 = beta_2 - beta_1;
+    double c_3 = beta_1 * alpha_2 - alpha_1 * beta_2;
+
+    double dz_0 = c_1 * f_0 + c_2 * f_1 + c_3 * f_2 - (beta_1 * c_2 + alpha_1 * c_3) * f_3;
+    double dz_1 =
+        (alpha_1 * c_1 + c_2) * f_0 - beta_1 * c_1 * f_1 - beta_1 * c_2 * f_2 - beta_1 * c_3 * f_3;
+    double dz_2 = -c_1 * f_0 - c_2 * f_1 - c_3 * f_2 + (alpha_2 * c_3 + beta_2 * c_2) * f_3;
+    double dz_3 =
+        -(alpha_2 * c_1 + c_2) * f_0 + beta_2 * c_1 * f_1 + beta_2 * c_2 * f_2 + beta_2 * c_3 * f_3;
+
+    double a1 = alpha_1 - inv * dz_0;
+    double b1 = beta_1 - inv * dz_1;
+    double a2 = alpha_2 - inv * dz_2;
+    double b2 = beta_2 - inv * dz_3;
+
+    double new_eps_t = quartic_eps_t(a1, b1, a2, b2, a, b, c, d);
+    if (new_eps_t < eps_t)
+    {
+      alpha_1 = a1;
+      beta_1 = b1;
+      alpha_2 = a2;
+      beta_2 = b2;
+      eps_t = new_eps_t;
+    }
+    else
+    {
+      break;
+    }
+  }
+
+  return QuadPair{alpha_1, beta_1, alpha_2, beta_2};
+}
+
 std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, double d, bool rescale)
 {
-  auto calc_eps_q = [&](double a1, double b1, double a2, double b2)
-  {
-    double eps_a = eps_rel(a1 + a2, a);
-    double eps_b = eps_rel(b1 + a1 * a2 + b2, b);
-    double eps_c = eps_rel(b1 * a2 + a1 * b2, c);
-    return eps_a + eps_b + eps_c;
-  };
-  auto calc_eps_t = [&](double a1, double b1, double a2, double b2)
-  { return calc_eps_q(a1, b1, a2, b2) + eps_rel(b1 * b2, d); };
-
   double disc = 9.0 * a * a - 24.0 * b;
   double s = NAN;
   if (disc >= 0.0)
@@ -320,34 +487,9 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
   double l_2_cand_2 = (delt_2 != 0.0) ? 2.0 * (d - l_3 * l_3) / delt_2 : 0.0;
   double d_2_cand_2 = (l_2_cand_2 != 0.0) ? 0.5 * delt_2 / l_2_cand_2 : 0.0;
 
-  double d_2_best = 0;
-  double l_2_best = 0;
-  double eps_l_best = 0;
-  struct Cand
-  {
-    double d2, l2;
-  };
-  Cand cands[3] = {
-      {d_2_cand_1, l_2_cand_1}, {d_2_cand_2, l_2_cand_2}, {d_2_cand_1, l_2_cand_2}};
-
-  for (int i = 0; i < 3; i++)
-  {
-    double d2 = cands[i].d2;
-    double l2 = cands[i].l2;
-    double eps_0 = eps_rel(d2 + l_1 * l_1 + 2.0 * l_3, b);
-    double eps_1 = eps_rel(2.0 * (d2 * l2 + l_1 * l_3), c);
-    double eps_2 = eps_rel(d2 * l2 * l2 + l_3 * l_3, d);
-    double eps_l = eps_0 + eps_1 + eps_2;
-    if (i == 0 || eps_l < eps_l_best)
-    {
-      d_2_best = d2;
-      l_2_best = l2;
-      eps_l_best = eps_l;
-    }
-  }
-
-  double d_2 = d_2_best;
-  double l_2 = l_2_best;
+  const auto best = best_d2_l2(d_2_cand_1, l_2_cand_1, d_2_cand_2, l_2_cand_2, l_1, l_3, b, c, d);
+  double d_2 = best.first;
+  double l_2 = best.second;
 
   double alpha_1 = NAN;
   double beta_1 = NAN;
@@ -368,47 +510,7 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
       beta_1 = d / beta_2;
 
     if (std::abs(alpha_1) != std::abs(alpha_2))
-    {
-      struct ACand
-      {
-        double a1, a2;
-      };
-      ACand acands[3];
-
-      if (std::abs(alpha_1) < std::abs(alpha_2))
-      {
-        double a1_c1 = (beta_2 != 0.0) ? (c - beta_1 * alpha_2) / beta_2 : alpha_1;
-        double a1_c2 = (alpha_2 != 0.0) ? (b - beta_2 - beta_1) / alpha_2 : alpha_1;
-        double a1_c3 = a - alpha_2;
-        acands[0] = {a1_c3, alpha_2};
-        acands[1] = {a1_c1, alpha_2};
-        acands[2] = {a1_c2, alpha_2};
-      }
-      else
-      {
-        double a2_c1 = (beta_1 != 0.0) ? (c - alpha_1 * beta_2) / beta_1 : alpha_2;
-        double a2_c2 = (alpha_1 != 0.0) ? (b - beta_2 - beta_1) / alpha_1 : alpha_2;
-        double a2_c3 = a - alpha_1;
-        acands[0] = {alpha_1, a2_c3};
-        acands[1] = {alpha_1, a2_c1};
-        acands[2] = {alpha_1, a2_c2};
-      }
-
-      double eps_q_best = 0;
-      for (int i = 0; i < 3; i++)
-      {
-        if (std::isfinite(acands[i].a1) && std::isfinite(acands[i].a2))
-        {
-          double eps_q = calc_eps_q(acands[i].a1, beta_1, acands[i].a2, beta_2);
-          if (i == 0 || eps_q < eps_q_best)
-          {
-            alpha_1 = acands[i].a1;
-            alpha_2 = acands[i].a2;
-            eps_q_best = eps_q;
-          }
-        }
-      }
-    }
+      refine_alphas(alpha_1, alpha_2, beta_1, beta_2, a, b, c);
   }
   else if (d_2 == 0.0)
   {
@@ -429,57 +531,7 @@ std::optional<QuadPair> factor_quartic_inner(double a, double b, double c, doubl
   }
 
   // Newton refinement
-  double eps_t = calc_eps_t(alpha_1, beta_1, alpha_2, beta_2);
-  for (int iter = 0; iter < 8; iter++)
-  {
-    if (eps_t == 0.0)
-      break;
-
-    double f_0 = beta_1 * beta_2 - d;
-    double f_1 = beta_1 * alpha_2 + alpha_1 * beta_2 - c;
-    double f_2 = beta_1 + alpha_1 * alpha_2 + beta_2 - b;
-    double f_3 = alpha_1 + alpha_2 - a;
-
-    double c_1 = alpha_1 - alpha_2;
-    double det_j = beta_1 * beta_1 - beta_1 * (alpha_2 * c_1 + 2.0 * beta_2) +
-                   beta_2 * (alpha_1 * c_1 + beta_2);
-    if (det_j == 0.0)
-      break;
-
-    double inv = 1.0 / det_j;
-    double c_2 = beta_2 - beta_1;
-    double c_3 = beta_1 * alpha_2 - alpha_1 * beta_2;
-
-    double dz_0 =
-        c_1 * f_0 + c_2 * f_1 + c_3 * f_2 - (beta_1 * c_2 + alpha_1 * c_3) * f_3;
-    double dz_1 =
-        (alpha_1 * c_1 + c_2) * f_0 - beta_1 * c_1 * f_1 - beta_1 * c_2 * f_2 - beta_1 * c_3 * f_3;
-    double dz_2 =
-        -c_1 * f_0 - c_2 * f_1 - c_3 * f_2 + (alpha_2 * c_3 + beta_2 * c_2) * f_3;
-    double dz_3 =
-        -(alpha_2 * c_1 + c_2) * f_0 + beta_2 * c_1 * f_1 + beta_2 * c_2 * f_2 + beta_2 * c_3 * f_3;
-
-    double a1 = alpha_1 - inv * dz_0;
-    double b1 = beta_1 - inv * dz_1;
-    double a2 = alpha_2 - inv * dz_2;
-    double b2 = beta_2 - inv * dz_3;
-
-    double new_eps_t = calc_eps_t(a1, b1, a2, b2);
-    if (new_eps_t < eps_t)
-    {
-      alpha_1 = a1;
-      beta_1 = b1;
-      alpha_2 = a2;
-      beta_2 = b2;
-      eps_t = new_eps_t;
-    }
-    else
-    {
-      break;
-    }
-  }
-
-  return QuadPair{alpha_1, beta_1, alpha_2, beta_2};
+  return quartic_newton_refine(QuadPair{alpha_1, beta_1, alpha_2, beta_2}, a, b, c, d);
 }
 
 // ITP root-finding method (Interpolate-Truncate-Project)
