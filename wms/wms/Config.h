@@ -193,6 +193,8 @@ class Config
 
  private:
   void parse_references();
+  void parse_length_units(const libconfig::Config& config);
+  void parse_auto2_references(const libconfig::Config& config);
   CTPP::CDT get_capabilities(const libconfig::Config& config) const;
   CTPP::CDT get_request(const libconfig::Config& config,
                         const std::string& prefix,

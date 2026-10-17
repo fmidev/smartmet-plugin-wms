@@ -610,17 +610,12 @@ CTPP::CDT Config::get_capabilities(const libconfig::Config& config) const
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Extract supported units and EPSG, CRS and AUTO2 references
+ * \brief Extract supported length units used in AUTO2 references
  */
 // ----------------------------------------------------------------------
 
-void Config::parse_references()
+void Config::parse_length_units(const libconfig::Config& config)
 {
-  const libconfig::Config& config = itsDaliConfig.getConfig();
-
-  // Units settings is an array of unit,scale,name typles. The data is used when generating AUTO2
-  // spatial references
-
   std::string units_name = "wms.supported_references.units";
   if (!config.exists(units_name))
   {
@@ -646,6 +641,61 @@ void Config::parse_references()
       itsLengthUnits[unit] = scale;
     }
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract supported AUTO2 references
+ */
+// ----------------------------------------------------------------------
+
+void Config::parse_auto2_references(const libconfig::Config& config)
+{
+  std::string auto2_name = "wms.supported_references.auto2";
+  if (config.exists(auto2_name))
+  {
+    const auto& auto2_settings = config.lookup(auto2_name);
+
+    if (!auto2_settings.isList())
+      throw Fmi::Exception(BCP, auto2_name + " must be a list of groups");
+
+    for (int i = 0; i < auto2_settings.getLength(); i++)
+    {
+      const auto& group = auto2_settings[i];
+
+      if (!group.isGroup())
+        throw Fmi::Exception(BCP, auto2_name + " must be a list of groups");
+
+      const int id = group["id"];
+      std::string proj = group["proj"];
+
+      itsAutoProjections[id] = proj;
+
+      const Fmi::BBox bbox(-180, 180, -90, 90);
+      const bool enabled = true;
+      const bool geographic = false;
+      const std::string name = fmt::format("AUTO2:{}", id);
+
+      SupportedReference ref(name, bbox, enabled, geographic);
+      itsSupportedReferences.insert(std::make_pair(name, ref));
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract supported units and EPSG, CRS and AUTO2 references
+ */
+// ----------------------------------------------------------------------
+
+void Config::parse_references()
+{
+  const libconfig::Config& config = itsDaliConfig.getConfig();
+
+  // Units settings is an array of unit,scale,name typles. The data is used when generating AUTO2
+  // spatial references
+
+  parse_length_units(config);
 
   // EPSG settings is an array of integers, whose name shall be EPSG:<int>
 
@@ -715,35 +765,7 @@ void Config::parse_references()
 
   // AUTO2 settings is a list of id, proj, bbox tuple, whose name shall be AUTO2:<id>
 
-  std::string auto2_name = "wms.supported_references.auto2";
-  if (config.exists(auto2_name))
-  {
-    const auto& auto2_settings = config.lookup(auto2_name);
-
-    if (!auto2_settings.isList())
-      throw Fmi::Exception(BCP, auto2_name + " must be a list of groups");
-
-    for (int i = 0; i < auto2_settings.getLength(); i++)
-    {
-      const auto& group = auto2_settings[i];
-
-      if (!group.isGroup())
-        throw Fmi::Exception(BCP, auto2_name + " must be a list of groups");
-
-      const int id = group["id"];
-      std::string proj = group["proj"];
-
-      itsAutoProjections[id] = proj;
-
-      const Fmi::BBox bbox(-180, 180, -90, 90);
-      const bool enabled = true;
-      const bool geographic = false;
-      const std::string name = fmt::format("AUTO2:{}", id);
-
-      SupportedReference ref(name, bbox, enabled, geographic);
-      itsSupportedReferences.insert(std::make_pair(name, ref));
-    }
-  }
+  parse_auto2_references(config);
 }
 
 // ----------------------------------------------------------------------
