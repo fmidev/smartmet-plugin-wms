@@ -1123,7 +1123,10 @@ std::map<std::string, LayerStyle> get_styles(const Json::Value& root,
 
       json = root.get("title", nulljson);
       if (!json.isNull())
+      {
+        layerStyle.title = Dali::Text("Style Title");
         layerStyle.title->init(json, config.getDaliConfig());
+      }
       else
         layerStyle.title = Dali::Text("Style Title", "Default style");
 
