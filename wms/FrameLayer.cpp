@@ -83,6 +83,122 @@ OGRGeometryPtr createFrameGeometry(const FrameDimension& inner, std::optional<Fr
 
   return pFrameGeom;
 }
+// Collect the long, intermediate and small tics strictly inside the given range.
+// An intermediate tic is added only if there is no long tic at the same position,
+// a small tic only if there is no long or intermediate tic.
+std::map<double, TicInfo> collect_tics(
+    const FrameScale& scale, int vMin, int vMax, double lowLimit, double highLimit)
+{
+  std::map<double, TicInfo> tics;
+  // first add long tics
+  if (scale.longTic)
+  {
+    double v = vMin + scale.longTic->step;
+    while (v < vMax)
+    {
+      if (v > lowLimit && v < highLimit)
+        tics.insert(std::make_pair(v, *(scale.longTic)));
+      v += scale.longTic->step;
+    }
+  }
+
+  if (scale.intermediateTic)
+  {
+    double v = vMin + scale.intermediateTic->step;
+    while (v < vMax)
+    {
+      if (scale.longTic && fmod(v, scale.longTic->step) > 0.01 && v > lowLimit && v < highLimit)
+        tics.insert(std::make_pair(v, *(scale.intermediateTic)));
+      v += scale.intermediateTic->step;
+    }
+  }
+
+  if (scale.smallTic)
+  {
+    double v = vMin + scale.smallTic->step;
+    while (v < vMax)
+    {
+      if (scale.longTic && fmod(v, scale.longTic->step) > 0.01 && scale.intermediateTic &&
+          fmod(v, scale.intermediateTic->step) > 0.01 && v > lowLimit && v < highLimit)
+        tics.insert(std::make_pair(v, *(scale.smallTic)));
+      v += scale.smallTic->step;
+    }
+  }
+  return tics;
+}
+
+// Move the left and right latitude labels away from the tics
+void latitude_label_offsets(bool labelIsOutside,
+                            bool ticIsOutside,
+                            double width,
+                            int length,
+                            double& lonStartLeft,
+                            double& lonStartRight)
+{
+  if (labelIsOutside)
+  {
+    if (ticIsOutside)  // label out, tic out
+    {
+      lonStartLeft -= (width + (length * 1.3));
+      lonStartRight += (length * 1.3);
+    }
+    else  // label out, tic in
+    {
+      lonStartLeft -= (width + (length * 0.3));
+      lonStartRight += (width * +0.3);
+    }
+  }
+  else
+  {
+    if (ticIsOutside)  // label in, tic out
+    {
+      lonStartLeft += (width * 0.3);
+      lonStartRight -= (width * 1.3);
+    }
+    else  // label in, tic in
+    {
+      lonStartLeft += (length * 1.3);
+      lonStartRight -= (width + (length * 1.3));
+    }
+  }
+}
+
+// Move the top and bottom longitude labels away from the tics
+void longitude_label_offsets(bool labelIsOutside,
+                             bool ticIsOutside,
+                             double height,
+                             int length,
+                             double& latStartTop,
+                             double& latStartBottom)
+{
+  if (labelIsOutside)
+  {
+    if (ticIsOutside)  // label out, tic out
+    {
+      latStartTop -= (length * 1.3);
+      latStartBottom += (height + (length * 1.3));
+    }
+    else  // label out, tic in
+    {
+      latStartTop -= (height * 0.3);
+      latStartBottom += (height * 1.3);
+    }
+  }
+  else
+  {
+    if (ticIsOutside)  // label in tic out
+    {
+      latStartTop += (height * 1.3);
+      latStartBottom -= (height * 0.3);
+    }
+    else  // label in tic in
+    {
+      latStartTop += (height + (length * 1.3));
+      latStartBottom -= (length * 1.3);
+    }
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -263,66 +379,13 @@ void FrameLayer::addTic(CTPP::CDT& theLayersCdt, double x1, double y1, double x2
   theLayersCdt.PushBack(lineCdt);
 }
 
-void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& /* theState */)
+void FrameLayer::addLatitudeTics(CTPP::CDT& theLayersCdt,
+                                 LonLatToXYTransformation& transformation,
+                                 const std::map<double, TicInfo>& latitudeTics,
+                                 const text_style_t& labelStyle,
+                                 bool ticIsOutside,
+                                 bool labelIsOutside)
 {
-  if (!itsScale)
-    return;
-  auto transformation = LonLatToXYTransformation(projection);
-
-  int lonMax = ceil(itsInnerBorder.rightLongitude);
-  int latMax = ceil(itsInnerBorder.topLatitude);
-  int lonMin = floor(itsInnerBorder.leftLongitude);
-  int latMin = floor(itsInnerBorder.bottomLatitude);
-
-  text_style_t labelStyle;
-  labelStyle.fontfamily = itsScaleAttributes.value("font-family");
-  labelStyle.fontsize = itsScaleAttributes.value("font-size");
-  labelStyle.fontstyle = itsScaleAttributes.value("font-style");
-  labelStyle.fontweight = itsScaleAttributes.value("font-weight");
-  labelStyle.textanchor = itsScaleAttributes.value("text-anchor");
-
-  std::map<double, TicInfo> latitudeTics;
-  // first add long tics
-  if (itsScale->longTic)
-  {
-    double lat = latMin + itsScale->longTic->step;
-    while (lat < latMax)
-    {
-      if (lat > itsInnerBorder.bottomLatitude && lat < itsInnerBorder.topLatitude)
-        latitudeTics.insert(std::make_pair(lat, *(itsScale->longTic)));
-      lat += itsScale->longTic->step;
-    }
-  }
-
-  if (itsScale->intermediateTic)
-  {
-    double lat = latMin + itsScale->intermediateTic->step;
-    while (lat < latMax)
-    {
-      if (itsScale->longTic && fmod(lat, itsScale->longTic->step) > 0.01 &&
-          lat > itsInnerBorder.bottomLatitude && lat < itsInnerBorder.topLatitude)
-        latitudeTics.insert(std::make_pair(lat, *(itsScale->intermediateTic)));
-      lat += itsScale->intermediateTic->step;
-    }
-  }
-
-  if (itsScale->smallTic)
-  {
-    // add small tic, if long or intermediate tic does not exist at the same latitude
-    double lat = latMin + itsScale->smallTic->step;
-    while (lat < latMax)
-    {
-      if (itsScale->longTic && fmod(lat, itsScale->longTic->step) > 0.01 &&
-          itsScale->intermediateTic && fmod(lat, itsScale->intermediateTic->step) > 0.01 &&
-          lat > itsInnerBorder.bottomLatitude && lat < itsInnerBorder.topLatitude)
-        latitudeTics.insert(std::make_pair(lat, *(itsScale->smallTic)));
-      lat += itsScale->smallTic->step;
-    }
-  }
-
-  bool ticIsOutside = (itsScale->ticPosition == "outside");
-  bool labelIsOutside = (*itsScale->labelPosition == "outside");
-
   for (const auto& tic : latitudeTics)
   {
     // left hand side
@@ -347,78 +410,26 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& /* theState */)
       std::string labelText = (Fmi::to_string(lround(tic.first)) + "°");
       text_dimension_t labelDimension = getTextDimension(labelText, labelStyle);
 
-      if (labelIsOutside)
-      {
-        if (ticIsOutside)  // label out, tic out
-        {
-          lonStartLeft -= (labelDimension.width + (tic.second.length * 1.3));
-          lonStartRight += (tic.second.length * 1.3);
-        }
-        else  // label out, tic in
-        {
-          lonStartLeft -= (labelDimension.width + (tic.second.length * 0.3));
-          lonStartRight += (labelDimension.width * +0.3);
-        }
-      }
-      else
-      {
-        if (ticIsOutside)  // label in, tic out
-        {
-          lonStartLeft += (labelDimension.width * 0.3);
-          lonStartRight -= (labelDimension.width * 1.3);
-        }
-        else  // label in, tic in
-        {
-          lonStartLeft += (tic.second.length * 1.3);
-          lonStartRight -= (labelDimension.width + (tic.second.length * 1.3));
-        }
-      }
+      latitude_label_offsets(labelIsOutside,
+                             ticIsOutside,
+                             labelDimension.width,
+                             tic.second.length,
+                             lonStartLeft,
+                             lonStartRight);
       latStart += (labelDimension.height / 2.0);
       addScaleNumber(theLayersCdt, lonStartLeft, latStart, labelText);
       addScaleNumber(theLayersCdt, lonStartRight, latStart, labelText);
     }
   }
+}
 
-  std::map<double, TicInfo> longitudeTics;
-  // first add long tics
-  if (itsScale->longTic)
-  {
-    double lon = lonMin + itsScale->longTic->step;
-    while (lon < lonMax)
-    {
-      if (lon > itsInnerBorder.leftLongitude && lon < itsInnerBorder.rightLongitude)
-        longitudeTics.insert(std::make_pair(lon, *(itsScale->longTic)));
-      lon += itsScale->longTic->step;
-    }
-  }
-
-  if (itsScale->intermediateTic)
-  {
-    // add intermediate tic, if long tic does not exist at the same longitude
-    double lon = lonMin + itsScale->intermediateTic->step;
-    while (lon < lonMax)
-    {
-      if (itsScale->longTic && fmod(lon, itsScale->longTic->step) > 0.01 &&
-          lon > itsInnerBorder.leftLongitude && lon < itsInnerBorder.rightLongitude)
-        longitudeTics.insert(std::make_pair(lon, *(itsScale->intermediateTic)));
-      lon += itsScale->intermediateTic->step;
-    }
-  }
-
-  if (itsScale->smallTic)
-  {
-    // add small tic, if long or intermediate tic does not exist at the same longitude
-    double lon = lonMin + itsScale->smallTic->step;
-    while (lon < lonMax)
-    {
-      if (itsScale->longTic && fmod(lon, itsScale->longTic->step) > 0.01 &&
-          itsScale->intermediateTic && fmod(lon, itsScale->intermediateTic->step) > 0.01 &&
-          lon > itsInnerBorder.leftLongitude && lon < itsInnerBorder.rightLongitude)
-        longitudeTics.insert(std::make_pair(lon, *(itsScale->smallTic)));
-      lon += itsScale->smallTic->step;
-    }
-  }
-
+void FrameLayer::addLongitudeTics(CTPP::CDT& theLayersCdt,
+                                  LonLatToXYTransformation& transformation,
+                                  const std::map<double, TicInfo>& longitudeTics,
+                                  const text_style_t& labelStyle,
+                                  bool ticIsOutside,
+                                  bool labelIsOutside)
+{
   for (const auto& tic : longitudeTics)
   {
     // top
@@ -447,37 +458,51 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& /* theState */)
       text_dimension_t labelDimension = getTextDimension(labelText, labelStyle);
       labelText += "°";
 
-      if (labelIsOutside)
-      {
-        if (ticIsOutside)  // label out, tic out
-        {
-          latStartTop -= (tic.second.length * 1.3);
-          latStartBottom += (labelDimension.height + (tic.second.length * 1.3));
-        }
-        else  // label out, tic in
-        {
-          latStartTop -= (labelDimension.height * 0.3);
-          latStartBottom += (labelDimension.height * 1.3);
-        }
-      }
-      else
-      {
-        if (ticIsOutside)  // label in tic out
-        {
-          latStartTop += (labelDimension.height * 1.3);
-          latStartBottom -= (labelDimension.height * 0.3);
-        }
-        else  // label in tic in
-        {
-          latStartTop += (labelDimension.height + (tic.second.length * 1.3));
-          latStartBottom -= (tic.second.length * 1.3);
-        }
-      }
+      longitude_label_offsets(labelIsOutside,
+                              ticIsOutside,
+                              labelDimension.height,
+                              tic.second.length,
+                              latStartTop,
+                              latStartBottom);
       lonStart -= (labelDimension.width / 2.0);
       addScaleNumber(theLayersCdt, lonStart, latStartTop, labelText);
       addScaleNumber(theLayersCdt, lonStart, latStartBottom, labelText);
     }
   }
+}
+
+void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& /* theState */)
+{
+  if (!itsScale)
+    return;
+  auto transformation = LonLatToXYTransformation(projection);
+
+  int lonMax = ceil(itsInnerBorder.rightLongitude);
+  int latMax = ceil(itsInnerBorder.topLatitude);
+  int lonMin = floor(itsInnerBorder.leftLongitude);
+  int latMin = floor(itsInnerBorder.bottomLatitude);
+
+  text_style_t labelStyle;
+  labelStyle.fontfamily = itsScaleAttributes.value("font-family");
+  labelStyle.fontsize = itsScaleAttributes.value("font-size");
+  labelStyle.fontstyle = itsScaleAttributes.value("font-style");
+  labelStyle.fontweight = itsScaleAttributes.value("font-weight");
+  labelStyle.textanchor = itsScaleAttributes.value("text-anchor");
+
+  const auto latitudeTics = collect_tics(
+      *itsScale, latMin, latMax, itsInnerBorder.bottomLatitude, itsInnerBorder.topLatitude);
+
+  bool ticIsOutside = (itsScale->ticPosition == "outside");
+  bool labelIsOutside = (*itsScale->labelPosition == "outside");
+
+  addLatitudeTics(
+      theLayersCdt, transformation, latitudeTics, labelStyle, ticIsOutside, labelIsOutside);
+
+  const auto longitudeTics = collect_tics(
+      *itsScale, lonMin, lonMax, itsInnerBorder.leftLongitude, itsInnerBorder.rightLongitude);
+
+  addLongitudeTics(
+      theLayersCdt, transformation, longitudeTics, labelStyle, ticIsOutside, labelIsOutside);
 }
 
 // ----------------------------------------------------------------------

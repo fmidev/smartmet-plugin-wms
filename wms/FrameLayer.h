@@ -10,6 +10,7 @@
 #include "Layer.h"
 #include "Text.h"
 #include <gis/Types.h>
+#include <map>
 #include <optional>
 #include <string>
 
@@ -26,6 +27,8 @@ namespace Dali
 {
 class Config;
 class State;
+class LonLatToXYTransformation;
+struct text_style_t;
 
 struct FrameDimension
 {
@@ -84,6 +87,18 @@ class FrameLayer : public Layer
   void addScale(CTPP::CDT& theLayersCdt, const State& theState);
   void addTic(CTPP::CDT& theLayersCdt, double x1, double y1, double x2, double y2);
   void addScaleNumber(CTPP::CDT& theLayersCdt, double x, double y, const std::string& num);
+  void addLatitudeTics(CTPP::CDT& theLayersCdt,
+                       LonLatToXYTransformation& transformation,
+                       const std::map<double, TicInfo>& latitudeTics,
+                       const text_style_t& labelStyle,
+                       bool ticIsOutside,
+                       bool labelIsOutside);
+  void addLongitudeTics(CTPP::CDT& theLayersCdt,
+                        LonLatToXYTransformation& transformation,
+                        const std::map<double, TicInfo>& longitudeTics,
+                        const text_style_t& labelStyle,
+                        bool ticIsOutside,
+                        bool labelIsOutside);
 
 };  // class FrameLayer
 
