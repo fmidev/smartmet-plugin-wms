@@ -20,6 +20,8 @@ namespace Plugin
 {
 namespace OGC
 {
+struct GridQuery;
+
 class GridDataLayer : public Layer
 {
  public:
@@ -42,6 +44,14 @@ class GridDataLayer : public Layer
   int itsGeometryId = 0;
   int itsLevelId = 0;
   std::string itsElevationUnit;
+
+  bool getContentTimes(ContentServer::ServiceInterface& contentServer,
+                       const T::GenerationInfo& generationInfo,
+                       GridQuery& query,
+                       const std::string& producerName,
+                       int tmpGeometryId,
+                       const std::set<int>& validGeometries,
+                       std::set<std::string>& contentTimeList);
 };
 
 }  // namespace OGC
