@@ -175,6 +175,27 @@ void add_grid_bbox_attributes(QueryServer::Query& query,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add the bboxcrs, cx, cy and resolution settings of the projection
+ */
+// ----------------------------------------------------------------------
+
+void add_projection_attributes(QueryServer::Query& query, const Projection& projection)
+{
+  if (projection.bboxcrs)
+    query.mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
+
+  if (projection.cx)
+    query.mAttributeList.addAttribute("grid.cx", Fmi::to_string(*projection.cx));
+
+  if (projection.cy)
+    query.mAttributeList.addAttribute("grid.cy", Fmi::to_string(*projection.cy));
+
+  if (projection.resolution)
+    query.mAttributeList.addAttribute("grid.resolution", Fmi::to_string(*projection.resolution));
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Add the bounding box given in the projection settings
  */
 // ----------------------------------------------------------------------
@@ -237,6 +258,53 @@ void add_contour_value_attributes(QueryServer::Query& query,
       Fmi::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
   // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
   // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse the contour interpolation method name
+ */
+// ----------------------------------------------------------------------
+
+std::optional<Trax::InterpolationType> parse_contour_interpolation(const std::string& interpolation)
+{
+  if (interpolation == "linear")
+    return Trax::InterpolationType::Linear;
+  if (interpolation == "nearest" || interpolation == "discrete" || interpolation == "midpoint")
+    return Trax::InterpolationType::Midpoint;
+  if (interpolation == "logarithmic")
+    return Trax::InterpolationType::Logarithmic;
+  return std::nullopt;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert the WKB contours returned by the query into OGRGeometry objects
+ */
+// ----------------------------------------------------------------------
+
+std::vector<OGRGeometryPtr> contour_geometries(const QueryServer::Query& query,
+                                               const std::optional<double>& minarea,
+                                               const std::string& areaunit,
+                                               const Fmi::Box& box,
+                                               const Fmi::SpatialReference& crs)
+{
+  std::vector<OGRGeometryPtr> geoms;
+  for (const auto& query_param : query.mQueryParameterList)
+  {
+    for (const auto& val : query_param.mValueList)
+    {
+      for (const auto& wkb : val->mValueData)
+      {
+        const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
+        OGRGeometry* geom = nullptr;
+        OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
+        auto geomPtr = OGRGeometryPtr(geom);
+        geoms.push_back(despeckle_contour(geomPtr, minarea, areaunit, box, crs));
+      }
+    }
+  }
+  return geoms;
 }
 
 // ----------------------------------------------------------------------

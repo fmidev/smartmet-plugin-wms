@@ -96,6 +96,25 @@ void apply_autoclass(std::vector<Isoband>& isobands, const std::string& pattern)
   }
 }
 
+// Contour limits of the isobands, missing limits are replaced by huge values
+void contour_limits(const std::vector<Isoband>& isobands,
+                    T::ParamValue_vec& contourLowValues,
+                    T::ParamValue_vec& contourHighValues)
+{
+  for (const Isoband& isoband : isobands)
+  {
+    if (isoband.lolimit)
+      contourLowValues.push_back(*isoband.lolimit);
+    else
+      contourLowValues.push_back(-1000000000.0);
+
+    if (isoband.hilimit)
+      contourHighValues.push_back(*isoband.hilimit);
+    else
+      contourHighValues.push_back(1000000000);
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -624,18 +643,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     T::ParamValue_vec contourLowValues;
     T::ParamValue_vec contourHighValues;
-    for (const Isoband& isoband : isobands)
-    {
-      if (isoband.lolimit)
-        contourLowValues.push_back(*isoband.lolimit);
-      else
-        contourLowValues.push_back(-1000000000.0);
-
-      if (isoband.hilimit)
-        contourHighValues.push_back(*isoband.hilimit);
-      else
-        contourHighValues.push_back(1000000000);
-    }
+    contour_limits(isobands, contourLowValues, contourHighValues);
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
@@ -666,13 +674,13 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Adding parameter information into the query.
 
     add_grid_parameter(*gridEngine,
-                                           producerName,
-                                           paraminfo.parameter,
-                                           multiplier,
-                                           offset,
-                                           projection,
-                                           attributeList,
-                                           *originalGridQuery);
+                       producerName,
+                       paraminfo.parameter,
+                       multiplier,
+                       offset,
+                       projection,
+                       attributeList,
+                       *originalGridQuery);
 
     add_time_attributes(attributeList, getValidTime(), origintime);
 
@@ -696,36 +704,18 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     add_grid_size_attributes(*originalGridQuery, projection);
 
-    if (projection.bboxcrs)
-      originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
-
-    if (projection.cx)
-      originalGridQuery->mAttributeList.addAttribute("grid.cx", Fmi::to_string(*projection.cx));
-
-    if (projection.cy)
-      originalGridQuery->mAttributeList.addAttribute("grid.cy", Fmi::to_string(*projection.cy));
-
-    if (projection.resolution)
-      originalGridQuery->mAttributeList.addAttribute("grid.resolution",
-                                                     Fmi::to_string(*projection.resolution));
+    add_projection_attributes(*originalGridQuery, projection);
 
     if (wkt == "data")
       add_data_bbox_attribute(*originalGridQuery, projection);
 
     add_contour_attributes(*originalGridQuery, smoother, subdivide, contour_threads);
 
-    if (interpolation == "linear")
-      originalGridQuery->mAttributeList.addAttribute(
-          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
-    else if (interpolation == "nearest" || interpolation == "discrete" ||
-             interpolation == "midpoint")
-      originalGridQuery->mAttributeList.addAttribute(
-          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Midpoint));
-    else if (interpolation == "logarithmic")
-      originalGridQuery->mAttributeList.addAttribute(
-          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
-    else
+    auto interpolation_type = parse_contour_interpolation(interpolation);
+    if (!interpolation_type)
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
+    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",
+                                                   Fmi::to_string((int)*interpolation_type));
 
     /*
     if (minarea)
@@ -751,63 +741,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Converting the returned WKB-isolines into OGRGeometry objects.
 
-    std::vector<OGRGeometryPtr> geoms;
-    for (const auto& query_param : query->mQueryParameterList)
-    {
-      for (const auto& val : query_param.mValueList)
-      {
-        if (!val->mValueData.empty())
-        {
-          for (const auto& wkb : val->mValueData)
-          {
-            const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
-            OGRGeometry* geom = nullptr;
-            OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
-            auto geomPtr = OGRGeometryPtr(geom);
-            geoms.push_back(despeckle_contour(geomPtr, minarea, areaunit, box, crs));
-          }
-#if 0
-          int width = 3600; //atoi(query.mAttributeList.getAttributeValue("grid.width"));
-          int height = 1800; // atoi(query.mAttributeList.getAttributeValue("grid.height"));
-
-          if (width > 0 &&  height > 0)
-          {
-            double mp = 10;
-            ImagePaint imagePaint(width,height,0xFFFFFF,false,true);
-
-            // ### Painting contours into the image:
-
-            if (query_param.mType == QueryServer::QueryParameter::Type::Isoband)
-            {
-              if (!val->mValueData.empty())
-              {
-                uint c = 250;
-                uint step = 250 / val->mValueData.size();
-
-                for (const auto & it: val->mValueData)
-                {
-                  printf("Contour %lu\n",it.size());
-                  uint col = (c << 16) + (c << 8) + c;
-                  imagePaint.paintWkb(mp,mp,180,90,it,col);
-                  c = c - step;
-                }
-              }
-            }
-            else
-            {
-              imagePaint.paintWkb(mp,mp,180,90,val->mValueData,0x00);
-            }
-
-            // ### Saving the image and releasing the image data:
-
-            char fname[200];
-            sprintf(fname,"/tmp/contour_%llu.jpg",getTime());
-            imagePaint.saveJpgImage(fname);
-          }
-#endif
-        }
-      }
-    }
+    std::vector<OGRGeometryPtr> geoms = contour_geometries(*query, minarea, areaunit, box, crs);
 
     // Convert filter pixel distance to metric distance for smoothing
     filter.bbox(box);

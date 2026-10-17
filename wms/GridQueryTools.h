@@ -9,8 +9,10 @@
 #include <gis/Types.h>
 #include <grid-content/queryServer/definition/Query.h>
 #include <macgyver/DateTime.h>
+#include <trax/InterpolationType.h>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace SmartMet
 {
@@ -71,6 +73,9 @@ void add_grid_bbox_attributes(QueryServer::Query& query,
                               const Fmi::Box& clipbox,
                               bool animation_enabled);
 
+// Add the bboxcrs, cx, cy and resolution settings of the projection
+void add_projection_attributes(QueryServer::Query& query, const Projection& projection);
+
 // Add the bounding box given in the projection settings, used with the data projection
 void add_data_bbox_attribute(QueryServer::Query& query, const Projection& projection);
 
@@ -85,6 +90,16 @@ void add_contour_value_attributes(QueryServer::Query& query,
                                   int extrapolation,
                                   const std::optional<double>& multiplier,
                                   const std::optional<double>& offset);
+
+// Parse the contour interpolation method name
+std::optional<Trax::InterpolationType> parse_contour_interpolation(const std::string& interpolation);
+
+// Convert the WKB contours returned by the query into despeckled OGRGeometry objects
+std::vector<OGRGeometryPtr> contour_geometries(const QueryServer::Query& query,
+                                               const std::optional<double>& minarea,
+                                               const std::string& areaunit,
+                                               const Fmi::Box& box,
+                                               const Fmi::SpatialReference& crs);
 
 // Remove small areas from a contour if a minimum area is set
 OGRGeometryPtr despeckle_contour(const OGRGeometryPtr& geomPtr,
