@@ -438,6 +438,52 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
   }
 }
 
+// Select the level, throws if it is not available
+void select_level(const Engine::Querydata::Q& q, double level)
+{
+  bool match = false;
+  for (q->resetLevel(); !match && q->nextLevel();)
+    match = (q->levelValue() == level);
+  if (!match)
+    throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(level) + " is not available");
+}
+
+// MVT layer name: the qid, or the speed or direction parameter name, or "arrows"
+std::string mvt_layer_name(const std::string& qid,
+                           const std::optional<std::string>& speed,
+                           const std::optional<std::string>& direction)
+{
+  std::string layerName = qid;
+  if (layerName.empty())
+  {
+    if (speed)
+      layerName = *speed;
+    else if (direction)
+      layerName = *direction;
+    else
+      layerName = "arrows";
+  }
+  return layerName;
+}
+
+// Add the symbol selected for the speed, or the default symbol, to MVT feature attributes
+void add_symbol_attribute(std::vector<std::pair<std::string, MVTValue>>& attrs,
+                          const std::vector<AttributeSelection>& arrows,
+                          const std::optional<std::string>& symbol,
+                          double wspd)
+{
+  if (!arrows.empty())
+  {
+    auto selection = Select::attribute(arrows, wspd);
+    if (selection && selection->symbol)
+      attrs.emplace_back("symbol", *selection->symbol);
+  }
+  else if (symbol)
+  {
+    attrs.emplace_back("symbol", *symbol);
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -977,12 +1023,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals,
       if (use_observations)
         throw std::runtime_error("Cannot set level value for observations in ArrowLayer");
 
-      bool match = false;
-      for (q->resetLevel(); !match && q->nextLevel();)
-        match = (q->levelValue() == *paraminfo.level);
-      if (!match)
-        throw Fmi::Exception(
-            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available");
+      select_level(q, *paraminfo.level);
     }
 
     projection.update(q);
@@ -2105,14 +2146,7 @@ void ArrowLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     positions->addMargins(xmargin, ymargin);
 
     if (paraminfo.level)
-    {
-      bool match = false;
-      for (q->resetLevel(); !match && q->nextLevel();)
-        match = (q->levelValue() == *paraminfo.level);
-      if (!match)
-        throw Fmi::Exception(
-            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available");
-    }
+      select_level(q, *paraminfo.level);
 
     projection.update(q);
     const auto& crs = projection.getCRS();
@@ -2129,17 +2163,7 @@ void ArrowLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     Fmi::CoordinateTransformation xform("WGS84", crs);
 
-    std::string layerName = qid;
-    if (layerName.empty())
-    {
-      if (speed)
-        layerName = *speed;
-      else if (direction)
-        layerName = *direction;
-      else
-        layerName = "arrows";
-    }
-    auto& mvtLayer = theBuilder.layer(layerName);
+    auto& mvtLayer = theBuilder.layer(mvt_layer_name(qid, speed, direction));
 
     for (const auto& pointvalue : pointvalues)
     {
@@ -2163,16 +2187,7 @@ void ArrowLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
       attrs.emplace_back("speed", wspd);
       attrs.emplace_back("direction", wdir);
 
-      if (!arrows.empty())
-      {
-        auto selection = Select::attribute(arrows, wspd);
-        if (selection && selection->symbol)
-          attrs.emplace_back("symbol", *selection->symbol);
-      }
-      else if (symbol)
-      {
-        attrs.emplace_back("symbol", *symbol);
-      }
+      add_symbol_attribute(attrs, arrows, symbol, wspd);
 
       mvtLayer.addFeature(pt, attrs);
     }
