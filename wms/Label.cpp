@@ -30,6 +30,22 @@ void set_rounding(const std::string& rounding)
   else if (rounding == "downward")
     std::fesetround(FE_DOWNWARD);
 }
+// Throw if the rounding mode is unknown
+void check_rounding(const std::string& rounding)
+{
+  if (rounding != "tonearest" && rounding != "upward" && rounding != "downward" &&
+      rounding != "towardzero")
+    throw Fmi::Exception(BCP, "Unknown label rounding mode '" + rounding + "'");
+}
+
+// Throw if the orientation is unknown
+void check_orientation(const std::string& orientation)
+{
+  if (orientation != "horizontal" && orientation != "vertical" && orientation != "auto" &&
+      orientation != "gradient")
+    throw Fmi::Exception(BCP, "Unknown label orientation '" + orientation + "'");
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -127,6 +143,68 @@ std::string Label::print(double theValue) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Set a single setting from JSON
+ */
+// ----------------------------------------------------------------------
+
+void Label::initSetting(const std::string& name, const Json::Value& json)
+{
+  if (name == "dx")
+    dx = json.asInt();
+  else if (name == "dy")
+    dy = json.asInt();
+  else if (name == "unit_conversion")
+    unit_conversion = json.asString();
+  else if (name == "multiplier")
+    multiplier = json.asDouble();
+  else if (name == "offset")
+    offset = json.asDouble();
+  else if (name == "format")
+  {
+    std::cerr << "Warning: label.format has been deprecated, use label.precision instead\n";
+  }
+  else if (name == "missing")
+    missing = json.asString();
+  else if (name == "locale")
+    this->setLocale(json.asString());
+  else if (name == "precision")
+    precision = json.asInt();
+  else if (name == "multiple")
+    multiple = json.asDouble();
+  else if (name == "rounding")
+  {
+    rounding = json.asString();
+    check_rounding(rounding);
+  }
+  else if (name == "prefix")
+    prefix = json.asString();
+  else if (name == "suffix")
+    suffix = json.asString();
+  else if (name == "plusprefix")
+    plusprefix = json.asString();
+  else if (name == "minusprefix")
+    minusprefix = json.asString();
+  else if (name == "orientation")
+  {
+    orientation = json.asString();
+    check_orientation(orientation);
+  }
+  else if (name == "padding_char")
+  {
+    auto padding_str = json.asString();
+    if (!padding_str.empty())
+      padding_char = padding_str.front();
+  }
+  else if (name == "padding_length")
+  {
+    padding_length = json.asInt();
+  }
+  else
+    throw Fmi::Exception(BCP, "Unknown setting '" + name + "'!");
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize from JSON
  */
 // ----------------------------------------------------------------------
@@ -146,64 +224,7 @@ void Label::init(Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      Json::Value& json = theJson[name];
-
-      if (name == "dx")
-        dx = json.asInt();
-      else if (name == "dy")
-        dy = json.asInt();
-      else if (name == "unit_conversion")
-        unit_conversion = json.asString();
-      else if (name == "multiplier")
-        multiplier = json.asDouble();
-      else if (name == "offset")
-        offset = json.asDouble();
-      else if (name == "format")
-      {
-        std::cerr << "Warning: label.format has been deprecated, use label.precision instead\n";
-      }
-      else if (name == "missing")
-        missing = json.asString();
-      else if (name == "locale")
-        this->setLocale(json.asString());
-      else if (name == "precision")
-        precision = json.asInt();
-      else if (name == "multiple")
-        multiple = json.asDouble();
-      else if (name == "rounding")
-      {
-        rounding = json.asString();
-        if (rounding != "tonearest" && rounding != "upward" && rounding != "downward" &&
-            rounding != "towardzero")
-          throw Fmi::Exception(BCP, "Unknown label rounding mode '" + rounding + "'");
-      }
-      else if (name == "prefix")
-        prefix = json.asString();
-      else if (name == "suffix")
-        suffix = json.asString();
-      else if (name == "plusprefix")
-        plusprefix = json.asString();
-      else if (name == "minusprefix")
-        minusprefix = json.asString();
-      else if (name == "orientation")
-      {
-        orientation = json.asString();
-        if (orientation != "horizontal" && orientation != "vertical" && orientation != "auto" &&
-            orientation != "gradient")
-          throw Fmi::Exception(BCP, "Unknown label orientation '" + orientation + "'");
-      }
-      else if (name == "padding_char")
-      {
-        auto padding_str = json.asString();
-        if (!padding_str.empty())
-          padding_char = padding_str.front();
-      }
-      else if (name == "padding_length")
-      {
-        padding_length = json.asInt();
-      }
-      else
-        throw Fmi::Exception(BCP, "Unknown setting '" + name + "'!");
+      initSetting(name, theJson[name]);
     }
 
     if (!unit_conversion.empty())

@@ -58,6 +58,7 @@ class Label
   size_t padding_length = 0;
 
   void setLocale(const std::string& theLocale);
+  void initSetting(const std::string& name, const Json::Value& json);
   // shared because otherwise the compiler would force definitions for all constructors
   std::shared_ptr<std::ostringstream> formatter{new std::ostringstream};
 
