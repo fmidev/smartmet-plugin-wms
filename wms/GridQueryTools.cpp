@@ -247,7 +247,7 @@ void add_contour_value_attributes(QueryServer::Query& query,
 {
   query.mAttributeList.addAttribute("contour.extrapolation", Fmi::to_string(extrapolation));
 
-  if (extrapolation)
+  if (extrapolation && multiplier)
     query.mAttributeList.addAttribute("contour.multiplier", Fmi::to_string(*multiplier));
 
   if (offset)
