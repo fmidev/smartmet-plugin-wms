@@ -5689,7 +5689,7 @@
     <Layer>
       <ows:Title>Temperature with circles</ows:Title>
       <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
-        <ows:LowerCorner>-90 -90</ows:LowerCorner>
+        <ows:LowerCorner>-180 -90</ows:LowerCorner>
         <ows:UpperCorner>180 90</ows:UpperCorner>
       </ows:WGS84BoundingBox>
       <ows:Identifier>test:t2m_circles</ows:Identifier>

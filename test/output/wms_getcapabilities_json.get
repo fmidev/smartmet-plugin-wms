@@ -10375,7 +10375,7 @@
 				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
-					"westBoundLongitude": -90,
+					"westBoundLongitude": -180,
 					"eastBoundLongitude": 180,
 					"southBoundLatitude": -90,
 					"northBoundLatitude": 90
@@ -10384,21 +10384,21 @@
 				[
 					{
 						"CRS": "CRS:27",
-						"minx": -90,
+						"minx": -180,
 						"miny": -90,
 						"maxx": 180,
 						"maxy": 90
 					},
 					{
 						"CRS": "CRS:83",
-						"minx": -90,
+						"minx": -180,
 						"miny": -90,
 						"maxx": 180,
 						"maxy": 90
 					},
 					{
 						"CRS": "CRS:84",
-						"minx": -90,
+						"minx": -180,
 						"miny": -90,
 						"maxx": 180,
 						"maxy": 90
@@ -10433,14 +10433,14 @@
 					},
 					{
 						"CRS": "EPSG:3857",
-						"minx": -10018754.1714,
+						"minx": -20037508.3428,
 						"miny": -20048966.104,
 						"maxx": 20037508.3428,
 						"maxy": 20048966.104
 					},
 					{
 						"CRS": "EPSG:4326",
-						"minx": -90,
+						"minx": -180,
 						"miny": -90,
 						"maxx": 180,
 						"maxy": 90

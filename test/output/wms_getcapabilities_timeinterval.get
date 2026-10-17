@@ -2502,9 +2502,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -2545,9 +2545,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -2588,9 +2588,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -2631,9 +2631,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -2674,9 +2674,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -2717,9 +2717,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -2760,9 +2760,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=140&amp;height=1800"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=139&amp;height=1800"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -3314,20 +3314,20 @@
       <CRS>EPSG:3857</CRS>
       <CRS>EPSG:4326</CRS>
       <EX_GeographicBoundingBox>
-        <westBoundLongitude>-90</westBoundLongitude>
+        <westBoundLongitude>-180</westBoundLongitude>
         <eastBoundLongitude>180</eastBoundLongitude>
         <southBoundLatitude>-90</southBoundLatitude>
         <northBoundLatitude>90</northBoundLatitude>
       </EX_GeographicBoundingBox>
-      <BoundingBox CRS="CRS:27" minx="-90" miny="-90" maxx="180" maxy="90"/>
-      <BoundingBox CRS="CRS:83" minx="-90" miny="-90" maxx="180" maxy="90"/>
-      <BoundingBox CRS="CRS:84" minx="-90" miny="-90" maxx="180" maxy="90"/>
+      <BoundingBox CRS="CRS:27" minx="-180" miny="-90" maxx="180" maxy="90"/>
+      <BoundingBox CRS="CRS:83" minx="-180" miny="-90" maxx="180" maxy="90"/>
+      <BoundingBox CRS="CRS:84" minx="-180" miny="-90" maxx="180" maxy="90"/>
       <BoundingBox CRS="CRS:SmartMetEurope" minx="-4460461.91185" miny="-6612906.73204" maxx="3387669.86061" maxy="-476105.949907"/>
       <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2093861.75205" miny="-3626674.93858" maxx="1010088.45179" maxy="-1822247.80407"/>
       <BoundingBox CRS="EPSG:3035" minx="-146473.113242" miny="1527541.11022" maxx="4672093.28728" maxy="6905958.26288"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
-      <BoundingBox CRS="EPSG:3857" minx="-10018754.1714" miny="-20048966.104" maxx="20037508.3428" maxy="20048966.104"/>
-      <BoundingBox CRS="EPSG:4326" minx="-90" miny="-90" maxx="180" maxy="90"/><Style>
+      <BoundingBox CRS="EPSG:3857" minx="-20037508.3428" miny="-20048966.104" maxx="20037508.3428" maxy="20048966.104"/>
+      <BoundingBox CRS="EPSG:4326" minx="-180" miny="-90" maxx="180" maxy="90"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
