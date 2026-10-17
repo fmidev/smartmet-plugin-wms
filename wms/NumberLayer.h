@@ -68,6 +68,19 @@ class NumberLayer : public Layer
   std::vector<AttributeSelection> numbers;
 
  private:
+  void setQueryLocations(QueryServer::Query& query, const State& theState);
+  void addSymbols(CTPP::CDT& theGlobals,
+                  CTPP::CDT& group_cdt,
+                  State& theState,
+                  const std::vector<PointData>& pointvalues,
+                  double xmultiplier,
+                  double xoffset) const;
+  int addNumbers(CTPP::CDT& theGlobals,
+                 CTPP::CDT& theLayersCdt,
+                 State& theState,
+                 const std::vector<PointData>& pointvalues,
+                 double xmultiplier,
+                 double xoffset) const;
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 

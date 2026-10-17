@@ -188,7 +188,177 @@ PointValues read_gridForecasts(const NumberLayer& layer,
   }
 }
 
+// Symbol translation and scaling
+std::string symbol_transform(int x,
+                             int y,
+                             const std::optional<double>& scale,
+                             const std::optional<double>& rescale)
+{
+  std::string tmp = fmt::sprintf("translate(%d,%d)", x, y);
+
+  double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
+  if (newscale != 1.0)
+    tmp += fmt::sprintf(" scale(%g)", newscale);
+  return tmp;
+}
+
 }  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the symbols of the numbers into the group
+ */
+// ----------------------------------------------------------------------
+
+void NumberLayer::addSymbols(CTPP::CDT& theGlobals,
+                             CTPP::CDT& group_cdt,
+                             State& theState,
+                             const PointValues& pointvalues,
+                             double xmultiplier,
+                             double xoffset) const
+{
+  for (const auto& pointvalue : pointvalues)
+  {
+    // Start generating the hash
+
+    CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+    tag_cdt["start"] = "<use";
+    tag_cdt["end"] = "/>";
+
+    const auto& point = pointvalue.point();
+    float value = pointvalue[0];
+
+    if (value != kFloatMissing)
+      value = xmultiplier * value + xoffset;
+
+    std::string iri;
+    if (symbol)
+      iri = *symbol;
+
+    auto selection = Select::attribute(numbers, value);
+    if (selection && selection->symbol)
+      iri = *selection->symbol;
+
+    // librsvg cannot handle scale + transform, must move former into latter
+    std::optional<double> rescale;
+    if (selection)
+    {
+      auto scaleattr = selection->attributes.remove("scale");
+      if (scaleattr)
+        rescale = Fmi::stod(*scaleattr);
+    }
+
+    if (iri.empty())
+      continue;
+
+    std::string IRI = Iri::normalize(iri);
+    if (theState.addId(IRI))
+      theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+    // Lack of CSS3 transform support forces us to use a direct transformation
+    // which may override user settings
+    tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
+
+    tag_cdt["attributes"]["transform"] = symbol_transform(point.x, point.y, scale, rescale);
+
+    group_cdt["tags"].PushBack(tag_cdt);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the numbers as text layers, returns the number of valid values
+ */
+// ----------------------------------------------------------------------
+
+int NumberLayer::addNumbers(CTPP::CDT& theGlobals,
+                            CTPP::CDT& theLayersCdt,
+                            State& theState,
+                            const PointValues& pointvalues,
+                            double xmultiplier,
+                            double xoffset) const
+{
+  int valid_count = 0;
+  for (const auto& pointvalue : pointvalues)
+  {
+    const auto& point = pointvalue.point();
+    float value = pointvalue[0];
+
+    if (value != kFloatMissing)
+    {
+      ++valid_count;
+      value = xmultiplier * value + xoffset;
+    }
+
+    std::string txt = label.print(value);
+
+    if (!txt.empty())
+    {
+      // Generate a text tag
+      CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+      text_cdt["start"] = "<text";
+      text_cdt["end"] = "</text>";
+      text_cdt["cdata"] = Fmi::safexmlescape(txt);
+
+      auto selection = Select::attribute(numbers, value);
+
+      if (selection)
+      {
+        selection->attributes.remove("scale");
+        theState.addAttributes(theGlobals, text_cdt, selection->attributes);
+      }
+
+      auto xpos = lround(point.x + point.dx + label.dx);
+      auto ypos = lround(point.y + point.dy + label.dy);
+
+      text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+      text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+      theLayersCdt.PushBack(text_cdt);
+    }
+  }
+  return valid_count;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set the point locations or the geometry to the grid query
+ */
+// ----------------------------------------------------------------------
+
+void NumberLayer::setQueryLocations(QueryServer::Query& query, const State& theState)
+{
+  if (positions)
+  {
+    const bool forecast_mode = true;
+    const auto& box = projection.getBox();
+    auto points =
+        positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+
+    T::Coordinate_vec coordinates;
+    for (const auto& point : points)
+      coordinates.emplace_back(point.latlon.X(), point.latlon.Y());
+
+    query.mAreaCoordinates.push_back(coordinates);
+    query.mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+  }
+
+  for (auto& queryparam : query.mQueryParameterList)
+  {
+    if (positions)
+    {
+      queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+      queryparam.mType = QueryServer::QueryParameter::Type::PointValues;
+    }
+    else
+    {
+      queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      queryparam.mType = QueryServer::QueryParameter::Type::Vector;
+      queryparam.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
+    }
+
+    set_query_parameter_selections(queryparam, paraminfo);
+  }
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -396,37 +566,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    if (positions)
-    {
-      const bool forecast_mode = true;
-      const auto& box = projection.getBox();
-      auto points =
-          positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
-
-      T::Coordinate_vec coordinates;
-      for (const auto& point : points)
-        coordinates.emplace_back(point.latlon.X(), point.latlon.Y());
-
-      originalGridQuery->mAreaCoordinates.push_back(coordinates);
-      originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
-    }
-
-    for (auto& queryparam : originalGridQuery->mQueryParameterList)
-    {
-      if (positions)
-      {
-        queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Point;
-        queryparam.mType = QueryServer::QueryParameter::Type::PointValues;
-      }
-      else
-      {
-        queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-        queryparam.mType = QueryServer::QueryParameter::Type::Vector;
-        queryparam.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
-      }
-
-      set_query_parameter_selections(queryparam, paraminfo);
-    }
+    setQueryLocations(*originalGridQuery, theState);
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
@@ -503,97 +643,13 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Symbols first
 
-    for (const auto& pointvalue : pointvalues)
-    {
-      // Start generating the hash
-
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-
-      const auto& point = pointvalue.point();
-      float value = pointvalue[0];
-
-      if (value != kFloatMissing)
-        value = xmultiplier * value + xoffset;
-
-      std::string iri;
-      if (symbol)
-        iri = *symbol;
-
-      auto selection = Select::attribute(numbers, value);
-      if (selection && selection->symbol)
-        iri = *selection->symbol;
-
-      // librsvg cannot handle scale + transform, must move former into latter
-      std::optional<double> rescale;
-      if (selection)
-      {
-        auto scaleattr = selection->attributes.remove("scale");
-        if (scaleattr)
-          rescale = Fmi::stod(*scaleattr);
-      }
-
-      if (!iri.empty())
-      {
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        // Lack of CSS3 transform support forces us to use a direct transformation
-        // which may override user settings
-        tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
-
-        std::string tmp = fmt::sprintf("translate(%d,%d)", point.x, point.y);
-
-        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
-        if (newscale != 1.0)
-          tmp += fmt::sprintf(" scale(%g)", newscale);
-
-        tag_cdt["attributes"]["transform"] = tmp;
-
-        group_cdt["tags"].PushBack(tag_cdt);
-      }
-    }
+    addSymbols(theGlobals, group_cdt, theState, pointvalues, xmultiplier, xoffset);
     theLayersCdt.PushBack(group_cdt);
 
     // Then numbers
 
-    int valid_count = 0;
-    for (const auto& pointvalue : pointvalues)
-    {
-      const auto& point = pointvalue.point();
-      float value = pointvalue[0];
-
-      if (value != kFloatMissing)
-      {
-        ++valid_count;
-        value = xmultiplier * value + xoffset;
-      }
-
-      std::string txt = label.print(value);
-
-      if (!txt.empty())
-      {
-        // Generate a text tag
-        CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-        text_cdt["start"] = "<text";
-        text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = Fmi::safexmlescape(txt);
-
-        auto selection = Select::attribute(numbers, value);
-
-        if (selection)
-        {
-          selection->attributes.remove("scale");
-          theState.addAttributes(theGlobals, text_cdt, selection->attributes);
-        }
-
-        text_cdt["attributes"]["x"] = Fmi::to_string(point.x + point.dx + label.dx);
-        text_cdt["attributes"]["y"] = Fmi::to_string(point.y + point.dy + label.dy);
-        theLayersCdt.PushBack(text_cdt);
-      }
-    }
+    int valid_count =
+        addNumbers(theGlobals, theLayersCdt, theState, pointvalues, xmultiplier, xoffset);
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in number layer")
@@ -753,100 +809,13 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Symbols first
 
-    for (const auto& pointvalue : pointvalues)
-    {
-      // Start generating the hash
-
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-
-      const auto& point = pointvalue.point();
-      float value = pointvalue[0];
-
-      if (value != kFloatMissing)
-        value = xmultiplier * value + xoffset;
-
-      std::string iri;
-      if (symbol)
-        iri = *symbol;
-
-      auto selection = Select::attribute(numbers, value);
-      if (selection && selection->symbol)
-        iri = *selection->symbol;
-
-      // librsvg cannot handle scale + transform, must move former into latter
-      std::optional<double> rescale;
-      if (selection)
-      {
-        auto scaleattr = selection->attributes.remove("scale");
-        if (scaleattr)
-          rescale = Fmi::stod(*scaleattr);
-      }
-
-      if (!iri.empty())
-      {
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        // Lack of CSS3 transform support forces us to use a direct transformation
-        // which may override user settings
-        tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
-
-        std::string tmp = fmt::sprintf("translate(%d,%d)", point.x, point.y);
-
-        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
-        if (newscale != 1.0)
-          tmp += fmt::sprintf(" scale(%g)", newscale);
-
-        tag_cdt["attributes"]["transform"] = tmp;
-
-        group_cdt["tags"].PushBack(tag_cdt);
-      }
-    }
+    addSymbols(theGlobals, group_cdt, theState, pointvalues, xmultiplier, xoffset);
     theLayersCdt.PushBack(group_cdt);
 
     // Then numbers
 
-    int valid_count = 0;
-    for (const auto& pointvalue : pointvalues)
-    {
-      const auto& point = pointvalue.point();
-      float value = pointvalue[0];
-
-      if (value != kFloatMissing)
-      {
-        ++valid_count;
-        value = xmultiplier * value + xoffset;
-      }
-
-      std::string txt = label.print(value);
-
-      if (!txt.empty())
-      {
-        // Generate a text tag
-        CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-        text_cdt["start"] = "<text";
-        text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = Fmi::safexmlescape(txt);
-
-        auto selection = Select::attribute(numbers, value);
-
-        if (selection)
-        {
-          selection->attributes.remove("scale");
-          theState.addAttributes(theGlobals, text_cdt, selection->attributes);
-        }
-
-        auto xpos = lround(point.x + point.dx + label.dx);
-        auto ypos = lround(point.y + point.dy + label.dy);
-
-        text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
-        text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
-        theLayersCdt.PushBack(text_cdt);
-      }
-    }
+    int valid_count =
+        addNumbers(theGlobals, theLayersCdt, theState, pointvalues, xmultiplier, xoffset);
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in number layer")
