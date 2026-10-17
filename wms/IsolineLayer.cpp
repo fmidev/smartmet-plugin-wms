@@ -505,32 +505,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
  */
 // ----------------------------------------------------------------------
 
-std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector<double>& isovalues,
-                                                               const State& theState)
+// ----------------------------------------------------------------------
+/*!
+ * \brief Select the first level or the requested level of the data
+ */
+// ----------------------------------------------------------------------
+
+void IsolineLayer::selectLevel() const
 {
-  // Establish the data. Store to member variable for IsolabelLayer use
-  q = getModel(theState);
-
-  if (q && !(q->isGrid()))
-    throw Fmi::Exception(BCP, "Isoline-layer can't use point data!");
-
-  // Establish the desired direction parameter. When the layer is
-  // configured as a TFP metaparameter, fetch the underlying scalar
-  // field instead and we'll compute TFP on the result further down.
-
-  if (paraminfo.parameter.empty())
-    throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
-
-  const bool tfp_mode = tfp && ComputedFields::isTfpParameter(paraminfo.parameter);
-  const std::string& fetch_name = tfp_mode ? tfp->field : paraminfo.parameter;
-  auto param = TS::ParameterFactory::instance().parse(fetch_name);
-
-  // Establish the valid time
-
-  auto valid_time = getValidTime();
-
-  // Establish the level
-
   if (q && !q->firstLevel())
     throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
@@ -543,35 +525,20 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
       throw Fmi::Exception(
           BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
   }
+}
 
-  // Get projection details
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fetch the inside and outside map shapes clipped to the clipping box
+ */
+// ----------------------------------------------------------------------
 
-  projection.update(q);
-  const auto& crs = projection.getCRS();
-  const auto& box = projection.getBox();
-  const auto clipbox = getClipBox(box);
-
-  // Sample to higher resolution if necessary
-
-  auto sampleresolution = sampling.getResolution(projection);
-  if (sampleresolution)
-  {
-    if (!q)
-      throw Fmi::Exception(BCP, "Cannot resample without gridded data");
-
-    q = q->sample(
-        param, valid_time, crs, box.xmin(), box.ymin(), box.xmax(), box.ymax(), *sampleresolution);
-  }
-
-  if (!q)
-    throw Fmi::Exception(BCP, "Cannot generate isolines without gridded data");
-
-  // Logical operations with maps require shapes
-
-  const auto& gis = theState.getGisEngine();
-
-  OGRGeometryPtr inshape;
-  OGRGeometryPtr outshape;
+void IsolineLayer::getMapShapes(const Engine::Gis::Engine& gis,
+                                const Fmi::SpatialReference& crs,
+                                const Fmi::Box& clipbox,
+                                OGRGeometryPtr& inshape,
+                                OGRGeometryPtr& outshape) const
+{
   if (inside)
   {
     inshape = gis.getShape(&crs, inside->options);
@@ -585,15 +552,19 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
     if (outshape)
       outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
   }
+}
 
-  // Logical operations with isobands are initialized before hand
-  intersections.init(paraminfo.producer, projection, valid_time, theState);
+// ----------------------------------------------------------------------
+/*!
+ * \brief Contouring options for the querydata engine. Also selects the requested level.
+ */
+// ----------------------------------------------------------------------
 
-  // Calculate the isolines and store them into the template engine
-
-  // TODO(mheiskan): Clean up Options API to use optionals
-  const auto& contourer = theState.getContourEngine();
-
+Engine::Contour::Options IsolineLayer::contourOptions(const Spine::Parameter& param,
+                                                      const Fmi::DateTime& valid_time,
+                                                      const std::vector<double>& isovalues,
+                                                      const Fmi::Box& box) const
+{
   Engine::Contour::Options options(param, valid_time, isovalues);
   options.level = paraminfo.level;
 
@@ -644,6 +615,77 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   options.subdivide = subdivide;
   options.threads = contour_threads;
 
+  return options;
+}
+
+std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector<double>& isovalues,
+                                                               const State& theState)
+{
+  // Establish the data. Store to member variable for IsolabelLayer use
+  q = getModel(theState);
+
+  if (q && !(q->isGrid()))
+    throw Fmi::Exception(BCP, "Isoline-layer can't use point data!");
+
+  // Establish the desired direction parameter. When the layer is
+  // configured as a TFP metaparameter, fetch the underlying scalar
+  // field instead and we'll compute TFP on the result further down.
+
+  if (paraminfo.parameter.empty())
+    throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
+
+  const bool tfp_mode = tfp && ComputedFields::isTfpParameter(paraminfo.parameter);
+  const std::string& fetch_name = tfp_mode ? tfp->field : paraminfo.parameter;
+  auto param = TS::ParameterFactory::instance().parse(fetch_name);
+
+  // Establish the valid time
+
+  auto valid_time = getValidTime();
+
+  // Establish the level
+
+  selectLevel();
+
+  // Get projection details
+
+  projection.update(q);
+  const auto& crs = projection.getCRS();
+  const auto& box = projection.getBox();
+  const auto clipbox = getClipBox(box);
+
+  // Sample to higher resolution if necessary
+
+  auto sampleresolution = sampling.getResolution(projection);
+  if (sampleresolution)
+  {
+    if (!q)
+      throw Fmi::Exception(BCP, "Cannot resample without gridded data");
+
+    q = q->sample(
+        param, valid_time, crs, box.xmin(), box.ymin(), box.xmax(), box.ymax(), *sampleresolution);
+  }
+
+  if (!q)
+    throw Fmi::Exception(BCP, "Cannot generate isolines without gridded data");
+
+  // Logical operations with maps require shapes
+
+  const auto& gis = theState.getGisEngine();
+
+  OGRGeometryPtr inshape;
+  OGRGeometryPtr outshape;
+  getMapShapes(gis, crs, clipbox, inshape, outshape);
+
+  // Logical operations with isobands are initialized before hand
+  intersections.init(paraminfo.producer, projection, valid_time, theState);
+
+  // Calculate the isolines and store them into the template engine
+
+  // TODO(mheiskan): Clean up Options API to use optionals
+  const auto& contourer = theState.getContourEngine();
+
+  Engine::Contour::Options options = contourOptions(param, valid_time, isovalues, box);
+
   // Do the actual contouring, either full grid or just
   // a sampled section
 
@@ -655,11 +697,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
   // Avoid reprojecting data when sampling has been used for better speed (and accuracy)
-  CoordinatesPtr coords;
-  if (sampleresolution)
-    coords = qEngine.getWorldCoordinates(q);
-  else
-    coords = qEngine.getWorldCoordinates(q, crs);
+  CoordinatesPtr coords =
+      (sampleresolution ? qEngine.getWorldCoordinates(q) : qEngine.getWorldCoordinates(q, crs));
 
   // When TFP mode is active, replace the fetched underlying field with
   // its Thermal Front Parameter derivative before contouring. The contour

@@ -9,6 +9,7 @@
 #include "ParameterInfo.h"
 #include "Sampling.h"
 #include "Smoother.h"
+#include <engines/contour/Engine.h>
 #include <engines/querydata/Q.h>
 #include <optional>
 #include <vector>
@@ -81,6 +82,16 @@ class IsolineLayer : public Layer
   T::MessageIndex messageIndex = 0;
 
  private:
+  void selectLevel() const;
+  void getMapShapes(const Engine::Gis::Engine& gis,
+                    const Fmi::SpatialReference& crs,
+                    const Fmi::Box& clipbox,
+                    OGRGeometryPtr& inshape,
+                    OGRGeometryPtr& outshape) const;
+  Engine::Contour::Options contourOptions(const Spine::Parameter& param,
+                                          const Fmi::DateTime& valid_time,
+                                          const std::vector<double>& isovalues,
+                                          const Fmi::Box& box) const;
   void addIsoline(CTPP::CDT& theGlobals,
                   CTPP::CDT& object_cdt,
                   CTPP::CDT& group_cdt,
