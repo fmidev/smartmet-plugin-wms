@@ -172,6 +172,84 @@ void add_errors(Json::Value& op)
   op["responses"]["500"] = OA::ref("responses", "Exception");
 }
 
+// Add the tile and feature info operations with n dimension values in the path
+void add_tile_operations(OA::Document& doc,
+                         const std::vector<OGC::OpenApiLayer>& layers,
+                         std::size_t n,
+                         std::size_t max_enum)
+{
+  // The layers with at least n dimensions, and the dimensions at each position
+  std::vector<std::string> ids;
+  std::vector<std::set<std::string>> dimension_names(n);
+  for (const auto& layer : layers)
+    if (layer.dimensions.size() >= n)
+    {
+      ids.push_back(layer.id);
+      for (std::size_t i = 0; i < n; i++)
+        dimension_names[i].insert(layer.dimensions[i]);
+    }
+
+  Json::Value params(Json::arrayValue);
+  params.append(OA::parameter(
+      "layer",
+      "path",
+      n == 0 ? "Identifier of the layer"
+             : fmt::format("Identifier of a layer with at least {} dimensions", n),
+      OA::enumSchema(ids, max_enum)));
+  params.append(OA::ref("parameters", "Style"));
+
+  std::string dim_path;
+  for (std::size_t i = 0; i < n; i++)
+  {
+    const auto name = fmt::format("dim{}", i + 1);
+    dim_path += "/{" + name + "}";
+    std::string names;
+    for (const auto& dim : dimension_names[i])
+      names += (names.empty() ? "" : " or ") + dim;
+    params.append(OA::parameter(
+        name,
+        "path",
+        fmt::format("Value of dimension {} of the layer ({}), in the order of the "
+                    "ResourceURL template of the capabilities",
+                    i + 1,
+                    names),
+        OA::stringSchema()));
+  }
+
+  const std::string base =
+      "/1.0.0/{layer}/{Style}" + dim_path + "/{TileMatrixSet}/{TileMatrix}/{TileRow}";
+  const std::string suffix = (n == 0 ? "" : fmt::format("_{}", n));
+
+  auto tile_params = params;
+  for (const char* name : {"TileMatrixSet", "TileMatrix", "TileRow", "TileCol", "format"})
+    tile_params.append(OA::ref("parameters", name));
+  for (const char* name : {"TIME", "WIDTH", "HEIGHT"})
+    tile_params.append(OA::ref("parameters", name));
+
+  auto& tile = doc.operation(base + "/{TileCol}.{format}", "get");
+  tile["tags"].append(TAG_TILES);
+  tile["summary"] = n == 0 ? "A tile" : fmt::format("A tile, {} dimension values", n);
+  tile["operationId"] = "getTile" + suffix;
+  tile["parameters"] = tile_params;
+  tile["responses"]["200"] = OA::ref("responses", "Tile");
+  add_errors(tile);
+
+  auto info_params = params;
+  for (const char* name :
+       {"TileMatrixSet", "TileMatrix", "TileRow", "TileCol", "J", "I", "infoFormat"})
+    info_params.append(OA::ref("parameters", name));
+  info_params.append(OA::ref("parameters", "TIME"));
+
+  auto& info = doc.operation(base + "/{TileCol}/{J}/{I}.{infoFormat}", "get");
+  info["tags"].append(TAG_TILES);
+  info["summary"] =
+      n == 0 ? "Feature info" : fmt::format("Feature info, {} dimension values", n);
+  info["operationId"] = "getFeatureInfo" + suffix;
+  info["parameters"] = info_params;
+  info["responses"]["200"] = OA::ref("responses", "FeatureInfo");
+  add_errors(info);
+}
+
 }  // namespace
 
 Spine::OpenAPI::Document apiDefinition(const Config& config,
@@ -219,78 +297,7 @@ Spine::OpenAPI::Document apiDefinition(const Config& config,
       max_dims = std::max(max_dims, layer.dimensions.size());
 
     for (std::size_t n = 0; n <= max_dims; n++)
-    {
-      // The layers with at least n dimensions, and the dimensions at each position
-      std::vector<std::string> ids;
-      std::vector<std::set<std::string>> dimension_names(n);
-      for (const auto& layer : layers)
-        if (layer.dimensions.size() >= n)
-        {
-          ids.push_back(layer.id);
-          for (std::size_t i = 0; i < n; i++)
-            dimension_names[i].insert(layer.dimensions[i]);
-        }
-
-      Json::Value params(Json::arrayValue);
-      params.append(OA::parameter(
-          "layer",
-          "path",
-          n == 0 ? "Identifier of the layer"
-                 : fmt::format("Identifier of a layer with at least {} dimensions", n),
-          OA::enumSchema(ids, max_enum)));
-      params.append(OA::ref("parameters", "Style"));
-
-      std::string dim_path;
-      for (std::size_t i = 0; i < n; i++)
-      {
-        const auto name = fmt::format("dim{}", i + 1);
-        dim_path += "/{" + name + "}";
-        std::string names;
-        for (const auto& dim : dimension_names[i])
-          names += (names.empty() ? "" : " or ") + dim;
-        params.append(OA::parameter(
-            name,
-            "path",
-            fmt::format("Value of dimension {} of the layer ({}), in the order of the "
-                        "ResourceURL template of the capabilities",
-                        i + 1,
-                        names),
-            OA::stringSchema()));
-      }
-
-      const std::string base =
-          "/1.0.0/{layer}/{Style}" + dim_path + "/{TileMatrixSet}/{TileMatrix}/{TileRow}";
-      const std::string suffix = (n == 0 ? "" : fmt::format("_{}", n));
-
-      auto tile_params = params;
-      for (const char* name : {"TileMatrixSet", "TileMatrix", "TileRow", "TileCol", "format"})
-        tile_params.append(OA::ref("parameters", name));
-      for (const char* name : {"TIME", "WIDTH", "HEIGHT"})
-        tile_params.append(OA::ref("parameters", name));
-
-      auto& tile = doc.operation(base + "/{TileCol}.{format}", "get");
-      tile["tags"].append(TAG_TILES);
-      tile["summary"] = n == 0 ? "A tile" : fmt::format("A tile, {} dimension values", n);
-      tile["operationId"] = "getTile" + suffix;
-      tile["parameters"] = tile_params;
-      tile["responses"]["200"] = OA::ref("responses", "Tile");
-      add_errors(tile);
-
-      auto info_params = params;
-      for (const char* name :
-           {"TileMatrixSet", "TileMatrix", "TileRow", "TileCol", "J", "I", "infoFormat"})
-        info_params.append(OA::ref("parameters", name));
-      info_params.append(OA::ref("parameters", "TIME"));
-
-      auto& info = doc.operation(base + "/{TileCol}/{J}/{I}.{infoFormat}", "get");
-      info["tags"].append(TAG_TILES);
-      info["summary"] =
-          n == 0 ? "Feature info" : fmt::format("Feature info, {} dimension values", n);
-      info["operationId"] = "getFeatureInfo" + suffix;
-      info["parameters"] = info_params;
-      info["responses"]["200"] = OA::ref("responses", "FeatureInfo");
-      add_errors(info);
-    }
+      add_tile_operations(doc, layers, n, max_enum);
 
     return doc;
   }
