@@ -168,6 +168,52 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
   }
 }
 
+// Check that the requested reference time, times and elevation are valid for the layer
+void validate_dimensions(const tag_get_map_request_options& options,
+                         const Config& itsConfig,
+                         const std::string& layer)
+{
+  // check reference time
+  if (options.reference_time)
+  {
+    if (!itsConfig.isValidReferenceTime(layer, *options.reference_time))
+    {
+      throw Fmi::Exception(BCP, "Invalid reference time requested!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+          .addParameter("Requested reference time", Fmi::to_iso_string(*options.reference_time))
+          .addParameter("Requested layer", layer)
+          .disableLogging();
+    }
+  }
+
+  // check that given timesteps are valid
+  for (const Fmi::DateTime& timestamp : options.timesteps)
+  {
+    if (!itsConfig.isValidTime(layer, timestamp, options.reference_time))
+    {
+      // TODO: enable when FMI app is working properly
+      throw Fmi::Exception(BCP, "Invalid time requested!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+          .addParameter("Requested time", Fmi::to_iso_string(timestamp))
+          .addParameter("Requested layer", layer)
+          .disableLogging();
+    }
+  }
+
+  // check that given elevation is valid
+  if (options.elevation)
+  {
+    if (!itsConfig.isValidElevation(layer, *options.elevation))
+    {
+      throw Fmi::Exception(BCP, "Invalid elevation requested!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+          .addParameter("Requested elevation", Fmi::to_string(*options.elevation))
+          .addParameter("Requested layer", layer)
+          .disableLogging();
+    }
+  }
+}
+
 void validate_options(const tag_get_map_request_options& options,
                       const Config& itsConfig,
                       const Engine::Querydata::Engine& /* querydata */)
@@ -217,45 +263,7 @@ void validate_options(const tag_get_map_request_options& options,
             .addParameter("Requested layer", layer);
       }
 
-      // check reference time
-      if (options.reference_time)
-      {
-        if (!itsConfig.isValidReferenceTime(layer, *options.reference_time))
-        {
-          throw Fmi::Exception(BCP, "Invalid reference time requested!")
-              .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-              .addParameter("Requested reference time", Fmi::to_iso_string(*options.reference_time))
-              .addParameter("Requested layer", layer)
-              .disableLogging();
-        }
-      }
-
-      // check that given timesteps are valid
-      for (const Fmi::DateTime& timestamp : options.timesteps)
-      {
-        if (!itsConfig.isValidTime(layer, timestamp, options.reference_time))
-        {
-          // TODO: enable when FMI app is working properly
-          throw Fmi::Exception(BCP, "Invalid time requested!")
-              .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-              .addParameter("Requested time", Fmi::to_iso_string(timestamp))
-              .addParameter("Requested layer", layer)
-              .disableLogging();
-        }
-      }
-
-      // check that given elevation is valid
-      if (options.elevation)
-      {
-        if (!itsConfig.isValidElevation(layer, *options.elevation))
-        {
-          throw Fmi::Exception(BCP, "Invalid elevation requested!")
-              .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-              .addParameter("Requested elevation", Fmi::to_string(*options.elevation))
-              .addParameter("Requested layer", layer)
-              .disableLogging();
-        }
-      }
+      validate_dimensions(options, itsConfig, layer);
     }
 
     // check format
