@@ -568,6 +568,16 @@ inline void uv_to_direction_speed(float v1, float v2, float nodata, float& dir, 
   }
 }
 
+// Apply the optional speed specific scale
+void rescale_arrow(const std::optional<double>& rescale, double& xscale, double& yscale)
+{
+  if (rescale)
+  {
+    xscale *= *rescale;
+    yscale *= *rescale;
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -729,6 +739,85 @@ std::shared_ptr<QueryServer::Query> ArrowLayer::build_grid_query(
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Select the arrow symbol, possibly based on the wind speed
+ *
+ * Speed specific attributes are added to the tag, and the optional speed
+ * specific scale is returned in rescale.
+ */
+// ----------------------------------------------------------------------
+
+std::string ArrowLayer::selectSymbol(CTPP::CDT& theGlobals,
+                                     CTPP::CDT& tag_cdt,
+                                     const State& theState,
+                                     bool check_speeds,
+                                     double wspd,
+                                     std::optional<double>& rescale) const
+{
+  std::string iri;
+
+  if (!check_speeds)
+  {
+    if (symbol)
+      iri = *symbol;
+    return iri;
+  }
+
+  auto selection = Select::attribute(arrows, wspd);
+  if (selection)
+  {
+    iri = selection->symbol.value_or(symbol.value_or(""));
+    auto scaleattr = selection->attributes.remove("scale");
+    if (scaleattr)
+      rescale = Fmi::stod(*scaleattr);
+    theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
+  }
+  return iri;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Apply fixed values and unit conversion, and calculate the arrow rotation
+ *
+ * Returns false if the grid north cannot be established.
+ */
+// ----------------------------------------------------------------------
+
+bool ArrowLayer::arrowRotation(const Fmi::CoordinateTransformation& transformation,
+                               const NFmiPoint& latlon,
+                               double& wspd,
+                               double& wdir,
+                               int& nrotate) const
+{
+  // Override data values with fixed values if requested
+  if (fixedspeed)
+    wspd = *fixedspeed;
+  if (fixeddirection)
+    wdir = *fixeddirection;
+
+  // Unit transformation
+  const double xmultiplier = multiplier.value_or(1.0);
+  const double xoffset = offset.value_or(0.0);
+  if (wspd != kFloatMissing)
+    wspd = xmultiplier * wspd + xoffset;
+
+  // Rotate wind direction to output coordinate system north
+  auto fix = Fmi::OGR::gridNorth(transformation, latlon.X(), latlon.Y());
+  if (!fix)
+    return false;
+  wdir = fmod(wdir + *fix, 360);
+
+  // North wind blows toward south, rotate 180 degrees to get arrow pointing into the wind
+  double rotate = fmod(wdir + 180, 360);
+  nrotate = lround(rotate);
+
+  // Disable rotation for slow wind speeds if a limit is set
+  if (wspd != kFloatMissing && minrotationspeed && wspd < *minrotationspeed)
+    nrotate = 0;
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Render collected arrow point values into the CDT group.
  *
  * This is the shared inner loop used by both generate_gridEngine and
@@ -761,56 +850,16 @@ void ArrowLayer::render_arrows(CTPP::CDT& theGlobals,
 
     ++valid_count;
 
-    // Override data values with fixed values if requested
-    if (fixedspeed)
-      wspd = *fixedspeed;
-    if (fixeddirection)
-      wdir = *fixeddirection;
-
-    // Unit transformation
-    const double xmultiplier = multiplier.value_or(1.0);
-    const double xoffset = offset.value_or(0.0);
-    if (wspd != kFloatMissing)
-      wspd = xmultiplier * wspd + xoffset;
-
-    // Rotate wind direction to output coordinate system north
-    auto fix = Fmi::OGR::gridNorth(transformation, point.latlon.X(), point.latlon.Y());
-    if (!fix)
+    int nrotate = 0;
+    if (!arrowRotation(transformation, point.latlon, wspd, wdir, nrotate))
       continue;
-    wdir = fmod(wdir + *fix, 360);
-
-    // North wind blows toward south, rotate 180 degrees to get arrow pointing into the wind
-    double rotate = fmod(wdir + 180, 360);
-    int nrotate = lround(rotate);
-
-    // Disable rotation for slow wind speeds if a limit is set
-    if (wspd != kFloatMissing && minrotationspeed && wspd < *minrotationspeed)
-      nrotate = 0;
 
     CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
     tag_cdt["start"] = "<use";
     tag_cdt["end"] = "/>";
 
     std::optional<double> rescale;
-    std::string iri;
-
-    if (!check_speeds)
-    {
-      if (symbol)
-        iri = *symbol;
-    }
-    else
-    {
-      auto selection = Select::attribute(arrows, wspd);
-      if (selection)
-      {
-        iri = selection->symbol.value_or(symbol.value_or(""));
-        auto scaleattr = selection->attributes.remove("scale");
-        if (scaleattr)
-          rescale = Fmi::stod(*scaleattr);
-        theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
-      }
-    }
+    std::string iri = selectSymbol(theGlobals, tag_cdt, theState, check_speeds, wspd, rescale);
 
     if (iri.empty())
       continue;
@@ -825,11 +874,7 @@ void ArrowLayer::render_arrows(CTPP::CDT& theGlobals,
 
     double yscale = (flip ? -1.0 : 1.0) * scale.value_or(1.0);
     double xscale = flop ? -yscale : yscale;
-    if (rescale)
-    {
-      xscale *= *rescale;
-      yscale *= *rescale;
-    }
+    rescale_arrow(rescale, xscale, yscale);
 
     int x = point.x + point.dx + dx.value_or(0);
     int y = point.y + point.dy + dy.value_or(0);

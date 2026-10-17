@@ -84,6 +84,17 @@ class ArrowLayer : public Layer
   void getGridValue(CTPP::CDT& theInfo, const State& theState);
 
   // Shared helpers
+  bool arrowRotation(const Fmi::CoordinateTransformation& transformation,
+                     const NFmiPoint& latlon,
+                     double& wspd,
+                     double& wdir,
+                     int& nrotate) const;
+  std::string selectSymbol(CTPP::CDT& theGlobals,
+                           CTPP::CDT& tag_cdt,
+                           const State& theState,
+                           bool check_speeds,
+                           double wspd,
+                           std::optional<double>& rescale) const;
   void render_arrows(CTPP::CDT& theGlobals,
                      CTPP::CDT& group_cdt,
                      const std::vector<PointData>& pointvalues,
