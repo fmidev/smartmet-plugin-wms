@@ -881,6 +881,27 @@ void add_layer_info(bool multiple_intervals,
   }
 }
 
+// Register the layer for all prefixes a:b:... of its name, and the first component as a
+// top level layer
+void register_name_prefixes(const std::string& layer_name,
+                            const LayerProxy& proxy,
+                            std::map<std::string, const LayerProxy*>& named_layers,
+                            std::set<std::string>& top_level_layers)
+{
+  std::vector<std::string> tokens;
+  boost::algorithm::split(tokens, layer_name, boost::is_any_of(":"), boost::token_compress_on);
+  std::string nm;
+  for (const auto& t : tokens)
+  {
+    if (!nm.empty())
+      nm += ":";
+    nm += t;
+    named_layers[nm] = &proxy;
+    if (nm.find(':') == std::string::npos)
+      top_level_layers.insert(nm);
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -954,20 +975,7 @@ void LayerHierarchy::processLayers(const std::map<std::string, LayerProxy>& laye
       sublayers.push_back(h);
     }
     else
-    {
-      std::vector<std::string> tokens;
-      boost::algorithm::split(tokens, layer_name, boost::is_any_of(":"), boost::token_compress_on);
-      std::string nm;
-      for (const auto& t : tokens)
-      {
-        if (!nm.empty())
-          nm += ":";
-        nm += t;
-        named_layers[nm] = &item.second;
-        if (nm.find(':') == std::string::npos)
-          top_level_layers.insert(nm);
-      }
-    }
+      register_name_prefixes(layer_name, item.second, named_layers, top_level_layers);
   }
 
   if (hierarchy_type == HierarchyType::flat)
