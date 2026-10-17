@@ -83,6 +83,14 @@ class ArrowLayer : public Layer
   void getQuerydataValue(CTPP::CDT& theInfo, const State& theState);
   void getGridValue(CTPP::CDT& theInfo, const State& theState);
 
+#ifndef WITHOUT_OBSERVATION
+  std::vector<PointData> readObservations(const State& theState,
+                                          const Fmi::SpatialReference& crs,
+                                          const Fmi::Box& box,
+                                          const Fmi::DateTime& valid_time,
+                                          const Fmi::TimePeriod& valid_time_period);
+#endif
+
   // Shared helpers
   bool arrowRotation(const Fmi::CoordinateTransformation& transformation,
                      const NFmiPoint& latlon,

@@ -578,6 +578,30 @@ void rescale_arrow(const std::optional<double>& rescale, double& xscale, double&
   }
 }
 
+#ifndef WITHOUT_OBSERVATION
+// Convert U/V observations to speed & direction
+void convert_uv_observations(PointValues& pointvalues)
+{
+  for (auto& pointvalue : pointvalues)
+  {
+    auto uspd = pointvalue[0];
+    auto vspd = pointvalue[1];
+
+    auto result = uv_to_speed_and_direction(uspd, vspd, nullptr, 0, 0);
+    if (result)
+    {
+      pointvalue[0] = result->speed;
+      pointvalue[1] = result->direction;
+    }
+    else
+    {
+      pointvalue[0] = kFloatMissing;
+      pointvalue[1] = kFloatMissing;
+    }
+  }
+}
+#endif
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -1038,6 +1062,58 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
   }
 }
 
+#ifndef WITHOUT_OBSERVATION
+// ----------------------------------------------------------------------
+/*!
+ * \brief Read the wind observations
+ */
+// ----------------------------------------------------------------------
+
+PointValues ArrowLayer::readObservations(const State& theState,
+                                         const Fmi::SpatialReference& crs,
+                                         const Fmi::Box& box,
+                                         const Fmi::DateTime& valid_time,
+                                         const Fmi::TimePeriod& valid_time_period)
+{
+  PointValues pointvalues;
+  if (Layer::isFlashOrMobileProducer(*paraminfo.producer))
+    throw Fmi::Exception(BCP, "Cannot use flash or mobile producer in ArrowLayer");
+
+  bool use_uv_components = (u && v);
+
+  if (use_uv_components)
+  {
+    pointvalues = ObservationReader::read(theState,
+                                          {*u, *v},
+                                          *this,
+                                          *positions,
+                                          maxdistance_km,
+                                          crs,
+                                          box,
+                                          valid_time,
+                                          valid_time_period);
+  }
+  else
+  {
+    if (!speed)
+      speed = "WindSpeedMS";  // default for arrows
+    pointvalues = ObservationReader::read(theState,
+                                          {*speed, *direction},
+                                          *this,
+                                          *positions,
+                                          maxdistance_km,
+                                          crs,
+                                          box,
+                                          valid_time,
+                                          valid_time_period);
+  }
+
+  if (use_uv_components)
+    convert_uv_observations(pointvalues);
+  return pointvalues;
+}
+#endif
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate arrow layer using the querydata engine
@@ -1117,59 +1193,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals,
 #ifndef WITHOUT_OBSERVATION
     else
     {
-      if (Layer::isFlashOrMobileProducer(*paraminfo.producer))
-        throw Fmi::Exception(BCP, "Cannot use flash or mobile producer in ArrowLayer");
-
-      bool use_uv_components = (u && v);
-
-      if (use_uv_components)
-      {
-        pointvalues = ObservationReader::read(theState,
-                                              {*u, *v},
-                                              *this,
-                                              *positions,
-                                              maxdistance_km,
-                                              crs,
-                                              box,
-                                              valid_time,
-                                              valid_time_period);
-      }
-      else
-      {
-        if (!speed)
-          speed = "WindSpeedMS";  // default for arrows
-        pointvalues = ObservationReader::read(theState,
-                                              {*speed, *direction},
-                                              *this,
-                                              *positions,
-                                              maxdistance_km,
-                                              crs,
-                                              box,
-                                              valid_time,
-                                              valid_time_period);
-      }
-
-      if (use_uv_components)
-      {
-        // Convert U/V observations to speed & direction
-        for (auto& pointvalue : pointvalues)
-        {
-          auto uspd = pointvalue[0];
-          auto vspd = pointvalue[1];
-
-          auto result = uv_to_speed_and_direction(uspd, vspd, nullptr, 0, 0);
-          if (result)
-          {
-            pointvalue[0] = result->speed;
-            pointvalue[1] = result->direction;
-          }
-          else
-          {
-            pointvalue[0] = kFloatMissing;
-            pointvalue[1] = kFloatMissing;
-          }
-        }
-      }
+      pointvalues = readObservations(theState, crs, box, valid_time, valid_time_period);
     }
 #endif
 
