@@ -83,6 +83,24 @@ class RasterLayer : public Layer
   std::string svg_image;
 
  private:
+  // Painting state shared by the painting phases of an image
+  struct PaintContext
+  {
+    int width;
+    int height;
+    int loopstep;
+    int loopsteps;
+    uint* image;
+    const T::Coordinate_vec* coordinates;
+    std::vector<float>& land;
+    std::vector<float>& sea_shadings;
+    std::vector<float>& land_shadings;
+    Parameters& seaParameters;
+    Parameters& landParameters;
+    Parameters& landBorderParameters;
+  };
+
+  void paintSurface(const std::string& position, PaintContext& ctx, bool require_sea_shadings);
   void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
   void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, const State& theState);
   void generate_output(CTPP::CDT& theGlobals,

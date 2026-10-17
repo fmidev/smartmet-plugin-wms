@@ -360,6 +360,83 @@ void RasterLayer::generate(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Paint the sea, land, topography and land sea border layers at the given position
+ */
+// ----------------------------------------------------------------------
+
+void RasterLayer::paintSurface(const std::string &position,
+                               PaintContext &ctx,
+                               bool require_sea_shadings)
+{
+  // Painting sea
+  if (sea_position == position && !ctx.land.empty())
+    seaPainter.setImageColors(ctx.width,
+                              ctx.height,
+                              ctx.loopstep,
+                              ctx.loopsteps,
+                              ctx.image,
+                              ctx.land,
+                              ctx.land,
+                              ctx.seaParameters);
+
+  // Painting land
+  if (land_position == position && !ctx.land.empty())
+    landPainter.setImageColors(ctx.width,
+                               ctx.height,
+                               ctx.loopstep,
+                               ctx.loopsteps,
+                               ctx.image,
+                               ctx.land,
+                               ctx.land,
+                               ctx.landParameters);
+
+  // Painting sea topography
+  if (sea_shading_position == position && (!require_sea_shadings || !ctx.sea_shadings.empty()) &&
+      ctx.coordinates)
+  {
+    if (ctx.sea_shadings.empty())
+      SmartMet::Map::topography.getSeaShading(*ctx.coordinates, ctx.sea_shadings);
+
+    shadingPainter.setImageColors(ctx.width,
+                                  ctx.height,
+                                  ctx.loopstep,
+                                  ctx.loopsteps,
+                                  ctx.image,
+                                  ctx.land,
+                                  ctx.sea_shadings,
+                                  sea_shading_parameters);
+  }
+
+  // Painting land topography
+  if (land_shading_position == position && ctx.coordinates)
+  {
+    if (ctx.land_shadings.empty())
+      SmartMet::Map::topography.getLandShading(*ctx.coordinates, ctx.land_shadings);
+
+    shadingPainter.setImageColors(ctx.width,
+                                  ctx.height,
+                                  ctx.loopstep,
+                                  ctx.loopsteps,
+                                  ctx.image,
+                                  ctx.land,
+                                  ctx.land_shadings,
+                                  land_shading_parameters);
+  }
+
+  // Painting land sea border
+  if (land_border_position == position && !ctx.land.empty())
+    landBorderPainter.setImageColors(ctx.width,
+                                     ctx.height,
+                                     ctx.loopstep,
+                                     ctx.loopsteps,
+                                     ctx.image,
+                                     ctx.land,
+                                     ctx.land,
+                                     ctx.landBorderParameters);
+}
+
 void RasterLayer::generate_image(int loopstep,
                                  int loopsteps,
                                  const T::Coordinate_vec *coordinates,
@@ -415,40 +492,23 @@ void RasterLayer::generate_image(int loopstep,
     cimage.pixel = image;
     Parameters emptyParameters;
 
-    // Painting sea
-    if (sea_position == "bottom" && !land.empty())
-      seaPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land, seaParameters);
+    PaintContext ctx{width,
+                     height,
+                     loopstep,
+                     loopsteps,
+                     image,
+                     coordinates,
+                     land,
+                     sea_shadings,
+                     land_shadings,
+                     seaParameters,
+                     landParameters,
+                     landBorderParameters};
 
-    // Painting land
-    if (land_position == "bottom" && !land.empty())
-      landPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land, landParameters);
-
-    // Painting sea topography
-    if (sea_shading_position == "bottom" && !sea_shadings.empty() && coordinates)
-    {
-      if (sea_shadings.empty())
-        SmartMet::Map::topography.getSeaShading(*coordinates, sea_shadings);
-
-      shadingPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, sea_shadings, sea_shading_parameters);
-    }
-
-    // Painting land topography
-    if (land_shading_position == "bottom" && coordinates)
-    {
-      if (land_shadings.empty())
-        SmartMet::Map::topography.getLandShading(*coordinates, land_shadings);
-
-      shadingPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land_shadings, land_shading_parameters);
-    }
-
-    // Painting land sea border
-    if (land_border_position == "bottom" && !land.empty())
-      landBorderPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land, landBorderParameters);
+    // Painting the background layers below the data. Note that the sea shading here requires
+    // the shading data to have been fetched already.
+    const bool require_sea_shadings = true;
+    paintSurface("bottom", ctx, require_sea_shadings);
 
     if (dataShadowPainter.getShadowCount())
       dataShadowPainter.setImageColors(
@@ -469,40 +529,8 @@ void RasterLayer::generate_image(int loopstep,
       dataBorderPainter.setImageColors(
           width, height, loopstep, loopsteps, image, land, values1, emptyParameters);
 
-    // Painting sea
-    if (sea_position == "top" && !land.empty())
-      seaPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land, seaParameters);
-
-    // Painting land
-    if (land_position == "top" && !land.empty())
-      landPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land, landParameters);
-
-    // Painting sea topography
-    if (sea_shading_position == "top" && coordinates)
-    {
-      if (sea_shadings.empty())
-        SmartMet::Map::topography.getSeaShading(*coordinates, sea_shadings);
-
-      shadingPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, sea_shadings, sea_shading_parameters);
-    }
-
-    // Painting land topography
-    if (land_shading_position == "top" && coordinates)
-    {
-      if (land_shadings.empty())
-        SmartMet::Map::topography.getLandShading(*coordinates, land_shadings);
-
-      shadingPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land_shadings, land_shading_parameters);
-    }
-
-    // Painting land sea border
-    if (land_border_position == "top" && !land.empty())
-      landBorderPainter.setImageColors(
-          width, height, loopstep, loopsteps, image, land, land, landBorderParameters);
+    // Painting the background layers on top of the data
+    paintSurface("top", ctx, !require_sea_shadings);
 
     std::ostringstream svgImage;
   }
