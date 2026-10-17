@@ -51,6 +51,72 @@ void TagLayer::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Negative-as-edge-relative rewrite of the x and y attributes
+ */
+// ----------------------------------------------------------------------
+
+void TagLayer::resolveEdgeRelativePosition(const State& theState)
+{
+  std::string x = attributes.value("x");
+  std::string y = attributes.value("y");
+
+  if (!x.empty() && !y.empty() && !theState.inDefs())
+  {
+    // Negative-as-edge-relative rewrite: "x=-3" on a body tag means
+    // "3 px from the right edge of the view".  Skip this inside <defs>
+    // because symbol contents must keep their literal coordinates —
+    // WMS symbols are required to be centred on (0, 0) with negative
+    // coordinates indicating the symbol's left/top edge, and getting
+    // rewritten to canvas-relative would push the geometry off-screen.
+    double xx = toDouble(x.c_str());
+    double yy = toDouble(y.c_str());
+
+    if (xx < 0 || yy < 0)
+    {
+      // Projection may not be available. We should really not require a projection
+      // here, but just check the size and position of the view.
+
+      const auto& box = projection.getBox();
+
+      if (xx < 0)
+        attributes.add("x", Fmi::to_string(box.width() + xx));
+
+      if (yy < 0)
+        attributes.add("y", Fmi::to_string(box.height() + yy));
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Position the sublayers relative to the given coordinate
+ */
+// ----------------------------------------------------------------------
+
+void TagLayer::positionSublayers(const std::string& longitude, const std::string& latitude)
+{
+  for (const auto& layer : layers.layers)
+  {
+    std::string x = layer->attributes.value("x");
+    std::string y = layer->attributes.value("y");
+    if (!x.empty() && !y.empty())
+    {
+      double xCoord = 0;
+      double yCoord = 0;
+      LonLatToXYTransformation transformation(projection);
+      if (!transformation.transform(
+              Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord))
+        throw Fmi::Exception(BCP, "Invalid lonlat for tag");
+      xCoord += Fmi::stod(x);
+      yCoord += Fmi::stod(y);
+      layer->attributes.add("x", Fmi::to_string(xCoord));
+      layer->attributes.add("y", Fmi::to_string(yCoord));
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the layer details into the template hash
  */
 // ----------------------------------------------------------------------
@@ -84,42 +150,11 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       attributes.remove("longitude");
     }
 
-    std::string x = attributes.value("x");
-    std::string y = attributes.value("y");
-
-    if (!x.empty() && !y.empty() && !theState.inDefs())
-    {
-      // Negative-as-edge-relative rewrite: "x=-3" on a body tag means
-      // "3 px from the right edge of the view".  Skip this inside <defs>
-      // because symbol contents must keep their literal coordinates —
-      // WMS symbols are required to be centred on (0, 0) with negative
-      // coordinates indicating the symbol's left/top edge, and getting
-      // rewritten to canvas-relative would push the geometry off-screen.
-      double xx = toDouble(x.c_str());
-      double yy = toDouble(y.c_str());
-
-      if (xx < 0 || yy < 0)
-      {
-        // Projection may not be available. We should really not require a projection
-        // here, but just check the size and position of the view.
-
-        const auto& box = projection.getBox();
-
-        if (xx < 0)
-          attributes.add("x", Fmi::to_string(box.width() + xx));
-
-        if (yy < 0)
-          attributes.add("y", Fmi::to_string(box.height() + yy));
-      }
-    }
+    resolveEdgeRelativePosition(theState);
 
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Detect whether we're defining a composite tag such as
     // clipPath or mask or a normal element such as circle
@@ -153,26 +188,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       // The tag is a composite
       // Update coordinates of sublayers
       if (!longitude.empty() && !latitude.empty())
-      {
-        for (const auto& layer : layers.layers)
-        {
-          std::string x = layer->attributes.value("x");
-          std::string y = layer->attributes.value("y");
-          if (!x.empty() && !y.empty())
-          {
-            double xCoord = 0;
-            double yCoord = 0;
-            LonLatToXYTransformation transformation(projection);
-            if (!transformation.transform(
-                    Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord))
-              throw Fmi::Exception(BCP, "Invalid lonlat for tag");
-            xCoord += Fmi::stod(x);
-            yCoord += Fmi::stod(y);
-            layer->attributes.add("x", Fmi::to_string(xCoord));
-            layer->attributes.add("y", Fmi::to_string(yCoord));
-          }
-        }
-      }
+        positionSublayers(longitude, latitude);
 
       CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
       group_cdt["start"] = "<" + *tag;

@@ -42,6 +42,9 @@ class TagLayer : public Layer
   std::optional<std::string> tag;
 
  private:
+  void resolveEdgeRelativePosition(const State& theState);
+  void positionSublayers(const std::string& longitude, const std::string& latitude);
+
   std::optional<Text> cdata;
 
 };  // class TagLayer
