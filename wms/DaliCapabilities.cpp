@@ -195,18 +195,9 @@ Json::Value time_node(const Engine::Querydata::Engine& theQEngine,
   }
 }
 
-// Parse a product JSON file (raw, no reference expansion) and build a catalog entry.
-// 'theRelative' is the product name relative to the customer's products/ directory,
-// without the .json extension, e.g. "aurausmalli/roadcondition".
-
-Json::Value product_entry(const std::filesystem::path& theFile,
-                          const std::string& theCustomer,
-                          const std::string& theRelative,
-                          const Engine::Querydata::Engine& theQEngine)
+// The catalog path of a product: the customer followed by the components of the relative name
+Json::Value product_path_array(const std::string& theCustomer, const std::string& theRelative)
 {
-  Json::Value entry;
-  entry["name"] = theRelative;
-
   Json::Value path(Json::arrayValue);
   path.append(theCustomer);
   std::string remaining = theRelative;
@@ -221,7 +212,42 @@ Json::Value product_entry(const std::filesystem::path& theFile,
     path.append(remaining.substr(0, slash));
     remaining = remaining.substr(slash + 1);
   }
-  entry["path"] = path;
+  return path;
+}
+
+// Copy the projection settings to the entry, and use projection.xsize/ysize as the
+// image size if top-level width/height are absent.
+void add_projection_info(const Json::Value& proj, Json::Value& entry, Json::Value& image)
+{
+  Json::Value projection(Json::objectValue);
+  for (const auto& key :
+       {"crs", "bboxcrs", "xsize", "ysize", "x1", "y1", "x2", "y2", "cx", "cy", "resolution"})
+  {
+    if (proj.isMember(key))
+      projection[key] = strip_comments(proj[key]);
+  }
+  if (!projection.empty())
+    entry["projection"] = projection;
+
+  // Fall back to projection.xsize/ysize if top-level width/height are absent.
+  if (!image.isMember("width") && proj.isMember("xsize"))
+    image["width"] = strip_comments(proj["xsize"]);
+  if (!image.isMember("height") && proj.isMember("ysize"))
+    image["height"] = strip_comments(proj["ysize"]);
+}
+
+// Parse a product JSON file (raw, no reference expansion) and build a catalog entry.
+// 'theRelative' is the product name relative to the customer's products/ directory,
+// without the .json extension, e.g. "aurausmalli/roadcondition".
+
+Json::Value product_entry(const std::filesystem::path& theFile,
+                          const std::string& theCustomer,
+                          const std::string& theRelative,
+                          const Engine::Querydata::Engine& theQEngine)
+{
+  Json::Value entry;
+  entry["name"] = theRelative;
+  entry["path"] = product_path_array(theCustomer, theRelative);
 
   const std::string text = slurp(theFile);
   if (text.empty())
@@ -269,24 +295,7 @@ Json::Value product_entry(const std::filesystem::path& theFile,
     image["height"] = strip_comments(json["height"]);
 
   if (json.isMember("projection") && json["projection"].isObject())
-  {
-    const auto& proj = json["projection"];
-    Json::Value projection(Json::objectValue);
-    for (const auto& key : {"crs", "bboxcrs", "xsize", "ysize", "x1", "y1", "x2", "y2",
-                            "cx", "cy", "resolution"})
-    {
-      if (proj.isMember(key))
-        projection[key] = strip_comments(proj[key]);
-    }
-    if (!projection.empty())
-      entry["projection"] = projection;
-
-    // Fall back to projection.xsize/ysize if top-level width/height are absent.
-    if (!image.isMember("width") && proj.isMember("xsize"))
-      image["width"] = strip_comments(proj["xsize"]);
-    if (!image.isMember("height") && proj.isMember("ysize"))
-      image["height"] = strip_comments(proj["ysize"]);
-  }
+    add_projection_info(json["projection"], entry, image);
 
   // Default output type is SVG (matches daliQuery default) but most browser
   // consumers will pass &type=png explicitly.
@@ -308,6 +317,45 @@ Json::Value product_entry(const std::filesystem::path& theFile,
       fmt::format("/dali?customer={}&product={}&time={{time}}", theCustomer, theRelative);
 
   return entry;
+}
+
+// Catalog entries of all products of a customer, sorted by file name
+Json::Value customer_products(const std::filesystem::path& products_root,
+                              const std::string& customer,
+                              const Engine::Querydata::Engine& theQEngine)
+{
+  // Collect and sort .json paths under products/ so output order is stable.
+  std::vector<std::filesystem::path> product_files;
+  for (const auto& entry : std::filesystem::recursive_directory_iterator(products_root))
+  {
+    if (entry.is_regular_file() && entry.path().extension() == ".json")
+      product_files.push_back(entry.path());
+  }
+  std::sort(product_files.begin(), product_files.end());
+
+  Json::Value products(Json::arrayValue);
+  for (const auto& product_path : product_files)
+  {
+    // Relative path without .json -> product name (e.g. "aurausmalli/roadcondition").
+    auto rel = std::filesystem::relative(product_path, products_root);
+    std::string relname = rel.generic_string();
+    if (relname.size() > 5 && relname.substr(relname.size() - 5) == ".json")
+      relname.resize(relname.size() - 5);
+
+    try
+    {
+      products.append(product_entry(product_path, customer, relname, theQEngine));
+    }
+    catch (...)
+    {
+      // Per-product failures must not abort the catalog.
+      Json::Value err;
+      err["name"] = relname;
+      err["error"] = "exception";
+      products.append(err);
+    }
+  }
+  return products;
 }
 
 }  // namespace
@@ -361,41 +409,7 @@ std::string DaliCapabilities::generate(const Spine::HTTP::Request& theRequest,
       if (!std::filesystem::exists(products_root))
         continue;
 
-      // Collect and sort .json paths under products/ so output order is stable.
-      std::vector<std::filesystem::path> product_files;
-      for (const auto& entry :
-           std::filesystem::recursive_directory_iterator(products_root))
-      {
-        if (entry.is_regular_file() && entry.path().extension() == ".json")
-          product_files.push_back(entry.path());
-      }
-      std::sort(product_files.begin(), product_files.end());
-
-      Json::Value products(Json::arrayValue);
-      for (const auto& product_path : product_files)
-      {
-        // Relative path without .json -> product name (e.g. "aurausmalli/roadcondition").
-        auto rel = std::filesystem::relative(product_path, products_root);
-        std::string relname = rel.generic_string();
-        if (relname.size() > 5 && relname.substr(relname.size() - 5) == ".json")
-          relname.resize(relname.size() - 5);
-
-        try
-        {
-          products.append(product_entry(product_path,
-                                        customer,
-                                        relname,
-                                        itsPlugin.getQEngine()));
-        }
-        catch (...)
-        {
-          // Per-product failures must not abort the catalog.
-          Json::Value err;
-          err["name"] = relname;
-          err["error"] = "exception";
-          products.append(err);
-        }
-      }
+      Json::Value products = customer_products(products_root, customer, itsPlugin.getQEngine());
 
       Json::Value c;
       c["name"] = customer;
