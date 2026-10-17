@@ -249,6 +249,9 @@ bool handle_visibility(const std::string& t,
     set_cavok(d, state);
     return true;
   }
+  // The wind direction variability group follows the wind group
+  if (boost::regex_match(t, re.varwind_re))
+    return true;
   if (t == "9999")
   {
     d.has_visibility = true;
