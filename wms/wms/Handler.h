@@ -13,9 +13,11 @@
 #include <macgyver/Cache.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/TemplateFactory.h>
 #include <spine/HTTP.h>
 #include <spine/JsonCache.h>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 
@@ -122,6 +124,23 @@ class Handler
                                  const Spine::HTTP::Request& theRequest,
                                  Spine::HTTP::Response& theResponse,
                                  Dali::Product& theProduct);
+  std::optional<QueryStatus> serveWithoutTemplate(Dali::State& theState,
+                                                  const Spine::HTTP::Request& theRequest,
+                                                  Spine::HTTP::Response& theResponse,
+                                                  Dali::Product& theProduct,
+                                                  std::size_t product_hash);
+  std::optional<QueryStatus> generateSvg(CTPP::CDT& hash,
+                                         std::string& output,
+                                         const Fmi::SharedFormatter& tmpl,
+                                         Dali::State& theState,
+                                         const Spine::HTTP::Request& theRequest,
+                                         Spine::HTTP::Response& theResponse,
+                                         Dali::Product& theProduct);
+  QueryStatus generateAnimation(Dali::State& theState,
+                                const Spine::HTTP::Request& theRequest,
+                                Spine::HTTP::Response& theResponse,
+                                Dali::Product& theProduct,
+                                const Fmi::SharedFormatter& tmpl);
   QueryStatus wmsGenerateFeatureInfo(Dali::State& theState,
                                      const Spine::HTTP::Request& theRequest,
                                      Spine::HTTP::Response& theResponse,

@@ -431,6 +431,23 @@ void print_params(const SmartMet::Plugin::Dali::ParameterInfos &infos)
   std::cout << std::flush;
 }
 
+// Shift the valid times of the layers by the data timestep for the next animation frame
+void shift_layer_times(Dali::Product& theProduct, int data_timestep)
+{
+  for (const auto& view : theProduct.views.views)
+  {
+    for (auto& layer : view->layers.layers)
+    {
+      auto tm = layer->getValidTime();
+      tm += Fmi::Minutes(data_timestep);
+      layer->setValidTime(tm);
+
+      for (auto& ilayer : layer->layers.layers)
+        ilayer->setValidTime(tm);
+    }
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -1088,35 +1105,18 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Postprocess a successfully handled GetMap/GetLegendGraphic product
+ * \brief Respond to ETag and conditional requests, and serve cached and template-less products
+ *
+ * Returns the status if the response has been set.
  */
 // ----------------------------------------------------------------------
-QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
-                                        const Spine::HTTP::Request &theRequest,
-                                        Spine::HTTP::Response &theResponse,
-                                        Dali::Product &theProduct)
+
+std::optional<QueryStatus> Handler::serveWithoutTemplate(Dali::State& theState,
+                                                         const Spine::HTTP::Request& theRequest,
+                                                         Spine::HTTP::Response& theResponse,
+                                                         Dali::Product& theProduct,
+                                                         std::size_t product_hash)
 {
-  // Calculate hash for the product
-
-  std::size_t product_hash = 0;
-  try
-  {
-    product_hash = theProduct.hash_value(theState);
-  }
-  catch (const Fmi::Exception &exception)
-  {
-    auto layers = theRequest.getParameter("LAYERS");
-
-    std::string msg;
-    if (layers)
-      msg = " for layer '" + *layers + "'";  // The LAYERS option may be missing
-
-    Fmi::Exception ex(
-        BCP, "Error in calculating hash_value" + msg + "! " + exception.what(), nullptr);
-    ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-    return handleWmsException(ex, theState, theRequest, theResponse);
-  }
-
   // We always return valid ETags
 
   if (product_hash != Fmi::bad_hash)
@@ -1172,6 +1172,210 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
     return QueryStatus::OK;
   }
 
+  return std::nullopt;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate the product and process the template into SVG
+ *
+ * Returns the status if an error response has been set.
+ */
+// ----------------------------------------------------------------------
+
+std::optional<QueryStatus> Handler::generateSvg(CTPP::CDT& hash,
+                                                std::string& output,
+                                                const Fmi::SharedFormatter& tmpl,
+                                                Dali::State& theState,
+                                                const Spine::HTTP::Request& theRequest,
+                                                Spine::HTTP::Response& theResponse,
+                                                Dali::Product& theProduct)
+{
+  try
+  {
+    theProduct.generate(hash, theState);
+  }
+  catch (...)
+  {
+    // Do not continue with a half-built CDT: Views::generate() only appends a view after
+    // its layers have been generated, so a failure here leaves 'views' empty and we would
+    // silently serve - and cache - a blank image with status 200.
+    Fmi::Exception ex(BCP, "Failed to generate product", nullptr);
+    if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+      ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    return handleWmsException(ex, theState, theRequest, theResponse);
+  }
+
+  // Build the template
+  std::string log;
+  try
+  {
+    std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+    if (theState.useTimer())
+    {
+      std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
+      mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
+    tmpl->process(hash, output, log);
+  }
+  catch (...)
+  {
+    Fmi::Exception ex(
+        BCP, "Error in processing the template '" + *theProduct.svg_tmpl + "'!", nullptr);
+    if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+      ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    return handleWmsException(ex, theState, theRequest, theResponse);
+  }
+
+  return std::nullopt;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate an animated WebP product
+ */
+// ----------------------------------------------------------------------
+
+QueryStatus Handler::generateAnimation(Dali::State& theState,
+                                       const Spine::HTTP::Request& theRequest,
+                                       Spine::HTTP::Response& theResponse,
+                                       Dali::Product& theProduct,
+                                       const Fmi::SharedFormatter& tmpl)
+{
+  theState.animation_enabled = true;
+
+  int animation_timesteps = theProduct.animation.timesteps;
+  int data_timestep = theProduct.animation.data_timestep;
+  int animation_loopsteps = theProduct.animation.loopsteps;
+  int frameCount = animation_timesteps * animation_loopsteps;
+  uint width = *theProduct.width;
+  uint height = *theProduct.height;
+  std::vector<std::shared_ptr<CImage>> images;
+
+  for (int tt = 0; tt < animation_timesteps; tt++)
+  {
+    theState.animation_timestep = tt;
+    theState.animation_timesteps = animation_timesteps;
+
+    for (int loop = 0; loop < animation_loopsteps; loop++)
+    {
+      CTPP::CDT hash(CTPP::CDT::HASH_VAL);
+      // if (requestType == RequestType::GET_LEGEND_GRAPHIC)
+      //   hash["legend"] = "true";
+
+      theState.animation_loopstep = loop;
+      theState.animation_loopsteps = animation_loopsteps;
+
+      std::string output;
+      auto status = generateSvg(hash, output, tmpl, theState, theRequest, theResponse, theProduct);
+      if (status)
+        return *status;
+
+      const auto print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
+      if (print_hash)
+        std::cout << fmt::format("Generated CDT:\n{}\n", hash.RecursiveDump());
+
+      // Converting SVG to ARGB-image:
+      uint* vectorImage = Giza::Svg::toargb(output);
+      if (vectorImage)
+      {
+        std::shared_ptr<CImage> sImage(new CImage(width, height, vectorImage));
+        images.push_back(sImage);
+      }
+
+      /* Saving animation frame for debugging
+
+      char fname[100];
+      sprintf(fname, "/tmp/WMS_animation_%d_%llu_%u_%u.svg", getpid(), getTime(),tt,loop);
+      FILE *file = fopen(fname,"w");
+      fprintf(file,"%s",output.c_str());
+      fclose(file);
+      */
+    }
+
+    if (animation_timesteps > 1)
+    {
+      // This is time animation so we have to changing the time of the layers.
+      // There is probably an easier way to do this.
+      shift_layer_times(theProduct, data_timestep);
+    }
+  }
+
+  // *** Creating the animation file:
+
+  std::vector<int> timeVect;
+  std::vector<uint*> image(frameCount, nullptr);  // does this leak memory???
+  for (int tt = 0; tt < animation_timesteps; tt++)
+  {
+    for (int t = 0; t < animation_loopsteps; t++)
+    {
+      uint idx = tt * animation_loopsteps + t;
+      const auto& cimage = images[idx];
+      image[idx] = cimage->pixel;
+      if (animation_loopsteps > 0)
+        timeVect.push_back(theProduct.animation.loopstep_interval);
+    }
+    timeVect.push_back(theProduct.animation.timestep_interval);
+  }
+
+  char fname[100];
+  sprintf(fname, "/tmp/WMS_animation_%d_%lu.webp", getpid(), getTime());
+  webp_anim_save_ARGB(fname, image.data(), width, height, frameCount, timeVect);
+  images.clear();
+
+  theResponse.setHeader("Content-Type", "image/webp");
+
+  std::string content;
+  std::ifstream in(fname);
+  if (!in)
+    throw Fmi::Exception(BCP, "Failed to open '" + std::string(fname) + "' for reading!");
+
+  content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+  theResponse.setContent(std::move(content));
+
+  // Removing the animation file
+  (void)remove(fname);
+
+  return QueryStatus::OK;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Postprocess a successfully handled GetMap/GetLegendGraphic product
+ */
+// ----------------------------------------------------------------------
+QueryStatus Handler::wmsGenerateProduct(Dali::State& theState,
+                                        const Spine::HTTP::Request& theRequest,
+                                        Spine::HTTP::Response& theResponse,
+                                        Dali::Product& theProduct)
+{
+  // Calculate hash for the product
+
+  std::size_t product_hash = 0;
+  try
+  {
+    product_hash = theProduct.hash_value(theState);
+  }
+  catch (const Fmi::Exception& exception)
+  {
+    auto layers = theRequest.getParameter("LAYERS");
+
+    std::string msg;
+    if (layers)
+      msg = " for layer '" + *layers + "'";  // The LAYERS option may be missing
+
+    Fmi::Exception ex(
+        BCP, "Error in calculating hash_value" + msg + "! " + exception.what(), nullptr);
+    ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    return handleWmsException(ex, theState, theRequest, theResponse);
+  }
+
+  // We always return valid ETags, and some products are served without the template
+
+  auto status = serveWithoutTemplate(theState, theRequest, theResponse, theProduct, product_hash);
+  if (status)
+    return *status;
+
   if (!theProduct.svg_tmpl)
     theProduct.svg_tmpl = itsDaliConfig.defaultTemplate(theProduct.type);
 
@@ -1187,195 +1391,29 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
 
   if (!theProduct.animation.enabled)
   {
-    try
-    {
-      theProduct.generate(hash, theState);
-    }
-    catch (...)
-    {
-      // Do not continue with a half-built CDT: Views::generate() only appends a view after
-      // its layers have been generated, so a failure here leaves 'views' empty and we would
-      // silently serve - and cache - a blank image with status 200.
-      Fmi::Exception ex(BCP, "Failed to generate product", nullptr);
-      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
-        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      return handleWmsException(ex, theState, theRequest, theResponse);
-    }
-
-    // Build the template
     std::string output;
-    std::string log;
-    try
-    {
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
-      if (theState.useTimer())
-      {
-        std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
-      }
-      tmpl->process(hash, output, log);
-    }
-    catch (...)
-    {
-      Fmi::Exception ex(
-          BCP, "Error in processing the template '" + *theProduct.svg_tmpl + "'!", nullptr);
-      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
-        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      return handleWmsException(ex, theState, theRequest, theResponse);
-    }
+    status = generateSvg(hash, output, tmpl, theState, theRequest, theResponse, theProduct);
+    if (status)
+      return *status;
 
     const auto print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
     if (print_hash)
       std::cout << fmt::format("Generated CDT:\n{}\n", hash.RecursiveDump());
 
-    theState.getPlugin().formatResponse(
-        output, theProduct.type, theRequest, theResponse, theState.useTimer(), theProduct, product_hash);
+    theState.getPlugin().formatResponse(output,
+                                        theProduct.type,
+                                        theRequest,
+                                        theResponse,
+                                        theState.useTimer(),
+                                        theProduct,
+                                        product_hash);
 
     return QueryStatus::OK;
   }
 
   // ####################### ANIMATION ENABLED #######################################
 
-  if (theProduct.animation.enabled)
-  {
-    theState.animation_enabled = true;
-
-    int animation_timesteps = theProduct.animation.timesteps;
-    int data_timestep = theProduct.animation.data_timestep;
-    int animation_loopsteps = theProduct.animation.loopsteps;
-    int frameCount = animation_timesteps * animation_loopsteps;
-    uint width = *theProduct.width;
-    uint height = *theProduct.height;
-    std::vector<std::shared_ptr<CImage>> images;
-
-    for (int tt = 0; tt < animation_timesteps; tt++)
-    {
-      theState.animation_timestep = tt;
-      theState.animation_timesteps = animation_timesteps;
-
-      for (int loop = 0; loop < animation_loopsteps; loop++)
-      {
-        CTPP::CDT hash(CTPP::CDT::HASH_VAL);
-        // if (requestType == RequestType::GET_LEGEND_GRAPHIC)
-        //   hash["legend"] = "true";
-
-        theState.animation_loopstep = loop;
-        theState.animation_loopsteps = animation_loopsteps;
-
-        try
-        {
-          theProduct.generate(hash, theState);
-        }
-        catch (...)
-        {
-          // Same reasoning as the non-animated branch: a partially built CDT would render
-          // an empty frame, and the frame count is then wrong for the whole animation.
-          Fmi::Exception ex(BCP, "Failed to generate product", nullptr);
-          if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
-            ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-          return handleWmsException(ex, theState, theRequest, theResponse);
-        }
-
-        std::string output;
-        std::string log;
-        try
-        {
-          std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
-          if (theState.useTimer())
-          {
-            std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-            mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
-          }
-          tmpl->process(hash, output, log);
-        }
-        catch (...)
-        {
-          Fmi::Exception ex(
-              BCP, "Error in processing the template '" + *theProduct.svg_tmpl + "'!", nullptr);
-          if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
-            ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-          return handleWmsException(ex, theState, theRequest, theResponse);
-        }
-
-        const auto print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
-        if (print_hash)
-          std::cout << fmt::format("Generated CDT:\n{}\n", hash.RecursiveDump());
-
-        // Converting SVG to ARGB-image:
-        uint *vectorImage = Giza::Svg::toargb(output);
-        if (vectorImage)
-        {
-          std::shared_ptr<CImage> sImage(new CImage(width, height, vectorImage));
-          images.push_back(sImage);
-        }
-
-        /* Saving animation frame for debugging
-
-        char fname[100];
-        sprintf(fname, "/tmp/WMS_animation_%d_%llu_%u_%u.svg", getpid(), getTime(),tt,loop);
-        FILE *file = fopen(fname,"w");
-        fprintf(file,"%s",output.c_str());
-        fclose(file);
-        */
-      }
-
-      if (animation_timesteps > 1)
-      {
-        // This is time animation so we have to changing the time of the layers.
-        // There is probably an easier way to do this.
-
-        for (const auto &view : theProduct.views.views)
-        {
-          for (auto &layer : view->layers.layers)
-          {
-            auto tm = layer->getValidTime();
-            tm += Fmi::Minutes(data_timestep);
-            layer->setValidTime(tm);
-
-            for (auto &ilayer : layer->layers.layers)
-              ilayer->setValidTime(tm);
-          }
-        }
-      }
-    }
-
-    // *** Creating the animation file:
-
-    std::vector<int> timeVect;
-    std::vector<uint *> image(frameCount, nullptr);  // does this leak memory???
-    for (int tt = 0; tt < animation_timesteps; tt++)
-    {
-      for (int t = 0; t < animation_loopsteps; t++)
-      {
-        uint idx = tt * animation_loopsteps + t;
-        const auto &cimage = images[idx];
-        image[idx] = cimage->pixel;
-        if (animation_loopsteps > 0)
-          timeVect.push_back(theProduct.animation.loopstep_interval);
-      }
-      timeVect.push_back(theProduct.animation.timestep_interval);
-    }
-
-    char fname[100];
-    sprintf(fname, "/tmp/WMS_animation_%d_%lu.webp", getpid(), getTime());
-    webp_anim_save_ARGB(fname, image.data(), width, height, frameCount, timeVect);
-    images.clear();
-
-    theResponse.setHeader("Content-Type", "image/webp");
-
-    std::string content;
-    std::ifstream in(fname);
-    if (!in)
-      throw Fmi::Exception(BCP, "Failed to open '" + std::string(fname) + "' for reading!");
-
-    content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
-    theResponse.setContent(std::move(content));
-
-    // Removing the animation file
-    (void)remove(fname);
-  }
-
-  return QueryStatus::OK;
+  return generateAnimation(theState, theRequest, theResponse, theProduct, tmpl);
 }
 
 // ----------------------------------------------------------------------
