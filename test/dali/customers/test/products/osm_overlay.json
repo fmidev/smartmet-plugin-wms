@@ -1,0 +1,47 @@
+{
+    "title": "Weather data between an OpenStreetMap background and its labels",
+    "projection":
+    {
+	"qid": "p",
+	"crs": "EPSG:3067",
+	"bboxcrs": "EPSG:3067",
+	"bbox": "-100000,6600000,900000,7800000",
+	"xsize": 500,
+	"ysize": 600
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "layers":
+	    [
+		{
+		    "qid": "base",
+		    "layer_type": "osm",
+		    "dataset": "synthetic",
+		    "style": "meteo-light",
+		    "exclude": ["places_*", "boundaries*", "water_label_*"]
+		},
+		{
+		    "qid": "data",
+		    "layer_type": "wkt",
+		    "wkt": "POLYGON((18 58,30 58,30 66,18 66,18 58))",
+		    "resolution": 10,
+		    "attributes":
+		    {
+			"fill": "#3070d0",
+			"fill-opacity": "0.5"
+		    }
+		},
+		{
+		    "qid": "labels",
+		    "layer_type": "osm",
+		    "dataset": "synthetic",
+		    "style": "meteo-light",
+		    "include": ["places_*", "boundaries*", "water_label_*"],
+		    "attribution": true
+		}
+	    ]
+	}
+    ]
+}

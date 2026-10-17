@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm&osm.style=protomaps-light&type=png HTTP/1.0

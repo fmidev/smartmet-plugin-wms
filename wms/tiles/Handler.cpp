@@ -1554,16 +1554,12 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     renderState.setName(collId);
     renderState.setCustomer(wmsConfig.layerCustomer(collId));
 
-    // Store tile z/x/y in State so PMTiles-backed OSMLayers can do direct passthrough.
-    // tmId is the zoom level identifier ("0"-"21"); col=x, row=y in tile coordinates.
-    try
-    {
-      const auto zoom = static_cast<uint8_t>(Fmi::stoul(tmId));
-      renderState.setTileCoords(zoom, static_cast<uint32_t>(col), static_cast<uint32_t>(row));
-    }
-    catch (...)
-    { /* non-numeric tmId — no tile coords set, passthrough disabled */
-    }
+    // Store the tile z/x/y in State so that layers backed by vector tile datasets
+    // can return the tiles directly. Only the WebMercatorQuad tiling matches them.
+    const int zoom = WMTS::webMercatorZoom(*tms, *tm);
+    if (zoom >= 0)
+      renderState.setTileCoords(
+          static_cast<uint8_t>(zoom), static_cast<uint32_t>(col), static_cast<uint32_t>(row));
 
     Dali::Product product;
     product.init(json, renderState, itsDaliConfig);

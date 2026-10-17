@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.17
+Version: 26.10.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -46,6 +46,7 @@ BuildRequires: smartmet-engine-grid-devel >= 26.10.16
 BuildRequires: smartmet-engine-geonames-devel >= 26.10.16
 BuildRequires: smartmet-engine-querydata-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
+BuildRequires: smartmet-engine-osm-devel >= 26.10.18
 BuildRequires: smartmet-engine-contour-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-library-gis-devel >= 26.10.16
@@ -124,6 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jq
 #TestRequires: python3-jsonschema
 #TestRequires: python3-pyyaml
+#TestRequires: smartmet-engine-osm >= 26.10.18
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
@@ -185,6 +187,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Oct 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.18-1.fmi
+- OSM layer: render vector tile datasets of the OSM engine with MapLibre styles
+  ("dataset", "style", "labels", "icons", "include", "exclude", "zoom",
+  "zoom_offset", "font_family", "attribution"); OSM support is no longer
+  compiled out, and the OSM engine stays optional at runtime
+- OGC API Tiles and WMTS return the vector tiles of OSM datasets directly only
+  for the WebMercatorQuad tiling, tiles beyond the available zoom levels are cut
+  from their ancestors
+- OSM layers are non-temporal WMS layers
+- Tests with a synthetic OSM dataset, and with real OpenStreetMap data when
+  it is installed (OSM_DATA_DIR, default /smartmet/data/osm)
+
 * Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
 - OGC API - Tiles and WMTS are listed in the API catalog of the server (/api)
 - ColorPainter_stream::initStream: assign line_color_land to the land color

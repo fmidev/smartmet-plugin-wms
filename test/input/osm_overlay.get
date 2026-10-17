@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm_overlay&type=png HTTP/1.0

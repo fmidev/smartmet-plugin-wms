@@ -1,0 +1,130 @@
+layers {
+  name: "earth"
+  features {
+    tags: 0
+    tags: 0
+    type: POLYGON
+    geometry: 9
+    geometry: 8320
+    geometry: 127
+    geometry: 26
+    geometry: 0
+    geometry: 8448
+    geometry: 8447
+    geometry: 0
+    geometry: 0
+    geometry: 8447
+    geometry: 15
+  }
+  keys: "kind"
+  values {
+    string_value: "earth"
+  }
+  extent: 4096
+  version: 2
+}
+layers {
+  name: "water"
+  features {
+    tags: 0
+    tags: 0
+    type: POLYGON
+    geometry: 9
+    geometry: 127
+    geometry: 8320
+    geometry: 26
+    geometry: 0
+    geometry: 8447
+    geometry: 8448
+    geometry: 0
+    geometry: 0
+    geometry: 8448
+    geometry: 15
+    geometry: 9
+    geometry: 8447
+    geometry: 8447
+    geometry: 26
+    geometry: 0
+    geometry: 8448
+    geometry: 8448
+    geometry: 0
+    geometry: 0
+    geometry: 8447
+    geometry: 15
+  }
+  keys: "kind"
+  values {
+    string_value: "ocean"
+  }
+  extent: 4096
+  version: 2
+}
+layers {
+  name: "roads"
+  features {
+    tags: 0
+    tags: 0
+    tags: 1
+    tags: 1
+    type: LINESTRING
+    geometry: 9
+    geometry: 3384
+    geometry: 936
+    geometry: 18
+    geometry: 2511
+    geometry: 648
+    geometry: 999
+    geometry: 258
+  }
+  keys: "kind"
+  keys: "kind_detail"
+  values {
+    string_value: "highway"
+  }
+  values {
+    string_value: "primary"
+  }
+  extent: 4096
+  version: 2
+}
+layers {
+  name: "places"
+  features {
+    tags: 0
+    tags: 0
+    tags: 1
+    tags: 1
+    tags: 2
+    tags: 2
+    tags: 3
+    tags: 3
+    tags: 4
+    tags: 4
+    type: POINT
+    geometry: 9
+    geometry: 3384
+    geometry: 936
+  }
+  keys: "capital"
+  keys: "kind"
+  keys: "min_zoom"
+  keys: "name"
+  keys: "population_rank"
+  values {
+    string_value: "yes"
+  }
+  values {
+    string_value: "locality"
+  }
+  values {
+    sint_value: 2
+  }
+  values {
+    string_value: "Alphaville"
+  }
+  values {
+    sint_value: 12
+  }
+  extent: 4096
+  version: 2
+}

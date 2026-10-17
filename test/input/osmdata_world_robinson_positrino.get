@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osmdata&p.crs=ESRI:54030&p.bboxcrs=ESRI:54030&p.bbox=-17000000,-8600000,17000000,8600000&p.xsize=1200&p.ysize=600&osm.style=versatiles-positrino&type=png HTTP/1.0

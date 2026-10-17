@@ -83,6 +83,11 @@ std::vector<TileMatrixSet> buildTileMatrixSets(const std::vector<int>& epsg_ids,
                                                unsigned tile_width = 256,
                                                unsigned tile_height = 256);
 
+// The zoom level of the tile matrix if it is a level of the WebMercatorQuad
+// (Google) tiling scheme, whose tiles can be taken directly from vector tile
+// datasets. Returns -1 otherwise.
+int webMercatorZoom(const TileMatrixSet& tms, const TileMatrix& tm);
+
 }  // namespace WMTS
 }  // namespace Plugin
 }  // namespace SmartMet

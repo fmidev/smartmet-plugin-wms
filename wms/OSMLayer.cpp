@@ -213,11 +213,11 @@ std::size_t OSMLayer::FeatureSet::hash_value() const
 
 std::int64_t OSMLayer::getDataTimestamp(const State& theState) const
 {
-  // PMTiles backend: get timestamp from the OSM engine (file mtime)
-  if (itsBackend == "pmtiles")
+  // Vector tile dataset: the newest file of the dataset
+  if (isDataset())
   {
     if (auto* osm = theState.getOSMEngine())
-      return osm->getDataTimestamp(itsOSMSource);
+      return osm->getDataTimestamp(itsOptions.dataset);
     return 0;
   }
 
@@ -237,7 +237,22 @@ std::int64_t OSMLayer::getDataTimestamp(const State& theState) const
 /*!
  * \brief Initialize from JSON
  *
- * Expected JSON structure:
+ * Vector tile dataset rendered with a MapLibre style:
+ * {
+ *   "layer_type": "osm",
+ *   "dataset": "protomaps",          // dataset in the OSM engine data directory
+ *   "style": "protomaps-white",      // style in the OSM engine style directory
+ *   "labels": true,                  // render the symbol layers of the style
+ *   "icons": true,                   // dots for point symbols with icons
+ *   "include": ["earth", "water*"],  // style layer ids or prefixes to render
+ *   "exclude": ["pois", "roads_*"],  // style layer ids or prefixes to skip
+ *   "zoom": 6,                       // fixed style zoom level instead of automatic
+ *   "zoom_offset": 0,                // adjustment to the automatic zoom level
+ *   "font_family": "Noto Sans, sans-serif",  // fallback fonts
+ *   "attribution": false             // draw "© OpenStreetMap" into the image
+ * }
+ *
+ * PostGIS data loaded with osm2pgsql:
  * {
  *   "layer_type": "osm",
  *   "timestamp_file": "/var/smartmet/osm/scandinavia.timestamp",
@@ -276,16 +291,35 @@ void OSMLayer::init(Json::Value& theJson,
     precision = theState.getPrecision("map");
     JsonTools::remove_double(precision, theJson, "precision");
 
-    JsonTools::remove_string(itsBackend, theJson, "backend");
-    if (itsBackend != "postgis" && itsBackend != "pmtiles")
-      throw Fmi::Exception(BCP, "OSMLayer: 'backend' must be 'postgis' or 'pmtiles'");
-
-    if (itsBackend == "pmtiles")
+    JsonTools::remove_string(itsOptions.dataset, theJson, "dataset");
+    if (isDataset())
     {
-      // PMTiles mode: just need the source name; feature_sets are not used
-      JsonTools::remove_string(itsOSMSource, theJson, "source");
-      if (itsOSMSource.empty())
-        throw Fmi::Exception(BCP, "OSMLayer pmtiles backend requires 'source'");
+      JsonTools::remove_string(itsOptions.style, theJson, "style");
+      if (itsOptions.style.empty())
+        throw Fmi::Exception(BCP, "OSMLayer with a dataset requires a 'style'");
+      JsonTools::remove_bool(itsOptions.labels, theJson, "labels");
+      JsonTools::remove_bool(itsOptions.icons, theJson, "icons");
+      JsonTools::remove_double(itsOptions.zoomOffset, theJson, "zoom_offset");
+      std::optional<double> zoom;
+      JsonTools::remove_double(zoom, theJson, "zoom");
+      itsOptions.zoom = zoom;
+      JsonTools::remove_string(itsOptions.fontFamily, theJson, "font_family");
+      JsonTools::remove_bool(itsAttribution, theJson, "attribution");
+
+      for (const auto* name : {"include", "exclude"})
+      {
+        auto json = JsonTools::remove(theJson, name);
+        if (json.isNull())
+          continue;
+        if (!json.isArray())
+          throw Fmi::Exception(BCP, fmt::format("OSMLayer '{}' must be an array", name));
+        auto& list = (std::string(name) == "include" ? itsOptions.include : itsOptions.exclude);
+        for (const auto& id : json)
+          list.push_back(id.asString());
+      }
+
+      // The precision of the pixel coordinates
+      itsOptions.precision = static_cast<int>(precision);
       return;
     }
 
@@ -363,6 +397,12 @@ void OSMLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   {
     if (!validLayer(theState))
       return;
+
+    if (isDataset())
+    {
+      generateDataset(theGlobals, theLayersCdt, theState);
+      return;
+    }
 
     std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
@@ -548,13 +588,8 @@ void OSMLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     if (!validLayer(theState))
       return;
 
-    // PMTiles backend: tile bytes come from the OSM engine; the MVTTileBuilder
-    // cannot accept raw pre-encoded bytes directly (it encodes from OGR geometry).
-    // For MVT output the tiles/Handler.cpp serializes the builder; for PMTiles
-    // the OSMLayer bypasses the builder entirely — the raw bytes are returned by
-    // the handler calling getRawMVTTile() instead. See tiles/Handler.cpp.
-    // Nothing to do here for the PMTiles path.
-    if (itsBackend == "pmtiles")
+    // Vector tile datasets return their tiles directly via getRawMVTBytes()
+    if (isDataset())
       return;
 
     const auto& crs = projection.getCRS();
@@ -620,39 +655,101 @@ void OSMLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Return raw MVT tile bytes for the PMTiles backend (zero-copy)
- */
-// ----------------------------------------------------------------------
-
-std::optional<Engine::OSM::TileData> OSMLayer::getRawMVTTile(
-    uint8_t z, uint32_t x, uint32_t y, const State& theState) const
-{
-  if (itsBackend != "pmtiles")
-    return {};
-  auto* osm = theState.getOSMEngine();
-  if (!osm)
-    return {};
-  return osm->getTile(itsOSMSource, z, x, y);
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Return raw MVT bytes for Product::generateMVT() passthrough
+ * \brief Return the MVT tile of a vector tile dataset
  *
- * Used when the entire product is a PMTiles-backed OSMLayer. The tile
- * coordinates must have been stored in State by the request handler.
+ * Used when the product consists of a dataset layer. The tile coordinates
+ * are stored in State by the request handler for WebMercatorQuad requests.
  */
 // ----------------------------------------------------------------------
 
 std::optional<std::string> OSMLayer::getRawMVTBytes(const State& theState) const
 {
-  if (itsBackend != "pmtiles" || !theState.hasTileCoords())
+  if (!isDataset() || !theState.hasTileCoords())
     return std::nullopt;
-  auto tileData = getRawMVTTile(
-      theState.getTileZ(), theState.getTileX(), theState.getTileY(), theState);
-  if (!tileData)
-    return std::nullopt;
-  return std::string(reinterpret_cast<const char*>(tileData->data), tileData->size);
+  auto* osm = theState.getOSMEngine();
+  if (!osm)
+    throw Fmi::Exception(BCP, "OSM engine is not available");
+  auto tile = osm->getVectorTile(
+      itsOptions.dataset, theState.getTileZ(), theState.getTileX(), theState.getTileY());
+  if (!tile)
+    return std::string();  // empty tile outside the dataset
+  return tile;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Render a vector tile dataset with the OSM engine
+ */
+// ----------------------------------------------------------------------
+
+void OSMLayer::generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    // Only SVG based output formats are supported
+    const auto& type = theState.getType();
+    if (type == "geojson" || type == "topojson" || type == "kml")
+      return;
+
+    auto* osm = theState.getOSMEngine();
+    if (!osm)
+      throw Fmi::Exception(BCP, "OSM engine is not available");
+
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    if (theState.useTimer())
+    {
+      std::string report = "OSMLayer::generate finished in %t sec CPU, %w sec real\n";
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
+
+    auto options = itsOptions;
+    options.margin = std::max(xmargin, ymargin);
+
+    auto scene = osm->renderMap(options, projection.getCRS(), projection.getBox());
+
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+    theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    for (const auto& element : scene->elements)
+    {
+      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+      tag_cdt["start"] = "<" + element.tag;
+      for (const auto& [name, value] : element.attributes)
+        tag_cdt["attributes"][name] = value;
+      if (element.content.empty())
+        tag_cdt["end"] = "/>";
+      else
+        tag_cdt["end"] = ">" + element.content + "</" + element.tag + ">";
+      group_cdt["tags"].PushBack(tag_cdt);
+    }
+
+    if (itsAttribution && !scene->attribution.empty())
+    {
+      CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+      text_cdt["start"] = "<text";
+      text_cdt["attributes"]["x"] = Fmi::to_string(static_cast<long>(scene->width) - 4);
+      text_cdt["attributes"]["y"] = Fmi::to_string(static_cast<long>(scene->height) - 4);
+      text_cdt["attributes"]["text-anchor"] = "end";
+      text_cdt["attributes"]["font-family"] = itsOptions.fontFamily;
+      text_cdt["attributes"]["font-size"] = "10";
+      text_cdt["attributes"]["fill"] = "#333333";
+      text_cdt["attributes"]["stroke"] = "#ffffff";
+      text_cdt["attributes"]["stroke-width"] = "2";
+      text_cdt["attributes"]["paint-order"] = "stroke";
+      text_cdt["end"] = ">" + Fmi::safexmlescape(scene->attribution) + "</text>";
+      group_cdt["tags"].PushBack(text_cdt);
+    }
+
+    theLayersCdt.PushBack(group_cdt);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "OSMLayer failed to render dataset")
+        .addParameter("dataset", itsOptions.dataset)
+        .addParameter("style", itsOptions.style);
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -679,11 +776,32 @@ std::size_t OSMLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Fmi::hash_combine(hash, Fmi::hash_value(itsBackend));
     Fmi::hash_combine(hash, Fmi::hash_value(getDataTimestamp(theState)));
-    if (itsBackend == "pmtiles")
+    if (isDataset())
     {
-      Fmi::hash_combine(hash, Fmi::hash_value(itsOSMSource));
+      const auto& o = itsOptions;
+      Fmi::hash_combine(hash, Fmi::hash_value(o.dataset));
+      Fmi::hash_combine(hash, Fmi::hash_value(o.style));
+      Fmi::hash_combine(hash, Fmi::hash_value(o.labels));
+      Fmi::hash_combine(hash, Fmi::hash_value(o.icons));
+      Fmi::hash_combine(hash, Fmi::hash_value(o.zoomOffset));
+      if (o.zoom)
+        Fmi::hash_combine(hash, Fmi::hash_value(*o.zoom));
+      Fmi::hash_combine(hash, Fmi::hash_value(o.fontFamily));
+      for (const auto& id : o.include)
+        Fmi::hash_combine(hash, Fmi::hash_value(id));
+      for (const auto& id : o.exclude)
+        Fmi::hash_combine(hash, Fmi::hash_value(id) + 1);
+      Fmi::hash_combine(hash, Fmi::hash_value(itsAttribution));
+
+      // The dataset version changes when its files change, the style when it is edited
+      if (auto* osm = theState.getOSMEngine())
+      {
+        auto info = osm->getDatasetInfo(o.dataset);
+        if (info)
+          Fmi::hash_combine(hash, Fmi::hash_value(info->version));
+        Fmi::hash_combine(hash, Fmi::hash_value(osm->getStyle(o.style)->modified()));
+      }
     }
     else
     {

@@ -2925,7 +2925,66 @@ The table below contains a list of attributes that can be defined for the windro
 
 #### OSMLayer
 
-The OSM layer renders OpenStreetMap data loaded into PostGIS via `osm2pgsql`. It supports polygon features (landuse, water, buildings), linear features (roads, coastlines, administrative boundaries) and place-name labels. Each layer response carries an HTTP ETag derived from the OSM data age, enabling efficient HTTP caching. The OGC API – Tiles endpoint also supports Mapbox Vector Tile (MVT/PBF) output via the `addMVTLayer` mechanism.
+The OSM layer renders OpenStreetMap data from one of two sources:
+
+1. **Vector tile datasets of the OSM engine** (recommended): PMTiles files such as the Protomaps basemap builds, rendered server side with MapLibre styles. Set `dataset` and `style`.
+2. **PostGIS data loaded with `osm2pgsql`**: set `feature_sets`, see [PostGIS data](#osm-postgis-data) below.
+
+##### Vector tile datasets
+
+The OSM engine serves the PMTiles files found in its data directory (`directory` in the engine configuration, for example `/smartmet/data/osm`). Each subdirectory is a dataset whose files share the same tile schema. The files of a dataset are combined by resolution: each tile is taken from the most detailed file containing it, and zoom levels missing from all files are cut from ancestor tiles. A server can thus be localized by installing a global file with few zoom levels and a detailed file for the local region:
+
+```
+/smartmet/data/osm/protomaps/world.pmtiles    whole world, zoom 0-8
+/smartmet/data/osm/protomaps/nordic.pmtiles   Nordic countries, zoom 0-15
+```
+
+The data is not packaged. The `smartmet-osm-update` tool of the engine downloads the Protomaps builds (the whole planet or extracts) and installs them atomically; the engine notices new files at its next directory rescan.
+
+The styles are MapLibre style documents in the engine's style directory (`/usr/share/smartmet/osm/styles`). The engine package ships styles for the Protomaps schema:
+
+| Style | Purpose |
+|---|---|
+| `meteo-light`, `meteo-dark`, `meteo-white` | Backgrounds for weather data: land, water, subtle landcover, borders, faint major roads and place names. The background colour is the sea colour so that the areas outside Web Mercator (beyond ±85°) look like sea. |
+| `versatiles-positrino`, `versatiles-positrino-dark`, `versatiles-gray`, `versatiles-gray-dark` | Muted general purpose basemaps (Positron and Dark Matter lookalikes), good for data visualization |
+| `protomaps-white`, `protomaps-grayscale`, `protomaps-black` | Protomaps data visualization flavors |
+| `protomaps-light`, `protomaps-dark`, `versatiles-muted`, `versatiles-colorful` | Full general purpose maps, too busy as backgrounds for most weather data |
+
+The renderer supports background, fill, line and point symbol layers with MapLibre expressions, legacy filters and legacy functions. Line labels, icons (except as dots for point symbols), patterns and 3D features are not rendered. The image may be in any projection; the zoom level is chosen like MapLibre does from the resolution at the centre of the image.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `dataset` | string | - | Dataset name in the OSM engine |
+| `style` | string | - | Style name in the OSM engine style directory |
+| `labels` | bool | true | Render the symbol layers of the style |
+| `icons` | bool | true | Draw a dot for point symbols with an icon, for example towns |
+| `include` | array | all | Style layer ids to render; an id ending in `*` is a prefix |
+| `exclude` | array | none | Style layer ids to skip; an id ending in `*` is a prefix |
+| `zoom` | number | automatic | Fixed style zoom level |
+| `zoom_offset` | number | 0 | Adjustment to the automatic zoom level, for example 1 for more detail |
+| `font_family` | string | `Noto Sans, DejaVu Sans, sans-serif` | Fallback fonts for the labels |
+| `attribution` | bool | false | Draw the data attribution (© OpenStreetMap) into the lower right corner |
+
+OpenStreetMap data requires the attribution "© OpenStreetMap contributors" to be visible on maps; draw it with `attribution` or show it in the client.
+
+Weather data is best drawn between the background and its labels, which is done by splitting the style into two layers:
+
+```json
+"layers": [
+  { "layer_type": "osm", "dataset": "protomaps", "style": "meteo-light",
+    "exclude": ["places_*", "boundaries*", "water_label_*"] },
+  { "layer_type": "isoband", "...": "the weather data" },
+  { "layer_type": "osm", "dataset": "protomaps", "style": "meteo-light",
+    "include": ["places_*", "boundaries*", "water_label_*"], "attribution": true }
+]
+```
+
+The OGC API - Tiles interface returns the vector tiles of the dataset directly for `f=mvt` requests in the WebMercatorQuad tiling (`EPSG:3857`), cutting tiles beyond the available zoom levels from their ancestors. Raster tiles are rendered in any tiling.
+
+<a id="osm-postgis-data"></a>
+##### PostGIS data
+
+The PostGIS mode renders OpenStreetMap data loaded into PostGIS via `osm2pgsql`. It supports polygon features (landuse, water, buildings), linear features (roads, coastlines, administrative boundaries) and place-name labels. Each layer response carries an HTTP ETag derived from the OSM data age, enabling efficient HTTP caching. The OGC API – Tiles endpoint also supports Mapbox Vector Tile (MVT/PBF) output via the `addMVTLayer` mechanism.
 
 **Data setup and scale guidance**
 

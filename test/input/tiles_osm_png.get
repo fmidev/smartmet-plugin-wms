@@ -1,0 +1,1 @@
+GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3857/6/17/35?f=png HTTP/1.0

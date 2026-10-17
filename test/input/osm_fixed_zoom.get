@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm&osm.zoom=3&type=png HTTP/1.0

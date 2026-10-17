@@ -224,6 +224,25 @@ std::vector<TileMatrixSet> buildTileMatrixSets(const std::vector<int>& epsg_ids,
   }
 }
 
+// ----------------------------------------------------------------------
+
+int webMercatorZoom(const TileMatrixSet& tms, const TileMatrix& tm)
+{
+  if (tms.crs.find("3857") == std::string::npos && tms.crs.find("900913") == std::string::npos)
+    return -1;
+
+  const double half = 20037508.342789244;
+  if (std::abs(tm.top_left_corner_x + half) > 1 || std::abs(tm.top_left_corner_y - half) > 1)
+    return -1;
+
+  if (tm.matrix_width != tm.matrix_height)
+    return -1;
+  for (int z = 0; z <= 30; z++)
+    if (tm.matrix_width == (1U << z))
+      return z;
+  return -1;
+}
+
 }  // namespace WMTS
 }  // namespace Plugin
 }  // namespace SmartMet
