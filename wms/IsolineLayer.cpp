@@ -864,6 +864,95 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add a single isoline to the output
+ */
+// ----------------------------------------------------------------------
+
+void IsolineLayer::addIsoline(CTPP::CDT& theGlobals,
+                              CTPP::CDT& object_cdt,
+                              CTPP::CDT& group_cdt,
+                              State& theState,
+                              const OGRGeometry& geom,
+                              const Isoline& isoline,
+                              const Fmi::SpatialReference& crs,
+                              const Fmi::Box& box,
+                              bool topojson)
+{
+  // Store the path with unique QID
+  std::string iri = qid + (qid.empty() ? "" : ".") + isoline.getQid(theState);
+
+  if (!theState.addId(iri) && !theState.animation_enabled)
+    throw Fmi::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
+
+  CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
+  isoline_cdt["iri"] = iri;
+  isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
+  isoline_cdt["parameter"] = paraminfo.parameter;
+  isoline_cdt["type"] = Geometry::name(geom, theState.getType());
+  isoline_cdt["layertype"] = "isoline";
+
+  std::string arcNumbers;
+  std::string arcCoordinates;
+  std::string pointCoordinates;
+
+  // Use Bezier SVG for SVG output when enabled
+  if (filter.bezierEnabled() && !topojson && theState.getType() != "geojson" &&
+      theState.getType() != "kml")
+  {
+    pointCoordinates = filter.toBezierSvg(geom, box, precision, &theState.getBezierCache());
+  }
+
+  if (pointCoordinates.empty())
+  {
+    pointCoordinates = Geometry::toString(geom,
+                                          theState.getType(),
+                                          box,
+                                          crs,
+                                          precision,
+                                          theState.arcHashMap,
+                                          theState.arcCounter,
+                                          arcNumbers,
+                                          arcCoordinates);
+  }
+
+  if (!pointCoordinates.empty())
+    isoline_cdt["data"] = pointCoordinates;
+
+  isoline_cdt["value"] = isoline.value;
+
+  theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);
+
+  if (topojson)
+  {
+    if (!arcNumbers.empty())
+      isoline_cdt["arcs"] = arcNumbers;
+
+    object_cdt["paths"][iri] = isoline_cdt;
+
+    if (!arcCoordinates.empty())
+    {
+      CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
+      arc_cdt["data"] = arcCoordinates;
+      theGlobals["arcs"][theState.insertCounter] = arc_cdt;
+      theState.insertCounter++;
+    }
+  }
+  else
+  {
+    theGlobals["paths"][iri] = isoline_cdt;
+  }
+
+  // Add the SVG use element
+  CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+  tag_cdt["start"] = "<use";
+  tag_cdt["end"] = "/>";
+  theState.addAttributes(theGlobals, tag_cdt, isoline.attributes);
+  tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+  group_cdt["tags"].PushBack(tag_cdt);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the layer details into the template hash
  */
 // ----------------------------------------------------------------------
@@ -933,81 +1022,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       const OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
-      {
-        const Isoline& isoline = isolines[i];
-
-        // Store the path with unique QID
-        std::string iri = qid + (qid.empty() ? "" : ".") + isoline.getQid(theState);
-
-        if (!theState.addId(iri) && !theState.animation_enabled)
-          throw Fmi::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
-
-        CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
-        isoline_cdt["iri"] = iri;
-        isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
-        isoline_cdt["parameter"] = paraminfo.parameter;
-        isoline_cdt["type"] = Geometry::name(*geom, theState.getType());
-        isoline_cdt["layertype"] = "isoline";
-
-        std::string arcNumbers;
-        std::string arcCoordinates;
-        std::string pointCoordinates;
-
-        // Use Bezier SVG for SVG output when enabled
-        if (filter.bezierEnabled() && !topojson && theState.getType() != "geojson" &&
-            theState.getType() != "kml")
-        {
-          pointCoordinates = filter.toBezierSvg(*geom, box, precision, &theState.getBezierCache());
-        }
-
-        if (pointCoordinates.empty())
-        {
-          pointCoordinates = Geometry::toString(*geom,
-                                                theState.getType(),
-                                                box,
-                                                crs,
-                                                precision,
-                                                theState.arcHashMap,
-                                                theState.arcCounter,
-                                                arcNumbers,
-                                                arcCoordinates);
-        }
-
-        if (!pointCoordinates.empty())
-          isoline_cdt["data"] = pointCoordinates;
-
-        isoline_cdt["value"] = isoline.value;
-
-        theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);
-
-        if (topojson)
-        {
-          if (!arcNumbers.empty())
-            isoline_cdt["arcs"] = arcNumbers;
-
-          object_cdt["paths"][iri] = isoline_cdt;
-
-          if (!arcCoordinates.empty())
-          {
-            CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
-            arc_cdt["data"] = arcCoordinates;
-            theGlobals["arcs"][theState.insertCounter] = arc_cdt;
-            theState.insertCounter++;
-          }
-        }
-        else
-        {
-          theGlobals["paths"][iri] = isoline_cdt;
-        }
-
-        // Add the SVG use element
-        CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-        tag_cdt["start"] = "<use";
-        tag_cdt["end"] = "/>";
-        theState.addAttributes(theGlobals, tag_cdt, isoline.attributes);
-        tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-        group_cdt["tags"].PushBack(tag_cdt);
-      }
+        addIsoline(
+            theGlobals, object_cdt, group_cdt, theState, *geom, isolines[i], crs, box, topojson);
     }
     theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
                          Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());

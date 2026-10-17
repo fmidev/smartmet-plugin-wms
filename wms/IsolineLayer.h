@@ -81,6 +81,16 @@ class IsolineLayer : public Layer
   T::MessageIndex messageIndex = 0;
 
  private:
+  void addIsoline(CTPP::CDT& theGlobals,
+                  CTPP::CDT& object_cdt,
+                  CTPP::CDT& group_cdt,
+                  State& theState,
+                  const OGRGeometry& geom,
+                  const Isoline& isoline,
+                  const Fmi::SpatialReference& crs,
+                  const Fmi::Box& box,
+                  bool topojson);
+
   std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double>& isovalues,
                                               const State& theState);
   std::vector<OGRGeometryPtr> getIsolinesQuerydata(const std::vector<double>& isovalues,
