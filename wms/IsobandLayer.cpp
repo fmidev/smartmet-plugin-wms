@@ -6,6 +6,7 @@
 #include "DataTile.h"
 #include "Geometry.h"
 #include "GridDataGeoTiff.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
@@ -429,6 +430,163 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fetch the inside and outside map shapes clipped to the clipping box
+ */
+// ----------------------------------------------------------------------
+
+void IsobandLayer::getMapShapes(const Engine::Gis::Engine& gis,
+                                const Fmi::SpatialReference& crs,
+                                const Fmi::Box& clipbox,
+                                OGRGeometryPtr& inshape,
+                                OGRGeometryPtr& outshape) const
+{
+  if (inside)
+  {
+    inshape = gis.getShape(&crs, inside->options);
+    if (!inshape)
+      throw Fmi::Exception(BCP, "Received empty inside-shape from database!");
+
+    inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
+  }
+  if (outside)
+  {
+    outshape = gis.getShape(&crs, outside->options);
+    if (outshape)
+      outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Clip the isoband and do the requested intersections
+ */
+// ----------------------------------------------------------------------
+
+OGRGeometryPtr IsobandLayer::clipIsoband(const OGRGeometry& geom,
+                                         const Fmi::Box& clipbox,
+                                         const OGRGeometryPtr& inshape,
+                                         const OGRGeometryPtr& outshape) const
+{
+  OGRGeometryPtr geom1(geom.clone());
+  Fmi::OGR::normalizeWindingOrder(geom1.get());
+  OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom1, clipbox));
+
+  // Do intersections if so requested
+
+  if (geom2 && geom2->IsEmpty() == 0 && inshape)
+    geom2.reset(geom2->Intersection(inshape.get()));
+
+  if (geom2 && geom2->IsEmpty() == 0 && outshape)
+    geom2.reset(geom2->Difference(outshape.get()));
+
+  // Intersect with data too
+
+  return intersections.intersect(geom2);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add a single isoband to the output
+ */
+// ----------------------------------------------------------------------
+
+void IsobandLayer::addIsoband(CTPP::CDT& theGlobals,
+                              CTPP::CDT& object_cdt,
+                              CTPP::CDT& group_cdt,
+                              State& theState,
+                              const OGRGeometry& geom,
+                              const Isoband& isoband,
+                              const Fmi::DateTime& valid_time,
+                              const Fmi::SpatialReference& crs,
+                              const Fmi::Box& box)
+{
+  // Store the path with unique ID
+  std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
+
+  if (!theState.addId(iri))
+    throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
+
+  std::string arcNumbers;
+  std::string arcCoordinates;
+  std::string pointCoordinates;
+
+  CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
+  isoband_cdt["iri"] = iri;
+  isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
+  isoband_cdt["parameter"] = paraminfo.parameter;
+
+  // Use Bezier SVG for SVG output when enabled
+  if (filter.bezierEnabled() && theState.getType() != "topojson" &&
+      theState.getType() != "geojson" && theState.getType() != "kml")
+  {
+    pointCoordinates =
+        filter.toBezierSvg(geom, box, precision, &theState.getBezierCache());
+  }
+
+  if (pointCoordinates.empty())
+  {
+    pointCoordinates = Geometry::toString(geom,
+                                          theState.getType(),
+                                          box,
+                                          crs,
+                                          precision,
+                                          theState.arcHashMap,
+                                          theState.arcCounter,
+                                          arcNumbers,
+                                          arcCoordinates);
+  }
+
+  if (!pointCoordinates.empty())
+    isoband_cdt["data"] = pointCoordinates;
+
+  isoband_cdt["type"] = Geometry::name(geom, theState.getType());
+  isoband_cdt["layertype"] = "isoband";
+
+  // Use null to indicate unset values in GeoJSON
+  if (isoband.lolimit)
+    isoband_cdt["lolimit"] = *isoband.lolimit;
+  else
+    isoband_cdt["lolimit"] = "null";
+
+  if (isoband.hilimit)
+    isoband_cdt["hilimit"] = *isoband.hilimit;
+  else
+    isoband_cdt["hilimit"] = "null";
+
+  theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
+
+  if (theState.getType() == "topojson")
+  {
+    if (!arcNumbers.empty())
+      isoband_cdt["arcs"] = arcNumbers;
+
+    if (!arcCoordinates.empty())
+    {
+      CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
+      arc_cdt["data"] = arcCoordinates;
+      theGlobals["arcs"][theState.insertCounter] = arc_cdt;
+      theState.insertCounter++;
+    }
+    object_cdt["paths"][iri] = isoband_cdt;
+  }
+  else
+  {
+    theGlobals["paths"][iri] = isoband_cdt;
+  }
+
+  // theGlobals["paths"][iri] = isoband_cdt;
+
+  // Add the SVG use element
+  CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+  tag_cdt["start"] = "<use";
+  tag_cdt["end"] = "/>";
+  theState.addAttributes(theGlobals, tag_cdt, isoband.attributes);
+  tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+  group_cdt["tags"].PushBack(tag_cdt);
+}
+
 void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
                                        CTPP::CDT& theLayersCdt,
                                        State& theState)
@@ -496,19 +654,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
-      auto bbox = fmt::format(
-          "{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
-      auto bl = projection.bottomLeftLatLon();
-      auto tr = projection.topRightLatLon();
-
-      // # Testing if the target grid is defined as latlon:
-      if (projection.x1 == bl.X() && projection.y1 == bl.Y() && projection.x2 == tr.X() &&
-          projection.y2 == tr.Y())
-        originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
-
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-      if (!theState.animation_enabled)
-        originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
+      add_grid_bbox_attributes(*originalGridQuery, projection, clipbox, theState.animation_enabled);
     }
     else
     {
@@ -519,43 +665,16 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    std::string pName = paraminfo.parameter;
-    auto pos = pName.find(".raw");
-    if (pos != std::string::npos)
-    {
-      attributeList.addAttribute("grid.areaInterpolationMethod",
-                                 Fmi::to_string(T::AreaInterpolationMethod::Nearest));
-      pName.erase(pos, 4);
-    }
+    add_grid_parameter(*gridEngine,
+                                           producerName,
+                                           paraminfo.parameter,
+                                           multiplier,
+                                           offset,
+                                           projection,
+                                           attributeList,
+                                           *originalGridQuery);
 
-    std::string param = gridEngine->getParameterString(producerName, pName);
-
-    if (multiplier && *multiplier != 1.0)
-      param = "MUL{" + param + ";" + std::to_string(*multiplier) + "}";
-
-    if (offset && *offset)
-      param = "SUM{" + param + ";" + std::to_string(*offset) + "}";
-
-    attributeList.addAttribute("param", param);
-
-    if (!projection.projectionParameter)
-      projection.projectionParameter = param;
-
-    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
-    {
-      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.empty())
-        originalGridQuery->mProducerNameList.push_back(producerName);
-    }
-
-    std::string forecastTime = Fmi::to_iso_string(getValidTime());
-    attributeList.addAttribute("startTime", forecastTime);
-    attributeList.addAttribute("endTime", forecastTime);
-    attributeList.addAttribute("timelist", forecastTime);
-    attributeList.addAttribute("timezone", "UTC");
-
-    if (origintime)
-      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+    add_time_attributes(attributeList, getValidTime(), origintime);
 
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
@@ -569,55 +688,13 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       p.mContourLowValues = contourLowValues;
       p.mContourHighValues = contourHighValues;
 
-      if (paraminfo.geometryId)
-        p.mGeometryId = *paraminfo.geometryId;
-
-      if (paraminfo.levelId)
-        p.mParameterLevelId = *paraminfo.levelId;
-
-      if (paraminfo.level)
-      {
-        p.mParameterLevel = C_INT(*paraminfo.level);
-      }
-      else if (paraminfo.pressure)
-      {
-        p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        p.mParameterLevel = C_INT(*paraminfo.pressure);
-      }
-
-      if (paraminfo.elevation_unit)
-      {
-        if (*paraminfo.elevation_unit == "m")
-          p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-
-        if (*paraminfo.elevation_unit == "p")
-          p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      }
-
-      if (paraminfo.forecastType)
-        p.mForecastType = C_INT(*paraminfo.forecastType);
-
-      if (paraminfo.forecastNumber)
-        p.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+      set_query_parameter_selections(p, paraminfo);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size && *projection.size > 0)
-    {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
-    }
-    else
-    {
-      if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       Fmi::to_string(*projection.xsize));
-
-      if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       Fmi::to_string(*projection.ysize));
-    }
+    add_grid_size_attributes(*originalGridQuery, projection);
 
     if (projection.bboxcrs)
       originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
@@ -632,28 +709,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("grid.resolution",
                                                      Fmi::to_string(*projection.resolution));
 
-    if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
-    {
-      auto bbox = fmt::format(
-          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-    }
+    if (wkt == "data")
+      add_data_bbox_attribute(*originalGridQuery, projection);
 
-    if (smoother.size)
-      originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
-                                                     Fmi::to_string(*smoother.size));
-
-    if (smoother.degree)
-      originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
-                                                     Fmi::to_string(*smoother.degree));
-
-    if (subdivide > 0)
-      originalGridQuery->mAttributeList.addAttribute("contour.subdivide",
-                                                     Fmi::to_string(subdivide));
-
-    if (contour_threads)
-      originalGridQuery->mAttributeList.addAttribute("contour.threads",
-                                                     Fmi::to_string(*contour_threads));
+    add_contour_attributes(*originalGridQuery, smoother, subdivide, contour_threads);
 
     if (interpolation == "linear")
       originalGridQuery->mAttributeList.addAttribute(
@@ -679,21 +738,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     }
     */
 
-    originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
-                                                   Fmi::to_string(extrapolation));
-
-    if (extrapolation)
-      originalGridQuery->mAttributeList.addAttribute("contour.multiplier",
-                                                     Fmi::to_string(*multiplier));
-
-    if (offset)
-      originalGridQuery->mAttributeList.addAttribute("contour.offset", Fmi::to_string(*offset));
-
-    originalGridQuery->mAttributeList.setAttribute(
-        "contour.coordinateType",
-        Fmi::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
-    // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
-    // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+    add_contour_value_attributes(*originalGridQuery, extrapolation, multiplier, offset);
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
@@ -719,21 +764,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
             OGRGeometry* geom = nullptr;
             OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
-            if (geomPtr && minarea && crs.get())
-            {
-              auto area = *minarea;
-              if (areaunit == "px^2")
-                area = box.areaFactor() * area;
-
-              OGRGeometryPtr tmp(geomPtr);
-              tmp->assignSpatialReference(crs.get());
-              tmp.reset(Fmi::OGR::despeckle(*tmp, area));
-              geoms.push_back(tmp);
-            }
-            else
-            {
-              geoms.push_back(geomPtr);
-            }
+            geoms.push_back(despeckle_contour(geomPtr, minarea, areaunit, box, crs));
           }
 #if 0
           int width = 3600; //atoi(query.mAttributeList.getAttributeValue("grid.width"));
@@ -786,50 +817,12 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Extracting the projection information from the query result.
 
-    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
-    {
-      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
-
-      if (widthStr != nullptr)
-        projection.xsize = Fmi::stoi(widthStr);
-
-      if (heightStr != nullptr)
-        projection.ysize = Fmi::stoi(heightStr);
-    }
+    update_projection_size(projection, *query);
 
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
 
-    if (*projection.crs == "data")
-    {
-      const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
-      const char* proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
-      if (proj4Str != nullptr && strstr(proj4Str, "+lon_wrap") != nullptr)
-        crsStr = proj4Str;
-
-      if (crsStr != nullptr)
-      {
-        projection.crs = crsStr;
-        if (!projection.bboxcrs)
-        {
-          const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
-          if (bboxStr != nullptr)
-          {
-            std::vector<double> partList;
-            splitString(bboxStr, ',', partList);
-
-            if (partList.size() == 4)
-            {
-              projection.x1 = partList[0];
-              projection.y1 = partList[1];
-              projection.x2 = partList[2];
-              projection.y2 = partList[3];
-            }
-          }
-        }
-      }
-    }
+    update_data_projection(projection, *query);
 
     if (wkt == "data")
       return;
@@ -838,20 +831,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     OGRGeometryPtr inshape;
     OGRGeometryPtr outshape;
-    if (inside)
-    {
-      inshape = gis.getShape(&crs, inside->options);
-      if (!inshape)
-        throw Fmi::Exception(BCP, "Received empty inside-shape from database!");
-
-      inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
-    }
-    if (outside)
-    {
-      outshape = gis.getShape(&crs, outside->options);
-      if (outshape)
-        outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
-    }
+    getMapShapes(gis, crs, clipbox, inshape, outshape);
 
     // Logical operations with isobands are initialized before hand
 
@@ -878,109 +858,12 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       const OGRGeometryPtr& geom = geoms[i];
       if (geom && geom->IsEmpty() == 0)
       {
-        OGRGeometryPtr geom1(geom->clone());
-        Fmi::OGR::normalizeWindingOrder(geom1.get());
-        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom1, clipbox));
-        const Isoband& isoband = isobands[i];
-
-        // Do intersections if so requested
-
-        if (geom2 && geom2->IsEmpty() == 0 && inshape)
-          geom2.reset(geom2->Intersection(inshape.get()));
-
-        if (geom2 && geom2->IsEmpty() == 0 && outshape)
-          geom2.reset(geom2->Difference(outshape.get()));
-
-        // Intersect with data too
-
-        geom2 = intersections.intersect(geom2);
+        OGRGeometryPtr geom2 = clipIsoband(*geom, clipbox, inshape, outshape);
 
         // Finally produce output if we still have something left
         if (geom2 && geom2->IsEmpty() == 0)
-        {
-          // Store the path with unique ID
-          std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
-
-          if (!theState.addId(iri))
-            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
-
-          CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
-
-          std::string arcNumbers;
-          std::string arcCoordinates;
-          std::string pointCoordinates;
-
-          isoband_cdt["iri"] = iri;
-          isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
-          isoband_cdt["parameter"] = paraminfo.parameter;
-
-          // Use Bezier SVG for SVG output when enabled
-          if (filter.bezierEnabled() && theState.getType() != "topojson" &&
-              theState.getType() != "geojson" && theState.getType() != "kml")
-          {
-            pointCoordinates =
-                filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
-          }
-
-          if (pointCoordinates.empty())
-          {
-            pointCoordinates = Geometry::toString(*geom2,
-                                                  theState.getType(),
-                                                  box,
-                                                  crs,
-                                                  precision,
-                                                  theState.arcHashMap,
-                                                  theState.arcCounter,
-                                                  arcNumbers,
-                                                  arcCoordinates);
-          }
-
-          if (!pointCoordinates.empty())
-            isoband_cdt["data"] = pointCoordinates;
-
-          isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
-          isoband_cdt["layertype"] = "isoband";
-
-          // Use null to indicate unset values in GeoJSON
-          if (isoband.lolimit)
-            isoband_cdt["lolimit"] = *isoband.lolimit;
-          else
-            isoband_cdt["lolimit"] = "null";
-
-          if (isoband.hilimit)
-            isoband_cdt["hilimit"] = *isoband.hilimit;
-          else
-            isoband_cdt["hilimit"] = "null";
-
-          theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
-
-          if (theState.getType() == "topojson")
-          {
-            if (!arcNumbers.empty())
-              isoband_cdt["arcs"] = arcNumbers;
-
-            if (!arcCoordinates.empty())
-            {
-              CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
-              arc_cdt["data"] = arcCoordinates;
-              theGlobals["arcs"][theState.insertCounter] = arc_cdt;
-              theState.insertCounter++;
-            }
-            object_cdt["paths"][iri] = isoband_cdt;
-          }
-          else
-          {
-            theGlobals["paths"][iri] = isoband_cdt;
-          }
-
-          // Add the SVG use element
-          CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-          tag_cdt["start"] = "<use";
-          tag_cdt["end"] = "/>";
-          theState.addAttributes(theGlobals, tag_cdt, isoband.attributes);
-          tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-          group_cdt["tags"].PushBack(tag_cdt);
-        }
+          addIsoband(
+              theGlobals, object_cdt, group_cdt, theState, *geom2, isobands[i], valid_time, crs, box);
       }
     }
 
@@ -1106,20 +989,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     OGRGeometryPtr inshape;
     OGRGeometryPtr outshape;
-    if (inside)
-    {
-      inshape = gis.getShape(&crs, inside->options);
-      if (!inshape)
-        throw Fmi::Exception(BCP, "Received empty inside-shape from database!");
-
-      inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
-    }
-    if (outside)
-    {
-      outshape = gis.getShape(&crs, outside->options);
-      if (outshape)
-        outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
-    }
+    getMapShapes(gis, crs, clipbox, inshape, outshape);
 
     // Logical operations with isobands are initialized before hand
 
@@ -1263,111 +1133,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
       if (geom && geom->IsEmpty() == 0)
       {
-        OGRGeometryPtr geom1(geom->clone());
-        Fmi::OGR::normalizeWindingOrder(geom1.get());
-        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom1, clipbox));
-
-        const Isoband& isoband = isobands[i];
-
-        // Do intersections if so requested
-
-        if (geom2 && geom2->IsEmpty() == 0 && inshape)
-          geom2.reset(geom2->Intersection(inshape.get()));
-
-        if (geom2 && geom2->IsEmpty() == 0 && outshape)
-          geom2.reset(geom2->Difference(outshape.get()));
-
-        // Intersect with data too
-
-        geom2 = intersections.intersect(geom2);
+        OGRGeometryPtr geom2 = clipIsoband(*geom, clipbox, inshape, outshape);
 
         // Finally produce output if we still have something left
         if (geom2 && geom2->IsEmpty() == 0)
-        {
-          // Store the path with unique ID
-          std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
-
-          if (!theState.addId(iri))
-            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
-
-          std::string arcNumbers;
-          std::string arcCoordinates;
-          std::string pointCoordinates;
-
-          CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
-          isoband_cdt["iri"] = iri;
-          isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
-          isoband_cdt["parameter"] = paraminfo.parameter;
-
-          // Use Bezier SVG for SVG output when enabled
-          if (filter.bezierEnabled() && theState.getType() != "topojson" &&
-              theState.getType() != "geojson" && theState.getType() != "kml")
-          {
-            pointCoordinates =
-                filter.toBezierSvg(*geom2, box, precision, &theState.getBezierCache());
-          }
-
-          if (pointCoordinates.empty())
-          {
-            pointCoordinates = Geometry::toString(*geom2,
-                                                  theState.getType(),
-                                                  box,
-                                                  crs,
-                                                  precision,
-                                                  theState.arcHashMap,
-                                                  theState.arcCounter,
-                                                  arcNumbers,
-                                                  arcCoordinates);
-          }
-
-          if (!pointCoordinates.empty())
-            isoband_cdt["data"] = pointCoordinates;
-
-          isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
-          isoband_cdt["layertype"] = "isoband";
-
-          // Use null to indicate unset values in GeoJSON
-          if (isoband.lolimit)
-            isoband_cdt["lolimit"] = *isoband.lolimit;
-          else
-            isoband_cdt["lolimit"] = "null";
-
-          if (isoband.hilimit)
-            isoband_cdt["hilimit"] = *isoband.hilimit;
-          else
-            isoband_cdt["hilimit"] = "null";
-
-          theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
-
-          if (theState.getType() == "topojson")
-          {
-            if (!arcNumbers.empty())
-              isoband_cdt["arcs"] = arcNumbers;
-
-            if (!arcCoordinates.empty())
-            {
-              CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
-              arc_cdt["data"] = arcCoordinates;
-              theGlobals["arcs"][theState.insertCounter] = arc_cdt;
-              theState.insertCounter++;
-            }
-            object_cdt["paths"][iri] = isoband_cdt;
-          }
-          else
-          {
-            theGlobals["paths"][iri] = isoband_cdt;
-          }
-
-          // theGlobals["paths"][iri] = isoband_cdt;
-
-          // Add the SVG use element
-          CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-          tag_cdt["start"] = "<use";
-          tag_cdt["end"] = "/>";
-          theState.addAttributes(theGlobals, tag_cdt, isoband.attributes);
-          tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-          group_cdt["tags"].PushBack(tag_cdt);
-        }
+          addIsoband(
+              theGlobals, object_cdt, group_cdt, theState, *geom2, isobands[i], valid_time, crs, box);
       }
     }
     theGlobals["objects"][objectKey] = object_cdt;

@@ -93,6 +93,25 @@ class IsobandLayer : public Layer
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
+  void getMapShapes(const Engine::Gis::Engine& gis,
+                    const Fmi::SpatialReference& crs,
+                    const Fmi::Box& clipbox,
+                    OGRGeometryPtr& inshape,
+                    OGRGeometryPtr& outshape) const;
+  OGRGeometryPtr clipIsoband(const OGRGeometry& geom,
+                             const Fmi::Box& clipbox,
+                             const OGRGeometryPtr& inshape,
+                             const OGRGeometryPtr& outshape) const;
+  void addIsoband(CTPP::CDT& theGlobals,
+                  CTPP::CDT& object_cdt,
+                  CTPP::CDT& group_cdt,
+                  State& theState,
+                  const OGRGeometry& geom,
+                  const Isoband& isoband,
+                  const Fmi::DateTime& valid_time,
+                  const Fmi::SpatialReference& crs,
+                  const Fmi::Box& box);
+
   void addHeatmapPoints(heatmap_t* hm,
                         const heatmap_stamp_t* hms,
                         const TS::TimeSeriesVector& values,
