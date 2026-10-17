@@ -40,8 +40,11 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <cstdlib>
+#include <fstream>
 #include <memory>
 #include <stdexcept>
+#include <unistd.h>
 
 using namespace boost::placeholders;
 
@@ -1293,11 +1296,9 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
 
       // Converting SVG to ARGB-image:
       uint* vectorImage = Giza::Svg::toargb(output);
-      if (vectorImage)
-      {
-        std::shared_ptr<CImage> sImage(new CImage(width, height, vectorImage));
-        images.push_back(sImage);
-      }
+      if (!vectorImage)
+        throw Fmi::Exception(BCP, "Failed to convert an animation frame to an image");
+      images.push_back(std::make_shared<CImage>(width, height, vectorImage));
 
       /* Saving animation frame for debugging
 
@@ -1319,23 +1320,27 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
 
   // *** Creating the animation file:
 
+  // One delay per frame: the last loop step of each time step waits for the time step interval
   std::vector<int> timeVect;
-  std::vector<uint*> image(frameCount, nullptr);  // does this leak memory???
+  std::vector<uint*> image(frameCount, nullptr);  // the pixels are owned by the CImages
   for (int tt = 0; tt < animation_timesteps; tt++)
   {
     for (int t = 0; t < animation_loopsteps; t++)
     {
       uint idx = tt * animation_loopsteps + t;
-      const auto& cimage = images[idx];
-      image[idx] = cimage->pixel;
-      if (animation_loopsteps > 0)
+      image[idx] = images[idx]->pixel;
+      if (t + 1 < animation_loopsteps)
         timeVect.push_back(theProduct.animation.loopstep_interval);
+      else
+        timeVect.push_back(theProduct.animation.timestep_interval);
     }
-    timeVect.push_back(theProduct.animation.timestep_interval);
   }
 
-  char fname[100];
-  sprintf(fname, "/tmp/WMS_animation_%d_%lu.webp", getpid(), getTime());
+  char fname[] = "/tmp/WMS_animation_XXXXXX.webp";
+  int fd = mkstemps(fname, 5);
+  if (fd < 0)
+    throw Fmi::Exception(BCP, "Failed to create a temporary file for the animation");
+  close(fd);
   webp_anim_save_ARGB(fname, image.data(), width, height, frameCount, timeVect);
   images.clear();
 
@@ -1344,7 +1349,10 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
   std::string content;
   std::ifstream in(fname);
   if (!in)
+  {
+    (void)remove(fname);
     throw Fmi::Exception(BCP, "Failed to open '" + std::string(fname) + "' for reading!");
+  }
 
   content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   theResponse.setContent(std::move(content));
