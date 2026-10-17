@@ -30,6 +30,16 @@ namespace
     }
     return ret;
   }
+
+  // Interval time dimension if the times form intervals, otherwise a step time dimension
+  std::shared_ptr<TimeDimension> make_time_dimension(
+      const Engine::Querydata::ValidTimeList& validtimes)
+  {
+    time_intervals intervals = get_intervals(validtimes);
+    if (!intervals.empty())
+      return std::make_shared<IntervalTimeDimension>(intervals);
+    return std::make_shared<StepTimeDimension>(validtimes);
+  }
 }
   
 bool QueryDataLayer::updateLayerMetaData()
@@ -55,12 +65,7 @@ bool QueryDataLayer::updateLayerMetaData()
 
         std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
         auto validtimes = apply_timestep(md.validtimes, timestep);
-        time_intervals intervals = get_intervals(*validtimes);
-        std::shared_ptr<TimeDimension> timeDimension;
-        if (!intervals.empty())
-          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
-        else
-          timeDimension = std::make_shared<StepTimeDimension>(*validtimes);
+        std::shared_ptr<TimeDimension> timeDimension = make_time_dimension(*validtimes);
         newTimeDimensions.insert(std::make_pair(Fmi::DateTime::NOT_A_DATE_TIME, timeDimension));
         timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
         timeDimensions->useLatestTimeAsDefault(!queryDataConf.isforecast);
@@ -104,12 +109,7 @@ bool QueryDataLayer::updateLayerMetaData()
 
       if (validtimes && !validtimes->empty())
       {
-        std::shared_ptr<TimeDimension> timeDimension;
-        time_intervals intervals = get_intervals(*validtimes);
-        if (!intervals.empty())
-          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
-        else
-          timeDimension = std::make_shared<StepTimeDimension>(*validtimes);
+        std::shared_ptr<TimeDimension> timeDimension = make_time_dimension(*validtimes);
 
         newTimeDimensions.insert(std::make_pair(Fmi::DateTime::NOT_A_DATE_TIME, timeDimension));
       }
@@ -124,12 +124,7 @@ bool QueryDataLayer::updateLayerMetaData()
         if (!vt)
           continue;
 
-        std::shared_ptr<TimeDimension> timeDimension;
-        time_intervals intervals = get_intervals(*vt);
-        if (!intervals.empty())
-          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
-        else
-          timeDimension = std::make_shared<StepTimeDimension>(*vt);
+        std::shared_ptr<TimeDimension> timeDimension = make_time_dimension(*vt);
 
         newTimeDimensions.insert(std::make_pair(t, timeDimension));
       }
