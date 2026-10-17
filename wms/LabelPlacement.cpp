@@ -710,24 +710,99 @@ std::vector<PlacedLabel> priorityGreedyPlacement(const LabelConfig& config,
 // Seed is fixed (42) so that the result is reproducible and the layer
 // cache (hash_value) is consistent across identical requests.
 // ------------------------------------------------------------------
-std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
-                                                      const std::vector<LabelCandidate>& candidates,
-                                                      double map_w, double map_h,
-                                                      const FeasibilityFn& feasible)
+// State of the simulated annealing of label positions
+class LabelAnnealer
 {
-  const int n = static_cast<int>(candidates.size());
-  if (n == 0)
-    return {};
+ public:
+  LabelAnnealer(const LabelConfig& config,
+                const std::vector<LabelCandidate>& candidates,
+                double map_w, double map_h,
+                const FeasibilityFn& feasible)
+      : config(config),
+        candidates(candidates),
+        n(static_cast<int>(candidates.size())),
+        map_w(map_w),
+        map_h(map_h),
+        fw(config.free_space_weight),
+        fs_radius(config.free_space_radius),
+        fs_radius2(fs_radius * fs_radius)
+  {
+    initBBoxes();
+    initFeasibility(feasible);
+    initAssignment();
+  }
 
-  const double pad = config.bbox_padding;
+  void anneal();
+  std::vector<PlacedLabel> result() const;
 
-  // Pre-compute all candidate bounding boxes for every label.  Two
+ private:
+  void initBBoxes();
+  void initFeasibility(const FeasibilityFn& feasible);
+  void initAssignment();
+
+  bool isFeasible(int i, int k) const
+  {
+    if (feasible_pos.empty())
+      return true;
+    return feasible_pos[static_cast<size_t>(i)][static_cast<size_t>(k)] != 0;
+  }
+
+  double labelOverlapContrib(int i, int k) const;
+  double obstacleOverlapContrib(int i, int k) const;
+  std::pair<double, double> computeFreeDir(int i) const;
+  double posPenalty(int i, int k) const;
+
+  const LabelConfig& config;
+  const std::vector<LabelCandidate>& candidates;
+  const int n;
+  const double map_w;
+  const double map_h;
+
+  // Pre-computed candidate bounding boxes for every label.  Two
   // versions are kept: render_bboxes are the natural (un-padded) boxes
   // returned to the caller; coll_bboxes are inflated by pad for collision
   // detection so platform-specific font measurement noise can't flip
   // close decisions.
-  std::vector<std::vector<LabelBBox>> render_bboxes(static_cast<size_t>(n));
-  std::vector<std::vector<LabelBBox>> coll_bboxes(static_cast<size_t>(n));
+  std::vector<std::vector<LabelBBox>> render_bboxes;
+  std::vector<std::vector<LabelBBox>> coll_bboxes;
+
+  // Marker obstacles indexed parallel to candidates so we can skip self
+  // when computing the obstacle-overlap energy.  Invalid bboxes (zero
+  // size) are kept in the list and ignored at lookup time.
+  std::vector<LabelBBox> obstacles;
+
+  // Per-position feasibility, empty if there is no predicate
+  std::vector<std::vector<char>> feasible_pos;
+
+  // assignment[i]: index into render_bboxes[i], or -1 if dropped
+  std::vector<int> assignment;
+
+  // Position penalty: dropped label costs (num_candidates) to discourage dropping
+  int num_cands = 0;
+
+  // Free-space bias: when enabled, the position penalty is reduced for
+  // candidate positions whose direction aligns with the candidate's
+  // free-direction vector — same idea as the greedy reorder, expressed
+  // here as an extra penalty term so SA balances it against the overlap
+  // and base position-index costs.
+  //
+  // Free direction is recomputed for the candidate being moved on each
+  // posPenalty call.  It includes both other candidates' markers AND
+  // their currently-assigned label centroids, so a wide neighbour-label
+  // is treated as occupied space.  Cost: O(n) per call ≈ 200 ops, run
+  // ~4 × sa_iterations times — well under a millisecond at typical
+  // settings.
+  const double fw;
+  const double fs_radius;
+  const double fs_radius2;
+};
+
+void LabelAnnealer::initBBoxes()
+{
+  const double pad = config.bbox_padding;
+
+  render_bboxes.resize(static_cast<size_t>(n));
+  coll_bboxes.resize(static_cast<size_t>(n));
   for (int i = 0; i < n; i++)
   {
     const auto& ci = candidates[static_cast<size_t>(i)];
@@ -744,44 +819,41 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
       dst.push_back(pad > 0.0 ? b.inflated(pad) : b);
   }
 
-  // Marker obstacles indexed parallel to candidates so we can skip self
-  // when computing the obstacle-overlap energy.  Invalid bboxes (zero
-  // size) are kept in the list and ignored at lookup time.
-  std::vector<LabelBBox> obstacles(static_cast<size_t>(n));
+  obstacles.resize(static_cast<size_t>(n));
   for (int i = 0; i < n; i++)
     obstacles[static_cast<size_t>(i)] = candidates[static_cast<size_t>(i)].obstacle;
 
-  // Country constraint: precompute per-position feasibility once (the
-  // polygons are static for the whole anneal).  This turns the constraint
-  // into an O(1) lookup inside the hot loop and keeps it a *hard* rule —
-  // an infeasible position is simply never assigned, so SA cannot trade a
-  // border crossing for lower overlap energy.  When no predicate is given
-  // the matrix is empty and every lookup short-circuits to "feasible".
-  std::vector<std::vector<char>> feasible_pos;
-  if (feasible)
+  num_cands = static_cast<int>(render_bboxes.empty() ? 0 : render_bboxes[0].size());
+}
+
+// Country constraint: precompute per-position feasibility once (the
+// polygons are static for the whole anneal).  This turns the constraint
+// into an O(1) lookup inside the hot loop and keeps it a *hard* rule —
+// an infeasible position is simply never assigned, so SA cannot trade a
+// border crossing for lower overlap energy.  When no predicate is given
+// the matrix is empty and every lookup short-circuits to "feasible".
+void LabelAnnealer::initFeasibility(const FeasibilityFn& feasible)
+{
+  if (!feasible)
+    return;
+
+  feasible_pos.resize(static_cast<size_t>(n));
+  for (int i = 0; i < n; i++)
   {
-    feasible_pos.resize(static_cast<size_t>(n));
-    for (int i = 0; i < n; i++)
-    {
-      const auto& bb = render_bboxes[static_cast<size_t>(i)];
-      auto& row = feasible_pos[static_cast<size_t>(i)];
-      row.resize(bb.size());
-      for (size_t k = 0; k < bb.size(); k++)
-        row[k] = feasible(candidates[static_cast<size_t>(i)], bb[k]) ? 1 : 0;
-    }
+    const auto& bb = render_bboxes[static_cast<size_t>(i)];
+    auto& row = feasible_pos[static_cast<size_t>(i)];
+    row.resize(bb.size());
+    for (size_t k = 0; k < bb.size(); k++)
+      row[k] = feasible(candidates[static_cast<size_t>(i)], bb[k]) ? 1 : 0;
   }
-  auto isFeasible = [&](int i, int k) -> bool {
-    if (feasible_pos.empty())
-      return true;
-    return feasible_pos[static_cast<size_t>(i)][static_cast<size_t>(k)] != 0;
-  };
+}
 
-  // assignment[i]: index into render_bboxes[i], or -1 if dropped
-  std::vector<int> assignment(static_cast<size_t>(n), -1);
-
-  // Initialise: each label at its first within-bounds candidate.  Bounds
-  // are checked against the natural (render) bbox; padding is for
-  // overlap detection only and does not constrain map bounds.
+// Initialise: each label at its first within-bounds candidate.  Bounds
+// are checked against the natural (render) bbox; padding is for
+// overlap detection only and does not constrain map bounds.
+void LabelAnnealer::initAssignment()
+{
+  assignment.assign(static_cast<size_t>(n), -1);
   for (int i = 0; i < n; i++)
   {
     for (int k = 0; k < static_cast<int>(render_bboxes[static_cast<size_t>(i)].size()); k++)
@@ -794,117 +866,104 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
       }
     }
   }
+}
 
-  // Delta-energy contributions for label i at candidate position k.
-  // Splits into label-vs-label and label-vs-obstacle terms because
-  // obstacles are static (don't depend on assignment) and weighted
-  // separately to make symbol-overlap a hard penalty.
-  auto labelOverlapContrib = [&](int i, int k) -> double {
-    if (k < 0)
-      return 0.0;
-    const auto& bi = coll_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
-    double e = 0.0;
-    for (int j = 0; j < n; j++)
-    {
-      if (j == i)
-        continue;
-      const int kj = assignment[static_cast<size_t>(j)];
-      if (kj < 0)
-        continue;
-      e += bi.overlap_area(coll_bboxes[static_cast<size_t>(j)][static_cast<size_t>(kj)]);
-    }
-    return e;
+// Delta-energy contributions for label i at candidate position k.
+// Splits into label-vs-label and label-vs-obstacle terms because
+// obstacles are static (don't depend on assignment) and weighted
+// separately to make symbol-overlap a hard penalty.
+double LabelAnnealer::labelOverlapContrib(int i, int k) const
+{
+  if (k < 0)
+    return 0.0;
+  const auto& bi = coll_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
+  double e = 0.0;
+  for (int j = 0; j < n; j++)
+  {
+    if (j == i)
+      continue;
+    const int kj = assignment[static_cast<size_t>(j)];
+    if (kj < 0)
+      continue;
+    e += bi.overlap_area(coll_bboxes[static_cast<size_t>(j)][static_cast<size_t>(kj)]);
+  }
+  return e;
+}
+
+double LabelAnnealer::obstacleOverlapContrib(int i, int k) const
+{
+  if (k < 0)
+    return 0.0;
+  const auto& bi = coll_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
+  double e = 0.0;
+  for (int j = 0; j < n; j++)
+  {
+    if (j == i)
+      continue;  // never test a label against its own marker
+    const auto& ob = obstacles[static_cast<size_t>(j)];
+    if (!ob.valid())
+      continue;
+    e += bi.overlap_area(ob);
+  }
+  return e;
+}
+
+std::pair<double, double> LabelAnnealer::computeFreeDir(int i) const
+{
+  if (fw <= 0.0)
+    return {0.0, 0.0};
+  double fx = 0.0;
+  double fy = 0.0;
+  auto accumulate = [&](double ox, double oy) {
+    const double dx = candidates[static_cast<size_t>(i)].anchor_x - ox;
+    const double dy = candidates[static_cast<size_t>(i)].anchor_y - oy;
+    const double d2 = dx * dx + dy * dy;
+    if (d2 < 1e-9)
+      return;
+    if (fs_radius > 0.0 && d2 > fs_radius2)
+      return;
+    fx += dx / d2;
+    fy += dy / d2;
   };
-
-  auto obstacleOverlapContrib = [&](int i, int k) -> double {
-    if (k < 0)
-      return 0.0;
-    const auto& bi = coll_bboxes[static_cast<size_t>(i)][static_cast<size_t>(k)];
-    double e = 0.0;
-    for (int j = 0; j < n; j++)
+  for (int j = 0; j < n; j++)
+  {
+    if (j == i)
+      continue;
+    const auto& cj = candidates[static_cast<size_t>(j)];
+    accumulate(cj.anchor_x, cj.anchor_y);
+    const int kj = assignment[static_cast<size_t>(j)];
+    if (kj >= 0)
     {
-      if (j == i)
-        continue;  // never test a label against its own marker
-      const auto& ob = obstacles[static_cast<size_t>(j)];
-      if (!ob.valid())
-        continue;
-      e += bi.overlap_area(ob);
+      const auto& bj = render_bboxes[static_cast<size_t>(j)][static_cast<size_t>(kj)];
+      accumulate((bj.x1 + bj.x2) / 2.0, (bj.y1 + bj.y2) / 2.0);
     }
-    return e;
-  };
+  }
+  const double mag = std::sqrt(fx * fx + fy * fy);
+  if (mag <= 1e-9)
+    return {0.0, 0.0};
+  return {fx / mag, fy / mag};
+}
 
-  // Position penalty: dropped label costs (num_candidates) to discourage dropping
-  const int num_cands = static_cast<int>(
-      render_bboxes.empty() ? 0 : render_bboxes[0].size());
-
-  // Free-space bias: when enabled, the position penalty is reduced for
-  // candidate positions whose direction aligns with the candidate's
-  // free-direction vector — same idea as the greedy reorder, expressed
-  // here as an extra penalty term so SA balances it against the overlap
-  // and base position-index costs.
-  //
-  // Free direction is recomputed for the candidate being moved on each
-  // posPenalty call.  It includes both other candidates' markers AND
-  // their currently-assigned label centroids, so a wide neighbour-label
-  // is treated as occupied space.  Cost: O(n) per call ≈ 200 ops, run
-  // ~4 × sa_iterations times — well under a millisecond at typical
-  // settings.
-  const double fw = config.free_space_weight;
-  const double fs_radius = config.free_space_radius;
-  const double fs_radius2 = fs_radius * fs_radius;
-
-  auto computeFreeDir = [&](int i) -> std::pair<double, double> {
-    if (fw <= 0.0)
-      return {0.0, 0.0};
-    double fx = 0.0;
-    double fy = 0.0;
-    auto accumulate = [&](double ox, double oy) {
-      const double dx = candidates[static_cast<size_t>(i)].anchor_x - ox;
-      const double dy = candidates[static_cast<size_t>(i)].anchor_y - oy;
-      const double d2 = dx * dx + dy * dy;
-      if (d2 < 1e-9)
-        return;
-      if (fs_radius > 0.0 && d2 > fs_radius2)
-        return;
-      fx += dx / d2;
-      fy += dy / d2;
-    };
-    for (int j = 0; j < n; j++)
+double LabelAnnealer::posPenalty(int i, int k) const
+{
+  if (k < 0)
+    return static_cast<double>(num_cands);
+  auto penalty = static_cast<double>(k);
+  if (fw > 0.0)
+  {
+    const auto fd = computeFreeDir(i);
+    if (fd.first != 0.0 || fd.second != 0.0)
     {
-      if (j == i)
-        continue;
-      const auto& cj = candidates[static_cast<size_t>(j)];
-      accumulate(cj.anchor_x, cj.anchor_y);
-      const int kj = assignment[static_cast<size_t>(j)];
-      if (kj >= 0)
-      {
-        const auto& bj = render_bboxes[static_cast<size_t>(j)][static_cast<size_t>(kj)];
-        accumulate((bj.x1 + bj.x2) / 2.0, (bj.y1 + bj.y2) / 2.0);
-      }
+      const auto& r = positionRule(num_cands, k);
+      const double alignment = r.dx * fd.first + r.dy * fd.second;
+      penalty -= fw * alignment;
     }
-    const double mag = std::sqrt(fx * fx + fy * fy);
-    if (mag <= 1e-9)
-      return {0.0, 0.0};
-    return {fx / mag, fy / mag};
-  };
+  }
+  return penalty;
+}
 
-  auto posPenalty = [&](int i, int k) -> double {
-    if (k < 0)
-      return static_cast<double>(num_cands);
-    auto penalty = static_cast<double>(k);
-    if (fw > 0.0)
-    {
-      const auto fd = computeFreeDir(i);
-      if (fd.first != 0.0 || fd.second != 0.0)
-      {
-        const auto& r = positionRule(num_cands, k);
-        const double alignment = r.dx * fd.first + r.dy * fd.second;
-        penalty -= fw * alignment;
-      }
-    }
-    return penalty;
-  };
-
+void LabelAnnealer::anneal()
+{
   // Fixed seed for reproducibility: identical map requests must produce
   // identical output so that the layer cache (hash_value) works correctly.
   // NOLINTNEXTLINE(cert-msc32-c,cert-msc51-cpp): fixed seed for reproducible label placement
@@ -952,9 +1011,12 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
 
     T *= cool;
   }
+}
 
-  // Build result vector — return natural (render) bboxes, not the
-  // padded collision bboxes used internally.
+// Build result vector — return natural (render) bboxes, not the
+// padded collision bboxes used internally.
+std::vector<PlacedLabel> LabelAnnealer::result() const
+{
   std::vector<PlacedLabel> result;
   result.reserve(static_cast<size_t>(n));
   for (int i = 0; i < n; i++)
@@ -968,6 +1030,19 @@ std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
       result.push_back(makeDropped(candidates[static_cast<size_t>(i)]));
   }
   return result;
+}
+
+std::vector<PlacedLabel> simulatedAnnealingPlacement(const LabelConfig& config,
+                                                      const std::vector<LabelCandidate>& candidates,
+                                                      double map_w, double map_h,
+                                                      const FeasibilityFn& feasible)
+{
+  if (candidates.empty())
+    return {};
+
+  LabelAnnealer annealer(config, candidates, map_w, map_h, feasible);
+  annealer.anneal();
+  return annealer.result();
 }
 
 }  // anonymous namespace
