@@ -2,6 +2,8 @@
 #include "Attributes.h"
 #include "Layer.h"
 
+class OGRGeometry;
+
 namespace SmartMet
 {
 namespace Plugin
@@ -48,6 +50,21 @@ class GraticuleLayer : public Layer
   };
 
  private:
+  void addGraticuleLines(CTPP::CDT& theGlobals,
+                         CTPP::CDT& theLayersCdt,
+                         State& theState,
+                         const Graticule& graticule,
+                         const OGRGeometry* labeled,
+                         const OGRGeometry* unlabeled,
+                         const Fmi::SpatialReference& crs,
+                         const Fmi::Box& box);
+  void addGraticuleLabels(CTPP::CDT& theGlobals,
+                          CTPP::CDT& theLayersCdt,
+                          State& theState,
+                          const Graticule& graticule,
+                          const Fmi::SpatialReference& crs,
+                          const Fmi::Box& box);
+
   // Note: if for example generating 10x10, 5x5 and 1x1 graticules in different styles, it is
   // advisable to configure in order 1, 5 and 10 so that the most significant graticule is drawn
   // last on top of the less significant ones. In WMS mode dash patterns will break at tile edges,

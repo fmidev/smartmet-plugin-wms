@@ -1236,6 +1236,129 @@ void GraticuleLayer::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add the lines of a graticule
+ */
+// ----------------------------------------------------------------------
+
+void GraticuleLayer::addGraticuleLines(CTPP::CDT& theGlobals,
+                                       CTPP::CDT& theLayersCdt,
+                                       State& theState,
+                                       const Graticule& graticule,
+                                       const OGRGeometry* labeled,
+                                       const OGRGeometry* unlabeled,
+                                       const Fmi::SpatialReference& crs,
+                                       const Fmi::Box& box)
+{
+  CTPP::CDT graticule_cdt(CTPP::CDT::HASH_VAL);
+
+  // Store the path with unique QID
+  std::string iri = qid + (qid.empty() ? "" : ".") + theState.makeQid("graticule");
+
+  if (!theState.addId(iri))
+    throw Fmi::Exception(BCP, "Non-unique ID assigned to graticule").addParameter("ID", iri);
+
+  graticule_cdt["iri"] = iri;
+  graticule_cdt["layertype"] = "graticule";
+
+  auto geom = std::make_unique<OGRGeometryCollection>();
+  if (labeled != nullptr && labeled->IsEmpty() == 0)
+    geom->addGeometry(labeled);
+  if (unlabeled != nullptr && unlabeled->IsEmpty() == 0)
+    geom->addGeometry(unlabeled);
+
+  std::string arcNumbers;
+  std::string arcCoordinates;
+  std::string pointCoordinates = Geometry::toString(*geom,
+                                                    theState.getType(),
+                                                    box,
+                                                    crs,
+                                                    precision,
+                                                    theState.arcHashMap,
+                                                    theState.arcCounter,
+                                                    arcNumbers,
+                                                    arcCoordinates);
+
+  if (!pointCoordinates.empty())
+    graticule_cdt["data"] = pointCoordinates;
+
+  theState.addPresentationAttributes(graticule_cdt, css, attributes, graticule.attributes);
+  theGlobals["paths"][iri] = graticule_cdt;
+
+  // Add the SVG use element
+  CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+  tag_cdt["start"] = "<use";
+  tag_cdt["end"] = "/>";
+  theState.addAttributes(theGlobals, tag_cdt, graticule.attributes);
+  tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+  graticule_cdt["tags"].PushBack(tag_cdt);
+
+  theLayersCdt.PushBack(graticule_cdt);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the labels of a graticule
+ */
+// ----------------------------------------------------------------------
+
+void GraticuleLayer::addGraticuleLabels(CTPP::CDT& theGlobals,
+                                        CTPP::CDT& theLayersCdt,
+                                        State& theState,
+                                        const Graticule& graticule,
+                                        const Fmi::SpatialReference& crs,
+                                        const Fmi::Box& box)
+{
+  auto labels = generate_labels(graticule, crs, box);
+
+  if (!labels.empty())
+  {
+    std::string num_iri = theState.makeQid("graticule-numbers-");
+    if (!theState.addId(num_iri))
+      throw Fmi::Exception(BCP, "Non-unique ID assigned to graticule labels")
+          .addParameter("ID", num_iri);
+
+    CTPP::CDT num_cdt(CTPP::CDT::HASH_VAL);
+    num_cdt["attributes"]["id"] = num_iri;
+    num_cdt["start"] = "  <g";
+    num_cdt["end"] = "";
+    theState.addAttributes(theGlobals, num_cdt, graticule.labels.attributes);
+    theLayersCdt.PushBack(num_cdt);
+
+    bool horizontal = (graticule.labels.orientation == "horizontal");
+
+    for (const auto& label : labels)
+    {
+      CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+      text_cdt["start"] = "   <text";
+      text_cdt["end"] = "</text>";
+      text_cdt["cdata"] = Fmi::safexmlescape(label.text);
+
+      auto xpos = lround(label.x + graticule.labels.dx);
+      auto ypos = lround(label.y + graticule.labels.dy);
+
+      if (horizontal || label.angle == 0)
+      {
+        text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+        text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+      }
+      else
+      {
+        auto transform =
+            fmt::format("translate({} {}) rotate({})", xpos, ypos, std::round(label.angle));
+        text_cdt["attributes"]["transform"] = transform;
+      }
+
+      theState.addAttributes(theGlobals, text_cdt, graticule.labels.textattributes);
+
+      theLayersCdt.PushBack(text_cdt);
+    }
+    // Close num_cdt
+    theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n    </g>");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate data for content formatting
  *
  * We first generate the numbers for all graticules in the order they are listed.
@@ -1279,11 +1402,7 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
 
     // Handle CSS
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Clip if necessary
     addClipRect(theLayersCdt, theGlobals, box, theState);
@@ -1313,50 +1432,14 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
           (!glines.unlabeled || glines.unlabeled->IsEmpty() == 1))
         continue;
 
-      CTPP::CDT graticule_cdt(CTPP::CDT::HASH_VAL);
-
-      // Store the path with unique QID
-      std::string iri = qid + (qid.empty() ? "" : ".") + theState.makeQid("graticule");
-
-      if (!theState.addId(iri))
-        throw Fmi::Exception(BCP, "Non-unique ID assigned to graticule").addParameter("ID", iri);
-
-      graticule_cdt["iri"] = iri;
-      graticule_cdt["layertype"] = "graticule";
-
-      auto geom = std::make_unique<OGRGeometryCollection>();
-      if (glines.labeled && glines.labeled->IsEmpty() == 0)
-        geom->addGeometry(glines.labeled.get());
-      if (glines.unlabeled && glines.unlabeled->IsEmpty() == 0)
-        geom->addGeometry(glines.unlabeled.get());
-
-      std::string arcNumbers;
-      std::string arcCoordinates;
-      std::string pointCoordinates = Geometry::toString(*geom,
-                                                        theState.getType(),
-                                                        box,
-                                                        crs,
-                                                        precision,
-                                                        theState.arcHashMap,
-                                                        theState.arcCounter,
-                                                        arcNumbers,
-                                                        arcCoordinates);
-
-      if (!pointCoordinates.empty())
-        graticule_cdt["data"] = pointCoordinates;
-
-      theState.addPresentationAttributes(graticule_cdt, css, attributes, graticule.attributes);
-      theGlobals["paths"][iri] = graticule_cdt;
-
-      // Add the SVG use element
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-      theState.addAttributes(theGlobals, tag_cdt, graticule.attributes);
-      tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-      graticule_cdt["tags"].PushBack(tag_cdt);
-
-      theLayersCdt.PushBack(graticule_cdt);
+      addGraticuleLines(theGlobals,
+                        theLayersCdt,
+                        theState,
+                        graticule,
+                        glines.labeled.get(),
+                        glines.unlabeled.get(),
+                        crs,
+                        box);
     }
 
     // Add optional number groups to the containing group
@@ -1373,55 +1456,7 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
     theLayersCdt.PushBack(labels_cdt);
 
     for (const auto& graticule : graticules)
-    {
-      auto labels = generate_labels(graticule, crs, box);
-
-      if (!labels.empty())
-      {
-        std::string num_iri = theState.makeQid("graticule-numbers-");
-        if (!theState.addId(num_iri))
-          throw Fmi::Exception(BCP, "Non-unique ID assigned to graticule labels")
-              .addParameter("ID", num_iri);
-
-        CTPP::CDT num_cdt(CTPP::CDT::HASH_VAL);
-        num_cdt["attributes"]["id"] = num_iri;
-        num_cdt["start"] = "  <g";
-        num_cdt["end"] = "";
-        theState.addAttributes(theGlobals, num_cdt, graticule.labels.attributes);
-        theLayersCdt.PushBack(num_cdt);
-
-        bool horizontal = (graticule.labels.orientation == "horizontal");
-
-        for (const auto& label : labels)
-        {
-          CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-          text_cdt["start"] = "   <text";
-          text_cdt["end"] = "</text>";
-          text_cdt["cdata"] = Fmi::safexmlescape(label.text);
-
-          auto xpos = lround(label.x + graticule.labels.dx);
-          auto ypos = lround(label.y + graticule.labels.dy);
-
-          if (horizontal || label.angle == 0)
-          {
-            text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
-            text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
-          }
-          else
-          {
-            auto transform =
-                fmt::format("translate({} {}) rotate({})", xpos, ypos, std::round(label.angle));
-            text_cdt["attributes"]["transform"] = transform;
-          }
-
-          theState.addAttributes(theGlobals, text_cdt, graticule.labels.textattributes);
-
-          theLayersCdt.PushBack(text_cdt);
-        }
-        // Close num_cdt
-        theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n    </g>");
-      }
-    }
+      addGraticuleLabels(theGlobals, theLayersCdt, theState, graticule, crs, box);
 
     // Close labels_cdt
     theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n   </g>");
