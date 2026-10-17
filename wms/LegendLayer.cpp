@@ -417,6 +417,88 @@ void LegendLayer::generate_from_symbol_vector(CTPP::CDT& theGlobals,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add the symbol of an isoband to the legend
+ */
+// ----------------------------------------------------------------------
+
+void LegendLayer::addIsobandSymbol(CTPP::CDT& theGlobals,
+                                   CTPP::CDT& theLayersCdt,
+                                   State& theState,
+                                   std::size_t num,
+                                   int xpos,
+                                   int ypos)
+{
+  const Isoband& isoband = isobands[num];
+
+  CTPP::CDT inner_group_cdt(CTPP::CDT::HASH_VAL);
+  inner_group_cdt["start"] = "";
+  inner_group_cdt["end"] = "";
+
+  CTPP::CDT symbol_cdt(CTPP::CDT::HASH_VAL);
+  symbol_cdt["start"] = "<use";
+  symbol_cdt["end"] = "/>";
+
+  theState.addAttributes(theGlobals, symbol_cdt, isoband.attributes);
+  theState.addAttributes(theGlobals, symbol_cdt, symbols.attributes);
+
+  symbol_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+  symbol_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+
+  std::string iri;
+  if (num == 0 && symbols.start)
+    iri = *symbols.start;
+  else if (num == isobands.size() - 1 && symbols.end)
+    iri = *symbols.end;
+  else
+    iri = *symbols.symbol;
+
+  std::string IRI = Iri::normalize(iri);
+  if (theState.addId(IRI))
+    theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+  symbol_cdt["attributes"]["xlink:href"] = "#" + IRI;
+
+  inner_group_cdt["tags"].PushBack(symbol_cdt);
+
+  theLayersCdt.PushBack(inner_group_cdt);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the label of an isoband to the legend
+ */
+// ----------------------------------------------------------------------
+
+void LegendLayer::addIsobandText(CTPP::CDT& theGlobals,
+                                 CTPP::CDT& theLayersCdt,
+                                 State& theState,
+                                 const Isoband& isoband,
+                                 int xpos,
+                                 int ypos)
+{
+  std::string text = legend_text(isoband, labels, language, theState.getConfig().defaultLanguage());
+
+  if (!text.empty())
+  {
+    CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+    text_cdt["start"] = "<text";
+    text_cdt["end"] = "</text>";
+    text_cdt["cdata"] = Fmi::safexmlescape(text);
+
+    auto attrs = labels.attributes;
+    if (isoband.label)
+      attrs.add(isoband.label->attributes);  // isoband specific attrs override
+
+    theState.addAttributes(theGlobals, text_cdt, attrs);
+
+    text_cdt["attributes"]["x"] = Fmi::to_string(xpos + labels.dx);
+    text_cdt["attributes"]["y"] = Fmi::to_string(ypos + labels.dy);
+    theLayersCdt.PushBack(text_cdt);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the layer details into the template hash
  *
  * Generated content is something like this:
@@ -497,64 +579,10 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       if (!isoband.lolimit && !isoband.hilimit && !symbols.missing)
         continue;
 
-      // First the symbol
+      // First the symbol, then the text
 
-      {
-        CTPP::CDT inner_group_cdt(CTPP::CDT::HASH_VAL);
-        inner_group_cdt["start"] = "";
-        inner_group_cdt["end"] = "";
-
-        CTPP::CDT symbol_cdt(CTPP::CDT::HASH_VAL);
-        symbol_cdt["start"] = "<use";
-        symbol_cdt["end"] = "/>";
-
-        theState.addAttributes(theGlobals, symbol_cdt, isoband.attributes);
-        theState.addAttributes(theGlobals, symbol_cdt, symbols.attributes);
-
-        symbol_cdt["attributes"]["x"] = Fmi::to_string(xpos);
-        symbol_cdt["attributes"]["y"] = Fmi::to_string(ypos);
-
-        std::string iri;
-        if (num == 0 && symbols.start)
-          iri = *symbols.start;
-        else if (num == isobands.size() - 1 && symbols.end)
-          iri = *symbols.end;
-        else
-          iri = *symbols.symbol;
-
-        std::string IRI = Iri::normalize(iri);
-        if (theState.addId(IRI))
-          theGlobals["includes"][iri] = theState.getSymbol(iri);
-
-        symbol_cdt["attributes"]["xlink:href"] = "#" + IRI;
-
-        inner_group_cdt["tags"].PushBack(symbol_cdt);
-
-        theLayersCdt.PushBack(inner_group_cdt);
-      }
-
-      // Then the text
-
-      std::string text =
-          legend_text(isoband, labels, language, theState.getConfig().defaultLanguage());
-
-      if (!text.empty())
-      {
-        CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-        text_cdt["start"] = "<text";
-        text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = Fmi::safexmlescape(text);
-
-        auto attrs = labels.attributes;
-        if (isoband.label)
-          attrs.add(isoband.label->attributes);  // isoband specific attrs override
-
-        theState.addAttributes(theGlobals, text_cdt, attrs);
-
-        text_cdt["attributes"]["x"] = Fmi::to_string(xpos + labels.dx);
-        text_cdt["attributes"]["y"] = Fmi::to_string(ypos + labels.dy);
-        theLayersCdt.PushBack(text_cdt);
-      }
+      addIsobandSymbol(theGlobals, theLayersCdt, theState, num, xpos, ypos);
+      addIsobandText(theGlobals, theLayersCdt, theState, isoband, xpos, ypos);
 
       // Update position
 

@@ -52,6 +52,18 @@ class LegendLayer : public Layer
   // The parameter values or ranges to be styled separately
   std::vector<AttributeSelection> symbol_vector;
   void generate_from_symbol_vector(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void addIsobandSymbol(CTPP::CDT& theGlobals,
+                        CTPP::CDT& theLayersCdt,
+                        State& theState,
+                        std::size_t num,
+                        int xpos,
+                        int ypos);
+  void addIsobandText(CTPP::CDT& theGlobals,
+                      CTPP::CDT& theLayersCdt,
+                      State& theState,
+                      const Isoband& isoband,
+                      int xpos,
+                      int ypos);
 };  // class LegendLayer
 
 }  // namespace Dali
