@@ -7,6 +7,54 @@ namespace Plugin
 {
 namespace OGC
 {
+namespace
+{
+// Map options from the map settings of a product
+Engine::Gis::MapOptions map_options(const Json::Value& map_json)
+{
+  Json::Value nulljson;
+  Engine::Gis::MapOptions mopt;
+  auto dbparam = map_json.get("pgname", nulljson);
+  if (!dbparam.isNull())
+    mopt.pgname = dbparam.asString();
+  dbparam = map_json.get("schema", nulljson);
+  if (!dbparam.isNull())
+    mopt.schema = dbparam.asString();
+  dbparam = map_json.get("table", nulljson);
+  if (!dbparam.isNull())
+    mopt.table = dbparam.asString();
+  dbparam = map_json.get("where", nulljson);
+  if (!dbparam.isNull())
+    mopt.where = dbparam.asString();
+  return mopt;
+}
+
+// Extend the bounding box to cover the envelope of the geometry
+void extend_bbox(const OGRGeometry& geom,
+                 std::optional<double>& xMin,
+                 std::optional<double>& xMax,
+                 std::optional<double>& yMin,
+                 std::optional<double>& yMax)
+{
+  OGREnvelope envelope;
+  geom.getEnvelope(&envelope);
+  if (!xMin)
+  {
+    xMin = envelope.MinX;
+    xMax = envelope.MaxX;
+    yMin = envelope.MinY;
+    yMax = envelope.MaxY;
+  }
+  else
+  {
+    xMin = std::min(*xMin, envelope.MinX);
+    xMax = std::max(*xMax, envelope.MaxX);
+    yMin = std::min(*yMin, envelope.MinY);
+    yMax = std::max(*yMax, envelope.MaxY);
+  }
+}
+}  // namespace
+
 MapLayer::MapLayer(const LayerConfig& config, const Json::Value& json)
     : NonTemporalLayer(config)
 {
@@ -25,38 +73,11 @@ MapLayer::MapLayer(const LayerConfig& config, const Json::Value& json)
 
       if (!map_json.isNull())
       {
-        Engine::Gis::MapOptions mopt;
-        auto dbparam = map_json.get("pgname", nulljson);
-        if (!dbparam.isNull())
-          mopt.pgname = dbparam.asString();
-        dbparam = map_json.get("schema", nulljson);
-        if (!dbparam.isNull())
-          mopt.schema = dbparam.asString();
-        dbparam = map_json.get("table", nulljson);
-        if (!dbparam.isNull())
-          mopt.table = dbparam.asString();
-        dbparam = map_json.get("where", nulljson);
-        if (!dbparam.isNull())
-          mopt.where = dbparam.asString();
+        Engine::Gis::MapOptions mopt = map_options(map_json);
         auto geom = config.gisEngine()->getShape(&sr, mopt);
         if (geom)
         {
-          OGREnvelope envelope;
-          geom->getEnvelope(&envelope);
-          if (!xMin)
-          {
-            xMin = envelope.MinX;
-            xMax = envelope.MaxX;
-            yMin = envelope.MinY;
-            yMax = envelope.MaxY;
-          }
-          else
-          {
-            xMin = std::min(*xMin, envelope.MinX);
-            xMax = std::max(*xMax, envelope.MaxX);
-            yMin = std::min(*yMin, envelope.MinY);
-            yMax = std::max(*yMax, envelope.MaxY);
-          }
+          extend_bbox(*geom, xMin, xMax, yMin, yMax);
         }
       }
     }
