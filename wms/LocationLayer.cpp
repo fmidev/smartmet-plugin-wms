@@ -49,6 +49,81 @@ namespace Dali
 namespace
 {
 
+// Parse the label placement algorithm name
+PlacementAlgorithm parse_placement_algorithm(const std::string& algo_str)
+{
+  if (algo_str == "none")
+    return PlacementAlgorithm::None;
+  if (algo_str == "fixed")
+    return PlacementAlgorithm::Fixed;
+  if (algo_str == "greedy")
+    return PlacementAlgorithm::Greedy;
+  if (algo_str == "priority-greedy")
+    return PlacementAlgorithm::PriorityGreedy;
+  if (algo_str == "simulated-annealing")
+    return PlacementAlgorithm::SimulatedAnnealing;
+  throw Fmi::Exception(BCP, "Unknown label placement algorithm '" + algo_str + "'");
+}
+
+// Parse the simulated annealing settings
+void parseAnnealingConfig(Json::Value& sa_json, LabelConfig& cfg)
+{
+  if (!sa_json.isNull())
+  {
+    if (!sa_json.isObject())
+      throw Fmi::Exception(BCP, "LocationLayer 'label.simulated_annealing' must be an object");
+    JsonTools::remove_int(cfg.sa_iterations, sa_json, "iterations");
+    JsonTools::remove_double(cfg.sa_initial_temp, sa_json, "initial_temperature");
+    JsonTools::remove_double(cfg.sa_cooling_rate, sa_json, "cooling_rate");
+    JsonTools::remove_double(cfg.sa_overlap_weight, sa_json, "overlap_weight");
+    JsonTools::remove_double(cfg.sa_position_weight, sa_json, "position_weight");
+  }
+}
+
+// Parse a population-based style class
+LabelStyleClass parseStyleClass(const Json::Value& cls_json)
+{
+  LabelStyleClass cls;
+  if (cls_json.isMember("lolimit"))
+    cls.lolimit = cls_json["lolimit"].asDouble();
+  if (cls_json.isMember("hilimit"))
+    cls.hilimit = cls_json["hilimit"].asDouble();
+  if (cls_json.isMember("font_size"))
+    cls.font_size = cls_json["font_size"].asDouble();
+  if (cls_json.isMember("font_weight"))
+    cls.font_weight = cls_json["font_weight"].asString();
+  if (cls_json.isMember("fill"))
+    cls.fill = cls_json["fill"].asString();
+  // Per-class symbol obstacle override.  symbol_size is the alias
+  // for symmetric markers; explicit width/height parsed afterwards
+  // override it.  Mirrors the top-level LabelConfig parsing.
+  if (cls_json.isMember("symbol_size"))
+  {
+    const double s = cls_json["symbol_size"].asDouble();
+    cls.symbol_width = s;
+    cls.symbol_height = s;
+  }
+  if (cls_json.isMember("symbol_width"))
+    cls.symbol_width = cls_json["symbol_width"].asDouble();
+  if (cls_json.isMember("symbol_height"))
+    cls.symbol_height = cls_json["symbol_height"].asDouble();
+  return cls;
+}
+
+// Parse the population-based style classes
+void parseStyleClasses(const Json::Value& classes_json, LabelConfig& cfg)
+{
+  if (!classes_json.isNull())
+  {
+    if (!classes_json.isArray())
+      throw Fmi::Exception(BCP, "LocationLayer 'label.classes' must be a JSON array");
+    for (const auto& cls_json : classes_json)
+    {
+      cfg.classes.push_back(parseStyleClass(cls_json));
+    }
+  }
+}
+
 LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
 {
   LabelConfig cfg;
@@ -62,18 +137,7 @@ LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
   // Algorithm
   std::string algo_str = "none";
   JsonTools::remove_string(algo_str, json, "algorithm");
-  if (algo_str == "none")
-    cfg.algorithm = PlacementAlgorithm::None;
-  else if (algo_str == "fixed")
-    cfg.algorithm = PlacementAlgorithm::Fixed;
-  else if (algo_str == "greedy")
-    cfg.algorithm = PlacementAlgorithm::Greedy;
-  else if (algo_str == "priority-greedy")
-    cfg.algorithm = PlacementAlgorithm::PriorityGreedy;
-  else if (algo_str == "simulated-annealing")
-    cfg.algorithm = PlacementAlgorithm::SimulatedAnnealing;
-  else
-    throw Fmi::Exception(BCP, "Unknown label placement algorithm '" + algo_str + "'");
+  cfg.algorithm = parse_placement_algorithm(algo_str);
 
   // Geometry
   JsonTools::remove_int(cfg.candidates, json, "candidates");
@@ -136,52 +200,11 @@ LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
 
   // SA sub-object
   auto sa_json = JsonTools::remove(json, "simulated_annealing");
-  if (!sa_json.isNull())
-  {
-    if (!sa_json.isObject())
-      throw Fmi::Exception(BCP, "LocationLayer 'label.simulated_annealing' must be an object");
-    JsonTools::remove_int(cfg.sa_iterations, sa_json, "iterations");
-    JsonTools::remove_double(cfg.sa_initial_temp, sa_json, "initial_temperature");
-    JsonTools::remove_double(cfg.sa_cooling_rate, sa_json, "cooling_rate");
-    JsonTools::remove_double(cfg.sa_overlap_weight, sa_json, "overlap_weight");
-    JsonTools::remove_double(cfg.sa_position_weight, sa_json, "position_weight");
-  }
+  parseAnnealingConfig(sa_json, cfg);
 
   // Population-based style classes
   auto classes_json = JsonTools::remove(json, "classes");
-  if (!classes_json.isNull())
-  {
-    if (!classes_json.isArray())
-      throw Fmi::Exception(BCP, "LocationLayer 'label.classes' must be a JSON array");
-    for (const auto& cls_json : classes_json)
-    {
-      LabelStyleClass cls;
-      if (cls_json.isMember("lolimit"))
-        cls.lolimit = cls_json["lolimit"].asDouble();
-      if (cls_json.isMember("hilimit"))
-        cls.hilimit = cls_json["hilimit"].asDouble();
-      if (cls_json.isMember("font_size"))
-        cls.font_size = cls_json["font_size"].asDouble();
-      if (cls_json.isMember("font_weight"))
-        cls.font_weight = cls_json["font_weight"].asString();
-      if (cls_json.isMember("fill"))
-        cls.fill = cls_json["fill"].asString();
-      // Per-class symbol obstacle override.  symbol_size is the alias
-      // for symmetric markers; explicit width/height parsed afterwards
-      // override it.  Mirrors the top-level LabelConfig parsing.
-      if (cls_json.isMember("symbol_size"))
-      {
-        const double s = cls_json["symbol_size"].asDouble();
-        cls.symbol_width = s;
-        cls.symbol_height = s;
-      }
-      if (cls_json.isMember("symbol_width"))
-        cls.symbol_width = cls_json["symbol_width"].asDouble();
-      if (cls_json.isMember("symbol_height"))
-        cls.symbol_height = cls_json["symbol_height"].asDouble();
-      cfg.classes.push_back(cls);
-    }
-  }
+  parseStyleClasses(classes_json, cfg);
 
   return cfg;
 }
