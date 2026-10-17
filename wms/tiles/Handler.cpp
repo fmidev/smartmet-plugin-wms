@@ -338,7 +338,10 @@ void Handler::init(std::unique_ptr<Config> tilesConfig)
 
   auto settings = Spine::OpenAPI::Settings::parse(itsDaliConfig.getConfig());
   if (settings.enabled)
+  {
     itsApi = std::make_unique<Spine::OpenAPI::Publisher>(std::move(settings));
+    itsApi->addToCatalog(itsDaliConfig.tilesUrl(), API_TITLE, API_DESCRIPTION);
+  }
 }
 
 // -----------------------------------------------------------------------

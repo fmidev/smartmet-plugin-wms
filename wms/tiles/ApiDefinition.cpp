@@ -11,6 +11,11 @@ namespace Plugin
 {
 namespace Tiles
 {
+const char* const API_TITLE = "SmartMet OGC API - Tiles";
+const char* const API_DESCRIPTION =
+    "Map, vector and data tiles of the WMS layers following OGC API - Tiles, with Mapbox GL "
+    "styles following OGC API - Styles.";
+
 namespace
 {
 namespace OA = Spine::OpenAPI;
@@ -527,11 +532,7 @@ Spine::OpenAPI::Document apiDefinition(const Config& config,
   {
     const auto max_enum = settings.max_enum;
 
-    OA::Document doc("SmartMet OGC API - Tiles",
-                     "Map, vector and data tiles of the WMS layers following OGC API - Tiles, "
-                     "with Mapbox GL styles following OGC API - Styles.",
-                     "1.0",
-                     settings);
+    OA::Document doc(API_TITLE, API_DESCRIPTION, "1.0", settings);
     doc.addTag(TAG_CAPABILITIES, "The landing page, conformance declaration and API definition");
     doc.addTag(TAG_TMS, "Tile matrix sets");
     doc.addTag(TAG_COLLECTIONS, "Collections (layers)");

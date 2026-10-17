@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.10.16
 BuildRequires: smartmet-library-grid-content-devel >= 26.10.16
 BuildRequires: smartmet-library-grid-files-devel >= 26.10.16
 BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
-BuildRequires: smartmet-library-spine-devel >= 26.10.16
+BuildRequires: smartmet-library-spine-devel >= 26.10.17-1
 BuildRequires: smartmet-library-timeseries-devel >= 26.10.16
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.10.16
@@ -85,7 +85,7 @@ Requires: smartmet-library-grid-files >= 26.10.17
 Requires: smartmet-library-gis >= 26.10.17
 Requires: smartmet-library-trax >= 26.10.17
 Requires: smartmet-library-macgyver >= 26.10.17
-Requires: smartmet-library-spine >= 26.10.17
+Requires: smartmet-library-spine >= 26.10.17-1
 Requires: smartmet-swagger-ui
 Requires: smartmet-library-timeseries >= 26.10.16
 Requires: smartmet-library-giza >= 26.10.17
@@ -104,7 +104,7 @@ Requires: smartmet-engine-grid >= 26.10.17
 Requires: smartmet-engine-geonames >= 26.10.17
 Requires: smartmet-engine-satellite >= 26.10.17
 Requires: smartmet-server >= 26.10.17
-Requires: smartmet-library-spine >= 26.10.17
+Requires: smartmet-library-spine >= 26.10.17-1
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -139,7 +139,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 26.10.16
 #TestRequires: smartmet-library-newbase-devel >= 26.10.16
 #TestRequires: smartmet-library-macgyver-devel >= 26.10.16
-#TestRequires: smartmet-library-spine-devel >= 26.10.16
+#TestRequires: smartmet-library-spine-devel >= 26.10.17-1
 #TestRequires: smartmet-library-timeseries-devel >= 26.10.16
 #TestRequires: smartmet-engine-grid-devel >= 26.10.16
 #TestRequires: smartmet-library-grid-files-test >= 26.10.16
@@ -186,6 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- OGC API - Tiles and WMTS are listed in the API catalog of the server (/api)
 - ColorPainter_stream::initStream: assign line_color_land to the land color
 - add_contour_value_attributes: do not dereference an unset multiplier
 - Grid layers: use GridQueryTools helpers for the repeated grid query blocks
