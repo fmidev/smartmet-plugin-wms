@@ -236,6 +236,32 @@ void set_etag_response(Spine::HTTP::Response& theResponse,
   }
 }
 
+// Set the Last-Modified and Expires headers
+void set_cache_headers(Spine::HTTP::Response& theResponse, const State& state)
+{
+  std::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
+
+  const Fmi::DateTime t_now = Fmi::SecondClock::universal_time();
+  const auto& modification_time = state.getModificationTime();
+  if (!modification_time)
+    theResponse.setHeader("Last-Modified", tformat->format(t_now));
+  else
+    theResponse.setHeader("Last-Modified", tformat->format(*modification_time));
+
+  // Send expiration header only if there was no error. Note: 304 Not Modified must pass!
+
+  bool is_error = (static_cast<int>(theResponse.getStatus()) >= 400);
+
+  if (!is_error)
+  {
+    const auto& expires = state.getExpirationTime();
+    if (!expires)
+      theResponse.setHeader("Expires", tformat->format(t_now + Fmi::Hours(1)));
+    else
+      theResponse.setHeader("Expires", tformat->format(*expires));
+  }
+}
+
 }  // namespace
 
 // Keep only acceptable querystring replacements (allowed keys or names with dots)
@@ -624,6 +650,72 @@ void Plugin::formatResponse(const std::string &theSvg,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Perform a WMS query and translate WMS exceptions to HTTP status codes
+ */
+// ----------------------------------------------------------------------
+
+void Plugin::wmsQuery(Spine::Reactor& theReactor,
+                      State& state,
+                      const Spine::HTTP::Request& theRequest,
+                      Spine::HTTP::Response& theResponse)
+{
+  try
+  {
+    OGC::QueryStatus status = itsWMSHandler->query(theReactor, state, theRequest, theResponse);
+
+    switch (status)
+    {
+      case OGC::QueryStatus::FORBIDDEN:
+      {
+        theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
+        break;
+      }
+      case OGC::QueryStatus::OK:
+      default:
+        break;
+    }
+  }
+
+  catch (const Fmi::Exception& wmsException)
+  {
+    wmsException.printError();
+
+    // The default for most responses:
+    theResponse.setStatus(Spine::HTTP::Status::bad_request);
+
+    const Fmi::Exception* e = wmsException.getExceptionByParameterName(WMS_EXCEPTION_CODE);
+
+    if (e != nullptr)
+    {
+      // Status codes used by OGC and their HTTP response codes:
+      // OperationNotSupported 501 Not Implemented
+      // MissingParameterValue 400 Bad request
+      // InvalidParameterValue 400 Bad request
+      // VersionNegotiationFailed 400 Bad request
+      // InvalidUpdateSequence 400 Bad request
+      // OptionNotSupported 501 Not Implemented
+      // NoApplicableCode 3xx, 4xx, 5xx Internal Server Error
+
+      std::string exceptionCode = e->getParameterValue(WMS_EXCEPTION_CODE);
+
+      theResponse.setHeader("X-WMS-Exception", exceptionCode);
+
+      std::string firstMessage = wmsException.what();
+      boost::algorithm::replace_all(firstMessage, "\n", " ");
+      if (firstMessage.size() > 300)
+        firstMessage.resize(300);
+      theResponse.setHeader("X-WMS-Error", firstMessage);
+
+      if (exceptionCode == WMS_LAYER_NOT_QUERYABLE || exceptionCode == WMS_OPERATION_NOT_SUPPORTED)
+      {
+        theResponse.setStatus(Spine::HTTP::Status::not_implemented);
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Main content handler
  */
 // ----------------------------------------------------------------------
@@ -656,61 +748,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
         theResponse.setStatus(Spine::HTTP::Status::ok);
 
         // may modify HTTP status set above
-        try
-        {
-          OGC::QueryStatus status =
-              itsWMSHandler->query(theReactor, state, theRequest, theResponse);
-
-          switch (status)
-          {
-            case OGC::QueryStatus::FORBIDDEN:
-            {
-              theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
-              break;
-            }
-            case OGC::QueryStatus::OK:
-            default:
-              break;
-          }
-        }
-
-        catch (const Fmi::Exception &wmsException)
-        {
-          wmsException.printError();
-
-          // The default for most responses:
-          theResponse.setStatus(Spine::HTTP::Status::bad_request);
-
-          const Fmi::Exception *e = wmsException.getExceptionByParameterName(WMS_EXCEPTION_CODE);
-
-          if (e != nullptr)
-          {
-            // Status codes used by OGC and their HTTP response codes:
-            // OperationNotSupported 501 Not Implemented
-            // MissingParameterValue 400 Bad request
-            // InvalidParameterValue 400 Bad request
-            // VersionNegotiationFailed 400 Bad request
-            // InvalidUpdateSequence 400 Bad request
-            // OptionNotSupported 501 Not Implemented
-            // NoApplicableCode 3xx, 4xx, 5xx Internal Server Error
-
-            std::string exceptionCode = e->getParameterValue(WMS_EXCEPTION_CODE);
-
-            theResponse.setHeader("X-WMS-Exception", exceptionCode);
-
-            std::string firstMessage = wmsException.what();
-            boost::algorithm::replace_all(firstMessage, "\n", " ");
-            if (firstMessage.size() > 300)
-              firstMessage.resize(300);
-            theResponse.setHeader("X-WMS-Error", firstMessage);
-
-            if (exceptionCode == WMS_LAYER_NOT_QUERYABLE ||
-                exceptionCode == WMS_OPERATION_NOT_SUPPORTED)
-            {
-              theResponse.setStatus(Spine::HTTP::Status::not_implemented);
-            }
-          }
-        }
+        wmsQuery(theReactor, state, theRequest, theResponse);
       }
       else if (is_below(resource, itsConfig.wmtsUrl()))
       {
@@ -736,27 +774,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       // Adding headers
 
-      std::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
-
-      const Fmi::DateTime t_now = Fmi::SecondClock::universal_time();
-      const auto &modification_time = state.getModificationTime();
-      if (!modification_time)
-        theResponse.setHeader("Last-Modified", tformat->format(t_now));
-      else
-        theResponse.setHeader("Last-Modified", tformat->format(*modification_time));
-
-      // Send expiration header only if there was no error. Note: 304 Not Modified must pass!
-
-      bool is_error = (static_cast<int>(theResponse.getStatus()) >= 400);
-
-      if (!is_error)
-      {
-        const auto &expires = state.getExpirationTime();
-        if (!expires)
-          theResponse.setHeader("Expires", tformat->format(t_now + Fmi::Hours(1)));
-        else
-          theResponse.setHeader("Expires", tformat->format(*expires));
-      }
+      set_cache_headers(theResponse, state);
     }
     catch (...)
     {
