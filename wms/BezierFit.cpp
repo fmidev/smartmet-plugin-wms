@@ -764,6 +764,40 @@ struct CubicCandidate
   double d1;
 };
 
+// Push the real roots of x^2 + alpha*x + beta, or the real part of a complex pair
+void push_quadratic_factor_roots(Roots& roots, double alpha, double beta)
+{
+  auto qr = solve_quadratic(beta, alpha, 1.0);
+  if (qr.count == 0)
+    roots.push(-0.5 * alpha);  // real part of complex pair
+  else
+    for (int i = 0; i < qr.count; i++)
+      roots.push(qr.vals[i]);
+}
+
+// Establish the control arm lengths d0 and d1 for the root d0. Returns d1, and d0 is updated
+// if necessary.
+double arm_lengths(double& d0_val, double s0, double s1, double s01, double area)
+{
+  double d1_val = NAN;
+  if (d0_val > 0.0)
+  {
+    double denom = 0.5 * d0_val * s01 - s1;
+    d1_val = (denom != 0.0) ? (d0_val * s0 - area * (10.0 / 3.0)) / denom : 0.0;
+    if (d1_val <= 0.0)
+    {
+      d0_val = (s01 != 0.0) ? s1 / s01 : 0.0;
+      d1_val = 0.0;
+    }
+  }
+  else
+  {
+    d0_val = 0.0;
+    d1_val = (s01 != 0.0) ? s0 / s01 : 0.0;
+  }
+  return d1_val;
+}
+
 std::vector<CubicCandidate> cubic_fit(double th0, double th1, double area, double mx)
 {
   double s0 = std::sin(th0);
@@ -812,20 +846,10 @@ std::vector<CubicCandidate> cubic_fit(double th0, double th1, double area, doubl
     if (quads)
     {
       // First quadratic: x^2 + alpha_1*x + beta_1
-      auto qr1 = solve_quadratic(quads->b1, quads->a1, 1.0);
-      if (qr1.count == 0)
-        roots.push(-0.5 * quads->a1);  // real part of complex pair
-      else
-        for (int i = 0; i < qr1.count; i++)
-          roots.push(qr1.vals[i]);
+      push_quadratic_factor_roots(roots, quads->a1, quads->b1);
 
       // Second quadratic: x^2 + alpha_2*x + beta_2
-      auto qr2 = solve_quadratic(quads->b2, quads->a2, 1.0);
-      if (qr2.count == 0)
-        roots.push(-0.5 * quads->a2);
-      else
-        for (int i = 0; i < qr2.count; i++)
-          roots.push(qr2.vals[i]);
+      push_quadratic_factor_roots(roots, quads->a2, quads->b2);
     }
   }
   else if (std::abs(a3) > EPS)
@@ -852,22 +876,7 @@ std::vector<CubicCandidate> cubic_fit(double th0, double th1, double area, doubl
   for (int i = 0; i < roots.count; i++)
   {
     double d0_val = roots.vals[i];
-    double d1_val = NAN;
-    if (d0_val > 0.0)
-    {
-      double denom = 0.5 * d0_val * s01 - s1;
-      d1_val = (denom != 0.0) ? (d0_val * s0 - area * (10.0 / 3.0)) / denom : 0.0;
-      if (d1_val <= 0.0)
-      {
-        d0_val = (s01 != 0.0) ? s1 / s01 : 0.0;
-        d1_val = 0.0;
-      }
-    }
-    else
-    {
-      d0_val = 0.0;
-      d1_val = (s01 != 0.0) ? s0 / s01 : 0.0;
-    }
+    double d1_val = arm_lengths(d0_val, s0, s1, s01, area);
 
     if (d0_val >= 0.0 && d1_val >= 0.0)
     {
