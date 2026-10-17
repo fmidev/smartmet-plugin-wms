@@ -141,6 +141,26 @@ bool Intersections::inside(double theX, double theY) const
   }
 }
 
+namespace
+{
+// Test whether the scaled value satisfies the limits of the intersection
+bool accepts_value(const Intersection& isection, double value)
+{
+  if (isection.multiplier)
+    value *= *isection.multiplier;
+  if (isection.offset)
+    value += *isection.offset;
+
+  if (isection.value && *isection.value != value)
+    return false;
+  if (isection.lolimit && *isection.lolimit > value)
+    return false;
+  if (isection.hilimit && *isection.hilimit < value)
+    return false;
+  return true;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Test if the given values satisfy the set limits
@@ -154,26 +174,15 @@ bool Intersections::inside(const IntersectValues& theValues) const
 {
   for (const auto& isection : intersections)
   {
-    if (isection.parameter)
+    if (!isection.parameter)
+      continue;
+
+    const auto& iter = theValues.find(*isection.parameter);
+    if (iter != theValues.end())
     {
-      const auto& iter = theValues.find(*isection.parameter);
-      if (iter != theValues.end())
-      {
-        // There is a value for the parameter, check it against the limits
-        double value = iter->second;
-
-        if (isection.multiplier)
-          value *= *isection.multiplier;
-        if (isection.offset)
-          value += *isection.offset;
-
-        if (isection.value && *isection.value != value)
-          return false;
-        if (isection.lolimit && *isection.lolimit > value)
-          return false;
-        if (isection.hilimit && *isection.hilimit < value)
-          return false;
-      }
+      // There is a value for the parameter, check it against the limits
+      if (!accepts_value(isection, iter->second))
+        return false;
     }
   }
   return true;
