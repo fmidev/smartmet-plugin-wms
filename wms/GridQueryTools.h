@@ -85,6 +85,9 @@ void add_grid_bbox_attributes(QueryServer::Query& query,
 // Add the bboxcrs, cx, cy and resolution settings of the projection
 void add_projection_attributes(QueryServer::Query& query, const Projection& projection);
 
+// Add the latlon bounding box and the projected bounding box of the projection
+void add_latlon_bbox_attributes(QueryServer::Query& query, const Projection& projection);
+
 // Add the bounding box given in the projection settings, used with the data projection
 void add_data_bbox_attribute(QueryServer::Query& query, const Projection& projection);
 

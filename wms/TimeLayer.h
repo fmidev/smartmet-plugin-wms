@@ -7,6 +7,9 @@
 #pragma once
 
 #include "Layer.h"
+#include <macgyver/LocalDateTime.h>
+#include <functional>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -54,6 +57,20 @@ class TimeLayer : public Layer
   //  std::optional<std::string> parameter;
 
  private:
+  void setTextPosition(CTPP::CDT& text_cdt) const;
+
+  using OriginTimeFunction = std::function<std::optional<Fmi::DateTime>()>;
+
+  void resolveTimestamp(const std::string& name,
+                        const Fmi::DateTime& valid_time,
+                        const Fmi::TimeZonePtr& tz,
+                        const OriginTimeFunction& origintime,
+                        std::optional<Fmi::LocalDateTime>& loctime,
+                        std::optional<Fmi::TimeDuration>& duration) const;
+  std::string timeText(const Fmi::DateTime& valid_time,
+                       const Fmi::TimeZonePtr& tz,
+                       const OriginTimeFunction& origintime);
+
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 

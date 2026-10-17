@@ -242,6 +242,24 @@ void add_projection_attributes(QueryServer::Query& query, const Projection& proj
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add the latlon bounding box and the projected bounding box of the projection
+ */
+// ----------------------------------------------------------------------
+
+void add_latlon_bbox_attributes(QueryServer::Query& query, const Projection& projection)
+{
+  auto bl = projection.bottomLeftLatLon();
+  auto tr = projection.topRightLatLon();
+  auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
+  query.mAttributeList.addAttribute("grid.llbox", bbox);
+
+  const auto& box = projection.getBox();
+  bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+  query.mAttributeList.addAttribute("grid.bbox", bbox);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Add the bounding box given in the projection settings
  */
 // ----------------------------------------------------------------------

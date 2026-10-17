@@ -200,18 +200,6 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
   }
 }
 
-// Add the latlon and projected bounding boxes of the projection to the query
-void add_symbol_bbox_attributes(QueryServer::Query& query, const Projection& projection)
-{
-  auto bl = projection.bottomLeftLatLon();
-  auto tr = projection.topRightLatLon();
-  auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
-  query.mAttributeList.addAttribute("grid.llbox", bbox);
-
-  const auto& box = projection.getBox();
-  bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-  query.mAttributeList.addAttribute("grid.bbox", bbox);
-}
 
 }  // namespace
 
@@ -650,7 +638,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
-      add_symbol_bbox_attributes(*originalGridQuery, projection);
+      add_latlon_bbox_attributes(*originalGridQuery, projection);
 
       positions->init(paraminfo.producer, projection, valid_time, theState);
     }

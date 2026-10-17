@@ -21,6 +21,7 @@
 #include <macgyver/StringConversion.h>
 #include <spine/Json.h>
 #include <array>
+#include <functional>
 #include <ogr_spatialref.h>
 
 namespace SmartMet
@@ -29,6 +30,89 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+// The origin time, throws if it is not available
+Fmi::DateTime required_origintime(const std::function<std::optional<Fmi::DateTime>()>& origintime)
+{
+  auto t = origintime();
+  if (!t)
+    throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
+  return *t;
+}
+
+// Format a time or a duration. Durations are always formatted with boost.
+void format_timestamp(std::ostream& msg,
+                      const std::string& fmt,
+                      const std::string& formatter,
+                      const std::optional<Fmi::LocalDateTime>& loctime,
+                      const std::optional<Fmi::TimeDuration>& duration)
+{
+  if (!loctime || formatter == "boost")
+  {
+    try
+    {
+      if (loctime)
+        msg << Fmi::format_time(fmt, loctime->local_time());
+      else
+        msg << Fmi::format_time(fmt, *duration);
+    }
+    catch (...)
+    {
+      throw Fmi::Exception::Trace(BCP, "Failed to format time with Boost")
+          .addParameter("format", "'" + fmt + "'");
+    }
+  }
+  else if (formatter == "strftime")
+  {
+    auto timeinfo = to_tm(loctime->local_time());
+    std::array<char, 100> buffer{};
+    if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
+    {
+      throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
+          .addParameter("format", "'" + fmt + "'");
+    }
+    msg << buffer.data();
+  }
+  else if (formatter == "fmt")
+  {
+    try
+    {
+      auto timeinfo = to_tm(loctime->local_time());
+      msg << fmt::format(fmt::runtime(fmt), timeinfo);
+    }
+    catch (...)
+    {
+      throw Fmi::Exception::Trace(BCP, "Failed to format time with fmt")
+          .addParameter("format", "'" + fmt + "'");
+    }
+  }
+
+  else
+    throw Fmi::Exception(BCP, "Unknown TimeLayer time formatter '" + formatter + "'");
+}
+
+// The first value set of the parameter in the query result
+std::shared_ptr<QueryServer::ParameterValues> first_parameter_values(
+    const QueryServer::Query& query, const std::string& paramStr)
+{
+  std::shared_ptr<QueryServer::ParameterValues> p;
+
+  for (auto param = query.mQueryParameterList.begin();
+       param != query.mQueryParameterList.end() && p == nullptr;
+       ++param)
+  {
+    if (param->mParam == paramStr && !param->mValueList.empty())
+    {
+      auto val = param->mValueList.begin();
+      p = (*val);
+    }
+  }
+  return p;
+}
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -132,6 +216,137 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish the time or the duration for a timestamp name
+ *
+ * The origin time is requested only if needed.
+ */
+// ----------------------------------------------------------------------
+
+void TimeLayer::resolveTimestamp(const std::string& name,
+                                 const Fmi::DateTime& valid_time,
+                                 const Fmi::TimeZonePtr& tz,
+                                 const OriginTimeFunction& origintime,
+                                 std::optional<Fmi::LocalDateTime>& loctime,
+                                 std::optional<Fmi::TimeDuration>& duration) const
+{
+  if (name == "validtime")
+  {
+    loctime = Fmi::LocalDateTime(valid_time, tz);
+  }
+  else if (name == "origintime")
+  {
+    loctime = Fmi::LocalDateTime(required_origintime(origintime), tz);
+  }
+  else if (name == "wallclock" || name == "now")
+  {
+    loctime = Fmi::LocalDateTime(now, tz);
+  }
+  else if (name == "starttime")
+  {
+    auto tmp = Fmi::LocalDateTime(valid_time, tz);
+    if (interval_start)
+      tmp -= Fmi::Minutes(*interval_start);
+    loctime = tmp;
+  }
+  else if (name == "endtime")
+  {
+    auto tmp = Fmi::LocalDateTime(valid_time, tz);
+    if (interval_end)
+      tmp += Fmi::Minutes(*interval_end);
+    loctime = tmp;
+  }
+  else if (name == "leadtime")
+  {
+    duration = valid_time - required_origintime(origintime);
+  }
+  else if (name == "leadhour")
+  {
+    const Fmi::DateTime ot = required_origintime(origintime);
+    duration = valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
+  }
+  else if (name == "time_offset")
+  {
+    duration = Fmi::Minutes(time_offset ? *time_offset : 0);
+  }
+  else if (name == "interval_start")
+  {
+    duration = Fmi::Minutes(interval_start ? *interval_start : 0);
+  }
+  else if (name == "interval_end")
+  {
+    duration = Fmi::Minutes(interval_end ? *interval_end : 0);
+  }
+  else
+  {
+    loctime = Fmi::LocalDateTime(valid_time, tz) + Fmi::TimeParser::parse_duration(name);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief The text of the layer: the formatted timestamps with the prefix and the suffix
+ */
+// ----------------------------------------------------------------------
+
+std::string TimeLayer::timeText(const Fmi::DateTime& valid_time,
+                                const Fmi::TimeZonePtr& tz,
+                                const OriginTimeFunction& origintime)
+{
+  // Set defaults and validate input.
+
+  if (timestamp.empty())
+    timestamp.emplace_back("validtime");
+
+  if (format.empty())
+    format.emplace_back("%Y-%m-%d %H:%M");
+
+  if (timestamp.size() != format.size())
+    throw Fmi::Exception(BCP, "TimeLayer timestamp and format arrays should be of the same size");
+
+  // Create the output
+  std::ostringstream msg;
+  msg << prefix;
+
+  for (auto i = 0UL; i < timestamp.size(); i++)
+  {
+    auto name = timestamp[i];
+    auto fmt = format[i];
+
+    if (name.empty())
+      throw Fmi::Exception(BCP, "TimeLayer timestamp setting cannot be an empty string");
+
+    if (fmt.empty())
+      throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
+
+    std::optional<Fmi::LocalDateTime> loctime;
+    std::optional<Fmi::TimeDuration> duration;
+
+    resolveTimestamp(name, valid_time, tz, origintime, loctime, duration);
+
+    format_timestamp(msg, fmt, formatter, loctime, duration);
+  }
+  msg << suffix;
+  return msg.str();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Override the X and Y coordinates of the text, negative values are from the right/bottom
+ */
+// ----------------------------------------------------------------------
+
+void TimeLayer::setTextPosition(CTPP::CDT& text_cdt) const
+{
+  const auto& box = projection.getBox();
+
+  if (x)
+    text_cdt["attributes"]["x"] = ((*x) >= 0 ? (*x) : box.width() + (*x));
+  if (y)
+    text_cdt["attributes"]["y"] = ((*y) >= 0 ? (*y) : box.height() + (*y));
+}
+
 void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
@@ -185,14 +400,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
       // Adding the bounding box information into the query.
 
-      auto bl = projection.bottomLeftLatLon();
-      auto tr = projection.topRightLatLon();
-      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
-      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
-
-      const auto& box = projection.getBox();
-      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+      add_latlon_bbox_attributes(*originalGridQuery, projection);
     }
     else
     {
@@ -245,18 +453,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     // The Query object after the query execution.
     // query.print(std::cout,0,0);
 
-    std::shared_ptr<QueryServer::ParameterValues> p;
-
-    for (auto param = query->mQueryParameterList.begin();
-         param != query->mQueryParameterList.end() && p == nullptr;
-         ++param)
-    {
-      if (param->mParam == paramStr && !param->mValueList.empty())
-      {
-        auto val = param->mValueList.begin();
-        p = (*val);
-      }
-    }
+    std::shared_ptr<QueryServer::ParameterValues> p = first_parameter_values(*query, paramStr);
 
     std::optional<Fmi::DateTime> originTime;
     if (p && p->mAnalysisTime.length() >= 15)
@@ -264,11 +461,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Generate a <text>cdata<text> layer
 
@@ -284,12 +477,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     if (x || y)
     {
       // projection.update(q);
-      const auto& box = projection.getBox();
-
-      if (x)
-        text_cdt["attributes"]["x"] = ((*x) >= 0 ? (*x) : box.width() + (*x));
-      if (y)
-        text_cdt["attributes"]["y"] = ((*y) >= 0 ? (*y) : box.height() + (*y));
+      setTextPosition(text_cdt);
     }
 
     // Establish the text to be added
@@ -297,143 +485,9 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     auto tz =
         theState.getGeoEngine().getTimeZones().time_zone_from_string(timezone ? *timezone : "UTC");
 
-    // Set defaults and validate input.
+    auto origintime_fn = [&]() { return originTime; };
 
-    if (timestamp.empty())
-      timestamp.emplace_back("validtime");
-
-    if (format.empty())
-      format.emplace_back("%Y-%m-%d %H:%M");
-
-    if (timestamp.size() != format.size())
-      throw Fmi::Exception(BCP, "TimeLayer timestamp and format arrays should be of the same size");
-
-    // Create the output
-    std::ostringstream msg;
-    msg << prefix;
-
-    for (auto i = 0UL; i < timestamp.size(); i++)
-    {
-      auto name = timestamp[i];
-      auto fmt = format[i];
-
-      if (name.empty())
-        throw Fmi::Exception(BCP, "TimeLayer timestamp setting cannot be an empty string");
-
-      if (fmt.empty())
-        throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
-
-      std::optional<Fmi::LocalDateTime> loctime;
-      std::optional<Fmi::TimeDuration> duration;
-
-      if (name == "validtime")
-      {
-        loctime = Fmi::LocalDateTime(valid_time, tz);
-      }
-      else if (name == "origintime")
-      {
-        if (!originTime)
-          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-
-        loctime = Fmi::LocalDateTime(*originTime, tz);
-      }
-      else if (name == "wallclock" || name == "now")
-      {
-        loctime = Fmi::LocalDateTime(now, tz);
-      }
-      else if (name == "starttime")
-      {
-        auto tmp = Fmi::LocalDateTime(valid_time, tz);
-        if (interval_start)
-          tmp -= Fmi::Minutes(*interval_start);
-        loctime = tmp;
-      }
-      else if (name == "endtime")
-      {
-        auto tmp = Fmi::LocalDateTime(valid_time, tz);
-        if (interval_end)
-          tmp += Fmi::Minutes(*interval_end);
-        loctime = tmp;
-      }
-      else if (name == "leadtime")
-      {
-        if (!originTime)
-          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-
-        duration = valid_time - *originTime;
-      }
-      else if (name == "leadhour")
-      {
-        if (!originTime)
-          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-
-        const auto& ot = *originTime;
-        duration = valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
-      }
-      else if (name == "time_offset")
-      {
-        duration = Fmi::Minutes(time_offset ? *time_offset : 0);
-      }
-      else if (name == "interval_start")
-      {
-        duration = Fmi::Minutes(interval_start ? *interval_start : 0);
-      }
-      else if (name == "interval_end")
-      {
-        duration = Fmi::Minutes(interval_end ? *interval_end : 0);
-      }
-      else
-      {
-        loctime = Fmi::LocalDateTime(valid_time, tz) + Fmi::TimeParser::parse_duration(name);
-      }
-
-      // durations are always formatted with boost
-      if (!loctime || formatter == "boost")
-      {
-        try
-        {
-          if (loctime)
-            msg << Fmi::format_time(fmt, loctime->local_time());
-          else
-            msg << Fmi::format_time(fmt, *duration);
-        }
-        catch (...)
-        {
-          throw Fmi::Exception::Trace(BCP, "Failed to format time with Boost")
-              .addParameter("format", "'" + fmt + "'");
-        }
-      }
-      else if (formatter == "strftime")
-      {
-        auto timeinfo = to_tm(loctime->local_time());
-        std::array<char, 100> buffer{};
-        if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
-        {
-          throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
-              .addParameter("format", "'" + fmt + "'");
-        }
-        msg << buffer.data();
-      }
-      else if (formatter == "fmt")
-      {
-        try
-        {
-          auto timeinfo = to_tm(loctime->local_time());
-          msg << fmt::format(fmt::runtime(fmt), timeinfo);
-        }
-        catch (...)
-        {
-          throw Fmi::Exception::Trace(BCP, "Failed to format time with fmt")
-              .addParameter("format", "'" + fmt + "'");
-        }
-      }
-
-      else
-        throw Fmi::Exception(BCP, "Unknown TimeLayer time formatter '" + formatter + "'");
-    }
-    msg << suffix;
-
-    text_cdt["cdata"] = Fmi::safexmlescape(msg.str());
+    text_cdt["cdata"] = Fmi::safexmlescape(timeText(valid_time, tz, origintime_fn));
     theLayersCdt.PushBack(text_cdt);
   }
   catch (...)
@@ -467,11 +521,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    addCss(theGlobals, theState);
 
     // Generate a <text>cdata<text> layer
 
@@ -487,12 +537,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     if (x || y)
     {
       projection.update(q);
-      const auto& box = projection.getBox();
-
-      if (x)
-        text_cdt["attributes"]["x"] = ((*x) >= 0 ? (*x) : box.width() + (*x));
-      if (y)
-        text_cdt["attributes"]["y"] = ((*y) >= 0 ? (*y) : box.height() + (*y));
+      setTextPosition(text_cdt);
     }
 
     // Establish the text to be added
@@ -500,139 +545,14 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     auto tz =
         theState.getGeoEngine().getTimeZones().time_zone_from_string(timezone ? *timezone : "UTC");
 
-    // Set defaults and validate input.
-
-    if (timestamp.empty())
-      timestamp.emplace_back("validtime");
-
-    if (format.empty())
-      format.emplace_back("%Y-%m-%d %H:%M");
-
-    if (timestamp.size() != format.size())
-      throw Fmi::Exception(BCP, "TimeLayer timestamp and format arrays should be of the same size");
-
-    // Create the output
-    std::ostringstream msg;
-    msg << prefix;
-
-    for (auto i = 0UL; i < timestamp.size(); i++)
+    auto origintime_fn = [&]() -> std::optional<Fmi::DateTime>
     {
-      auto name = timestamp[i];
-      auto fmt = format[i];
+      if (!q)
+        return std::nullopt;
+      return q->originTime();
+    };
 
-      if (name.empty())
-        throw Fmi::Exception(BCP, "TimeLayer timestamp setting cannot be an empty string");
-      if (fmt.empty())
-        throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
-
-      std::optional<Fmi::LocalDateTime> loctime;
-      std::optional<Fmi::TimeDuration> duration;
-
-      if (name == "validtime")
-      {
-        loctime = Fmi::LocalDateTime(valid_time, tz);
-      }
-      else if (name == "origintime")
-      {
-        if (!q)
-          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-        loctime = Fmi::LocalDateTime(q->originTime(), tz);
-      }
-      else if (name == "wallclock" || name == "now")
-      {
-        loctime = Fmi::LocalDateTime(now, tz);
-      }
-      else if (name == "starttime")
-      {
-        auto tmp = Fmi::LocalDateTime(valid_time, tz);
-        if (interval_start)
-          tmp -= Fmi::Minutes(*interval_start);
-        loctime = tmp;
-      }
-      else if (name == "endtime")
-      {
-        auto tmp = Fmi::LocalDateTime(valid_time, tz);
-        if (interval_end)
-          tmp += Fmi::Minutes(*interval_end);
-        loctime = tmp;
-      }
-      else if (name == "leadtime")
-      {
-        if (!q)
-          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-        duration = valid_time - q->originTime();
-      }
-      else if (name == "leadhour")
-      {
-        if (!q)
-          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-        Fmi::DateTime ot = q->originTime();
-        duration = valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
-      }
-      else if (name == "time_offset")
-      {
-        duration = Fmi::Minutes(time_offset ? *time_offset : 0);
-      }
-      else if (name == "interval_start")
-      {
-        duration = Fmi::Minutes(interval_start ? *interval_start : 0);
-      }
-      else if (name == "interval_end")
-      {
-        duration = Fmi::Minutes(interval_end ? *interval_end : 0);
-      }
-      else
-      {
-        loctime = Fmi::LocalDateTime(valid_time, tz) + Fmi::TimeParser::parse_duration(name);
-      }
-
-      // durations are always formatted with boost
-      if (!loctime || formatter == "boost")
-      {
-        try
-        {
-          if (loctime)
-            msg << Fmi::format_time(fmt, loctime->local_time());
-          else
-            msg << Fmi::format_time(fmt, *duration);
-        }
-        catch (...)
-        {
-          throw Fmi::Exception::Trace(BCP, "Failed to format time with Boost")
-              .addParameter("format", "'" + fmt + "'");
-        }
-      }
-      else if (formatter == "strftime")
-      {
-        auto timeinfo = to_tm(loctime->local_time());
-        std::array<char, 101> buffer{};
-        if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
-        {
-          throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
-              .addParameter("format", "'" + fmt + "'");
-        }
-        msg << buffer.data();
-      }
-      else if (formatter == "fmt")
-      {
-        try
-        {
-          auto timeinfo = to_tm(loctime->local_time());
-          msg << fmt::format(fmt::runtime(fmt), timeinfo);
-        }
-        catch (...)
-        {
-          throw Fmi::Exception::Trace(BCP, "Failed to format time with fmt")
-              .addParameter("format", "'" + fmt + "'");
-        }
-      }
-
-      else
-        throw Fmi::Exception(BCP, "Unknown TimeLayer time formatter '" + formatter + "'");
-    }
-    msg << suffix;
-
-    text_cdt["cdata"] = Fmi::safexmlescape(msg.str());
+    text_cdt["cdata"] = Fmi::safexmlescape(timeText(valid_time, tz, origintime_fn));
     theLayersCdt.PushBack(text_cdt);
   }
   catch (...)
