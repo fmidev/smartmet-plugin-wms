@@ -323,8 +323,7 @@ Labels generate_labels_center(const Graticule& g,
 }
 
 // Project the label positions to pixels and add labels at the outermost positions along the
-// given coordinate (x or y) which are inside the image. Note that the first position is
-// never used.
+// given coordinate (x or y) which are inside the image.
 void add_edge_labels(Labels& labels,
                      const std::string& txt,
                      const std::vector<double>& lons,
@@ -344,7 +343,7 @@ void add_edge_labels(Labels& labels,
 
   auto minpos = std::string::npos;
   auto maxpos = std::string::npos;
-  for (auto i = 1UL; i < coord.size(); i++)
+  for (auto i = 0UL; i < coord.size(); i++)
   {
     // discard points outside the box
     if (x[i] > 0 && x[i] < box.width() && y[i] > 0 && y[i] < box.height())
