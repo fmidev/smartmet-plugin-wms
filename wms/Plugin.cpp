@@ -175,6 +175,67 @@ std::string injectFrameStyle(const std::string &theSvg, int theFrame, bool theAc
   return out;
 }
 
+// Check the requested image size
+void check_image_size(const Spine::HTTP::Request& theRequest, unsigned int maxImageSize)
+{
+  int width = Spine::optional_int(theRequest.getParameter("width"), 1000);
+  int height = Spine::optional_int(theRequest.getParameter("height"), 1000);
+
+  if (static_cast<double>(width) * static_cast<double>(height) > maxImageSize)
+  {
+    throw Fmi::Exception(BCP, "Too large image requested")
+        .addParameter("limit", Fmi::to_string(maxImageSize));
+  }
+
+  if (width < 20 || width > 10000)
+    throw Fmi::Exception(BCP, "Invalid 'width' value '" + Fmi::to_string(width) + "'!");
+
+  if (height < 20 || height > 10000)
+    throw Fmi::Exception(BCP, "Invalid 'height' value '" + Fmi::to_string(height) + "'!");
+}
+
+// Test whether the Dali output type is supported (case insensitive)
+bool is_valid_dali_type(const std::string& fmt)
+{
+  for (const char* type : {"xml",
+                           "svg",
+                           "png",
+                           "pdf",
+                           "ps",
+                           "webp",
+                           "geojson",
+                           "topojson",
+                           "kml",
+                           "cnf",
+                           "geotiff",
+                           "mvt",
+                           "datatile"})
+  {
+    if (boost::iequals(fmt, type))
+      return true;
+  }
+  return false;
+}
+
+// Response to an ETag request
+void set_etag_response(Spine::HTTP::Response& theResponse,
+                       const State& theState,
+                       const std::string& theType,
+                       std::size_t product_hash)
+{
+  theResponse.setHeader("Content-Type", mimeType(theType));
+  theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+  theResponse.setStatus(Spine::HTTP::Status::no_content);
+
+  // Add updated expiration time if available
+  const auto& expires = theState.getExpirationTime();
+  if (expires)
+  {
+    std::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
+    theResponse.setHeader("Expires", tformat->format(*expires));
+  }
+}
+
 }  // namespace
 
 // Keep only acceptable querystring replacements (allowed keys or names with dots)
@@ -245,20 +306,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       return;
     }
 
-    int width = Spine::optional_int(theRequest.getParameter("width"), 1000);
-    int height = Spine::optional_int(theRequest.getParameter("height"), 1000);
-
-    if (static_cast<double>(width) * static_cast<double>(height) > itsConfig.maxImageSize())
-    {
-      throw Fmi::Exception(BCP, "Too large image requested")
-          .addParameter("limit", Fmi::to_string(itsConfig.maxImageSize()));
-    }
-
-    if (width < 20 || width > 10000)
-      throw Fmi::Exception(BCP, "Invalid 'width' value '" + Fmi::to_string(width) + "'!");
-
-    if (height < 20 || height > 10000)
-      throw Fmi::Exception(BCP, "Invalid 'height' value '" + Fmi::to_string(height) + "'!");
+    check_image_size(theRequest, itsConfig.maxImageSize());
 
     // Establish debugging related variables
 
@@ -304,12 +352,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     // Trivial error checks done first for speed
 
-    if (!boost::iequals(fmt, "xml") && !boost::iequals(fmt, "svg") && !boost::iequals(fmt, "png") &&
-        !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") && !boost::iequals(fmt, "webp") &&
-        !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "topojson") &&
-        !boost::iequals(fmt, "kml") && !boost::iequals(fmt, "cnf") &&
-        !boost::iequals(fmt, "geotiff") && !boost::iequals(fmt, "mvt") &&
-        !boost::iequals(fmt, "datatile"))
+    if (!is_valid_dali_type(fmt))
     {
       throw Fmi::Exception(BCP, "Invalid 'type' value '" + fmt + "'!");
     }
@@ -340,25 +383,11 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     auto product_hash = product.hash_value(theState);
 
-    if (product_hash != Fmi::bad_hash)
+    // If request was ETag request, respond accordingly
+    if (product_hash != Fmi::bad_hash && theRequest.getHeader("X-Request-ETag"))
     {
-      // If request was ETag request, respond accordingly
-      if (theRequest.getHeader("X-Request-ETag"))
-      {
-        theResponse.setHeader("Content-Type", mimeType(product.type));
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
-        theResponse.setStatus(Spine::HTTP::Status::no_content);
-
-        // Add updated expiration time if available
-        const auto &expires = theState.getExpirationTime();
-        if (expires)
-        {
-          std::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
-          theResponse.setHeader("Expires", tformat->format(*expires));
-        }
-
-        return;
-      }
+      set_etag_response(theResponse, theState, product.type, product_hash);
+      return;
     }
 
     // With a valid hash we can serve conditional requests: advertise the ETag
