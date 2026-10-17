@@ -61,6 +61,18 @@ class GetMap
   std::vector<std::string> styles() const;
 
  private:
+  std::string validateLayers(const std::vector<std::string>& layers) const;
+  void validateStyles(const std::vector<std::string>& layers,
+                      std::vector<std::string>& styles,
+                      const std::string& styles_opt) const;
+  void parseImageSize(const Spine::HTTP::Request& theRequest);
+  void parseColors(const Spine::HTTP::Request& theRequest);
+  void parseReferenceTime(Spine::HTTP::Request& theRequest, const std::string& layer_origintime);
+  void parseTimes(const Spine::HTTP::Request& theRequest);
+  void parseIntervals(const Spine::HTTP::Request& theRequest);
+  void addIntervalParameters(Spine::HTTP::Request& theRequest, const std::string& layerName) const;
+  void resolveTime(Spine::HTTP::Request& theRequest, const std::string& layerName) const;
+
   tag_get_map_request_options itsParameters;
   std::string itsFilename;
 

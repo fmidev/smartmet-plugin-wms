@@ -393,6 +393,354 @@ void parse_interval_with_resolution(const std::string& time_str,
 
 GetMap::GetMap(const Config& theConfig) : itsConfig(theConfig) {}
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Validate the requested layers, returns the origintime given in a layer name
+ */
+// ----------------------------------------------------------------------
+
+std::string GetMap::validateLayers(const std::vector<std::string>& layers) const
+{
+  std::string layer_origintime;
+  for (const auto& layername : layers)
+  {
+    if (!itsConfig.isValidLayer(layer_name(layername)))
+    {
+      Fmi::Exception exception(BCP, "The requested layer is not supported!");
+      exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
+      exception.addParameter("Layer", layername);
+      throw exception;
+    }
+
+    if (layername.find(":origintime_") != std::string::npos)
+      layer_origintime = layername.substr(layername.find(":origintime_") + 12);
+  }
+  return layer_origintime;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse the styles and check there is one for each layer
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::validateStyles(const std::vector<std::string>& layers,
+                            std::vector<std::string>& styles,
+                            const std::string& styles_opt) const
+{
+  if (!styles_opt.empty())
+    boost::algorithm::split(styles, styles_opt, boost::algorithm::is_any_of(","));
+
+  // if empty STYLES definition, fill the vector with default style names
+  if (styles_opt.empty())
+    styles.insert(styles.begin(), layers.size(), "");
+
+  // there must be one-to-one relationship between layers and styles
+  // so if styles has been defined there must be equal amount of layers
+  if (styles.size() != layers.size())
+  {
+    Fmi::Exception exception(BCP, "LAYERS and STYLES amount mismatch");
+    exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    exception.addParameter("Layers", Fmi::to_string(layers.size()));
+    exception.addParameter("Styles", Fmi::to_string(styles.size()));
+    throw exception;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse and validate the image size
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::parseImageSize(const Spine::HTTP::Request& theRequest)
+{
+  try
+  {
+    itsParameters.width = Fmi::stoul(*theRequest.getParameter("width"));
+    itsParameters.height = Fmi::stoul(*theRequest.getParameter("height"));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Invalid width / height value!")
+        .addDetail("The WIDTH and HEIGHT options must be valid integer numbers!")
+        .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+  }
+
+  if (itsParameters.width < 2 || itsParameters.height < 2)
+    throw Fmi::Exception(BCP, "Image size must be at least 2x2");
+
+  if (static_cast<double>(itsParameters.width) * static_cast<double>(itsParameters.height) >
+      itsConfig.getDaliConfig().maxImageSize())
+  {
+    Fmi::Exception exception(BCP, "Too large width*height value");
+    exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    throw exception;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse the TRANSPARENT and BGCOLOR options
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::parseColors(const Spine::HTTP::Request& theRequest)
+{
+  CaseInsensitiveComparator cicomp;
+
+  std::string transparent_str(
+      Spine::optional_string(theRequest.getParameter("TRANSPARENT"), "FALSE"));
+  if (!cicomp(transparent_str, "true") && !cicomp(transparent_str, "false"))
+  {
+    Fmi::Exception exception(BCP, "Invalid value for the TRANSPARENT option!");
+    exception.addDetail("The TRANSPARENT option must have value 'TRUE' or 'FALSE'");
+    exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    throw exception;
+  }
+
+  itsParameters.transparent = transparent_str == "TRUE";
+
+  // store  BGCOLOR option
+  std::string bgcolor_str = Spine::optional_string(theRequest.getParameter("BGCOLOR"), "");
+  if (!bgcolor_str.empty())
+  {
+    rgb_color bgcol = hex_string_to_rgb(bgcolor_str);
+    itsParameters.bgcolor.red = bgcol.red;
+    itsParameters.bgcolor.green = bgcol.green;
+    itsParameters.bgcolor.blue = bgcol.blue;
+  }
+  else
+  {
+    itsParameters.bgcolor.red = 0xFF;
+    itsParameters.bgcolor.green = 0xFF;
+    itsParameters.bgcolor.blue = 0xFF;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse the reference time from the request or the layer name
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::parseReferenceTime(Spine::HTTP::Request& theRequest,
+                                const std::string& layer_origintime)
+{
+  if (theRequest.getParameter("DIM_REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME") ||
+      !layer_origintime.empty())
+  {
+    std::string reference_time =
+        Spine::optional_string(theRequest.getParameter("DIM_REFERENCE_TIME"), "");
+    std::string origintime = Spine::optional_string(theRequest.getParameter("ORIGINTIME"), "");
+    if (reference_time.empty() && !origintime.empty())
+      reference_time = origintime;
+
+    if (reference_time.empty())
+    {
+      // Use origintime from layer name
+      reference_time = layer_origintime;
+    }
+
+    if (!reference_time.empty())
+      itsParameters.reference_time = parse_time(reference_time);
+
+    // reference_time and origintime are the same thing, dali understands origintime-parameter
+    if (origintime.empty() && !reference_time.empty())
+      theRequest.addParameter("origintime", reference_time);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse the TIME option
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::parseTimes(const Spine::HTTP::Request& theRequest)
+{
+  CaseInsensitiveComparator cicomp;
+
+  if (theRequest.getParameter("TIME"))
+  {
+    std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
+
+    if (cicomp(time_str, "current"))
+    {
+      // current time: send the most current data available,
+      // for example current icemap can be up to 24 hours old, but it is still the most current
+      // current time for each layer is resolved just before request is passed to dali
+    }
+    else if (time_str.find(',') == std::string::npos && time_str.find('/') == std::string::npos)
+    {
+      // single time: time1
+      itsParameters.timesteps.push_back(parse_time(time_str));
+    }
+    else if (time_str.find(',') != std::string::npos && time_str.find('/') == std::string::npos)
+    {
+      // time list separated with comma: time1,time2,time3
+      std::vector<std::string> timesteps;
+      boost::algorithm::split(timesteps, time_str, boost::algorithm::is_any_of(","));
+
+      for (const auto& timestep : timesteps)
+        itsParameters.timesteps.push_back(cicomp(timestep, "current")
+                                              ? Fmi::SecondClock::universal_time()
+                                              : parse_time(timestep));
+    }
+    else if (time_str.find(',') == std::string::npos && time_str.find('/') != std::string::npos)
+    {
+      // one interval: min1/max1/res1
+      parse_interval_with_resolution(time_str, itsParameters.timesteps);
+    }
+    else if (time_str.find(',') != std::string::npos && time_str.find('/') != std::string::npos)
+    {
+      // multiple intervals: min1/max1/res1,min2/max2/res2,...
+      std::vector<std::string> parts;
+      boost::algorithm::split(parts, time_str, boost::algorithm::is_any_of(","));
+
+      for (const auto& part : parts)
+        parse_interval_with_resolution(part, itsParameters.timesteps);
+    }
+    else
+    {
+      Fmi::Exception exception(BCP, "Invalid TIME option value!");
+      exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
+      exception.addParameter("Time value", time_str);
+      throw exception;
+    }
+  }
+  else
+  {
+    // if time not defined use current time
+    // current time for each layer is resolved just before request is passed to dali
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse the DIM_INTERVAL_START and DIM_INTERVAL_END options
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::parseIntervals(const Spine::HTTP::Request& theRequest)
+{
+  std::string dim_interval_start =
+      Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_START"), "");
+  std::string dim_interval_end =
+      Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_END"), "");
+  boost::algorithm::trim(dim_interval_start);
+  boost::algorithm::trim(dim_interval_end);
+  boost::replace_all(dim_interval_start, " ", "");
+  boost::replace_all(dim_interval_end, " ", "");
+
+  if (!dim_interval_start.empty())
+  {
+    if (!is_number(dim_interval_start))
+    {
+      Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_START option value, must be integer!");
+      exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
+      exception.addParameter("Interval value", dim_interval_start);
+      throw exception;
+    }
+    itsParameters.interval_start = Fmi::stoi(dim_interval_start);
+  }
+  if (!dim_interval_end.empty())
+  {
+    if (!is_number(dim_interval_end))
+    {
+      Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_END option value, must be integer!");
+      exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
+      exception.addParameter("Interval value", dim_interval_end);
+      throw exception;
+    }
+    itsParameters.interval_end = Fmi::stoi(dim_interval_end);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the requested or the default interval of the layer to the request
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::addIntervalParameters(Spine::HTTP::Request& theRequest,
+                                   const std::string& layerName) const
+{
+  if (itsParameters.interval_start || itsParameters.interval_end)
+  {
+    int interval_start = (itsParameters.interval_start ? *itsParameters.interval_start : 0);
+    int interval_end = (itsParameters.interval_end ? *itsParameters.interval_end : 0);
+
+    theRequest.removeParameter("DIM_INTERVAL_START");
+    theRequest.removeParameter("DIM_INTERVAL_END");
+    theRequest.addParameter("interval_start", Fmi::to_string(abs(interval_start)));
+    theRequest.addParameter("interval_end", Fmi::to_string(abs(interval_end)));
+  }
+  else
+  {
+    // Else check if layer has default interval configured
+    auto default_interval = itsConfig.getDefaultInterval(layerName);
+    auto interval_start = default_interval.first;
+    auto interval_end = default_interval.second;
+    if (!interval_start.empty() || !interval_end.empty())
+    {
+      if (interval_start.empty())
+        interval_start = "0";
+      if (interval_end.empty())
+        interval_end = "0";
+      theRequest.addParameter("interval_start", interval_start);
+      theRequest.addParameter("interval_end", interval_end);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Resolve the current (most recent) time for the layer
+ */
+// ----------------------------------------------------------------------
+
+void GetMap::resolveTime(Spine::HTTP::Request& theRequest, const std::string& layerName) const
+{
+  CaseInsensitiveComparator cicomp;
+
+  std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
+
+  if (cicomp(time_str, "current"))
+  {
+    if (!itsConfig.isTemporal(layerName))
+    {
+      theRequest.removeParameter("time");
+    }
+    else
+    {
+      if (!itsConfig.currentValue(layerName))
+      {
+        Fmi::Exception exception(BCP, "Invalid TIME option value for the current layer!");
+        exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
+        exception.addParameter("Time value", time_str);
+        exception.addParameter("Layer", layerName);
+        throw exception;
+      }
+
+      Fmi::DateTime mostCurrentTime(
+          itsConfig.mostCurrentTime(layerName, itsParameters.reference_time));
+
+      if (mostCurrentTime.is_not_a_date_time())
+        theRequest.removeParameter("time");
+      else
+        theRequest.addParameter("time", Fmi::to_iso_string(mostCurrentTime));
+    }
+  }
+  else
+  {
+    if (itsParameters.timesteps.empty())
+      throw Fmi::Exception(BCP, "Intervals need to be at least one minute long");
+    theRequest.removeParameter("time");
+    theRequest.addParameter("time", Fmi::to_iso_string(itsParameters.timesteps[0]));
+  }
+}
+
 void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                                  Spine::HTTP::Request& theRequest)
 {
@@ -417,38 +765,9 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       throw Fmi::Exception(BCP, "LAYERS option not set")
           .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
 
-    std::string layer_origintime;
-    for (const auto& layername : layers)
-    {
-      if (!itsConfig.isValidLayer(layer_name(layername)))
-      {
-        Fmi::Exception exception(BCP, "The requested layer is not supported!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
-        exception.addParameter("Layer", layername);
-        throw exception;
-      }
+    std::string layer_origintime = validateLayers(layers);
 
-      if (layername.find(":origintime_") != std::string::npos)
-        layer_origintime = layername.substr(layername.find(":origintime_") + 12);
-    }
-
-    if (!styles_opt.empty())
-      boost::algorithm::split(styles, styles_opt, boost::algorithm::is_any_of(","));
-
-    // if empty STYLES definition, fill the vector with default style names
-    if (styles_opt.empty())
-      styles.insert(styles.begin(), layers.size(), "");
-
-    // there must be one-to-one relationship between layers and styles
-    // so if styles has been defined there must be equal amount of layers
-    if (styles.size() != layers.size())
-    {
-      Fmi::Exception exception(BCP, "LAYERS and STYLES amount mismatch");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      exception.addParameter("Layers", Fmi::to_string(layers.size()));
-      exception.addParameter("Styles", Fmi::to_string(styles.size()));
-      throw exception;
-    }
+    validateStyles(layers, styles, styles_opt);
 
     // Prevent DDOS attacks by layering the same thing thousands of times
 
@@ -459,28 +778,7 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
           .addParameter("Limit", Fmi::to_string(layer_limit));
 
     // width and height
-    try
-    {
-      itsParameters.width = Fmi::stoul(*theRequest.getParameter("width"));
-      itsParameters.height = Fmi::stoul(*theRequest.getParameter("height"));
-    }
-    catch (...)
-    {
-      throw Fmi::Exception::Trace(BCP, "Invalid width / height value!")
-          .addDetail("The WIDTH and HEIGHT options must be valid integer numbers!")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-    }
-
-    if (itsParameters.width < 2 || itsParameters.height < 2)
-      throw Fmi::Exception(BCP, "Image size must be at least 2x2");
-
-    if (static_cast<double>(itsParameters.width) * static_cast<double>(itsParameters.height) >
-        itsConfig.getDaliConfig().maxImageSize())
-    {
-      Fmi::Exception exception(BCP, "Too large width*height value");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
-    }
+    parseImageSize(theRequest);
 
     for (unsigned int i = 0; i < layers.size(); i++)
     {
@@ -499,35 +797,7 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
     itsParameters.format = *(theRequest.getParameter("FORMAT"));
 
-    CaseInsensitiveComparator cicomp;
-
-    std::string transparent_str(
-        Spine::optional_string(theRequest.getParameter("TRANSPARENT"), "FALSE"));
-    if (!cicomp(transparent_str, "true") && !cicomp(transparent_str, "false"))
-    {
-      Fmi::Exception exception(BCP, "Invalid value for the TRANSPARENT option!");
-      exception.addDetail("The TRANSPARENT option must have value 'TRUE' or 'FALSE'");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
-    }
-
-    itsParameters.transparent = transparent_str == "TRUE";
-
-    // store  BGCOLOR option
-    std::string bgcolor_str = Spine::optional_string(theRequest.getParameter("BGCOLOR"), "");
-    if (!bgcolor_str.empty())
-    {
-      rgb_color bgcol = hex_string_to_rgb(bgcolor_str);
-      itsParameters.bgcolor.red = bgcol.red;
-      itsParameters.bgcolor.green = bgcol.green;
-      itsParameters.bgcolor.blue = bgcol.blue;
-    }
-    else
-    {
-      itsParameters.bgcolor.red = 0xFF;
-      itsParameters.bgcolor.green = 0xFF;
-      itsParameters.bgcolor.blue = 0xFF;
-    }
+    parseColors(theRequest);
 
     itsParameters.version = *(theRequest.getParameter("VERSION"));
 
@@ -536,115 +806,12 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       itsParameters.elevation = Spine::optional_int(theRequest.getParameter("ELEVATION"), 0);
     }
 
-    if (theRequest.getParameter("DIM_REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME") ||
-        !layer_origintime.empty())
-    {
-      std::string reference_time =
-          Spine::optional_string(theRequest.getParameter("DIM_REFERENCE_TIME"), "");
-      std::string origintime = Spine::optional_string(theRequest.getParameter("ORIGINTIME"), "");
-      if (reference_time.empty() && !origintime.empty())
-        reference_time = origintime;
+    parseReferenceTime(theRequest, layer_origintime);
 
-      if (reference_time.empty())
-      {
-        // Use origintime from layer name
-        reference_time = layer_origintime;
-      }
-
-      if (!reference_time.empty())
-        itsParameters.reference_time = parse_time(reference_time);
-
-      // reference_time and origintime are the same thing, dali understands origintime-parameter
-      if (origintime.empty() && !reference_time.empty())
-        theRequest.addParameter("origintime", reference_time);
-    }
-
-    if (theRequest.getParameter("TIME"))
-    {
-      std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
-
-      if (cicomp(time_str, "current"))
-      {
-        // current time: send the most current data available,
-        // for example current icemap can be up to 24 hours old, but it is still the most current
-        // current time for each layer is resolved just before request is passed to dali
-      }
-      else if (time_str.find(',') == std::string::npos && time_str.find('/') == std::string::npos)
-      {
-        // single time: time1
-        itsParameters.timesteps.push_back(parse_time(time_str));
-      }
-      else if (time_str.find(',') != std::string::npos && time_str.find('/') == std::string::npos)
-      {
-        // time list separated with comma: time1,time2,time3
-        std::vector<std::string> timesteps;
-        boost::algorithm::split(timesteps, time_str, boost::algorithm::is_any_of(","));
-
-        for (const auto& timestep : timesteps)
-          itsParameters.timesteps.push_back(cicomp(timestep, "current")
-                                                ? Fmi::SecondClock::universal_time()
-                                                : parse_time(timestep));
-      }
-      else if (time_str.find(',') == std::string::npos && time_str.find('/') != std::string::npos)
-      {
-        // one interval: min1/max1/res1
-        parse_interval_with_resolution(time_str, itsParameters.timesteps);
-      }
-      else if (time_str.find(',') != std::string::npos && time_str.find('/') != std::string::npos)
-      {
-        // multiple intervals: min1/max1/res1,min2/max2/res2,...
-        std::vector<std::string> parts;
-        boost::algorithm::split(parts, time_str, boost::algorithm::is_any_of(","));
-
-        for (const auto& part : parts)
-          parse_interval_with_resolution(part, itsParameters.timesteps);
-      }
-      else
-      {
-        Fmi::Exception exception(BCP, "Invalid TIME option value!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-        exception.addParameter("Time value", time_str);
-        throw exception;
-      }
-    }
-    else
-    {
-      // if time not defined use current time
-      // current time for each layer is resolved just before request is passed to dali
-    }
+    parseTimes(theRequest);
 
     // Check DIM_INTERVAL_START and DIM_INTERVAL_END
-    std::string dim_interval_start =
-        Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_START"), "");
-    std::string dim_interval_end =
-        Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_END"), "");
-    boost::algorithm::trim(dim_interval_start);
-    boost::algorithm::trim(dim_interval_end);
-    boost::replace_all(dim_interval_start, " ", "");
-    boost::replace_all(dim_interval_end, " ", "");
-
-    if (!dim_interval_start.empty())
-    {
-      if (!is_number(dim_interval_start))
-      {
-        Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_START option value, must be integer!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-        exception.addParameter("Interval value", dim_interval_start);
-        throw exception;
-      }
-      itsParameters.interval_start = Fmi::stoi(dim_interval_start);
-    }
-    if (!dim_interval_end.empty())
-    {
-      if (!is_number(dim_interval_end))
-      {
-        Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_END option value, must be integer!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-        exception.addParameter("Interval value", dim_interval_end);
-        throw exception;
-      }
-      itsParameters.interval_end = Fmi::stoi(dim_interval_end);
-    }
+    parseIntervals(theRequest);
 
     // validate the given options
     validate_options(itsParameters, itsConfig, theQEngine);
@@ -668,32 +835,7 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     theRequest.addParameter("projection.ysize", Fmi::to_string(itsParameters.height));
 
     // Add interval if exists
-    if (itsParameters.interval_start || itsParameters.interval_end)
-    {
-      int interval_start = (itsParameters.interval_start ? *itsParameters.interval_start : 0);
-      int interval_end = (itsParameters.interval_end ? *itsParameters.interval_end : 0);
-
-      theRequest.removeParameter("DIM_INTERVAL_START");
-      theRequest.removeParameter("DIM_INTERVAL_END");
-      theRequest.addParameter("interval_start", Fmi::to_string(abs(interval_start)));
-      theRequest.addParameter("interval_end", Fmi::to_string(abs(interval_end)));
-    }
-    else
-    {
-      // Else check if layer has default interval configured
-      auto default_interval = itsConfig.getDefaultInterval(layerName);
-      auto interval_start = default_interval.first;
-      auto interval_end = default_interval.second;
-      if (!interval_start.empty() || !interval_end.empty())
-      {
-        if (interval_start.empty())
-          interval_start = "0";
-        if (interval_end.empty())
-          interval_end = "0";
-        theRequest.addParameter("interval_start", interval_start);
-        theRequest.addParameter("interval_end", interval_end);
-      }
-    }
+    addIntervalParameters(theRequest, layerName);
 
     theRequest.addParameter("projection.crs", crs_decl);
 
@@ -702,41 +844,7 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     theRequest.addParameter("customer", itsConfig.layerCustomer(layerName));
 
     // resolve current time (most recent) for the layer
-    std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
-
-    if (cicomp(time_str, "current"))
-    {
-      if (!itsConfig.isTemporal(layerName))
-      {
-        theRequest.removeParameter("time");
-      }
-      else
-      {
-        if (!itsConfig.currentValue(layerName))
-        {
-          Fmi::Exception exception(BCP, "Invalid TIME option value for the current layer!");
-          exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-          exception.addParameter("Time value", time_str);
-          exception.addParameter("Layer", layerName);
-          throw exception;
-        }
-
-        Fmi::DateTime mostCurrentTime(
-            itsConfig.mostCurrentTime(layerName, itsParameters.reference_time));
-
-        if (mostCurrentTime.is_not_a_date_time())
-          theRequest.removeParameter("time");
-        else
-          theRequest.addParameter("time", Fmi::to_iso_string(mostCurrentTime));
-      }
-    }
-    else
-    {
-      if (itsParameters.timesteps.empty())
-        throw Fmi::Exception(BCP, "Intervals need to be at least one minute long");
-      theRequest.removeParameter("time");
-      theRequest.addParameter("time", Fmi::to_iso_string(itsParameters.timesteps[0]));
-    }
+    resolveTime(theRequest, layerName);
   }
   catch (...)
   {
