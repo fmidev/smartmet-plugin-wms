@@ -39,7 +39,9 @@
 #include "WeatherObjectsLayer.h"
 #include "WindRoseLayer.h"
 #include <macgyver/Exception.h>
+#include <map>
 #include <stdexcept>
+#include <string>
 
 namespace SmartMet
 {
@@ -49,6 +51,15 @@ namespace Dali
 {
 namespace LayerFactory
 {
+namespace
+{
+template <typename T>
+Layer* make_layer()
+{
+  return new T;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Create a new layer
@@ -66,83 +77,54 @@ Layer* create(const Json::Value& theJson)
 
     auto name = theJson.get("layer_type", "tag").asString();
 
-    if (name == "arrow")
-      return new ArrowLayer;
-    if (name == "background")
-      return new BackgroundLayer;
-    if (name == "group")
-      return new GroupLayer;
-    if (name == "postgis")
-      return new PostGISLayer;
-    if (name == "isoband")
-      return new IsobandLayer;
-    if (name == "isoline")
-      return new IsolineLayer;
-    if (name == "isolabel")
-      return new IsolabelLayer;
-    if (name == "legend")
-      return new LegendLayer;
-    if (name == "location")
-      return new LocationLayer;
-    if (name == "map")
-      return new MapLayer;
-    if (name == "null")
-      return new NullLayer;
+    using LayerCreator = Layer* (*)();
+    static const std::map<std::string, LayerCreator> creators{
+        {"arrow", make_layer<ArrowLayer>},
+        {"background", make_layer<BackgroundLayer>},
+        {"group", make_layer<GroupLayer>},
+        {"postgis", make_layer<PostGISLayer>},
+        {"isoband", make_layer<IsobandLayer>},
+        {"isoline", make_layer<IsolineLayer>},
+        {"isolabel", make_layer<IsolabelLayer>},
+        {"legend", make_layer<LegendLayer>},
+        {"location", make_layer<LocationLayer>},
+        {"map", make_layer<MapLayer>},
+        {"null", make_layer<NullLayer>},
 #ifndef WITHOUT_OSM
-    if (name == "osm")
-      return new OSMLayer;
+        {"osm", make_layer<OSMLayer>},
 #endif
-    if (name == "number")
-      return new NumberLayer;
-    if (name == "raster")
-      return new RasterLayer;
-
-    if (name == "satellite")
-      return new SatelliteLayer;
-    if (name == "geotiff")
-      return new GeoTiffLayer;
-    if (name == "hovmoeller")
-      return new HovmoellerLayer;
-    if (name == "stream")
-      return new StreamLayer;
-    if (name == "symbol")
-      return new SymbolLayer;
-    if (name == "tag")
-      return new TagLayer;
-    if (name == "time")
-      return new TimeLayer;
-    if (name == "translation")
-      return new TranslationLayer;
-    if (name == "wkt")
-      return new WKTLayer;
+        {"number", make_layer<NumberLayer>},
+        {"raster", make_layer<RasterLayer>},
+        {"satellite", make_layer<SatelliteLayer>},
+        {"geotiff", make_layer<GeoTiffLayer>},
+        {"hovmoeller", make_layer<HovmoellerLayer>},
+        {"stream", make_layer<StreamLayer>},
+        {"symbol", make_layer<SymbolLayer>},
+        {"tag", make_layer<TagLayer>},
+        {"time", make_layer<TimeLayer>},
+        {"translation", make_layer<TranslationLayer>},
+        {"wkt", make_layer<WKTLayer>},
 #ifndef WITHOUT_OBSERVATION
-    if (name == "windrose")
-      return new WindRoseLayer;
-    if (name == "finnish_road_observation")
-      return new FinnishRoadObservationLayer;
-    if (name == "present_weather_observation")
-      return new PresentWeatherObservationLayer;
-    if (name == "cloud_ceiling")
-      return new CloudCeilingLayer;
+        {"windrose", make_layer<WindRoseLayer>},
+        {"finnish_road_observation", make_layer<FinnishRoadObservationLayer>},
+        {"present_weather_observation", make_layer<PresentWeatherObservationLayer>},
+        {"cloud_ceiling", make_layer<CloudCeilingLayer>},
 #endif
-    if (name == "icemap")
-      return new IceMapLayer;
-    if (name == "frame")
-      return new FrameLayer;
-    if (name == "fronts")
-      return new WeatherFrontsLayer;
-    if (name == "weather_objects")
-      return new WeatherObjectsLayer;
+        {"icemap", make_layer<IceMapLayer>},
+        {"frame", make_layer<FrameLayer>},
+        {"fronts", make_layer<WeatherFrontsLayer>},
+        {"weather_objects", make_layer<WeatherObjectsLayer>},
 #ifndef WITHOUT_AVI
-    if (name == "metar")
-      return new MetarLayer;
+        {"metar", make_layer<MetarLayer>},
 #endif
-    if (name == "grid")
-      return new GridLayer;
-    if (name == "circle")
-      return new CircleLayer;
-    if (name == "graticule")
-      return new GraticuleLayer;
+        {"grid", make_layer<GridLayer>},
+        {"circle", make_layer<CircleLayer>},
+        {"graticule", make_layer<GraticuleLayer>},
+    };
+
+    auto pos = creators.find(name);
+    if (pos != creators.end())
+      return pos->second();
 
     throw Fmi::Exception(BCP, "Unknown layer type '" + name + "'");
   }
