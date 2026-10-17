@@ -100,6 +100,132 @@ std::optional<SpeedAndDirection> uv_to_speed_and_direction(
   return SpeedAndDirection{wspd, wdir};
 }
 
+// The wind parameters of an arrow layer and their aggregation functions
+struct WindParameters
+{
+  std::optional<Spine::Parameter> dirparam;
+  std::optional<Spine::Parameter> speedparam;
+  std::optional<Spine::Parameter> uparam;
+  std::optional<Spine::Parameter> vparam;
+
+  std::optional<TS::ParameterAndFunctions> speed_funcs;
+  std::optional<TS::ParameterAndFunctions> dir_funcs;
+  std::optional<TS::ParameterAndFunctions> u_funcs;
+  std::optional<TS::ParameterAndFunctions> v_funcs;
+};
+
+// Parse an optional parameter name with its aggregation functions
+void parse_wind_parameter(const std::optional<std::string>& name,
+                          std::optional<TS::ParameterAndFunctions>& funcs,
+                          std::optional<Spine::Parameter>& param)
+{
+  if (name)
+  {
+    funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*name);
+    param = funcs->parameter;
+  }
+}
+
+// Parse the direction, speed, u and v parameters
+WindParameters parse_wind_parameters(const std::optional<std::string>& direction,
+                                     const std::optional<std::string>& speed,
+                                     const std::optional<std::string>& u,
+                                     const std::optional<std::string>& v)
+{
+  WindParameters params;
+  parse_wind_parameter(direction, params.dir_funcs, params.dirparam);
+  parse_wind_parameter(speed, params.speed_funcs, params.speedparam);
+  parse_wind_parameter(u, params.u_funcs, params.uparam);
+  parse_wind_parameter(v, params.v_funcs, params.vparam);
+  return params;
+}
+
+// Reads point values from querydata, aggregated if functions are given. The ParameterOptions
+// hold references to their arguments, hence the arguments are kept as members.
+class PointValueReader
+{
+ public:
+  PointValueReader(const Engine::Querydata::Q& theQ,
+                   const NFmiMetTime& theMetTime,
+                   const Fmi::LocalDateTime& theLocalTime)
+      : q(theQ), met_time(theMetTime), localdatetime(theLocalTime)
+  {
+  }
+
+  // Aggregated value at the location, or nullopt if the result is not a number
+  std::optional<double> aggregated(const Spine::Parameter& param,
+                                   const Spine::Location& loc,
+                                   const std::optional<TS::ParameterAndFunctions>& funcs)
+  {
+    auto options = Engine::Querydata::ParameterOptions(
+        param, tmp, loc, tmp, tmp, *timeformatter, tmp, tmp, mylocale, tmp, nearest, 0, dummy);
+    auto result = AggregationUtility::get_qengine_value(q, options, localdatetime, funcs);
+    if (const double* ptr = std::get_if<double>(&result))
+      return *ptr;
+    return std::nullopt;
+  }
+
+  // Aggregated value if an inner function is given, otherwise the interpolated value.
+  // Returns the fallback value if the aggregated value is not a number.
+  double value(const Spine::Parameter& param,
+               const std::optional<TS::ParameterAndFunctions>& funcs,
+               const Spine::Location& loc,
+               const NFmiPoint& latlon,
+               double fallback)
+  {
+    if (funcs && funcs->functions.innerFunction.exists())
+      return aggregated(param, loc, funcs).value_or(fallback);
+
+    q->param(param.number());
+    return q->interpolate(latlon, met_time, 180);
+  }
+
+  // Wind speed and direction at the point. The speed defaults to 0 and the direction
+  // to missing.
+  void wind(const WindParameters& params,
+            const std::shared_ptr<Fmi::CoordinateTransformation>& uvtransformation,
+            const Spine::Location& loc,
+            const NFmiPoint& latlon,
+            double& wspd,
+            double& wdir)
+  {
+    wdir = kFloatMissing;
+    wspd = 0;
+
+    if (params.uparam && params.vparam)
+    {
+      auto uresult = aggregated(*params.uparam, loc, params.u_funcs);
+      auto vresult = aggregated(*params.vparam, loc, params.v_funcs);
+      if (uresult && vresult)
+      {
+        auto result =
+            uv_to_speed_and_direction(*uresult, *vresult, uvtransformation, latlon.X(), latlon.Y());
+        if (result)
+        {
+          wspd = result->speed;
+          wdir = result->direction;
+        }
+      }
+      return;
+    }
+
+    wdir = value(*params.dirparam, params.dir_funcs, loc, latlon, wdir);
+
+    if (params.speedparam)
+      wspd = value(*params.speedparam, params.speed_funcs, loc, latlon, wspd);
+  }
+
+ private:
+  const Engine::Querydata::Q& q;
+  NFmiMetTime met_time;
+  Fmi::LocalDateTime localdatetime;
+  std::shared_ptr<Fmi::TimeFormatter> timeformatter{Fmi::TimeFormatter::create("iso")};
+  const std::string tmp;
+  const std::locale& mylocale = std::locale::classic();
+  const bool nearest = false;
+  NFmiPoint dummy;
+};
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Build the SVG transform attribute string for an arrow.
@@ -141,36 +267,9 @@ PointValues read_forecasts(const ArrowLayer& layer,
   {
     NFmiMetTime met_time = valid_time;
 
-    std::optional<Spine::Parameter> dirparam;
-    std::optional<Spine::Parameter> speedparam;
-    std::optional<Spine::Parameter> uparam;
-    std::optional<Spine::Parameter> vparam;
-
-    std::optional<TS::ParameterAndFunctions> speed_funcs;
-    std::optional<TS::ParameterAndFunctions> dir_funcs;
-    std::optional<TS::ParameterAndFunctions> u_funcs;
-    std::optional<TS::ParameterAndFunctions> v_funcs;
-
-    if (layer.direction)
-    {
-      dir_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.direction);
-      dirparam = dir_funcs->parameter;
-    }
-    if (layer.speed)
-    {
-      speed_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.speed);
-      speedparam = speed_funcs->parameter;
-    }
-    if (layer.u)
-    {
-      u_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.u);
-      uparam = u_funcs->parameter;
-    }
-    if (layer.v)
-    {
-      v_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.v);
-      vparam = v_funcs->parameter;
-    }
+    const auto params = parse_wind_parameters(layer.direction, layer.speed, layer.u, layer.v);
+    const auto& speedparam = params.speedparam;
+    const auto& dirparam = params.dirparam;
 
     if (speedparam && !q->param(speedparam->number()))
       throw Fmi::Exception(
@@ -182,7 +281,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
     // We may need to convert relative U/V components to true north
     std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
-    if (uparam && vparam && q->isRelativeUV())
+    if (params.uparam && params.vparam && q->isRelativeUV())
       uvtransformation =
           std::make_shared<Fmi::CoordinateTransformation>("WGS84", q->SpatialReference());
 
@@ -191,12 +290,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
     PointValues pointvalues;
 
-    // Q API requires these helpers
-    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    Fmi::LocalDateTime localdatetime(met_time, Fmi::TimeZonePtr::utc);
-    std::string tmp;
-    const auto& mylocale = std::locale::classic();
-    NFmiPoint dummy;
+    PointValueReader reader(q, met_time, Fmi::LocalDateTime(met_time, Fmi::TimeZonePtr::utc));
 
     for (const auto& point : points)
     {
@@ -206,109 +300,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
       double wdir = kFloatMissing;
       double wspd = 0;
       Spine::Location loc(point.latlon.X(), point.latlon.Y());
-
-      if (uparam && vparam)
-      {
-        auto up = Engine::Querydata::ParameterOptions(*uparam,
-                                                      tmp,
-                                                      loc,
-                                                      tmp,
-                                                      tmp,
-                                                      *timeformatter,
-                                                      tmp,
-                                                      tmp,
-                                                      mylocale,
-                                                      tmp,
-                                                      false,
-                                                      0,
-                                                      dummy);
-        auto vp = Engine::Querydata::ParameterOptions(*vparam,
-                                                      tmp,
-                                                      loc,
-                                                      tmp,
-                                                      tmp,
-                                                      *timeformatter,
-                                                      tmp,
-                                                      tmp,
-                                                      mylocale,
-                                                      tmp,
-                                                      false,
-                                                      0,
-                                                      dummy);
-
-        auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
-        auto vresult = AggregationUtility::get_qengine_value(q, vp, localdatetime, v_funcs);
-
-        const double* u_ptr = std::get_if<double>(&uresult);
-        const double* v_ptr = std::get_if<double>(&vresult);
-
-        if (u_ptr && v_ptr)
-        {
-          auto result = uv_to_speed_and_direction(
-              *u_ptr, *v_ptr, uvtransformation, point.latlon.X(), point.latlon.Y());
-          if (result)
-          {
-            wspd = result->speed;
-            wdir = result->direction;
-          }
-        }
-      }
-      else
-      {
-        if (dir_funcs && dir_funcs->functions.innerFunction.exists())
-        {
-          auto dp = Engine::Querydata::ParameterOptions(*dirparam,
-                                                        tmp,
-                                                        loc,
-                                                        tmp,
-                                                        tmp,
-                                                        *timeformatter,
-                                                        tmp,
-                                                        tmp,
-                                                        mylocale,
-                                                        tmp,
-                                                        false,
-                                                        0,
-                                                        dummy);
-          auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
-          if (const double* ptr = std::get_if<double>(&dir_result))
-            wdir = *ptr;
-        }
-        else
-        {
-          q->param(dirparam->number());
-          wdir = q->interpolate(point.latlon, met_time, 180);
-        }
-
-        if (speedparam)
-        {
-          if (speed_funcs && speed_funcs->functions.innerFunction.exists())
-          {
-            auto sp = Engine::Querydata::ParameterOptions(*speedparam,
-                                                          tmp,
-                                                          loc,
-                                                          tmp,
-                                                          tmp,
-                                                          *timeformatter,
-                                                          tmp,
-                                                          tmp,
-                                                          mylocale,
-                                                          tmp,
-                                                          false,
-                                                          0,
-                                                          dummy);
-            auto speed_result =
-                AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
-            if (const double* ptr = std::get_if<double>(&speed_result))
-              wspd = *ptr;
-          }
-          else
-          {
-            q->param(speedparam->number());
-            wspd = q->interpolate(point.latlon, met_time, 180);
-          }
-        }
-      }
+      reader.wind(params, uvtransformation, loc, point.latlon, wspd, wdir);
 
       if (wdir == kFloatMissing || wspd == kFloatMissing)
         continue;
@@ -1214,36 +1206,9 @@ void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
     if (!q || !q->isGrid())
       return;
 
-    std::optional<Spine::Parameter> dirparam;
-    std::optional<Spine::Parameter> speedparam;
-    std::optional<Spine::Parameter> uparam;
-    std::optional<Spine::Parameter> vparam;
-
-    std::optional<TS::ParameterAndFunctions> speed_funcs;
-    std::optional<TS::ParameterAndFunctions> dir_funcs;
-    std::optional<TS::ParameterAndFunctions> u_funcs;
-    std::optional<TS::ParameterAndFunctions> v_funcs;
-
-    if (direction)
-    {
-      dir_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*direction);
-      dirparam = dir_funcs->parameter;
-    }
-    if (speed)
-    {
-      speed_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*speed);
-      speedparam = speed_funcs->parameter;
-    }
-    if (u)
-    {
-      u_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*u);
-      uparam = u_funcs->parameter;
-    }
-    if (v)
-    {
-      v_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*v);
-      vparam = v_funcs->parameter;
-    }
+    const auto params = parse_wind_parameters(direction, speed, u, v);
+    const auto& speedparam = params.speedparam;
+    const auto& dirparam = params.dirparam;
 
     if (speedparam && !q->param(speedparam->number()))
       return;
@@ -1251,7 +1216,7 @@ void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
       return;
 
     std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
-    if (uparam && vparam && q->isRelativeUV())
+    if (params.uparam && params.vparam && q->isRelativeUV())
       uvtransformation =
           std::make_shared<Fmi::CoordinateTransformation>("WGS84", q->SpatialReference());
 
@@ -1273,82 +1238,12 @@ void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
     if (!transformation.transform(lon, lat))
       return;
 
-    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
-    const auto& mylocale = std::locale::classic();
-    NFmiPoint dummy;
+    PointValueReader reader(q, valid_time, Fmi::LocalDateTime(valid_time, Fmi::TimeZonePtr::utc));
     Spine::Location loc(lon, lat);
 
     double wdir = kFloatMissing;
     double wspd = 0;
-
-    if (uparam && vparam)
-    {
-      auto up = Engine::Querydata::ParameterOptions(
-          *uparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
-      auto vp = Engine::Querydata::ParameterOptions(
-          *vparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
-
-      auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
-      auto vresult = AggregationUtility::get_qengine_value(q, vp, localdatetime, v_funcs);
-
-      const double* u_ptr = std::get_if<double>(&uresult);
-      const double* v_ptr = std::get_if<double>(&vresult);
-      if (u_ptr && v_ptr)
-      {
-        auto result = uv_to_speed_and_direction(*u_ptr, *v_ptr, uvtransformation, lon, lat);
-        if (result)
-        {
-          wspd = result->speed;
-          wdir = result->direction;
-        }
-      }
-    }
-    else
-    {
-      if (dir_funcs && dir_funcs->functions.innerFunction.exists())
-      {
-        auto dp = Engine::Querydata::ParameterOptions(
-            *dirparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
-        auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
-        if (const double* ptr = std::get_if<double>(&dir_result))
-          wdir = *ptr;
-      }
-      else
-      {
-        q->param(dirparam->number());
-        wdir = q->interpolate(NFmiPoint(lon, lat), valid_time, 180);
-      }
-
-      if (speedparam)
-      {
-        if (speed_funcs && speed_funcs->functions.innerFunction.exists())
-        {
-          auto sp = Engine::Querydata::ParameterOptions(*speedparam,
-                                                        "",
-                                                        loc,
-                                                        "",
-                                                        "",
-                                                        *timeformatter,
-                                                        "",
-                                                        "",
-                                                        mylocale,
-                                                        "",
-                                                        false,
-                                                        0,
-                                                        dummy);
-          auto speed_result =
-              AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
-          if (const double* ptr = std::get_if<double>(&speed_result))
-            wspd = *ptr;
-        }
-        else
-        {
-          q->param(speedparam->number());
-          wspd = q->interpolate(NFmiPoint(lon, lat), valid_time, 180);
-        }
-      }
-    }
+    reader.wind(params, uvtransformation, loc, NFmiPoint(lon, lat), wspd, wdir);
 
     if (wdir == kFloatMissing || wspd == kFloatMissing)
       return;
