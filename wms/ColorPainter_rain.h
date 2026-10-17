@@ -53,6 +53,10 @@ class ColorPainter_rain : public ColorPainter
     uint          streamImage_height;
     int           step_x;
     std::vector<StreamSpeed> streamSpeeds;
+
+  private:
+
+    void          createStreamImage(uint width,uint height);
 };
 
 
