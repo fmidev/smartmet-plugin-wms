@@ -43,6 +43,10 @@ class Layer
 {
  private:
   void setProductFile(const std::string& theProductFile);
+  void addBaseInfo(CTPP::CDT& layer,
+                   const std::string& language,
+                   const std::string& defaultLanguage) const;
+  void addCrsInfo(CTPP::CDT& layer) const;
   bool hasIdenticalProjectedBBox(const std::string& id, const Fmi::BBox& bbox) const;
 
  protected:

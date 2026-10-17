@@ -1695,6 +1695,134 @@ void Layer::initProjectedBBoxes()
   }
 }
 
+namespace
+{
+// The interval dimensions of a layer in capabilities
+CTPP::CDT interval_dimension_cdt(const IntervalDimension& intervalDimension)
+{
+  CTPP::CDT interval_dimension_list(CTPP::CDT::ARRAY_VAL);
+  CTPP::CDT interval_dimension_start(CTPP::CDT::HASH_VAL);
+
+  interval_dimension_start["name"] = "interval_start";
+  interval_dimension_start["units"] = "minute";
+  interval_dimension_start["multiple_values"] = 0;
+  interval_dimension_start["nearest_value"] = 0;
+  interval_dimension_start["default"] = intervalDimension.getDefaultStartInterval();
+  interval_dimension_start["value"] = intervalDimension.getStartIntervals();
+
+  CTPP::CDT interval_dimension_end(CTPP::CDT::HASH_VAL);
+  interval_dimension_end["name"] = "interval_end";
+  interval_dimension_end["units"] = "minute";
+  interval_dimension_end["multiple_values"] = 0;
+  interval_dimension_end["nearest_value"] = 0;
+  interval_dimension_end["default"] = intervalDimension.getDefaultEndInterval();
+  interval_dimension_end["value"] = intervalDimension.getEndIntervals();
+
+  interval_dimension_list.PushBack(interval_dimension_start);
+  interval_dimension_list.PushBack(interval_dimension_end);
+  return interval_dimension_list;
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the name, title, abstract and other base information of the layer
+ */
+// ----------------------------------------------------------------------
+
+void Layer::addBaseInfo(CTPP::CDT& layer,
+                        const std::string& language,
+                        const std::string& defaultLanguage) const
+{
+  // Layer name, title and abstract
+  if (!name.empty())
+    layer["name"] = name;
+  if (title)
+    layer["title"] = title->translate(language, defaultLanguage);
+  if (abstract)
+    layer["abstract"] = abstract->translate(language, defaultLanguage);
+  if (opaque == 1)
+    layer["opaque"] = *opaque;
+  if (queryable == 1)
+    layer["queryable"] = *queryable;
+  if (cascaded == 1)
+    layer["cascaded"] = *cascaded;
+  if (no_subsets == 1)
+    layer["no_subsets"] = *no_subsets;
+  if (fixed_width)
+    layer["fixed_width"] = *fixed_width;
+  if (fixed_height)
+    layer["fixed_height"] = *fixed_height;
+  if (keywords)
+  {
+    CTPP::CDT kwords(CTPP::CDT::ARRAY_VAL);
+    for (const auto& kword : *keywords)
+      kwords.PushBack(kword);
+    layer["keyword"] = kwords;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the CRS list and the bounding boxes of the layer
+ */
+// ----------------------------------------------------------------------
+
+void Layer::addCrsInfo(CTPP::CDT& layer) const
+{
+  CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
+  CTPP::CDT layer_bbox_list(CTPP::CDT::ARRAY_VAL);
+
+  for (const auto& id_ref : refs)
+  {
+    const auto& id = id_ref.first;
+    const auto& ref = id_ref.second;
+
+    if (!isValidCRS(id))
+      continue;
+
+    CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
+
+    layer_bbox["crs"] = id;
+
+    if (ref.geographic)
+    {
+      layer_crs_list.PushBack(id);
+      layer_bbox["minx"] = geographicBoundingBox.xMin;
+      layer_bbox["miny"] = geographicBoundingBox.yMin;
+      layer_bbox["maxx"] = geographicBoundingBox.xMax;
+      layer_bbox["maxy"] = geographicBoundingBox.yMax;
+      layer_bbox_list.PushBack(layer_bbox);
+    }
+    else
+    {
+      auto pos = projected_bbox.find(id);
+
+      if (pos != projected_bbox.end())
+      {
+        // Acceptable CRS
+        layer_crs_list.PushBack(id);
+
+        layer_bbox["minx"] = pos->second.west;
+        layer_bbox["miny"] = pos->second.south;
+        layer_bbox["maxx"] = pos->second.east;
+        layer_bbox["maxy"] = pos->second.north;
+        layer_bbox_list.PushBack(layer_bbox);
+      }
+
+      // No bbox provided for AUTO2 projections, just the CRS name
+      else if (boost::algorithm::starts_with(id, "AUTO2:"))
+        layer_crs_list.PushBack(id);
+    }
+  }
+
+  if (layer_crs_list.Size() > 0)
+  {
+    layer["crs"] = layer_crs_list;
+    layer["bounding_box"] = layer_bbox_list;
+  }
+}
+
 std::optional<CTPP::CDT> Layer::getLayerBaseInfo(const std::string& language,
                                                     const std::string& defaultLanguage) const
 {
@@ -1706,31 +1834,7 @@ std::optional<CTPP::CDT> Layer::getLayerBaseInfo(const std::string& language,
     CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 
     // Layer name, title and abstract
-    if (!name.empty())
-      layer["name"] = name;
-    if (title)
-      layer["title"] = title->translate(language, defaultLanguage);
-    if (abstract)
-      layer["abstract"] = abstract->translate(language, defaultLanguage);
-    if (opaque == 1)
-      layer["opaque"] = *opaque;
-    if (queryable == 1)
-      layer["queryable"] = *queryable;
-    if (cascaded == 1)
-      layer["cascaded"] = *cascaded;
-    if (no_subsets == 1)
-      layer["no_subsets"] = *no_subsets;
-    if (fixed_width)
-      layer["fixed_width"] = *fixed_width;
-    if (fixed_height)
-      layer["fixed_height"] = *fixed_height;
-    if (keywords)
-    {
-      CTPP::CDT kwords(CTPP::CDT::ARRAY_VAL);
-      for (const auto& kword : *keywords)
-        kwords.PushBack(kword);
-      layer["keyword"] = kwords;
-    }
+    addBaseInfo(layer, language, defaultLanguage);
 
     return layer;
   }
@@ -1971,28 +2075,7 @@ std::optional<CTPP::CDT> Layer::getIntervalDimensionInfo() const
       return {};
 
     CTPP::CDT layer(CTPP::CDT::HASH_VAL);
-
-    CTPP::CDT interval_dimension_list(CTPP::CDT::ARRAY_VAL);
-    CTPP::CDT interval_dimension_start(CTPP::CDT::HASH_VAL);
-
-    interval_dimension_start["name"] = "interval_start";
-    interval_dimension_start["units"] = "minute";
-    interval_dimension_start["multiple_values"] = 0;
-    interval_dimension_start["nearest_value"] = 0;
-    interval_dimension_start["default"] = intervalDimension->getDefaultStartInterval();
-    interval_dimension_start["value"] = intervalDimension->getStartIntervals();
-
-    CTPP::CDT interval_dimension_end(CTPP::CDT::HASH_VAL);
-    interval_dimension_end["name"] = "interval_end";
-    interval_dimension_end["units"] = "minute";
-    interval_dimension_end["multiple_values"] = 0;
-    interval_dimension_end["nearest_value"] = 0;
-    interval_dimension_end["default"] = intervalDimension->getDefaultEndInterval();
-    interval_dimension_end["value"] = intervalDimension->getEndIntervals();
-
-    interval_dimension_list.PushBack(interval_dimension_start);
-    interval_dimension_list.PushBack(interval_dimension_end);
-    layer["interval_dimension"] = interval_dimension_list;
+    layer["interval_dimension"] = interval_dimension_cdt(*intervalDimension);
 
     return layer;
   }
@@ -2145,62 +2228,18 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
         return {};
 
       CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
-      CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
-
-      layer_dimension["name"] = "time";
-      layer_dimension["units"] = "ISO8601";
-      layer_dimension["multiple_values"] = 0;
-      layer_dimension["nearest_value"] = 0;
-      layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-      layer_dimension["value"] = dim_string;
-
-      layer_dimension_list.PushBack(layer_dimension);
+      layer_dimension_list.PushBack(time_dimension_cdt(td, dim_string));
 
       const std::vector<Fmi::DateTime>& origintimes = timeDimensions->getOrigintimes();
       bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
       if (showOrigintimes)
-      {
-        StepTimeDimension orgintimesDimension(origintimes);
-        CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
-        reference_time_dimension["name"] = "reference_time";
-        reference_time_dimension["units"] = "ISO8601";
-        reference_time_dimension["multiple_values"] = 0;
-        reference_time_dimension["nearest_value"] = 0;
-        reference_time_dimension["current"] = 1;
-        reference_time_dimension["default"] =
-            (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
-        std::optional<Fmi::DateTime> t;
-        reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
-        layer_dimension_list.PushBack(reference_time_dimension);
-      }
+        layer_dimension_list.PushBack(origintimes_dimension_cdt(origintimes));
 
       layer["time_dimension"] = layer_dimension_list;
     }
 
     if (intervalDimension)
-    {
-      CTPP::CDT interval_dimension_list(CTPP::CDT::ARRAY_VAL);
-      CTPP::CDT interval_dimension_start(CTPP::CDT::HASH_VAL);
-
-      interval_dimension_start["name"] = "interval_start";
-      interval_dimension_start["units"] = "minute";
-      interval_dimension_start["multiple_values"] = 0;
-      interval_dimension_start["nearest_value"] = 0;
-      interval_dimension_start["default"] = intervalDimension->getDefaultStartInterval();
-      interval_dimension_start["value"] = intervalDimension->getStartIntervals();
-
-      CTPP::CDT interval_dimension_end(CTPP::CDT::HASH_VAL);
-      interval_dimension_end["name"] = "interval_end";
-      interval_dimension_end["units"] = "minute";
-      interval_dimension_end["multiple_values"] = 0;
-      interval_dimension_end["nearest_value"] = 0;
-      interval_dimension_end["default"] = intervalDimension->getDefaultEndInterval();
-      interval_dimension_end["value"] = intervalDimension->getEndIntervals();
-
-      interval_dimension_list.PushBack(interval_dimension_start);
-      interval_dimension_list.PushBack(interval_dimension_end);
-      layer["interval_dimension"] = interval_dimension_list;
-    }
+      layer["interval_dimension"] = interval_dimension_cdt(*intervalDimension);
 
     // isOK() is false for a single surface level "0", which is no dimension a
     // client could select anything from; getElevationDimensionInfo() applies
@@ -2221,32 +2260,7 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
     }
 
     // Layer name, title and abstract
-    if (!name.empty())
-      layer["name"] = name;
-    if (title)
-      layer["title"] = title->translate(language, defaultLanguage);
-    if (abstract)
-      layer["abstract"] = abstract->translate(language, defaultLanguage);
-    if (opaque == 1)
-      layer["opaque"] = *opaque;
-    if (queryable == 1)
-      layer["queryable"] = *queryable;
-    if (cascaded == 1)
-      layer["cascaded"] = *cascaded;
-    if (no_subsets == 1)
-      layer["no_subsets"] = *no_subsets;
-    if (fixed_width)
-      layer["fixed_width"] = *fixed_width;
-    if (fixed_height)
-      layer["fixed_height"] = *fixed_height;
-
-    if (keywords)
-    {
-      CTPP::CDT keys(CTPP::CDT::ARRAY_VAL);
-      for (const auto& key : *keywords)
-        keys.PushBack(key);
-      layer["keyword"] = keys;
-    }
+    addBaseInfo(layer, language, defaultLanguage);
 
     // Layer geographic bounding boxes
 
@@ -2260,59 +2274,7 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
     // Layer CRS list and their bounding boxes
 
     if (!refs.empty())
-    {
-      CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
-      CTPP::CDT layer_bbox_list(CTPP::CDT::ARRAY_VAL);
-
-      for (const auto& id_ref : refs)
-      {
-        const auto& id = id_ref.first;
-        const auto& ref = id_ref.second;
-
-        if (!isValidCRS(id))
-          continue;
-
-        CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
-
-        layer_bbox["crs"] = id;
-
-        if (ref.geographic)
-        {
-          layer_crs_list.PushBack(id);
-          layer_bbox["minx"] = geographicBoundingBox.xMin;
-          layer_bbox["miny"] = geographicBoundingBox.yMin;
-          layer_bbox["maxx"] = geographicBoundingBox.xMax;
-          layer_bbox["maxy"] = geographicBoundingBox.yMax;
-          layer_bbox_list.PushBack(layer_bbox);
-        }
-        else
-        {
-          auto pos = projected_bbox.find(id);
-
-          if (pos != projected_bbox.end())
-          {
-            // Acceptable CRS
-            layer_crs_list.PushBack(id);
-
-            layer_bbox["minx"] = pos->second.west;
-            layer_bbox["miny"] = pos->second.south;
-            layer_bbox["maxx"] = pos->second.east;
-            layer_bbox["maxy"] = pos->second.north;
-            layer_bbox_list.PushBack(layer_bbox);
-          }
-
-          // No bbox provided for AUTO2 projections, just the CRS name
-          else if (boost::algorithm::starts_with(id, "AUTO2:"))
-            layer_crs_list.PushBack(id);
-        }
-      }
-
-      if (layer_crs_list.Size() > 0)
-      {
-        layer["crs"] = layer_crs_list;
-        layer["bounding_box"] = layer_bbox_list;
-      }
-    }
+      addCrsInfo(layer);
 
     // Layer attribution
 
