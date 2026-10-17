@@ -66,6 +66,67 @@ bool all_valid(const std::vector<OGRGeometryPtr>& geoms)
 
 }  // namespace
 
+// Bezier fitting settings (optional)
+// Can be specified as a number (accuracy in pixels) or as an object with settings
+void IsolineFilter::initBezier(Json::Value& theJson)
+{
+  if (!theJson.isMember("bezier"))
+    return;
+
+  auto& bezierJson = theJson["bezier"];
+  if (bezierJson.isDouble() || bezierJson.isInt())
+  {
+    m_bezierAccuracy = bezierJson.asDouble();
+  }
+  else if (bezierJson.isObject())
+  {
+    JsonTools::remove_double(m_bezierAccuracy, bezierJson, "accuracy");
+    int maxDepth = m_bezierMaxDepth;
+    JsonTools::remove_int(maxDepth, bezierJson, "maxdepth");
+    m_bezierMaxDepth = maxDepth;
+  }
+  theJson.removeMember("bezier");
+
+  if (m_bezierAccuracy < 0)
+    throw Fmi::Exception(BCP, "Bezier fitting accuracy must be nonnegative");
+  // 0 disables fitting; below ~2 px the moment-matching fitter starts
+  // returning extreme control points that produce visible artifacts
+  // (very large d0/d1 in unit-chord coords project far outside the view).
+  if (m_bezierAccuracy > 0 && m_bezierAccuracy < 2)
+    throw Fmi::Exception(BCP, "Bezier fitting accuracy must be at least 2 pixels");
+  if (m_bezierAccuracy > 100)
+    throw Fmi::Exception(BCP, "Bezier fitting accuracy must be less than 100 pixels");
+  if (m_bezierMaxDepth < 1 || m_bezierMaxDepth > 20)
+    throw Fmi::Exception(BCP, "Bezier fitting maxdepth must be between 1 and 20");
+}
+
+// Adaptive validity backoff settings (enabled by default; "validate":false
+// turns it off). Accepts a boolean, or an object for finer control.
+void IsolineFilter::initValidate(Json::Value& theJson)
+{
+  if (!theJson.isMember("validate"))
+    return;
+
+  auto& validateJson = theJson["validate"];
+  if (validateJson.isBool())
+    m_validate = validateJson.asBool();
+  else if (validateJson.isObject())
+  {
+    bool enabled = true;
+    JsonTools::remove_bool(enabled, validateJson, "enabled");
+    m_validate = enabled;
+    JsonTools::remove_int(m_validateTries, validateJson, "tries");
+    JsonTools::remove_bool(m_validateBisect, validateJson, "bisect");
+    JsonTools::remove_bool(m_validateDebug, validateJson, "debug");
+  }
+  else
+    throw Fmi::Exception(BCP, "Isoline filter 'validate' must be a boolean or an object");
+  theJson.removeMember("validate");
+
+  if (m_validateTries < 1 || m_validateTries > 10)
+    throw Fmi::Exception(BCP, "Isoline filter validate.tries must be between 1 and 10");
+}
+
 // Initialize from JSON config
 void IsolineFilter::init(Json::Value& theJson)
 {
@@ -120,65 +181,80 @@ void IsolineFilter::init(Json::Value& theJson)
     m_radiusPixels = radius;
     m_iterations = iterations;
 
-    // Bezier fitting settings (optional)
-    // Can be specified as a number (accuracy in pixels) or as an object with settings
-    if (theJson.isMember("bezier"))
-    {
-      auto& bezierJson = theJson["bezier"];
-      if (bezierJson.isDouble() || bezierJson.isInt())
-      {
-        m_bezierAccuracy = bezierJson.asDouble();
-      }
-      else if (bezierJson.isObject())
-      {
-        JsonTools::remove_double(m_bezierAccuracy, bezierJson, "accuracy");
-        int maxDepth = m_bezierMaxDepth;
-        JsonTools::remove_int(maxDepth, bezierJson, "maxdepth");
-        m_bezierMaxDepth = maxDepth;
-      }
-      theJson.removeMember("bezier");
-
-      if (m_bezierAccuracy < 0)
-        throw Fmi::Exception(BCP, "Bezier fitting accuracy must be nonnegative");
-      // 0 disables fitting; below ~2 px the moment-matching fitter starts
-      // returning extreme control points that produce visible artifacts
-      // (very large d0/d1 in unit-chord coords project far outside the view).
-      if (m_bezierAccuracy > 0 && m_bezierAccuracy < 2)
-        throw Fmi::Exception(BCP, "Bezier fitting accuracy must be at least 2 pixels");
-      if (m_bezierAccuracy > 100)
-        throw Fmi::Exception(BCP, "Bezier fitting accuracy must be less than 100 pixels");
-      if (m_bezierMaxDepth < 1 || m_bezierMaxDepth > 20)
-        throw Fmi::Exception(BCP, "Bezier fitting maxdepth must be between 1 and 20");
-    }
-
-    // Adaptive validity backoff settings (enabled by default; "validate":false
-    // turns it off). Accepts a boolean, or an object for finer control.
-    if (theJson.isMember("validate"))
-    {
-      auto& validateJson = theJson["validate"];
-      if (validateJson.isBool())
-        m_validate = validateJson.asBool();
-      else if (validateJson.isObject())
-      {
-        bool enabled = true;
-        JsonTools::remove_bool(enabled, validateJson, "enabled");
-        m_validate = enabled;
-        JsonTools::remove_int(m_validateTries, validateJson, "tries");
-        JsonTools::remove_bool(m_validateBisect, validateJson, "bisect");
-        JsonTools::remove_bool(m_validateDebug, validateJson, "debug");
-      }
-      else
-        throw Fmi::Exception(BCP, "Isoline filter 'validate' must be a boolean or an object");
-      theJson.removeMember("validate");
-
-      if (m_validateTries < 1 || m_validateTries > 10)
-        throw Fmi::Exception(BCP, "Isoline filter validate.tries must be between 1 and 10");
-    }
+    initBezier(theJson);
+    initValidate(theJson);
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// Smooth with the adaptive validity backoff
+void IsolineFilter::applyWithBackoff(std::vector<OGRGeometryPtr>& geoms, bool preserve_topology)
+{
+  // Adaptive validity backoff. Smoothing can move vertices enough to make an
+  // isoband self-intersect, which makes it invalid for clipping. Re-smooth the
+  // whole set at a halved radius until every geometry is valid. Re-smoothing
+  // the whole set (rather than repairing one band) keeps the shared edges
+  // between adjacent isobands coherent and gap-free. If no valid radius is
+  // found within the budget, fall back to the unsmoothed (simple) input.
+  //
+  // A shallow copy is enough to preserve the originals: the smoother replaces
+  // each shared_ptr (geom.reset(newgeom)) rather than mutating in place, so the
+  // copied pointers keep the originals alive across retries.
+  const std::vector<OGRGeometryPtr> original = geoms;
+
+  Fmi::GeometrySmoother trial;
+  trial.type(m_type);
+  trial.iterations(m_iterations);
+  trial.lambda(m_lambda);
+  trial.mu(m_mu);
+
+  double r = m_radiusMetric;
+  double last_bad = -1;
+  bool ok = false;
+
+  for (int t = 0; t < m_validateTries && r > 0; ++t)
+  {
+    geoms = original;
+    trial.radius(r);
+    trial.apply(geoms, preserve_topology);
+    if (all_valid(geoms))
+    {
+      ok = true;
+      break;
+    }
+    last_bad = r;
+    r *= 0.5;
+  }
+
+  // One bisection step back towards a larger (less aggressively reduced) radius
+  // to retain as much smoothing as possible while staying valid.
+  if (ok && m_validateBisect && last_bad > 0)
+  {
+    const double rmid = 0.5 * (r + last_bad);
+    std::vector<OGRGeometryPtr> trial_geoms = original;
+    trial.radius(rmid);
+    trial.apply(trial_geoms, preserve_topology);
+    if (all_valid(trial_geoms))
+    {
+      geoms = std::move(trial_geoms);
+      r = rmid;
+    }
+  }
+
+  if (!ok)
+    geoms = original;  // emit unsmoothed geometry rather than an invalid one
+
+  if (m_validateDebug && r != m_radiusMetric)
+    std::cerr << Spine::log_time_str()
+              << fmt::format(
+                     " WMS IsolineFilter validity backoff: smoothing radius {} -> {} ({})",
+                     m_radiusMetric,
+                     (ok ? r : 0.0),
+                     (ok ? "valid" : "unsmoothed fallback"))
+              << '\n';
 }
 
 // Apply smoother and prepare vertex counter for Bezier fitting
@@ -195,68 +271,7 @@ void IsolineFilter::apply(std::vector<OGRGeometryPtr>& geoms, bool preserve_topo
   }
   else
   {
-    // Adaptive validity backoff. Smoothing can move vertices enough to make an
-    // isoband self-intersect, which makes it invalid for clipping. Re-smooth the
-    // whole set at a halved radius until every geometry is valid. Re-smoothing
-    // the whole set (rather than repairing one band) keeps the shared edges
-    // between adjacent isobands coherent and gap-free. If no valid radius is
-    // found within the budget, fall back to the unsmoothed (simple) input.
-    //
-    // A shallow copy is enough to preserve the originals: the smoother replaces
-    // each shared_ptr (geom.reset(newgeom)) rather than mutating in place, so the
-    // copied pointers keep the originals alive across retries.
-    const std::vector<OGRGeometryPtr> original = geoms;
-
-    Fmi::GeometrySmoother trial;
-    trial.type(m_type);
-    trial.iterations(m_iterations);
-    trial.lambda(m_lambda);
-    trial.mu(m_mu);
-
-    double r = m_radiusMetric;
-    double last_bad = -1;
-    bool ok = false;
-
-    for (int t = 0; t < m_validateTries && r > 0; ++t)
-    {
-      geoms = original;
-      trial.radius(r);
-      trial.apply(geoms, preserve_topology);
-      if (all_valid(geoms))
-      {
-        ok = true;
-        break;
-      }
-      last_bad = r;
-      r *= 0.5;
-    }
-
-    // One bisection step back towards a larger (less aggressively reduced) radius
-    // to retain as much smoothing as possible while staying valid.
-    if (ok && m_validateBisect && last_bad > 0)
-    {
-      const double rmid = 0.5 * (r + last_bad);
-      std::vector<OGRGeometryPtr> trial_geoms = original;
-      trial.radius(rmid);
-      trial.apply(trial_geoms, preserve_topology);
-      if (all_valid(trial_geoms))
-      {
-        geoms = std::move(trial_geoms);
-        r = rmid;
-      }
-    }
-
-    if (!ok)
-      geoms = original;  // emit unsmoothed geometry rather than an invalid one
-
-    if (m_validateDebug && r != m_radiusMetric)
-      std::cerr << Spine::log_time_str()
-                << fmt::format(
-                       " WMS IsolineFilter validity backoff: smoothing radius {} -> {} ({})",
-                       m_radiusMetric,
-                       (ok ? r : 0.0),
-                       (ok ? "valid" : "unsmoothed fallback"))
-                << '\n';
+    applyWithBackoff(geoms, preserve_topology);
   }
 
   // When Bezier fitting is enabled, always count vertices across all geometries.

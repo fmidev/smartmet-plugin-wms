@@ -53,6 +53,10 @@ class IsolineFilter
                           BezierCache* cache = nullptr) const;
 
  private:
+  void initBezier(Json::Value& theJson);
+  void initValidate(Json::Value& theJson);
+  void applyWithBackoff(std::vector<OGRGeometryPtr>& geoms, bool preserve_topology);
+
   Fmi::GeometrySmoother smoother;
 
   // Adaptive validity backoff settings (enabled by default; set "validate":false
