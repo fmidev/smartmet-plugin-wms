@@ -277,6 +277,100 @@ struct LayerGroup
   std::vector<const LayerHierarchy*> members;
 };
 
+// The geo key if all the leaves share it, otherwise an empty string. The representative
+// is the first leaf with the shared non-empty key, or nullptr.
+std::string unanimous_geo_key(const std::list<const LayerHierarchy*>& leaves,
+                              const LayerHierarchy*& geo_repr)
+{
+  std::string g;
+  bool geo_unanimous = true;
+  for (const auto* leaf : leaves)
+  {
+    std::string k = geo_key(*leaf);
+    if (g.empty())
+    {
+      g = k;
+      if (!k.empty())
+        geo_repr = leaf;
+    }
+    else if (k != g)
+    {
+      geo_unanimous = false;
+      break;
+    }
+  }
+  std::string child_geo = geo_unanimous ? g : "";
+  if (child_geo.empty())
+    geo_repr = nullptr;
+  return child_geo;
+}
+
+// The most common key across the leaves. The representative is the first leaf with
+// that key if the key is not empty.
+std::string most_common_key(const std::list<const LayerHierarchy*>& leaves,
+                            std::string (*key_function)(const LayerHierarchy&),
+                            const LayerHierarchy*& repr)
+{
+  std::map<std::string, int> counts;
+  std::map<std::string, const LayerHierarchy*> first;
+  for (const auto* leaf : leaves)
+  {
+    std::string k = key_function(*leaf);
+    counts[k]++;
+    if (!k.empty() && !first.count(k))
+      first[k] = leaf;
+  }
+  std::string child_key;
+  int best = 0;
+  for (const auto& [k, v] : counts)
+    if (v > best)
+    {
+      best = v;
+      child_key = k;
+    }
+  if (!child_key.empty())
+  {
+    auto it = first.find(child_key);
+    if (it != first.end())
+      repr = it->second;
+  }
+  return child_key;
+}
+
+// Remove the entries which do not have an identical value in the other map
+void retain_common_entries(ProjMap& pm, const ProjMap& other)
+{
+  std::vector<std::string> remove;
+  for (const auto& [crs, val] : pm)
+  {
+    auto it = other.find(crs);
+    if (it == other.end() || it->second != val)
+      remove.push_back(crs);
+  }
+  for (const auto& c : remove)
+    pm.erase(c);
+}
+
+// The projected bbox entries shared by all leaves of the layer
+ProjMap unanimous_proj_map(const LayerHierarchy& member)
+{
+  ProjMap member_pm;
+  auto leaves = get_leaf_layers(member);
+  bool pm_first = true;
+  for (const auto* leaf : leaves)
+  {
+    ProjMap leaf_pm = proj_map(*leaf);
+    if (pm_first)
+    {
+      member_pm = leaf_pm;
+      pm_first = false;
+    }
+    else
+      retain_common_entries(member_pm, leaf_pm);
+  }
+  return member_pm;
+}
+
 // Group a flat list of child nodes by geo+time+elev, then find the
 // projected bbox entries common to ALL members of each group.
 std::vector<LayerGroup> group_children(
@@ -304,103 +398,18 @@ std::vector<LayerGroup> group_children(
     const LayerHierarchy* elev_repr = nullptr;
 
     // geo: unanimous only
-    std::string g;
-    bool geo_unanimous = true;
-    for (const auto* leaf : leaves)
-    {
-      std::string k = geo_key(*leaf);
-      if (g.empty())
-      {
-        g = k;
-        if (!k.empty())
-          geo_repr = leaf;
-      }
-      else if (k != g)
-      {
-        geo_unanimous = false;
-        break;
-      }
-    }
-    std::string child_geo = geo_unanimous ? g : "";
-    if (child_geo.empty())
-      geo_repr = nullptr;
+    std::string child_geo = unanimous_geo_key(leaves, geo_repr);
 
     // time: most common across leaves
-    std::map<std::string, int> time_counts;
-    std::map<std::string, const LayerHierarchy*> time_first;
-    for (const auto* leaf : leaves)
-    {
-      std::string k = time_key(*leaf);
-      time_counts[k]++;
-      if (!k.empty() && !time_first.count(k))
-        time_first[k] = leaf;
-    }
-    std::string child_time;
-    int best = 0;
-    for (const auto& [k, v] : time_counts)
-      if (v > best)
-      {
-        best = v;
-        child_time = k;
-      }
-    if (!child_time.empty())
-    {
-      auto it = time_first.find(child_time);
-      if (it != time_first.end())
-        time_repr = it->second;
-    }
+    std::string child_time = most_common_key(leaves, time_key, time_repr);
 
     // elev: most common across leaves
-    std::map<std::string, int> elev_counts;
-    std::map<std::string, const LayerHierarchy*> elev_first;
-    for (const auto* leaf : leaves)
-    {
-      std::string k = elev_key(*leaf);
-      elev_counts[k]++;
-      if (!k.empty() && !elev_first.count(k))
-        elev_first[k] = leaf;
-    }
-    std::string child_elev;
-    best = 0;
-    for (const auto& [k, v] : elev_counts)
-      if (v > best)
-      {
-        best = v;
-        child_elev = k;
-      }
-    if (!child_elev.empty())
-    {
-      auto it = elev_first.find(child_elev);
-      if (it != elev_first.end())
-        elev_repr = it->second;
-    }
+    std::string child_elev = most_common_key(leaves, elev_key, elev_repr);
 
     // interval: most common across leaves. Not part of the group key — group
     // members may share geo/time/elev yet differ in intervals; the per-key
     // suppression in emit_interval() lets the odd ones out declare their own.
-    std::map<std::string, int> interval_counts;
-    std::map<std::string, const LayerHierarchy*> interval_first;
-    for (const auto* leaf : leaves)
-    {
-      std::string k = interval_key(*leaf);
-      interval_counts[k]++;
-      if (!k.empty() && !interval_first.count(k))
-        interval_first[k] = leaf;
-    }
-    std::string child_interval;
-    best = 0;
-    for (const auto& [k, v] : interval_counts)
-      if (v > best)
-      {
-        best = v;
-        child_interval = k;
-      }
-    if (!child_interval.empty())
-    {
-      auto it = interval_first.find(child_interval);
-      if (it != interval_first.end())
-        interval_repr = it->second;
-    }
+    std::string child_interval = most_common_key(leaves, interval_key, interval_repr);
 
     auto key = std::make_tuple(child_geo, child_time, child_elev);
     auto& grp = groups[key];
@@ -433,30 +442,7 @@ std::vector<LayerGroup> group_children(
     for (const auto* member : grp.members)
     {
       // Collect the unanimous proj map for this member's subtree
-      ProjMap member_pm;
-      auto leaves = get_leaf_layers(*member);
-      bool pm_first = true;
-      for (const auto* leaf : leaves)
-      {
-        ProjMap leaf_pm = proj_map(*leaf);
-        if (pm_first)
-        {
-          member_pm = leaf_pm;
-          pm_first = false;
-        }
-        else
-        {
-          std::vector<std::string> remove;
-          for (const auto& [crs, val] : member_pm)
-          {
-            auto it = leaf_pm.find(crs);
-            if (it == leaf_pm.end() || it->second != val)
-              remove.push_back(crs);
-          }
-          for (const auto& c : remove)
-            member_pm.erase(c);
-        }
-      }
+      ProjMap member_pm = unanimous_proj_map(*member);
 
       if (first)
       {
@@ -464,17 +450,7 @@ std::vector<LayerGroup> group_children(
         first = false;
       }
       else
-      {
-        std::vector<std::string> remove;
-        for (const auto& [crs, val] : grp.sharedProj)
-        {
-          auto it = member_pm.find(crs);
-          if (it == member_pm.end() || it->second != val)
-            remove.push_back(crs);
-        }
-        for (const auto& c : remove)
-          grp.sharedProj.erase(c);
-      }
+        retain_common_entries(grp.sharedProj, member_pm);
     }
     result.push_back(std::move(grp));
   }
