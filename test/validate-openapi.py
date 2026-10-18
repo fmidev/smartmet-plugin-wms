@@ -221,6 +221,10 @@ def check(definition, input_dir, ignored, prefix, output_dir=None):
             request = f.readline().split()
         if len(request) < 2 or request[0] != "GET":
             continue
+        # Server resources outside the API, such as the API catalog of the server
+        path = urllib.parse.urlsplit(request[1]).path
+        if base_path and not (path == base_path or path.startswith(base_path + "/")):
+            continue
         check_request(fname, doc, operations, base_path, request[1])
         count += 1
     print(f"{definition}: checked {count} requests in {input_dir}")
