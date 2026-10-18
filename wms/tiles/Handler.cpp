@@ -340,7 +340,7 @@ void Handler::init(std::unique_ptr<Config> tilesConfig)
   if (settings.enabled)
   {
     itsApi = std::make_unique<Spine::OpenAPI::Publisher>(std::move(settings));
-    itsApi->addToCatalog(itsDaliConfig.tilesUrl(), API_TITLE, API_DESCRIPTION);
+    itsApi->addToCatalog(itsDaliConfig.tilesUrl(), API_TITLE, API_DESCRIPTION, "tiles");
   }
 }
 

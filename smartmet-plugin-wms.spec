@@ -186,6 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- Tiles and WMTS: list the APIs in the API catalog with the kinds tiles and wmts
 - OGC API - Tiles and WMTS are listed in the API catalog of the server (/api)
 - ColorPainter_stream::initStream: assign line_color_land to the land color
 - add_contour_value_attributes: do not dereference an unset multiplier
