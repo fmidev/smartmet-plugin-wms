@@ -186,6 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- GraticuleLayer: list the accepted label layouts in the error message
 - HovmoellerLayer: remove the unused time_ascending and level_ascending settings from the class
 - CloudCeilingLayer: the parameter setting is no longer required
 - WeatherFrontsLayer: "side": "right" draws the glyphs on the right side of the front by reversing the path

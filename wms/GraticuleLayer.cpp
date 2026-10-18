@@ -1156,7 +1156,7 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
       throw Fmi::Exception(BCP, "graticule tick length must be at least 1");
 
     if (valid_label_layouts.find(label.layout) == valid_label_layouts.end())
-      throw Fmi::Exception(BCP, "graticule labels layout must be none|edge|grid|center|edge_center")
+      throw Fmi::Exception(BCP, "graticule labels layout must be none|center|cross|edge_center|ticks")
           .addParameter("layout", label.layout);
 
     if (valid_orientations.find(label.orientation) == valid_orientations.end())
