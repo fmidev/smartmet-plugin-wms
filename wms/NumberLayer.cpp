@@ -380,7 +380,7 @@ void NumberLayer::init(Json::Value& theJson,
 
     point_value_options.init(theJson);
 
-    if (paraminfo.parameter.empty())
+    if (paraminfo.parameter.empty() && requiresParameter())
       throw Fmi::Exception(BCP, "NumberLayer parameter is not set");
     if (!paraminfo.producer)
       throw Fmi::Exception(BCP, "NumberLayer producer is not set");

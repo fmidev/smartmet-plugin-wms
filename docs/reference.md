@@ -1630,7 +1630,7 @@ The table below shows a simple example on the usage of the cloud_ceiling layer.
 </table>
 
 The cloud_ceiling layer is inherited from number layer so the same attributes are available. Label object has two new attributes 'padding_char' and 'padding_length' to format numbers.
-The layer reads the cloud amount and cloud base height observations itself, but since the number layer requires a parameter, the "parameter" setting must still be given.
+The layer reads the cloud amount and cloud base height observations itself, so unlike in the number layer no "parameter" setting is needed.
 
 | Name    | Type               | Default value | Description                                                          |
 | ------- | ------------------ | ------------- | -------------------------------------------------------------------- |

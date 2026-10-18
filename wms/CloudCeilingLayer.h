@@ -29,6 +29,10 @@ class CloudCeilingLayer : public NumberLayer
 
   //  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
+ protected:
+  // The cloud layer and height parameters are fixed
+  bool requiresParameter() const override { return false; }
+
  private:
   void addStations(Engine::Observation::Settings& settings,
                    const State& state,

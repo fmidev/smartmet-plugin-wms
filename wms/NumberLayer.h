@@ -68,6 +68,9 @@ class NumberLayer : public Layer
   std::vector<AttributeSelection> numbers;
 
  protected:
+  // False for derived layers which select their parameters themselves
+  virtual bool requiresParameter() const { return true; }
+
   void addSymbols(CTPP::CDT& theGlobals,
                   CTPP::CDT& group_cdt,
                   State& theState,
