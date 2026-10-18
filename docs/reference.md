@@ -4404,6 +4404,11 @@ Two independent smoothers are available; only one runs per layer.
 
 The radius/passes are in grid cells (index space), not projected distance.
 
+With grid engine data the `box`, `median` and `morphology` methods are forwarded to the grid
+engine for isoband, isoline and intersection queries. The grid engine currently applies them
+only to function and metric level parameters; other grid parameters are contoured unsmoothed.
+Savitzky-Golay is not applied to grid engine data.
+
 **Method gallery** — the same temperature field and projection, smoothed by each method at a **matched scale**. The point of a smoother comparison is to judge how each method treats features of a given size, so the parameters here are deliberately tuned to remove roughly the same spatial scale rather than to a fixed `radius` value: at equal `radius` the rank/morphological filters remove much more than the polynomial Savitzky-Golay fit, which would make the comparison misleading. The Savitzky-Golay `size 3` window (7&times;7) sets the reference scale, and `box`/`median`/`morphology` are dialed to match it (`box radius 1, passes 3`; `median radius 2`; `morphology radius 2`). At this matched scale the differences are about *character*, not amount:
 
 - `Savitzky-Golay` keeps the most fine structure and the strongest extrema (a local polynomial fit), at the highest cost.

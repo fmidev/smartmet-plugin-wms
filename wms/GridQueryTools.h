@@ -10,6 +10,7 @@
 #include <grid-content/queryServer/definition/Query.h>
 #include <macgyver/DateTime.h>
 #include <trax/InterpolationType.h>
+#include <trax/SmoothOptions.h>
 #include <optional>
 #include <string>
 #include <vector>
@@ -90,6 +91,9 @@ void add_latlon_bbox_attributes(QueryServer::Query& query, const Projection& pro
 
 // Add the bounding box given in the projection settings, used with the data projection
 void add_data_bbox_attribute(QueryServer::Query& query, const Projection& projection);
+
+// Forward the opt-in Trax grid smoother as contour.smooth.* attributes
+void add_trax_smoother_attributes(T::AttributeList& attrs, const Trax::SmoothOptions& so);
 
 // Add the contour smoothing, subdivision and thread count attributes
 void add_contour_attributes(QueryServer::Query& query,

@@ -2,6 +2,7 @@
 
 #include "Intersection.h"
 #include "Config.h"
+#include "GridQueryTools.h"
 #include "Hash.h"
 #include "Projection.h"
 #include "State.h"
@@ -22,49 +23,6 @@ namespace Dali
 {
 namespace
 {
-// Forward the opt-in Trax grid smoother as contour.smooth.* attributes that
-// grid-content parses back into Trax::SmoothOptions.
-void add_trax_smoother_attributes(T::AttributeList& attrs, const Trax::SmoothOptions& so)
-{
-  const char* method = nullptr;
-  switch (so.method)
-  {
-    case Trax::SmoothMethod::Box:
-      method = "box";
-      break;
-    case Trax::SmoothMethod::Median:
-      method = "median";
-      break;
-    case Trax::SmoothMethod::Morphology:
-      method = "morphology";
-      break;
-    default:
-      break;  // None / Pyramid: nothing to send
-  }
-  if (method != nullptr)
-  {
-    attrs.addAttribute("contour.smooth.method", method);
-    attrs.addAttribute("contour.smooth.radius", Fmi::to_string(so.radius));
-    attrs.addAttribute("contour.smooth.passes", Fmi::to_string(so.passes));
-    const char* boundary = "normalized";
-    if (so.boundary == Trax::SmoothBoundary::Replicate)
-      boundary = "replicate";
-    else if (so.boundary == Trax::SmoothBoundary::Reflect)
-      boundary = "reflect";
-    attrs.addAttribute("contour.smooth.boundary", boundary);
-    if (so.method == Trax::SmoothMethod::Morphology)
-    {
-      const char* op = "openclose";
-      if (so.morphology == Trax::MorphologyOp::Open)
-        op = "open";
-      else if (so.morphology == Trax::MorphologyOp::Close)
-        op = "close";
-      attrs.addAttribute("contour.smooth.morphology", op);
-    }
-    attrs.addAttribute("contour.smooth.preserve_missing", so.preserve_missing ? "1" : "0");
-  }
-}
-
 // Parse the interpolation method name
 std::optional<Trax::InterpolationType> parse_interpolation(const std::string& interpolation)
 {
