@@ -4111,10 +4111,11 @@ used for example in ice charts.
 | small_tic_step          | (double) | -             | Step of the small tics in degrees.                                |
 | small_tic_length        | (int)    | 10            | Length of the small tics in pixels.                               |
 | tic_position            | string   | "outside"     | Tics inside or outside the inner border.                          |
-| label_step              | double   | -             | Step of the labels in degrees. Required with a scale.             |
-| label_position          | string   | -             | "inside" or "outside" the inner border. Required with a scale.    |
+| label_step              | (double) | -             | Step of the labels in degrees. No labels if not set.              |
+| label_position          | (string) | "outside"     | Labels "inside" or "outside" the inner border.                    |
 
-Each tic type is drawn independently of the others, also at negative coordinates. An
+Each tic type is drawn independently of the others, also at negative coordinates. Labels are
+drawn at the tics which are multiples of `label_step`, also at negative coordinates. An
 intermediate tic is not drawn where there is a long tic, and a small tic is not drawn where
 there is a long or an intermediate tic.
 

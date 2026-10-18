@@ -90,6 +90,12 @@ bool at_tic(double v, const std::optional<TicInfo>& tic)
   return tic && std::abs(std::remainder(v, tic->step)) <= 0.01;
 }
 
+// True if the value is at a label position. No labels are drawn without a label step.
+bool at_label(double v, const std::optional<double>& step)
+{
+  return step && std::abs(std::remainder(v, *step)) <= 0.01;
+}
+
 // Collect the long, intermediate and small tics strictly inside the given range.
 // An intermediate tic is added only if there is no long tic at the same position,
 // a small tic only if there is no long or intermediate tic.
@@ -259,6 +265,7 @@ void FrameLayer::init(Json::Value& theJson,
       itsScale = FrameScale();
       itsScale->ticPosition = "outside";
       JsonTools::remove_string(itsScale->ticPosition, jscale, "tic_position");
+      itsScale->labelPosition = "outside";
       JsonTools::remove_double(itsScale->labelStep, jscale, "label_step");
       JsonTools::remove_string(itsScale->labelPosition, jscale, "label_position");
 
@@ -412,7 +419,7 @@ void FrameLayer::addLatitudeTics(CTPP::CDT& theLayersCdt,
     addTic(theLayersCdt, lonStartRight, latStart, lonEnd, latStart);
 
     // add labels
-    if (fmod(tic.first, *(itsScale->labelStep)) < 0.01)
+    if (at_label(tic.first, itsScale->labelStep))
     {
       std::string labelText = (Fmi::to_string(lround(tic.first)) + "°");
       text_dimension_t labelDimension = getTextDimension(labelText, labelStyle);
@@ -459,7 +466,7 @@ void FrameLayer::addLongitudeTics(CTPP::CDT& theLayersCdt,
     addTic(theLayersCdt, lonStart, latStartBottom, lonStart, latEnd);
 
     // add labels
-    if (fmod(tic.first, *(itsScale->labelStep)) < 0.01)
+    if (at_label(tic.first, itsScale->labelStep))
     {
       std::string labelText = (Fmi::to_string(lround(tic.first)));
       text_dimension_t labelDimension = getTextDimension(labelText, labelStyle);
