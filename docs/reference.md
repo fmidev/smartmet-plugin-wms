@@ -2351,7 +2351,8 @@ testing and for manually drawn analyses.
 
 Symbols are rendered as inline SVG shapes (filled triangles and semicircles) — no external
 font is required.  Uppercase glyph characters produce symbols on the **left** side of the
-directed path; lowercase on the **right** side.  The layer places alternating symbols at
+directed path; lowercase on the **right** side. The direction of the path is the order of the
+points, reversed for fronts with `"side": "right"`.  The layer places alternating symbols at
 even arc-length intervals using the spacing parameters below.
 
 | Glyph char | Shape |
@@ -2385,7 +2386,7 @@ Each element in the `fronts` array defines one front curve:
 | Name   | Type   | Default  | Description |
 | ------ | ------ | -------- | ----------- |
 | type   | string | `"cold"` | Front type: `"cold"`, `"warm"`, `"occluded"`, `"stationary"`, `"trough"`, or `"ridge"`. |
-| side   | string | `"left"` | `"left"` or `"right"`. Currently has no effect: the side is determined by the glyph characters. |
+| side   | string | `"left"` | `"left"` or `"right"`. With `"right"` the path is walked from the last point to the first, which mirrors the glyphs to the other side of the line: an uppercase glyph is then drawn on the right side of the point sequence, a lowercase one on the left. |
 | points | array  | –        | Array of `[longitude, latitude]` pairs (WGS84) defining the front path. Required. |
 
 ##### Style overrides

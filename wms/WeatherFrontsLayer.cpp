@@ -15,6 +15,7 @@
 #include <gis/CoordinateTransformation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
+#include <algorithm>
 #include <cmath>
 #include <sstream>
 
@@ -275,6 +276,10 @@ void WeatherFrontsLayer::generate(CTPP::CDT& theGlobals,
         box.transform(x, y);
         screenPts.emplace_back(x, y);
       }
+      // The glyphs are designed for the left side of the directed path, walking the
+      // path backwards puts them on the right side
+      if (curve.side == FrontSide::Right)
+        std::reverse(screenPts.begin(), screenPts.end());
       renderFrontLine(screenPts, curve.type, theGlobals, theLayersCdt, theState);
     }
 

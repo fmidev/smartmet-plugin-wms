@@ -186,6 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- WeatherFrontsLayer: "side": "right" draws the glyphs on the right side of the front by reversing the path
 - Grid isoband and isoline layers: forward the Trax smoother method to the grid engine like Intersection does
 - FrameLayer: no labels without label_step, label_position defaults to outside, labels also at negative coordinates
 - Tiles and WMTS: list the APIs in the API catalog with the kinds tiles and wmts
