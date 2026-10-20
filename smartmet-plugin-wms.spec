@@ -29,8 +29,8 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.10.16
 BuildRequires: smartmet-library-giza-devel >= 26.10.16
-BuildRequires: smartmet-library-grid-content-devel >= 26.10.16
-BuildRequires: smartmet-library-grid-files-devel >= 26.10.16
+BuildRequires: smartmet-library-grid-content-devel >= 26.10.20
+BuildRequires: smartmet-library-grid-files-devel >= 26.10.20
 BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
 BuildRequires: smartmet-library-spine-devel >= 26.10.17-1
 BuildRequires: smartmet-library-timeseries-devel >= 26.10.16
@@ -80,8 +80,8 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
-Requires: smartmet-library-grid-content >= 26.10.17
-Requires: smartmet-library-grid-files >= 26.10.17
+Requires: smartmet-library-grid-content >= 26.10.20
+Requires: smartmet-library-grid-files >= 26.10.20
 Requires: smartmet-library-gis >= 26.10.17
 Requires: smartmet-library-trax >= 26.10.17
 Requires: smartmet-library-macgyver >= 26.10.17
@@ -142,7 +142,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-spine-devel >= 26.10.17-1
 #TestRequires: smartmet-library-timeseries-devel >= 26.10.16
 #TestRequires: smartmet-engine-grid-devel >= 26.10.16
-#TestRequires: smartmet-library-grid-files-test >= 26.10.16
+#TestRequires: smartmet-library-grid-files-test >= 26.10.20
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.9.3
 #TestRequires: smartmet-test-db >= 26.5.8
