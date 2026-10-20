@@ -59,6 +59,9 @@ PLUGIN_TEST_OBJS := $(patsubst %.cpp,obj/%.o,$(PLUGIN_TEST_SRC))
 
 TEST_FINISH_TARGETS := stop-valkey-db
 
+# Starts the Redis test database listening only on a Unix socket below /tmp
+GRID_TEST_REDIS ?= smartmet-grid-test-redis
+
 TEST_DB_DIR := $(shell pwd)/tmp-geonames-db
 
 ifdef CI
@@ -231,20 +234,13 @@ stop-geonames-db:
 	-/usr/share/smartmet/test/db/test-db-ctl.sh $(TEST_DB_DIR) stop
 
 start-valkey-db:
-	@rm -rf cnf/grid
-	@cp -pr $(datadir)/smartmet/test/grid cnf/
-	@echo "*** Creating the Redis configuration file."
-	@smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
-	@echo "*** Starting the Redis database."
-	@valkey-server cnf/grid/redis/redis.conf
+	@$(GRID_TEST_REDIS) start
 
 stop-valkey-db:
-	@if [ -f cnf/grid/valkey/valkey-server.pid ] ; then \
-		cat cnf/grid/valkey/valkey-server.pid | xargs kill -9; \
-		rm -f cnf/grid/valkey/valkey-server.pid; \
-	fi
+	@$(GRID_TEST_REDIS) stop
 
 clean-valkey:
+	-@$(GRID_TEST_REDIS) stop
 	rm -rf cnf/grid
 
 dummy:
