@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=obsgrid_opendata_temperature&time=201308051500&type=png HTTP/1.0

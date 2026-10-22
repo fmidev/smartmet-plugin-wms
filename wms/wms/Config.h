@@ -87,6 +87,8 @@ class Config
     itsSatelliteEngine = theEngine;
   }
 
+  void setGridder(const Dali::Gridding::Gridder* theEngine) { itsGridder = theEngine; }
+
   Config() = delete;
   Config(const Config& other) = delete;
   Config operator=(const Config& other) = delete;
@@ -208,6 +210,7 @@ class Config
   Engine::Gis::Engine* itsGisEngine = nullptr;
   Engine::Grid::Engine* itsGridEngine = nullptr;
   const Engine::Satellite::Engine* itsSatelliteEngine = nullptr;
+  const Dali::Gridding::Gridder* itsGridder = nullptr;
 
 #ifndef WITHOUT_AUTHENTICATION
   // For GetCapabilities and GetMap Authentication

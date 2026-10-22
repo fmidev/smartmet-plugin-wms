@@ -76,7 +76,10 @@ WMTS_OBJS = $(patsubst $(SUBNAME)/wmts/%.cpp, obj/wmts/%.o, $(WMTS_SRCS))
 TILES_SRCS = $(wildcard $(SUBNAME)/tiles/*.cpp)
 TILES_OBJS = $(patsubst $(SUBNAME)/tiles/%.cpp, obj/tiles/%.o, $(TILES_SRCS))
 
-OBJS += $(WMS_OBJS) $(OGC_OBJS) $(WMTS_OBJS) $(TILES_OBJS)
+GRIDDING_SRCS = $(wildcard $(SUBNAME)/gridding/*.cpp)
+GRIDDING_OBJS = $(patsubst $(SUBNAME)/gridding/%.cpp, obj/gridding/%.o, $(GRIDDING_SRCS))
+
+OBJS += $(WMS_OBJS) $(OGC_OBJS) $(WMTS_OBJS) $(TILES_OBJS) $(GRIDDING_OBJS)
 
 # Protobuf-generated sources (.cc extension, not caught by the *.cpp wildcard)
 PROTO_SRCS = $(SUBNAME)/vector_tile.pb.cc
@@ -167,7 +170,7 @@ test-dali test-wms test-wmts test-tiles update-outputs update-schemas check-sche
 	cd test && make $@
 
 objdir:
-	@mkdir -p $(objdir) $(objdir)/wms $(objdir)/ogc $(objdir)/wmts $(objdir)/tiles
+	@mkdir -p $(objdir) $(objdir)/wms $(objdir)/ogc $(objdir)/wmts $(objdir)/tiles $(objdir)/gridding
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
@@ -192,6 +195,9 @@ obj/wmts/%.o: $(SUBNAME)/wmts/%.cpp
 obj/tiles/%.o: $(SUBNAME)/tiles/%.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF obj/tiles/$*.d -MT $@ -o $@ $<
 
+obj/gridding/%.o: $(SUBNAME)/gridding/%.cpp
+	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF obj/gridding/$*.d -MT $@ -o $@ $<
+
 templates: $(BYTECODES)
 
 %.c2t:	%.tmpl
@@ -202,4 +208,5 @@ templates: $(BYTECODES)
 -include $(wildcard obj/ogc/*.d)
 -include $(wildcard obj/wmts/*.d)
 -include $(wildcard obj/tiles/*.d)
+-include $(wildcard obj/gridding/*.d)
 -include obj/vector_tile.pb.d

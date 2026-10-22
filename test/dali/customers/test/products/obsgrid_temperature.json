@@ -1,0 +1,40 @@
+{
+    "title": "Temperature observations gridded with the terrain",
+    "producer": "synop_europe",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 440
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                },
+                {
+		    "qid": "l2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+		    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isolines",
+			"class": "Temperature"
+		    }
+                }
+            ]
+        }
+    ]
+}

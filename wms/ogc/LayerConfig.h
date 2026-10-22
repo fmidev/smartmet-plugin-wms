@@ -14,6 +14,7 @@
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Engine.h>
+#include "gridding/Gridder.h"
 #include <engines/satellite/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -74,6 +75,11 @@ class LayerConfig
     itsSatelliteEngine = e;
     return *this;
   }
+  LayerConfig& setGridder(const Dali::Gridding::Gridder* e)
+  {
+    itsGridder = e;
+    return *this;
+  }
   LayerConfig& setObservationProducers(std::set<std::string> p)
   {
     itsObservationProducers = std::move(p);
@@ -102,6 +108,8 @@ class LayerConfig
   Engine::Gis::Engine* gisEngine() const { return itsGisEngine; }
   Engine::Grid::Engine* gridEngine() const { return itsGridEngine; }
   const Engine::Satellite::Engine* satelliteEngine() const { return itsSatelliteEngine; }
+  // nullptr if the engine is not loaded
+  const Dali::Gridding::Gridder* gridder() const { return itsGridder; }
   const std::set<std::string>& getObservationProducers() const { return itsObservationProducers; }
   const std::map<std::string, SupportedReference>& getSupportedReferences() const
   {
@@ -119,6 +127,7 @@ class LayerConfig
   Engine::Gis::Engine* itsGisEngine = nullptr;
   Engine::Grid::Engine* itsGridEngine = nullptr;
   const Engine::Satellite::Engine* itsSatelliteEngine = nullptr;
+  const Dali::Gridding::Gridder* itsGridder = nullptr;
   std::set<std::string> itsObservationProducers;
   std::map<std::string, SupportedReference> itsSupportedReferences;
 #ifndef WITHOUT_OBSERVATION

@@ -967,6 +967,17 @@ void Plugin::init()
     itsAviEngine = itsReactor->getEngine<Engine::Avi::Engine>("Avi", nullptr);
 #endif
 
+    // Gridded observations (optional: only when the configuration has a gridding group)
+    if (itsConfig.getConfig().exists("gridding"))
+    {
+      Engine::Observation::Engine* obsengine = nullptr;
+#ifndef WITHOUT_OBSERVATION
+      obsengine = itsObsEngine.get();
+#endif
+      itsGridder = std::make_shared<Gridding::Gridder>(
+          itsConfig.getConfig().lookup("gridding"), itsQEngine.get(), obsengine);
+    }
+
     if (Spine::Reactor::isShuttingDown())
       return;
 
@@ -1026,6 +1037,7 @@ void Plugin::init()
       wmsConfig->shutdown();
 
     wmsConfig->setSatelliteEngine(itsSatelliteEngine.get());
+    wmsConfig->setGridder(itsGridder.get());
 
     wmsConfig->init();  // heavy initializations
 
@@ -1931,6 +1943,9 @@ Fmi::Cache::CacheStatistics Plugin::getCacheStats() const
   ret["Wms::css_cache"] = itsStyleSheetCache.statistics();
   if (itsWMSHandler)
     ret["Wms::capabilities_cache"] = itsWMSHandler->getCapabilitiesCacheStats();
+  if (itsGridder)
+    for (const auto& item : itsGridder->getCacheStats())
+      ret[item.first] = item.second;
   // TextUtility.cpp uses LRUCache which is not yet comparible
   // ret["Wms::text_extent_cache"] = getTextCacheStats();
 

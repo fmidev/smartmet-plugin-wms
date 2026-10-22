@@ -21,6 +21,7 @@
 #include "BezierCache.h"
 #include <engines/geonames/Engine.h>
 #include <engines/grid/Engine.h>
+#include "gridding/Gridder.h"
 #include <engines/querydata/Q.h>
 #include <grid-files/common/ImageFunctions.h>
 #include <spine/HTTP.h>
@@ -106,6 +107,10 @@ class State
 #endif
   // nullptr if engine not loaded
   const Engine::Satellite::Engine* getSatelliteEngine() const;
+  // nullptr if engine not loaded
+  const Gridding::Gridder* getGridder() const;
+  // Whether the producer is gridded observations from the ObsGrid engine
+  bool isObsGrid(const std::string& theProducer) const;
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
 
@@ -352,6 +357,12 @@ class State
   std::optional<uint8_t> itsTileZ;
   std::optional<uint32_t> itsTileX;
   std::optional<uint32_t> itsTileY;
+
+ private:
+  // The observation time to grid for a request: the latest available time in the period, or
+  // the latest time if no period is given
+  Fmi::DateTime obsGridTime(const std::string& theProducer,
+                            const std::optional<Fmi::TimePeriod>& thePeriod) const;
 };
 
 }  // namespace Dali

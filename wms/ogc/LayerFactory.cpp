@@ -3,6 +3,7 @@
 #include "StyleSelection.h"
 #include "GridDataLayer.h"
 #include "NonTemporalLayer.h"
+#include "ObsGridLayer.h"
 #include "PostGISLayer.h"
 #include "QueryDataLayer.h"
 #include "SatelliteLayer.h"
@@ -516,7 +517,12 @@ SharedLayer create_wms_layer(const LayerConfig& theConfig, Json::Value& root)
       }
       case LayerType::QueryDataLayer:
       {
-        layer = std::make_shared<QueryDataLayer>(theConfig, producer);
+        // Gridded observations are drawn as querydata, but their times come from the gridding
+        const auto* obsgrid = theConfig.gridder();
+        if (obsgrid != nullptr && obsgrid->hasProducer(producer))
+          layer = std::make_shared<ObsGridLayer>(theConfig, producer);
+        else
+          layer = std::make_shared<QueryDataLayer>(theConfig, producer);
         break;
       }
       case LayerType::GridDataLayer:

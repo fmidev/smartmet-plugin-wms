@@ -1,0 +1,29 @@
+{
+    "title": "Gridded temperature observations",
+    "abstract": "SYNOP temperatures gridded with the terrain by the gridded observations engine",
+    "producer": "synop_europe",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 440
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                }
+            ]
+        }
+    ]
+}

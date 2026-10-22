@@ -132,6 +132,50 @@ const Engine::Satellite::Engine* State::getSatelliteEngine() const
 }
 
 // ----------------------------------------------------------------------
+
+const Gridding::Gridder* State::getGridder() const
+{
+  return itsPlugin.getGridder();
+}
+
+bool State::isObsGrid(const std::string& theProducer) const
+{
+  const auto* engine = itsPlugin.getGridder();
+  return engine != nullptr && engine->hasProducer(theProducer);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Select the observation time to grid
+ */
+// ----------------------------------------------------------------------
+
+Fmi::DateTime State::obsGridTime(const std::string& theProducer,
+                                 const std::optional<Fmi::TimePeriod>& thePeriod) const
+{
+  // An exact time is gridded as requested, any observation time can be gridded
+  if (thePeriod && !thePeriod->begin().is_not_a_date_time() &&
+      thePeriod->begin() == thePeriod->end())
+    return thePeriod->begin();
+
+  // Otherwise the latest time available in the period
+  const auto times = getGridder()->validTimes(theProducer);
+  for (auto it = times.rbegin(); it != times.rend(); ++it)
+  {
+    if (!thePeriod || (*it >= thePeriod->begin() && *it <= thePeriod->end()))
+      return *it;
+    if (*it < thePeriod->begin())
+      break;
+  }
+  if (!thePeriod)
+    throw Fmi::Exception(BCP, "No gridded observations available")
+        .addParameter("Producer", theProducer);
+  throw Fmi::Exception(BCP, "No gridded observations available for the requested time")
+      .addParameter("Producer", theProducer)
+      .addParameter("Time", Fmi::to_iso_string(thePeriod->end()));
+}
+
+// ----------------------------------------------------------------------
 /*!
  * \brief Get the GEO engine
  */
@@ -268,6 +312,14 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
     if (res != itsQCache.end())
       return res->second;
 
+    // Gridded observations of the latest time
+    if (isObsGrid(theProducer))
+    {
+      auto q = getGridder()->get(theProducer, obsGridTime(theProducer, std::nullopt));
+      itsQCache.insert(std::make_pair(key, q));
+      return q;
+    }
+
     // Get the data from the engine
     auto q = itsPlugin.getQEngine().get(theProducer);
 
@@ -302,6 +354,15 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
     auto res = itsQCache.find(key);
     if (res != itsQCache.end())
       return res->second;
+
+    // Gridded observations have no origin times, the time is the observation time
+    if (isObsGrid(theProducer))
+    {
+      auto q = getGridder()->get(
+          theProducer, obsGridTime(theProducer, Fmi::TimePeriod(theOriginTime, theOriginTime)));
+      itsQCache.insert(std::make_pair(key, q));
+      return q;
+    }
 
     // Get the data from the engine
     auto q = itsPlugin.getQEngine().get(theProducer, theOriginTime);
@@ -341,6 +402,13 @@ std::size_t State::getModelHashValue(const Engine::Querydata::Producer& theProdu
     if (res != itsModelHashCache.end())
       return res->second;
 
+    if (isObsGrid(theProducer))
+    {
+      auto hash = getGridder()->hashValue(theProducer, obsGridTime(theProducer, std::nullopt));
+      itsModelHashCache.insert(std::make_pair(key, hash));
+      return hash;
+    }
+
     auto value = itsPlugin.getQEngine().getModelHashValue(theProducer);
 
     updateExpirationTime(value.expirationTime);
@@ -364,6 +432,14 @@ std::size_t State::getModelHashValue(const Engine::Querydata::Producer& theProdu
     auto res = itsModelHashCache.find(key);
     if (res != itsModelHashCache.end())
       return res->second;
+
+    if (isObsGrid(theProducer))
+    {
+      auto hash = getGridder()->hashValue(
+          theProducer, obsGridTime(theProducer, Fmi::TimePeriod(theOriginTime, theOriginTime)));
+      itsModelHashCache.insert(std::make_pair(key, hash));
+      return hash;
+    }
 
     auto value = itsPlugin.getQEngine().getModelHashValue(theProducer, theOriginTime);
 
@@ -389,6 +465,13 @@ std::size_t State::getModelHashValue(const Engine::Querydata::Producer& theProdu
     auto res = itsModelHashCache.find(key);
     if (res != itsModelHashCache.end())
       return res->second;
+
+    if (isObsGrid(theProducer))
+    {
+      auto hash = getGridder()->hashValue(theProducer, obsGridTime(theProducer, theTimePeriod));
+      itsModelHashCache.insert(std::make_pair(key, hash));
+      return hash;
+    }
 
     auto value = itsPlugin.getQEngine().getModelHashValue(theProducer, theTimePeriod);
 
@@ -421,6 +504,14 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
     auto res = itsQCache.find(key);
     if (res != itsQCache.end())
       return res->second;
+
+    // Gridded observations of the latest time in the period
+    if (isObsGrid(theProducer))
+    {
+      auto q = getGridder()->get(theProducer, obsGridTime(theProducer, theTimePeriod));
+      itsQCache.insert(std::make_pair(key, q));
+      return q;
+    }
 
     // Get the data from the engine
     auto q = itsPlugin.getQEngine().get(theProducer, theTimePeriod);

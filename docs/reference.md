@@ -226,6 +226,27 @@ The table below contains a list of attributes that are shared from the top level
 
 Normally the "valid time" for the data is time + time_offset. If a time interval is defined, it is producer dependent how the settings are interpreted. Most layers ignore the settings, and the settings are ignored for all forecasts. For lightning data the interval is true, all flashes in the interval are picked. For other observations only the latest one in the time interval will be selected. For this reason interval_end is usually not needed for observations either.
 
+#### Gridded observations
+
+Producers defined in the `gridding` group of the plugin configuration are point observations
+gridded over a fixed area with the help of the terrain, see [gridding.md](gridding.md). The
+isoline, isoband and isolabel layers draw them like any gridded querydata, OGC Tiles can deliver
+them as GeoTIFF, and the layers get their time dimension and bounding box from the gridding
+configuration. The time is an observation time: an exact time is gridded as requested, within a
+time interval the latest offered time is used, and without a time the latest offered time. Every
+map tile cuts its isolines from the same full-area field, so tiles join seamlessly.
+
+```json
+{
+    "producer": "obs_europe",
+    "views": [ { "layers": [ {
+        "layer_type": "isoband",
+        "isobands": "json:isobands/temperature.json",
+        "parameter": "Temperature"
+    } ] } ]
+}
+```
+
 #### Clipping and margins
 
 Normally any point strictly outside the layer rectangle will be omitted. However, if the image will be tiled, this may produce images where symbols or text appear only in one tile, and the rest of the symbol is cut off from the adjacent tile. The layer effective bounding box may be expanded using the setting "margin", which sets both the x-margin and y-margin, or directly by setting "xmargin" and/or "ymargin".

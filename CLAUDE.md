@@ -85,6 +85,8 @@ wms/ogc/          # OGC layer metadata: wraps Dali layers for GetCapabilities,
                   #   time/elevation dimensions, legend caching
 wms/wmts/         # WMTS handler (GetTile, GetCapabilities)
 wms/tiles/        # OGC API - Tiles 1.0 REST handler
+wms/gridding/     # Gridded observations: point observations gridded with the terrain
+                  #   (gis PointGridding) and served as in-memory querydata, see docs/gridding.md
 tmpl/             # CTPP2 templates: svg.tmpl, geojson.tmpl, kml.tmpl, topojson.tmpl
 cnf/              # Configuration
 docs/             # Documentation and reference images

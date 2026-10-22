@@ -21,6 +21,7 @@
 #include <engines/osm/Engine.h>
 #endif
 #include <engines/querydata/Engine.h>
+#include "gridding/Gridder.h"
 #include <engines/satellite/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -83,6 +84,8 @@ class Plugin : public SmartMetPlugin
   const Engine::Geonames::Engine& getGeoEngine() const { return *itsGeoEngine; }
   // nullptr if the engine is not loaded
   const Engine::Satellite::Engine* getSatelliteEngine() const { return itsSatelliteEngine.get(); }
+  // nullptr if the engine is not loaded
+  const Gridding::Gridder* getGridder() const { return itsGridder.get(); }
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
 #endif
@@ -209,6 +212,7 @@ class Plugin : public SmartMetPlugin
   std::shared_ptr<Engine::OSM::Engine> itsOSMEngine;
 #endif
   std::shared_ptr<Engine::Satellite::Engine> itsSatelliteEngine;
+  std::shared_ptr<Gridding::Gridder> itsGridder;
   std::shared_ptr<Engine::Geonames::Engine> itsGeoEngine;
   std::shared_ptr<Engine::Authentication::Engine> authEngine;
 #ifndef WITHOUT_OBSERVATION

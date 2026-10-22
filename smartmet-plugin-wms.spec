@@ -48,7 +48,7 @@ BuildRequires: smartmet-engine-querydata-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-engine-contour-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
-BuildRequires: smartmet-library-gis-devel >= 26.10.16
+BuildRequires: smartmet-library-gis-devel >= 26.10.21
 BuildRequires: smartmet-library-trax-devel >= 26.10.16
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -82,7 +82,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
 Requires: smartmet-library-grid-content >= 26.10.20
 Requires: smartmet-library-grid-files >= 26.10.20
-Requires: smartmet-library-gis >= 26.10.17
+Requires: smartmet-library-gis >= 26.10.21
 Requires: smartmet-library-trax >= 26.10.17
 Requires: smartmet-library-macgyver >= 26.10.17
 Requires: smartmet-library-spine >= 26.10.17-1
@@ -187,6 +187,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Oct 22 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.10.22-1.fmi
 - GeoTIFF output (OGC Tiles f=tiff) works for querydata layers too, not only for the grid engine
+- Gridded observations: producers of the new gridding settings grid point observations (observation engine or point querydata) with the terrain, and the isoline, isoband and isolabel layers draw them like querydata in WMS, WMTS and OGC Tiles
 
 * Tue Oct 20 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.10.20-1.fmi
 - Use UNIX socket with Valkey/Redis db for tests

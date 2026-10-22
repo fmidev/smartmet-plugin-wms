@@ -1,0 +1,42 @@
+{
+    "title": "Temperature observations of the observation engine gridded with the terrain",
+    "producer": "opendata_europe",
+    "projection": {
+        "crs": "EPSG:3067",
+        "bboxcrs": "EPSG:4326",
+        "x1": 19.0,
+        "y1": 59.5,
+        "x2": 32.0,
+        "y2": 70.2,
+        "xsize": 300,
+        "ysize": 500
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+                    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+                    "attributes": {
+                        "id": "temperature_isobands"
+                    }
+                },
+                {
+                    "qid": "l2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+                    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+                    "attributes": {
+                        "id": "temperature_isolines",
+                        "class": "Temperature"
+                    }
+                }
+            ]
+        }
+    ]
+}

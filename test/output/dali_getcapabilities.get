@@ -3014,6 +3014,55 @@
           "image" : 
           {
             "height" : 500,
+            "width" : 300
+          },
+          "name" : "obsgrid_opendata_temperature",
+          "path" : 
+          [
+            "test",
+            "obsgrid_opendata_temperature"
+          ],
+          "producer" : "opendata_europe",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "x1" : 19.0,
+            "x2" : 32.0,
+            "xsize" : 300,
+            "y1" : 59.5,
+            "y2" : 70.200000000000003,
+            "ysize" : 500
+          },
+          "title" : "Temperature observations of the observation engine gridded with the terrain",
+          "url_template" : "/dali?customer=test&product=obsgrid_opendata_temperature&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 440,
+            "width" : 500
+          },
+          "name" : "obsgrid_temperature",
+          "path" : 
+          [
+            "test",
+            "obsgrid_temperature"
+          ],
+          "producer" : "synop_europe",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 440
+          },
+          "title" : "Temperature observations gridded with the terrain",
+          "url_template" : "/dali?customer=test&product=obsgrid_temperature&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
             "width" : 500
           },
           "name" : "opendata_meteorological_wind_data_plustemperatures",
