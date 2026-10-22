@@ -23,8 +23,9 @@ class Layer;
 class State;
 
 /**
- * Query the grid engine for a single scalar parameter and write the result
- * as a deflate-compressed Float32 GeoTiff.
+ * Query a single scalar parameter and write the result as a deflate-compressed
+ * Float32 GeoTiff. Layers with the grid source query the grid engine, other
+ * layers interpolate their querydata to the pixel centres.
  *
  * @param layer         The layer whose paraminfo, projection, multiplier, offset,
  *                      origintime and valid time are used to build the query.

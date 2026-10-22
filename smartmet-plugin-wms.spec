@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.20
+Version: 26.10.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -185,6 +185,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Oct 22 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.10.22-1.fmi
+- GeoTIFF output (OGC Tiles f=tiff) works for querydata layers too, not only for the grid engine
+
 * Tue Oct 20 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.10.20-1.fmi
 - Use UNIX socket with Valkey/Redis db for tests
 

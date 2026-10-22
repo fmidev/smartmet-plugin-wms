@@ -861,10 +861,12 @@ These forward to the `Layer` virtuals `generateGeoTiff`, `addMVTLayer` and
 `generateDataTile`, whose base implementations do nothing, so a product mixing a
 background map and an isoband layer yields the isoband's data.
 
-**GeoTIFF** (`wms/GridDataGeoTiff.cpp`). `gridDataGeoTiff(layer, parameter,
-interpolation, state)` builds a grid-engine query with the layer's producer, parameter,
-level, time and projection bounding box, receives a float grid sampled to
-`xsize` by `ysize`, and writes a deflate-compressed Float32 GeoTIFF with GDAL. Multi-band
+**GeoTIFF** (`wms/GridDataGeoTiff.cpp`). For layers with the grid source,
+`gridDataGeoTiff(layer, parameter, interpolation, state)` builds a grid-engine query with the
+layer's producer, parameter, level, time and projection bounding box and receives a float grid
+sampled to `xsize` by `ysize`. For querydata layers it transforms the pixel centres of the
+output to WGS84 and interpolates the layer's querydata at them; pixels outside the data are
+nodata. Either way it writes a deflate-compressed Float32 GeoTIFF with GDAL. Multi-band
 products (wind speed and direction, U and V) use `writeGeoTiffBands`. The client gets
 real numbers, not colours, and can do its own analysis.
 
