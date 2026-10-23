@@ -47,6 +47,17 @@
                         "stroke": "#222",
                         "stroke-width": "0.3px"
                     }
+                },
+                {
+                    "qid": "obs",
+                    "layer_type": "symbol",
+                    "producer": "fmi_observations",
+                    "parameter": "Temperature",
+                    "symbols": "json:obsgrid/temperature_markers.json",
+                    "css": "isobands/temperature.css",
+                    "positions": {
+                        "layout": "data"
+                    }
                 }
             ]
         }

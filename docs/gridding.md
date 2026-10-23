@@ -123,6 +123,7 @@ example over the seas, the result is the background:
 		orography  = "GeopHeight";     # model orography (m) in the same producer, optional
 		lapse_rate = -6.5;             # K/km, default -6.5, or 0 for the barnes method
 		weight     = 0.7;              # weight of the corrected background
+		taper      = 50.0;             # km, fading out at the edges of the background data
 	};
 }
 ```
@@ -132,7 +133,8 @@ background is moved from the model orography to the terrain heights with the lap
 `orography` the model is assumed to see the same terrain. The corrected background is blended
 with the analysis of the observations alone by `weight` (0.7 gave the best scores with IFS
 forecasts, see `gis/docs/gis-pointgridding.md`), and where the background is missing the
-observations alone are used. A new model run changes the cache key of the gridded data.
+observations alone are used. The background fades out over about `taper` km from the edges of
+its data, so that the two do not meet in a seam. A new model run changes the cache key of the gridded data.
 
 Producers reading observations need the observation engine; a plugin built without it accepts
 only point querydata producers. Wind cannot be gridded yet: it should be gridded as vector

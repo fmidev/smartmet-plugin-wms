@@ -47,6 +47,17 @@
                         "stroke": "#222",
                         "stroke-width": "0.3px"
                     }
+                },
+                {
+                    "qid": "obs",
+                    "layer_type": "symbol",
+                    "producer": "europe_observations",
+                    "parameter": "Pressure",
+                    "symbols": "json:obsgrid/pressure_markers.json",
+                    "css": "isobands/pressure.css",
+                    "positions": {
+                        "layout": "data"
+                    }
                 }
             ]
         }

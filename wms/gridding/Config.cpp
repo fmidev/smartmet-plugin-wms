@@ -128,6 +128,7 @@ BackgroundConfig parse_background(const libconfig::Setting& theSetting,
   theOptions.backgroundLapseRate = (theOptions.predictors.empty() ? 0.0 : -6.5);
   theSetting.lookupValue("lapse_rate", theOptions.backgroundLapseRate);
   theSetting.lookupValue("weight", theOptions.backgroundWeight);
+  lookup_km(theSetting, "taper", theOptions.backgroundTaper);
   if (theOptions.backgroundWeight <= 0 || theOptions.backgroundWeight > 1)
     throw Fmi::Exception(BCP, "Setting 'background.weight' must be in the range (0,1]");
   return background;
