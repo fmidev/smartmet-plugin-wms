@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jq
 #TestRequires: python3-jsonschema
 #TestRequires: python3-pyyaml
-#TestRequires: smartmet-engine-osm >= 26.10.23
+#TestRequires: smartmet-engine-osm-devel >= 26.10.23
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
