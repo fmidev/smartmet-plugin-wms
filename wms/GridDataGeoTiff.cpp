@@ -111,7 +111,7 @@ std::string writeGeoTiffBands(const Projection& projection,
 
     static std::atomic<uint64_t> seq{0};
     const std::string vsimem_path = fmt::format("/vsimem/geotiff_{}.tif", ++seq);
-    const char* opts[] = {"COMPRESS=DEFLATE", "WRITE_DATETIME_METADATA=NO", nullptr};
+    const char* opts[] = {"COMPRESS=DEFLATE", nullptr};
     auto* tiffDs = tiffDrv->CreateCopy(
         vsimem_path.c_str(), memDs, 0, const_cast<char**>(opts), nullptr, nullptr);
     GDALClose(memDs);

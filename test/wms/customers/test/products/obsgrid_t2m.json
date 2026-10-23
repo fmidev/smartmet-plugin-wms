@@ -1,6 +1,6 @@
 {
     "title": "Gridded temperature observations",
-    "abstract": "SYNOP temperatures gridded with the terrain by the gridded observations engine",
+    "abstract": "SYNOP temperatures gridded with the terrain",
     "producer": "synop_europe",
     "projection":
     {

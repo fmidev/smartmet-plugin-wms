@@ -3266,7 +3266,7 @@
     </Layer>
     <Layer>
       <ows:Title>Gridded temperature observations</ows:Title>
-      <ows:Abstract>SYNOP temperatures gridded with the terrain by the gridded observations engine</ows:Abstract>
+      <ows:Abstract>SYNOP temperatures gridded with the terrain</ows:Abstract>
       <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
         <ows:LowerCorner>-44.794315966 29.4495253295</ows:LowerCorner>
         <ows:UpperCorner>69.6555417577 73.5753748776</ows:UpperCorner>

@@ -2520,7 +2520,7 @@
     <Layer queryable="1">
       <Name>test:obsgrid_t2m</Name>
       <Title>Gridded temperature observations</Title>
-      <Abstract>SYNOP temperatures gridded with the terrain by the gridded observations engine</Abstract>
+      <Abstract>SYNOP temperatures gridded with the terrain</Abstract>
       <CRS>AUTO2:42001</CRS>
       <CRS>AUTO2:42002</CRS>
       <CRS>AUTO2:42003</CRS>
