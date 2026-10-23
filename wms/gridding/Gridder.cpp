@@ -26,6 +26,7 @@
 #include <cmath>
 #include <cpl_error.h>
 #include <iostream>
+#include <limits>
 
 namespace SmartMet
 {
@@ -132,6 +133,57 @@ std::vector<Fmi::PointGridding::Station> stations_for(const Area& theArea,
     stations.push_back(Fmi::PointGridding::Station{theX[i], theY[i], h, value});
   }
   return stations;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief The newest model run of a producer which contains the time, null if none does
+ */
+// ----------------------------------------------------------------------
+
+Engine::Querydata::Q select_background(const Engine::Querydata::Engine& theQEngine,
+                                       const BackgroundConfig& theBackground,
+                                       const Fmi::DateTime& theTime)
+{
+  const auto origintimes = theQEngine.origintimes(theBackground.producer);
+  for (auto it = origintimes.rbegin(); it != origintimes.rend(); ++it)
+  {
+    auto q = theQEngine.get(theBackground.producer, *it);
+    if (!q || !q->isGrid() || !q->firstTime())
+      continue;
+    const Fmi::DateTime first = q->validTime();
+    q->lastTime();
+    const Fmi::DateTime last = q->validTime();
+    if (theTime >= first && theTime <= last)
+      return q;
+  }
+  return {};
+}
+
+// One parameter of the background interpolated to the grid cells, NaN where missing
+Fmi::PointGridding::Field background_field(Engine::Querydata::Q& theQ,
+                                           FmiParameterName theParam,
+                                           const Area& theArea,
+                                           const Fmi::DateTime& theTime)
+{
+  if (!theQ->param(theParam))
+    throw Fmi::Exception(BCP, "Parameter missing from the background")
+        .addParameter("Parameter", Fmi::to_string(static_cast<int>(theParam)));
+  theQ->firstLevel();
+  const auto values = theQ->values(theArea.lonlats(), NFmiMetTime(theTime));
+
+  const auto& g = theArea.grid();
+  Fmi::PointGridding::Field field(g, std::numeric_limits<double>::quiet_NaN());
+  if (values.NX() != g.nx || values.NY() != g.ny)
+    return field;  // time outside the data
+  for (std::size_t j = 0; j < g.ny; j++)
+    for (std::size_t i = 0; i < g.nx; i++)
+    {
+      const float v = values[i][j];
+      if (v != kFloatMissing && std::isfinite(v))
+        field(i, j) = v;
+    }
+  return field;
 }
 
 }  // namespace
@@ -274,14 +326,34 @@ StationData Gridder::read(const ProducerConfig& theProducer, const Fmi::DateTime
       *itsQEngine, theProducer, itsStationElevations.at(theProducer.name), theTime);
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief The background models for the time
+ */
+// ----------------------------------------------------------------------
+
+Gridder::Backgrounds Gridder::backgrounds(const ProducerConfig& theProducer,
+                                          const Fmi::DateTime& theTime) const
+{
+  Backgrounds result;
+  for (const auto& param : theProducer.parameters)
+    result.push_back(param.background ? select_background(*itsQEngine, *param.background, theTime)
+                                      : Engine::Querydata::Q());
+  return result;
+}
+
 std::size_t Gridder::dataHash(const ProducerConfig& theProducer,
                               const Fmi::DateTime& theTime,
-                              const StationData& theData) const
+                              const StationData& theData,
+                              const Backgrounds& theBackgrounds) const
 {
   std::size_t hash = Fmi::hash_value(theProducer.name);
   Fmi::hash_combine(hash, Fmi::hash_value(theTime));
   Fmi::hash_combine(hash, itsAreas.at(theProducer.name)->hashValue());
   Fmi::hash_combine(hash, theData.hashValue());
+  // A new model run changes the result
+  for (const auto& q : theBackgrounds)
+    Fmi::hash_combine(hash, q ? q->hashValue() : 0);
   return hash;
 }
 
@@ -290,7 +362,7 @@ std::size_t Gridder::hashValue(const std::string& theProducer, const Fmi::DateTi
   try
   {
     const auto& p = producer(theProducer);
-    return dataHash(p, theTime, read(p, theTime));
+    return dataHash(p, theTime, read(p, theTime), backgrounds(p, theTime));
   }
   catch (...)
   {
@@ -315,7 +387,8 @@ Engine::Querydata::Q Gridder::get(const std::string& theProducer,
   try
   {
     const auto& p = producer(theProducer);
-    return std::make_shared<Engine::Querydata::QImpl>(grid(p, theTime, read(p, theTime)));
+    return std::make_shared<Engine::Querydata::QImpl>(
+        grid(p, theTime, read(p, theTime), backgrounds(p, theTime)));
   }
   catch (...)
   {
@@ -327,9 +400,10 @@ Engine::Querydata::Q Gridder::get(const std::string& theProducer,
 
 Engine::Querydata::SharedModel Gridder::grid(const ProducerConfig& p,
                                              const Fmi::DateTime& theTime,
-                                             const StationData& theData) const
+                                             const StationData& theData,
+                                             const Backgrounds& theBackgrounds) const
 {
-  const auto hash = dataHash(p, theTime, theData);
+  const auto hash = dataHash(p, theTime, theData, theBackgrounds);
 
   if (auto cached = itsCache.find(hash))
     return *cached;
@@ -373,9 +447,21 @@ Engine::Querydata::SharedModel Gridder::grid(const ProducerConfig& p,
       if (stations.empty())
         continue;  // all missing
 
-      const Fmi::PointGridding::Analysis analysis(
-          area.terrain(), stations, with_threads(param.options, itsConfig.threads()));
-      const auto field = analysis.grid();
+      const auto options = with_threads(param.options, itsConfig.threads());
+      auto bg = theBackgrounds.at(k);
+      Fmi::PointGridding::Field field;
+      if (bg)
+      {
+        // Without a model orography the model is assumed to see the terrain of the area
+        Fmi::PointGridding::Background background{
+            background_field(bg, param.background->parameter, area, theTime),
+            (param.background->orography != kFmiBadParameter
+                 ? background_field(bg, param.background->orography, area, theTime)
+                 : area.terrain().elevation())};
+        field = Fmi::PointGridding::Analysis(area.terrain(), stations, background, options).grid();
+      }
+      else
+        field = Fmi::PointGridding::Analysis(area.terrain(), stations, options).grid();
 
       // Both grids start from the south-west corner, x running fastest
       const auto& values = field.values();

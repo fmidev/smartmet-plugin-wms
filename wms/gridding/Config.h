@@ -10,6 +10,7 @@
 #include <newbase/NFmiParameterName.h>
 #include <libconfig.h++>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -21,6 +22,17 @@ namespace Dali
 {
 namespace Gridding
 {
+// A background such as a forecast which the observations correct. The newest model run of
+// the producer containing the time is used, and the background is interpolated to the grid.
+struct BackgroundConfig
+{
+  std::string producer;                           // gridded querydata producer
+  FmiParameterName parameter = kFmiBadParameter;  // the background parameter
+  // The model orography in metres. Without it the model is assumed to see the terrain of the
+  // gridding area, and the background is not moved to the station heights.
+  FmiParameterName orography = kFmiBadParameter;
+};
+
 // One gridded parameter of a producer
 struct ParameterConfig
 {
@@ -28,6 +40,7 @@ struct ParameterConfig
   FmiParameterName id = kFmiBadParameter;  // and its number
   std::string source;                      // name of the parameter at the source
   Fmi::PointGridding::Options options;
+  std::optional<BackgroundConfig> background;
 };
 
 enum class SourceType

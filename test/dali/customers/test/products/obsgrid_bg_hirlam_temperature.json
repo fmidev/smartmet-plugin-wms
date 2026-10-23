@@ -1,0 +1,54 @@
+{
+    "title": "FMI temperatures correcting a HIRLAM forecast",
+    "producer": "fmi_hirlam",
+    "projection": {
+        "crs": "EPSG:3035",
+        "bboxcrs": "EPSG:3035",
+        "bbox": "4550000,3750000,5550000,5400000",
+        "xsize": 400,
+        "ysize": 660
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+                    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+                    "attributes": {
+                        "id": "temperature_isobands"
+                    }
+                },
+                {
+                    "qid": "l2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+                    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+                    "attributes": {
+                        "id": "temperature_isolines",
+                        "class": "Temperature"
+                    }
+                },
+                {
+                    "qid": "m1",
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes": {
+                        "id": "coastlines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                }
+            ]
+        }
+    ]
+}

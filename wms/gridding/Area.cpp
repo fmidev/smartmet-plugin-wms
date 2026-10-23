@@ -142,6 +142,33 @@ Area::Area(const std::string& theDemFile, double theTpiSigma)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief WGS84 coordinates of the cell centres
+ */
+// ----------------------------------------------------------------------
+
+const Fmi::CoordinateMatrix& Area::lonlats() const
+{
+  std::call_once(itsLonLatsFlag,
+                 [this]()
+                 {
+                   const auto& g = grid();
+                   auto m = std::make_unique<Fmi::CoordinateMatrix>(
+                       g.nx,
+                       g.ny,
+                       g.x0 + 0.5 * g.dx,
+                       g.y0 + 0.5 * g.dx,
+                       g.x0 + (static_cast<double>(g.nx) - 0.5) * g.dx,
+                       g.y0 + (static_cast<double>(g.ny) - 0.5) * g.dx);
+                   Fmi::CoordinateTransformation transformation(Fmi::SpatialReference(itsWkt),
+                                                                "WGS84");
+                   m->transform(transformation);
+                   itsLonLats = std::move(m);
+                 });
+  return *itsLonLats;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Project WGS84 coordinates to the grid coordinates
  */
 // ----------------------------------------------------------------------

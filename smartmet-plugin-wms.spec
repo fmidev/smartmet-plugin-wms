@@ -49,7 +49,7 @@ BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-engine-osm-devel >= 26.10.23
 BuildRequires: smartmet-engine-contour-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
-BuildRequires: smartmet-library-gis-devel >= 26.10.21
+BuildRequires: smartmet-library-gis-devel >= 26.10.24
 BuildRequires: smartmet-library-trax-devel >= 26.10.16
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -83,7 +83,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
 Requires: smartmet-library-grid-content >= 26.10.20
 Requires: smartmet-library-grid-files >= 26.10.20
-Requires: smartmet-library-gis >= 26.10.21
+Requires: smartmet-library-gis >= 26.10.24
 Requires: smartmet-library-trax >= 26.10.17
 Requires: smartmet-library-macgyver >= 26.10.17
 Requires: smartmet-library-spine >= 26.10.17-1
@@ -190,6 +190,7 @@ rm -rf $RPM_BUILD_ROOT
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-1.fmi
 - A missing value no longer matches a value range of symbol, number and other attribute selections: 32700 fell into the open top class, f.ex. stations without a temperature were drawn as >= 38 C
 - Gridded observation tests draw the observations as small circles coloured like the isobands, at 1024 pixels
+- Gridded observations can correct a background such as the latest forecast (gridding parameter setting 'background')
 
 * Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-3.fmi
 - Removed the GTiff creation option WRITE_DATETIME_METADATA which GDAL does not know and warned about on every GeoTIFF request

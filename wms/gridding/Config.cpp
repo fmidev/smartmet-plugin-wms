@@ -97,6 +97,42 @@ Fmi::PointGridding::Options parse_options(const libconfig::Setting& theSetting)
   return options;
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Background settings of a parameter
+ *
+ * The lapse rate moves the background from the model orography to the actual heights. It
+ * defaults to the standard atmosphere for the terrain method and to zero for the barnes
+ * method, which is meant for fields without a height dependency.
+ */
+// ----------------------------------------------------------------------
+
+BackgroundConfig parse_background(const libconfig::Setting& theSetting,
+                                  const std::string& theParameter,
+                                  Fmi::PointGridding::Options& theOptions)
+{
+  if (!theSetting.isGroup())
+    throw Fmi::Exception(BCP, "Setting 'background' must be a group");
+
+  BackgroundConfig background;
+  if (!theSetting.lookupValue("producer", background.producer))
+    throw Fmi::Exception(BCP, "Setting 'background.producer' is required");
+
+  std::string name = theParameter;
+  theSetting.lookupValue("parameter", name);
+  background.parameter = parameter_id(name);
+
+  if (theSetting.lookupValue("orography", name))
+    background.orography = parameter_id(name);
+
+  theOptions.backgroundLapseRate = (theOptions.predictors.empty() ? 0.0 : -6.5);
+  theSetting.lookupValue("lapse_rate", theOptions.backgroundLapseRate);
+  theSetting.lookupValue("weight", theOptions.backgroundWeight);
+  if (theOptions.backgroundWeight <= 0 || theOptions.backgroundWeight > 1)
+    throw Fmi::Exception(BCP, "Setting 'background.weight' must be in the range (0,1]");
+  return background;
+}
+
 int lookup_minutes(const libconfig::Setting& theSetting, const char* theName, int theDefault)
 {
   int value = theDefault;
@@ -211,6 +247,8 @@ void Config::parseProducer(const libconfig::Setting& theSetting)
       param.source = param.name;
       setting.lookupValue("source", param.source);
       param.options = parse_options(setting);
+      if (setting.exists("background"))
+        param.background = parse_background(setting.lookup("background"), param.name, param.options);
       producer.parameters.push_back(param);
     }
 

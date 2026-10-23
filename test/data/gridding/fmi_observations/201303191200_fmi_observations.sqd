@@ -1,0 +1,803 @@
+@$∞£QINFO@$∞£ VER 7
+21 NFmiQueryInfo
+0 0 0 0 
+0
+0
+34 NFmiParamDescriptor
+0 0 0 0 
+2
+4
+11 Temperature
+-300 1000 1 32700 32700 4 %.1f
+1001
+16 FMI observations
+1 1 1 1 1 0 0 0 
+0
+1
+8 Pressure
+0 2000 1 32700 32700 4 %.1f
+1001
+16 FMI observations
+1 1 1 1 1 0 0 0 
+0
+1 1 
+1 0 0 0
+31 NFmiLocationBag
+189
+38
+100907
+31 Jomala Maarianhamina lentoasema
+19.90038 60.12735
+32700 1
+100908
+13 Parainen Ut√∂
+21.37479 59.77909
+32700 1
+100909
+14 Lemland Nyhamn
+19.95374 59.95911
+32700 1
+100917
+15 Jomala Jomalaby
+19.98686 60.17824
+32700 1
+100919
+18 Hammarland M√§rket
+19.13142 60.30098
+32700 1
+100921
+15 K√∂kar Bogsk√§r
+20.34748 59.50454
+32700 1
+100924
+18 Parainen Fagerholm
+21.69828 60.11163
+32700 1
+100928
+20 Kumlinge kirkonkyl√§
+20.74698 60.25823
+32700 1
+100932
+14 Hanko Russar√∂
+22.94868 59.77363
+32700 1
+100934
+17 Kaarina Ylt√∂inen
+22.55183 60.3869
+32700 1
+100945
+19 Kemi√∂nsaari V√§n√∂
+22.19343 59.86949
+32700 1
+100946
+16 Hanko Tulliniemi
+22.91246 59.80864
+32700 1
+100947
+14 Turku Rajakari
+22.0964 60.37788
+32700 1
+100949
+16 Turku Artukainen
+22.1787 60.45439
+32700 1
+100951
+19 Kemi√∂nsaari Kemi√∂
+22.75768 60.17123
+32700 1
+100953
+16 Hanko Tv√§rminne
+23.24859 59.84383
+32700 1
+100955
+13 Salo K√§rkk√§
+23.11661 60.37475
+32700 1
+100965
+18 Raasepori Jussar√∂
+23.57309 59.82076
+32700 1
+100967
+25 Salo Kiikala lentokentt√§
+23.64976 60.46415
+32700 1
+100968
+34 Vantaa Helsinki-Vantaan lentoasema
+24.97274 60.32937
+32700 1
+100969
+16 Inkoo B√•gask√§r
+24.01408 59.93114
+32700 1
+100971
+19 Helsinki Kaisaniemi
+24.94459 60.17523
+32700 1
+100974
+11 Lohja Porla
+24.04951 60.24446
+32700 1
+100976
+13 Vihti Maasoja
+24.39862 60.41875
+32700 1
+100996
+16 Helsinki Harmaja
+24.97539 60.10512
+32700 1
+100997
+22 Kirkkonummi M√§kiluoto
+24.35023 59.91982
+32700 1
+101000
+15 Espoo Latokaski
+24.64009 60.17771
+32700 1
+101003
+26 Helsinki Helsingin majakka
+24.92631 59.94898
+32700 1
+101004
+16 Helsinki Kumpula
+24.96131 60.20307
+32700 1
+101005
+17 Espoo Sep√§nkyl√§
+24.74152 60.20761
+32700 1
+101007
+22 Helsinki Rautatientori
+24.9446 60.17169
+32700 1
+101022
+20 Porvoo Kalb√•dagrund
+25.59879 59.98568
+32700 1
+101023
+15 Porvoo Em√§salo
+25.62546 60.20382
+32700 1
+101028
+16 Porvoo Harabacka
+25.6073 60.39172
+32700 1
+101030
+12 Kotka Rankki
+26.95893 60.37538
+32700 1
+101036
+19 Loviisa ydinvoimala
+26.32215 60.37771
+32700 1
+101039
+18 Loviisa Orrengrund
+26.44759 60.27476
+32700 1
+101042
+16 Kotka Haapasaari
+27.18482 60.28676
+32700 1
+101044
+15 Pori lentoasema
+21.80839 61.46011
+32700 1
+101059
+15 Kustavi Isokari
+21.02681 60.7222
+32700 1
+101061
+19 Rauma Kylm√§pihlaja
+21.30273 61.14475
+32700 1
+101062
+31 Eurajoki Olkiluodon ydinvoimala
+21.43072 61.24261
+32700 1
+101064
+18 Pori rautatieasema
+21.7832 61.47893
+32700 1
+101065
+16 Turku lentoasema
+22.27916 60.51565
+32700 1
+101103
+18 Kokem√§ki Tulkkila
+22.34613 61.25294
+32700 1
+101104
+16 Jokioinen Ilmala
+23.49825 60.81397
+32700 1
+101118
+36 Pirkkala Tampere-Pirkkala lentoasema
+23.62256 61.4194
+32700 1
+101124
+18 Tampere H√§rm√§l√§
+23.74678 61.46561
+32700 1
+101128
+14 Somero Salkola
+23.80559 60.64668
+32700 1
+101130
+27 Hyvink√§√§ Hyvink√§√§nkyl√§
+24.80297 60.59589
+32700 1
+101149
+20 Nurmij√§rvi R√∂ykk√§
+24.65375 60.50872
+32700 1
+101150
+20 H√§meenlinna Katinen
+24.49163 60.9992
+32700 1
+101151
+13 Hattula Lepaa
+24.32449 61.11454
+32700 1
+101152
+11 Lahti Laune
+25.6309 60.96211
+32700 1
+101154
+26 H√§meenlinna Lammi Pappila
+25.03844 61.05408
+32700 1
+101185
+23 Asikkala Pulkkilanharju
+25.52021 61.26521
+32700 1
+101189
+22 H√§meenlinna Lammi Evo
+25.13283 61.2166
+32700 1
+101191
+23 Kouvola Utti lentoasema
+26.94882 60.89839
+32700 1
+101194
+14 Kouvola Anjala
+26.81106 60.6965
+32700 1
+101196
+18 Heinola Asemantaus
+26.04967 61.20008
+32700 1
+101231
+20 Virolahti Koivuniemi
+27.67274 60.5272
+32700 1
+101237
+23 Lappeenranta lentoasema
+28.12916 61.0403
+32700 1
+101246
+22 Lappeenranta Konnunsuo
+28.56395 61.03879
+32700 1
+101247
+19 Lappeenranta Lepola
+28.20873 61.05754
+32700 1
+101252
+24 Lappeenranta Hiekkapakka
+28.47308 61.1982
+32700 1
+101254
+22 Parikkala Koitsanlahti
+29.46108 61.44467
+32700 1
+101256
+18 Kaskinen S√§lgrund
+21.19081 62.33382
+32700 1
+101267
+22 Pori Tahkoluoto satama
+21.3762 61.63042
+32700 1
+101268
+26 Kristiinankaupunki Majakka
+21.16983 62.20324
+32700 1
+101272
+13 Karvia Alkkia
+22.79983 62.18329
+32700 1
+101289
+20 Kauhajoki Kuja-Kokko
+22.18372 62.41345
+32700 1
+101291
+35 Kankaanp√§√§ Niinisalo lentokentt√§
+22.46368 61.83864
+32700 1
+101310
+18 Virrat √Ñij√§nneva
+23.54228 62.32783
+32700 1
+101311
+18 Tampere Siilinkari
+23.75388 61.51757
+32700 1
+101315
+24 J√§ms√§ Halli lentoasema
+24.80459 61.85551
+32700 1
+101317
+20 Juupajoki Hyyti√§l√§
+24.28696 61.84591
+32700 1
+101362
+17 Luhanka Judinsalo
+25.50529 61.70448
+32700 1
+101367
+15 Joutsa Savenaho
+26.09478 61.87942
+32700 1
+101418
+12 Juva Partala
+27.88528 61.8923
+32700 1
+101420
+27 Joroinen Varkaus lentoasema
+27.86012 62.17377
+32700 1
+101421
+20 Varkaus Kosulanniemi
+27.90785 62.32221
+32700 1
+101430
+21 Savonlinna lentoasema
+28.93238 61.94638
+32700 1
+101435
+30 Puumala kirkonkyl√§ Hiisivuori
+28.1888 61.53614
+32700 1
+101436
+22 Rantasalmi Rukkasluoto
+28.56618 62.06302
+32700 1
+101441
+33 Savonlinna Punkaharju Laukansaari
+29.31506 61.80186
+32700 1
+101459
+17 Tohmaj√§rvi Kemie
+30.34662 62.23539
+32700 1
+101462
+16 Vaasa lentoasema
+21.7546 63.05858
+32700 1
+101464
+22 Mustasaari Valassaaret
+21.06856 63.43508
+32700 1
+101479
+20 Korsn√§s Bredsk√§ret
+21.18485 62.93488
+32700 1
+101481
+26 Maalahti Str√∂mmingsb√•dan
+20.74008 62.97839
+32700 1
+101485
+17 Vaasa Klemettil√§
+21.63938 63.09871
+32700 1
+101486
+17 Sein√§joki Pelmaa
+22.48878 62.93808
+32700 1
+101503
+20 Kauhava lentokentt√§
+23.04364 63.12033
+32700 1
+101520
+13 √Ñht√§ri Inha
+24.14239 62.55461
+32700 1
+101533
+16 Alaj√§rvi M√∂ksy
+24.26084 63.08898
+32700 1
+101536
+14 Multia Karhila
+24.80764 62.51044
+32700 1
+101537
+21 Viitasaari Haapaniemi
+25.85862 63.08225
+32700 1
+101555
+19 Vesanto kirkonkyl√§
+26.4247 62.92178
+32700 1
+101570
+30 Siilinj√§rvi Kuopio lentoasema
+27.80817 62.99842
+32700 1
+101572
+15 Kuopio Maaninka
+27.31317 63.14343
+32700 1
+101580
+16 Kuopio Ritoniemi
+27.90495 62.79892
+32700 1
+101581
+18 Kuopio Vehmasm√§ki
+27.5416 62.73878
+32700 1
+101586
+16 Kuopio Savilahti
+27.63331 62.89256
+32700 1
+101603
+22 Rautavaara Yl√§-Luosta
+28.66166 63.37806
+32700 1
+101608
+25 Liperi Joensuu lentoasema
+29.63608 62.65695
+32700 1
+101609
+14 Juuka Niemel√§
+29.23397 63.23236
+32700 1
+101628
+21 Liperi Tuiskavanluoto
+29.66818 62.54601
+32700 1
+101632
+19 Joensuu Linnunlahti
+29.72713 62.60179
+32700 1
+101636
+14 Lieksa Lampela
+30.04578 63.32108
+32700 1
+101649
+23 Ilomantsi P√∂ts√∂nvaara
+31.04454 63.14166
+32700 1
+101651
+21 Ilomantsi Mekrij√§rvi
+30.97467 62.76942
+32700 1
+101660
+18 Pietarsaari Kallan
+22.52282 63.75144
+32700 1
+101661
+14 Kokkola Tankar
+22.84537 63.95114
+32700 1
+101662
+40 Kruunupyy Kokkola-Pietarsaari lentoasema
+23.14359 63.72655
+32700 1
+101673
+18 Kalajoki Ulkokalla
+23.44627 64.33073
+32700 1
+101675
+17 Kokkola Santahaka
+23.09715 63.83882
+32700 1
+101689
+17 Toholampi Laitala
+24.16323 63.82133
+32700 1
+101690
+22 Ylivieska lentokentt√§
+24.72468 64.05029
+32700 1
+101695
+23 Haapavesi Mustikkam√§ki
+25.42335 64.14263
+32700 1
+101705
+20 Pyh√§j√§rvi Ojakyl√§
+25.70573 63.73589
+32700 1
+101725
+18 Kajaani lentoasema
+27.67114 64.2829
+32700 1
+101726
+19 Vierem√§ Kaarakkala
+27.22061 63.8409
+32700 1
+101743
+14 Nurmes Valtimo
+28.82927 63.6673
+32700 1
+101756
+18 Sotkamo Kuolaniemi
+28.33639 64.11197
+32700 1
+101773
+16 Kuhmo Kalliojoki
+30.17068 64.29756
+32700 1
+101775
+16 Raahe Nahkiainen
+23.89674 64.61178
+32700 1
+101776
+19 Hailuoto Keskikyl√§
+24.72758 65.01967
+32700 1
+101783
+14 Kemi I majakka
+24.09568 65.38508
+32700 1
+101784
+19 Hailuoto Marjaniemi
+24.56118 65.03975
+32700 1
+101785
+22 Raahe Lapaluoto satama
+24.40695 64.66589
+32700 1
+101786
+15 Oulu lentoasema
+25.3392 64.93503
+32700 1
+101787
+16 Siikajoki Ruukki
+25.08919 64.68421
+32700 1
+101794
+24 Oulu Vihre√§saari satama
+25.39325 65.00637
+32700 1
+101799
+26 Oulu Oulunsalo Pellonp√§√§
+25.37299 64.93698
+32700 1
+101800
+11 Vaala Pelso
+26.42386 64.50144
+32700 1
+101805
+24 Pudasj√§rvi lentokentt√§
+26.96311 65.40014
+32700 1
+101826
+18 Suomussalmi Pesi√∂
+28.74672 64.93125
+32700 1
+101831
+17 Puolanka Paljakka
+28.0567 64.66392
+32700 1
+101840
+27 Kemi Kemi-Tornio lentoasema
+24.58278 65.78944
+32700 1
+101846
+9 Kemi Ajos
+24.51519 65.67318
+32700 1
+101851
+15 Tornio Kaakkuri
+24.17936 65.86893
+32700 1
+101873
+18 Ranua lentokentt√§
+26.36757 65.97717
+32700 1
+101885
+23 Taivalkoski kirkonkyl√§
+28.21766 65.57489
+32700 1
+101886
+18 Kuusamo lentoasema
+29.22715 65.99334
+32700 1
+101887
+21 Kuusamo Kiutak√∂ng√§s
+29.31188 66.36999
+32700 1
+101897
+19 Kuusamo Rukatunturi
+29.15177 66.16614
+32700 1
+101908
+22 Ylitornio Meltosj√§rvi
+24.6496 66.52952
+32700 1
+101914
+17 Pello kirkonkyl√§
+23.96303 66.77278
+32700 1
+101927
+20 Rovaniemi Vennivaara
+25.57106 66.54931
+32700 1
+101928
+23 Rovaniemi rautatieasema
+25.7088 66.49832
+32700 1
+101932
+20 Sodankyl√§ T√§htel√§
+26.62901 67.36663
+32700 1
+101933
+16 Rovaniemi Apukka
+26.01094 66.57944
+32700 1
+101950
+23 Kemij√§rvi lentokentt√§
+27.15906 66.71556
+32700 1
+101952
+21 Savukoski kirkonkyl√§
+28.1786 67.28296
+32700 1
+101958
+26 Pelkosenniemi Pyh√§tunturi
+27.21827 67.02191
+32700 1
+101959
+17 Salla kirkonkyl√§
+28.68829 66.8166
+32700 1
+101966
+13 Salla Naruska
+29.17766 67.16226
+32700 1
+101981
+20 Kittil√§ Levitunturi
+24.85319 67.78475
+32700 1
+101982
+16 Muonio Laukukero
+24.03335 68.06284
+32700 1
+101983
+20 Muonio Sammaltunturi
+24.11559 67.97328
+32700 1
+101985
+17 Kittil√§ Matorova
+24.24016 67.99996
+32700 1
+101986
+19 Kittil√§ lentoasema
+24.85538 67.69168
+32700 1
+101987
+20 Kittil√§ Kentt√§rova
+24.24301 67.98721
+32700 1
+101990
+16 Kittil√§ Pakatti
+24.92927 67.66924
+32700 1
+101994
+14 Kittil√§ Pokka
+25.78316 68.16961
+32700 1
+102000
+16 Sodankyl√§ Lokka
+27.74597 67.82147
+32700 1
+102001
+17 Sodankyl√§ Vuotso
+27.18501 68.08422
+32700 1
+102005
+32 Inari Saariselk√§ matkailukeskus
+27.41323 68.41507
+32700 1
+102006
+29 Inari Saariselk√§ Kaunisp√§√§
+27.44515 68.43399
+32700 1
+102009
+19 Inari Raja-Jooseppi
+28.30123 68.478
+32700 1
+102012
+21 Salla V√§rri√∂tunturi
+29.61132 67.74858
+32700 1
+102016
+35 Enonteki√∂ Kilpisj√§rvi kyl√§keskus
+20.81379 69.03905
+32700 1
+102017
+29 Enonteki√∂ Kilpisj√§rvi Saana
+20.85091 69.04277
+32700 1
+102019
+21 Enonteki√∂ N√§kk√§l√§
+23.57595 68.60301
+32700 1
+102026
+29 Inari Angeli Lintupuoliselk√§
+25.73646 68.90296
+32700 1
+102033
+22 Inari Ivalo lentoasema
+27.4189 68.61336
+32700 1
+102035
+12 Utsjoki Kevo
+27.00678 69.75637
+32700 1
+102036
+15 Utsjoki Nuorgam
+27.8965 70.08203
+32700 1
+102042
+13 Inari V√§yl√§
+27.4925 69.07219
+32700 1
+102047
+14 Inari Kaamanen
+27.26567 69.14089
+32700 1
+102052
+12 Inari Nellim
+28.29911 68.84928
+32700 1
+102055
+19 Inari Kirakkaj√§rvi
+28.89409 69.5825
+32700 1
+126736
+22 Kajaani Pet√§isenniska
+27.75194 64.21678
+32700 1
+126737
+23 Utsjoki Kevo Kevoj√§rvi
+27.012 69.757
+32700 1
+126760
+33 Liperi lentoasema vertailumittaus
+29.61444 62.65944
+32700 1
+129963
+17 Inari Seitalaassa
+27.757 69.04853
+32700 1
+137190
+25 Rovaniemi lentoasema AWOS
+25.84848 66.57276
+32700 1
+137208
+27 Jyv√§skyl√§ lentoasema AWOS
+25.68862 62.39332
+32700 1
+150168
+19 Puumala kirkonkyl√§
+28.18491 61.52242
+32700 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+0 NFmiArea
+0 NFmiGrid
+1
+5000
+4 None
+0
+1
+1 NFmiTimeDescriptor
+1
+2013 3 19 12 0 0
+2013 3 19 12 0 0
+2013 3 19 12 0 0
+0 0 0 0 0 0 0
+0 0 0 1 0 0 0
+1 
+6
+1
+1512
+  ∞¿33£¿öôô¿ÕÃ¨¿ff∂¿  †¿öôy¿ÕÃ¨¿33√¿  Ä¿ffñ¿33√¿ffñ¿ffÜ¿  ê¿ff÷¿ÕÃl¿  –¿33£¿33≥¿  –¿ÕÃ¨¿33É¿  ê¿33”¿ÕÃ‹¿ff¡  ¿ff¶¿öôâ¿33£¿öôÈ¿  ¿¿öôô¿öôπ¿öô©¿33”¿ÕÃÃ¿  ê¿  ê¿ÕÃú¿öô9¿33É¿ffñ¿33É¿ff¶¿  ¿¿ff∂¿33≥¿öô©¿ÕÃ‹¿ÕÃº¿öôô¿ffñ¿ÕÃº¿ffÊ¿ff∆¿  ¿ÕÃº¿33„¿ÕÃÃ¿  ‡¿33”¿öô…¿33„¿ffñ¿  `¿öôâ¿ÕÃú¿  ∞¿öô…¿  ê¿ÕÃº¿ÕÃ‹¿ÕÃº¿ÕÃº¿33Û¿ÕÃÏ¿ÕÃ‹¿33”¿ÕÃº¿ff¶¿ff∆¿ff∆¿  ê¿ffñ¿ff¶¿  ¿öô…¿  ‡¿öôô¿ff∂¿öô…¿öôŸ¿   ¡  ¡  ‡¿öôŸ¿ÕÃº¿ÕÃº¿öô©¿ff¡öôô¿33ì¿  †¿33£¿ÕÃº¿33s¿ÕÃ¨¿ffÊ¿ff∆¿33”¿öô¡öôŸ¿öô¡öô…¿öô˘¿33„¿öôÈ¿  ‡¿öô©¿ÕÃ¨¿33£¿33≥¿33”¿33¡ÕÃÏ¿ff&¡ffÊ¿   ¡ff∆¿  ‡¿öô©¿ff∂¿33”¿33”¿ffÊ¿ff¡ÕÃÃ¿ff∂¿ÕÃº¿33≥¿33”¿ff¡öôÈ¿ÕÃL¡ff¶¿33”¿  ‡¿  ê¿ffÊ¿33£¿  –¿öô˘¿33¡ffÊ¿ÕÃ¸¿  @¡ÕÃt¡33C¡ÕÃ¡  ¡33¡ÕÃ¡öô)¡ÕÃ¸¿ff¡öô¡33¡ÕÃ¡  ¡  8¡ff~¡öôQ¡   ¡  ‡¿33+¡ÕÃ<¡33¡öô¡  ¿ÕÃÏ¿  †¿ff&¡  †¿öôI¡ff∂¿33¡ÕÃ¨¿ff~D @~DöY~D Ä~D `~DÕÏ}D `~D3s~D @~DÕl~D xˇF33~D3s~DfÜ~D xˇF xˇF xˇF33~Döy~DÕ¨~Dff~DÕå~D xˇFöô~Döy~D xˇF xˇF3S~DÕå~DfÜ~D xˇFff~DÕå~DÕ¨~D ¿~D3≥~D ¿~D3≥~D Ä~D †~Df∆~Döπ~Dö˘~Df}DöŸ~Df¶~D3D33D xˇF xˇFöŸ~D3Û~D xˇFfD xˇFfFD33DÕD xˇF xˇF xˇFÕLDffD xˇFöŸD ¿D `Dö˘~DöYD xˇFfÜDf&D xˇF  DÕåD xˇF xˇF xˇFfÊDöÄDöÄDö	ÄD3≥D3ÄD  ÄD xˇF3≥D3ÄD ¿DfÊDöŸDfÊDÕÏDÕÃD3ÄDöŸDf6ÄD xˇF3SÄD3SÄD @ÄD xˇFÕ<ÄD ÄÄD3SÄD xˇF PÄD3SÄD xˇF ¿ÄDÕåÄD3#ÄDf6ÄD 0ÄD3cÄDÕ<ÄDöIÄDöiÄD xˇFÕ\ÄDÕ¨ÄD ÄÄD xˇF ¿ÄD 0ÅD ÄÄD xˇF3≥ÄDf¶ÄD3ÉÄD3sÄDÕúÄD ∞ÄD3≥ÄDö©ÄD3ÅD  ÅD xˇFÕ‹ÄDÕÃÄDÕ‹ÄDfÅD xˇF3ìÅD xˇF êÅD xˇFfÅD xˇFf&ÅDÕ|ÅDf6ÅDöiÅD xˇFöiÅD †ÅDö…ÅD pÅDfñÅDÕ|ÅD ÄÅD3sÅD pÅD xˇF xˇF xˇFö©ÅD xˇF ¿ÅD3√ÅD xˇFffÅD xˇF xˇF xˇFf∂ÅD ‡ÅD xˇF xˇF xˇF –ÅD xˇF †ÄD xˇF xˇFf÷ÅDÕ,ÅD xˇF xˇF

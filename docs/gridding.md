@@ -105,6 +105,34 @@ Parameter options:
 | `damping` | 0.25 | Station equivalents in the Barnes denominator |
 | `local_sigma`, `regional_sigma` | 150, 600 | km, the regression scales |
 | `bilateral_sigma_h` | 300 | m, height scale of the residuals, 0 for horizontal only |
+| `background` | none | A forecast or other gridded field which the observations correct, see below |
+
+### Correcting a background
+
+With a `background` the observations correct a gridded querydata producer, typically the
+latest forecast, instead of being gridded on their own. Where there are no observations, for
+example over the seas, the result is the background:
+
+```
+{
+	name = "Temperature";
+	background =
+	{
+		producer   = "ecmwf_europe";   # gridded querydata producer
+		parameter  = "Temperature";    # default: the gridded parameter
+		orography  = "GeopHeight";     # model orography (m) in the same producer, optional
+		lapse_rate = -6.5;             # K/km, default -6.5, or 0 for the barnes method
+		weight     = 0.7;              # weight of the corrected background
+	};
+}
+```
+
+The newest model run containing the requested time is used, interpolated to the grid. The
+background is moved from the model orography to the terrain heights with the lapse rate; without
+`orography` the model is assumed to see the same terrain. The corrected background is blended
+with the analysis of the observations alone by `weight` (0.7 gave the best scores with IFS
+forecasts, see `gis/docs/gis-pointgridding.md`), and where the background is missing the
+observations alone are used. A new model run changes the cache key of the gridded data.
 
 Producers reading observations need the observation engine; a plugin built without it accepts
 only point querydata producers. Wind cannot be gridded yet: it should be gridded as vector
@@ -162,6 +190,17 @@ The test configuration grids the European SYNOP point querydata of 2008-12-05 fr
 smartmet-test-data and the Finnish observations of the test database with a 20 km Europe
 terrain (`test/cnf/gridding/europe_3035_20km.tif`). The tests `obsgrid_*`,
 `wms_getmap_obsgrid_t2m`, `tiles_gettile_obsgrid` and `tiles_gettile_geotiff_obsgrid` draw and
-deliver them. Their requests and outputs are shown in the [Dali](examples/dali.md#gridded-observations),
+deliver them.
+
+The `obsgrid_bg_*` tests correct a background and draw the background alone for comparison:
+
+- `fmi_hirlam`: 189 FMI stations of 2013-03-19 12 UTC (`test/data/gridding/fmi_observations`,
+  from the cldb archive with `obs-gridding/fetch_archive_obs.py`) correct the HIRLAM test
+  forecast, which has its own orography (`GeopHeight`), on a 5 km Finland terrain
+  (`test/cnf/gridding/finland_3035_5km.tif`).
+- `ifs_europe_corrected`: 2966 European stations of 2026-01-21 06 UTC correct the +24 h ECMWF
+  IFS open data forecast (CC-BY-4.0, `test/data/gridding/ifs_europe`, made with
+  `obs-gridding/make_ifs_fixture.py`), whose orography is derived from its surface and sea
+  level pressures. The pressure tests show the correction fading out over the seas. Their requests and outputs are shown in the [Dali](examples/dali.md#gridded-observations),
 [WMS](examples/wms.md#getmap--gridded-observations) and
 [OGC API Tiles](examples/tiles.md#tiles_gettile_obsgrid) examples.

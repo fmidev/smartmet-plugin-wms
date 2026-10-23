@@ -6,10 +6,12 @@
 
 #pragma once
 
+#include <gis/CoordinateMatrix.h>
 #include <gis/PointGridding.h>
 #include <gis/SpatialReference.h>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -39,6 +41,10 @@ class Area
   // WGS84 bounding box of the grid with keys minx, miny, maxx, maxy
   const std::map<std::string, double>& lonlatBBox() const { return itsBBox; }
 
+  // WGS84 coordinates of the grid cell centres in grid order, computed on first use. Cells
+  // which cannot be projected are NaN.
+  const Fmi::CoordinateMatrix& lonlats() const;
+
   std::size_t hashValue() const { return itsHash; }
 
  private:
@@ -46,6 +52,9 @@ class Area
   std::string itsWkt;
   std::map<std::string, double> itsBBox;
   std::size_t itsHash = 0;
+
+  mutable std::once_flag itsLonLatsFlag;
+  mutable std::unique_ptr<Fmi::CoordinateMatrix> itsLonLats;
 };
 
 }  // namespace Gridding

@@ -87,14 +87,20 @@ class Gridder
   Fmi::Cache::CacheStatistics getCacheStats() const;
 
  private:
+  // The background models of the parameters, null where there is none
+  using Backgrounds = std::vector<Engine::Querydata::Q>;
+
   const ProducerConfig& producer(const std::string& theProducer) const;
   StationData read(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const;
+  Backgrounds backgrounds(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const;
   std::size_t dataHash(const ProducerConfig& theProducer,
                        const Fmi::DateTime& theTime,
-                       const StationData& theData) const;
+                       const StationData& theData,
+                       const Backgrounds& theBackgrounds) const;
   Engine::Querydata::SharedModel grid(const ProducerConfig& theProducer,
                                       const Fmi::DateTime& theTime,
-                                      const StationData& theData) const;
+                                      const StationData& theData,
+                                      const Backgrounds& theBackgrounds) const;
 
   Config itsConfig;
   std::map<std::string, std::unique_ptr<Area>> itsAreas;

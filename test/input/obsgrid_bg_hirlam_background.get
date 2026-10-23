@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=obsgrid_bg_hirlam_background&time=201303191200 HTTP/1.0

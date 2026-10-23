@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=obsgrid_bg_ifs_background&time=202601210600 HTTP/1.0
