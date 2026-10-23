@@ -199,7 +199,8 @@ The `obsgrid_bg_*` tests correct a background and draw the background alone for 
 - `fmi_hirlam`: 189 FMI stations of 2013-03-19 12 UTC (`test/data/gridding/fmi_observations`,
   from the cldb archive with `obs-gridding/fetch_archive_obs.py`) correct the HIRLAM test
   forecast, which has its own orography (`GeopHeight`), on a 5 km Finland terrain
-  (`test/cnf/gridding/finland_3035_5km.tif`).
+  (`test/cnf/gridding/finland_3035_5km.tif`). The cropped test HIRLAM is a strip only about 400 km wide,
+  so the test also shows the background fading out at the edges of its data.
 - `ifs_europe_corrected`: 2966 European stations of 2026-01-21 06 UTC correct the +24 h ECMWF
   IFS open data forecast (CC-BY-4.0, `test/data/gridding/ifs_europe`, made with
   `obs-gridding/make_ifs_fixture.py`), whose orography is derived from its surface and sea
