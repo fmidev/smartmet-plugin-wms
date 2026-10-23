@@ -3525,3 +3525,47 @@ database holds Finnish stations only, so the field is defined by them alone.
 ![obsgrid_opendata_temperature](../images/dali/obsgrid_opendata_temperature.png)
 
 ---
+
+### obsgrid_bg_* — Observations correcting a forecast
+
+With a `background` setting the observations correct a forecast instead of being gridded on
+their own (see [Correcting a background](../gridding.md#correcting-a-background)). Each case
+has the forecast alone and the corrected analysis on the same map, both with the stations drawn
+as circles coloured like the isobands: on the forecast they show where it goes wrong, on the
+corrected analysis they blend in.
+
+| Test | Producer | Time | Product |
+|------|----------|------|---------|
+| [`obsgrid_bg_ifs_background`](../../test/input/obsgrid_bg_ifs_background.get) | `ifs_europe` | 2026-01-21 06 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_ifs_background.json) |
+| [`obsgrid_bg_ifs_temperature`](../../test/input/obsgrid_bg_ifs_temperature.get) | `ifs_europe_corrected` | 2026-01-21 06 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_ifs_temperature.json) |
+| [`obsgrid_bg_ifs_pressure_background`](../../test/input/obsgrid_bg_ifs_pressure_background.get) | `ifs_europe` | 2026-01-21 06 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_ifs_pressure_background.json) |
+| [`obsgrid_bg_ifs_pressure`](../../test/input/obsgrid_bg_ifs_pressure.get) | `ifs_europe_corrected` | 2026-01-21 06 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_ifs_pressure.json) |
+| [`obsgrid_bg_hirlam_background`](../../test/input/obsgrid_bg_hirlam_background.get) | `hirlam` | 2013-03-19 12 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_hirlam_background.json) |
+| [`obsgrid_bg_hirlam_temperature`](../../test/input/obsgrid_bg_hirlam_temperature.get) | `fmi_hirlam` | 2013-03-19 12 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_hirlam_temperature.json) |
+
+**ECMWF IFS +24 h temperature corrected by 2966 European stations.** The winter morning
+forecast was too warm in Finland and the Baltic countries and too cold in places in
+Scandinavia; the corrected analysis follows the stations and keeps the forecast over the seas.
+
+| Forecast | Corrected |
+|----------|-----------|
+| ![obsgrid_bg_ifs_background](../images/dali/obsgrid_bg_ifs_background.png) | ![obsgrid_bg_ifs_temperature](../images/dali/obsgrid_bg_ifs_temperature.png) |
+
+**Sea level pressure, method `barnes` without a height dependency.** The Atlantic low keeps
+its forecast depth where there are no observations, and the stations adjust it near the
+coasts.
+
+| Forecast | Corrected |
+|----------|-----------|
+| ![obsgrid_bg_ifs_pressure_background](../images/dali/obsgrid_bg_ifs_pressure_background.png) | ![obsgrid_bg_ifs_pressure](../images/dali/obsgrid_bg_ifs_pressure.png) |
+
+**HIRLAM +36 h temperature corrected by 189 FMI stations on a 5 km terrain.** HIRLAM's own
+orography moves the forecast to the actual heights. The cropped test HIRLAM covers only the
+slanted strip of the left image; outside it the observations alone are used, and the
+background fades out over about 50 km from the edges of its data.
+
+| Forecast | Corrected |
+|----------|-----------|
+| ![obsgrid_bg_hirlam_background](../images/dali/obsgrid_bg_hirlam_background.png) | ![obsgrid_bg_hirlam_temperature](../images/dali/obsgrid_bg_hirlam_temperature.png) |
+
+---
