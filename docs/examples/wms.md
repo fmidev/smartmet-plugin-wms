@@ -27,6 +27,7 @@ The WMS tests exercise the `/wms` endpoint.  Test inputs are in [`test/input/wms
 - [GetMap — Symbol style](#getmap--symbol-style)
 - [GetMap — Error handling](#getmap--error-handling)
 - [GetMap — Grid Engine layers](#getmap--grid-engine-layers)
+- [GetMap — OpenStreetMap background](#getmap--openstreetmap-background)
 - [GetFeatureInfo](#getfeatureinfo)
 - [GetLegendGraphic](#getlegendgraphic) — see also the [Legend Examples](legends.md) page
 
@@ -1038,6 +1039,42 @@ Streamline traces driven by U/V wind components, served from both grid and Query
 (Same image as [`wms_getmap_png`](#wms_getmap_png-epsg4326-png) above — `wmsmap` is the underlying product name.)
 
 ---
+
+## GetMap — OpenStreetMap background
+
+The `test:osm` layer ([`test/wms/customers/test/products/osm.json`](../../test/wms/customers/test/products/osm.json)) renders the OSM engine's vector tile data as a non-temporal background layer, with one variant per style (`test:osm:meteo-light`, `test:osm:meteo-dark`, `test:osm:meteo-white`, `test:osm:protomaps-light`).  The tests use the small OpenStreetMap extract described in [`test/osm/README.md`](../../test/osm/README.md); see also the [OpenStreetMap examples](dali.md#openstreetmap-background-maps) of the Dali interface.  Map data © OpenStreetMap contributors.
+
+### wms_getmap_osm / wms_getmap_osm_dark
+
+**Input:** [`test/input/wms_getmap_osm.get`](../../test/input/wms_getmap_osm.get), [`test/input/wms_getmap_osm_dark.get`](../../test/input/wms_getmap_osm_dark.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:osm:meteo-light&styles=
+    &crs=EPSG:3067&bbox=365000,6657000,410000,6694500
+    &width=600&height=500&format=image/png HTTP/1.0
+```
+
+The Helsinki area with the light and dark meteorological styles.
+
+![wms_getmap_osm](../images/wms/wms_getmap_osm.png)
+
+![wms_getmap_osm_dark](../images/wms/wms_getmap_osm_dark.png)
+
+### wms_getmap_osm_with_data
+
+**Input:** [`test/input/wms_getmap_osm_with_data.get`](../../test/input/wms_getmap_osm_with_data.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:osm:meteo-light,test:precipitation_areas&styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500&format=image/png&time=20080805120000 HTTP/1.0
+```
+
+The OSM background combined with a weather layer in one request.  The background comes from the coarse world data of the extract.
+
+![wms_getmap_osm_with_data](../images/wms/wms_getmap_osm_with_data.png)
 
 ## GetFeatureInfo
 

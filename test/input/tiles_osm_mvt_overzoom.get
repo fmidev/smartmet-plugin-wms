@@ -1,1 +1,1 @@
-GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3857/9/148/291?f=mvt HTTP/1.0
+GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3857/14/4745/9341?f=mvt HTTP/1.0

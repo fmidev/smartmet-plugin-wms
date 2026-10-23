@@ -40,6 +40,7 @@ Each request URL is decomposed into a table showing every query parameter and it
 - [Text Layer](#text-layer)
 - [Map simplification](#map-simplification)
 - [World Map Products](#world-map-products)
+- [OpenStreetMap Background Maps](#openstreetmap-background-maps)
 
 ---
 
@@ -3304,3 +3305,114 @@ All GFS world products use the `gfs` producer.  In addition to the five standard
 
 ---
 
+## OpenStreetMap Background Maps
+
+The `osm` layer renders the vector tile datasets of the OSM engine with MapLibre styles (see [OSMLayer](../reference.md#osmlayer)).  The tests below use a small OpenStreetMap extract committed with the tests: Helsinki in detail (zoom levels 0-12) and the whole world coarsely (zoom levels 0-4), see [`test/osm/README.md`](../../test/osm/README.md).  Map data © OpenStreetMap contributors, available under the Open Database License.
+
+The `osm` product ([`test/dali/customers/test/products/osm.json`](../../test/dali/customers/test/products/osm.json)) shows the Helsinki area in ETRS-TM35FIN:
+
+```json
+{
+    "qid": "osm",
+    "layer_type": "osm",
+    "dataset": "extract",
+    "style": "meteo-light"
+}
+```
+
+The layer settings can be overridden in the request with the `osm.` prefix, for example `osm.style=meteo-dark`, `osm.labels=0` or `osm.zoom=3`.
+
+### Styles
+
+The `meteo-*` styles are muted backgrounds for weather data, the `protomaps-*` styles general purpose basemaps.
+
+| Test | Style | Input |
+|------|-------|-------|
+| `osm_helsinki_meteo_light` | `meteo-light` (the product default) | [`osm_helsinki_meteo_light.get`](../../test/input/osm_helsinki_meteo_light.get) |
+| `osm_helsinki_meteo_dark` | `meteo-dark` | [`osm_helsinki_meteo_dark.get`](../../test/input/osm_helsinki_meteo_dark.get) |
+| `osm_helsinki_meteo_white` | `meteo-white` | [`osm_helsinki_meteo_white.get`](../../test/input/osm_helsinki_meteo_white.get) |
+| `osm_helsinki_protomaps_light` | `protomaps-light` | [`osm_helsinki_protomaps_light.get`](../../test/input/osm_helsinki_protomaps_light.get) |
+| `osm_helsinki_protomaps_dark` | `protomaps-dark` | [`osm_helsinki_protomaps_dark.get`](../../test/input/osm_helsinki_protomaps_dark.get) |
+| `osm_helsinki_svg` | `meteo-light`, SVG output | [`osm_helsinki_svg.get`](../../test/input/osm_helsinki_svg.get) |
+
+| Style | Output |
+|-------|--------|
+| meteo-light | ![osm_helsinki_meteo_light](../images/dali/osm_helsinki_meteo_light.png) |
+| meteo-dark | ![osm_helsinki_meteo_dark](../images/dali/osm_helsinki_meteo_dark.png) |
+| meteo-white | ![osm_helsinki_meteo_white](../images/dali/osm_helsinki_meteo_white.png) |
+| protomaps-light | ![osm_helsinki_protomaps_light](../images/dali/osm_helsinki_protomaps_light.png) |
+| protomaps-dark | ![osm_helsinki_protomaps_dark](../images/dali/osm_helsinki_protomaps_dark.png) |
+| meteo-light (SVG) | ![osm_helsinki_svg](../images/dali/osm_helsinki_svg.png) |
+
+### Labels and weather data overlays
+
+`osm_no_labels` ([input](../../test/input/osm_no_labels.get)) disables the labels with `osm.labels=0`.
+
+`osm_overlay` ([input](../../test/input/osm_overlay.get)) places weather data between the background and its labels.  The product ([`osm_overlay.json`](../../test/dali/customers/test/products/osm_overlay.json)) uses the same style twice: first without the place, boundary and water labels (`"exclude"`), then only them (`"include"`) on top of a semi-transparent WKT polygon over central Helsinki.  The second layer also draws the attribution (`"attribution": true`).
+
+| Test | Output |
+|------|--------|
+| `osm_no_labels` | ![osm_no_labels](../images/dali/osm_no_labels.png) |
+| `osm_overlay` | ![osm_overlay](../images/dali/osm_overlay.png) |
+
+### Zoom levels and data resolution
+
+The style zoom level is chosen from the map resolution, and the tiles are read from the most detailed data file covering them.
+
+- `osm_overzoom` ([input](../../test/input/osm_overzoom.get)) shows a 2×2 km area of downtown Helsinki, beyond zoom level 12 of the data.  The tiles are cut from their zoom level 12 ancestors.
+- `osm_mixed_resolution` ([input](../../test/input/osm_mixed_resolution.get)) straddles the eastern edge of the detailed Helsinki data in Web Mercator.  The western part comes from the detailed file, the eastern part from the coarse world file.
+- `osm_fixed_zoom` ([input](../../test/input/osm_fixed_zoom.get)) forces style zoom level 3 with `osm.zoom=3`, which shows the coarse world data even at the Helsinki scale.
+
+| Test | Output |
+|------|--------|
+| `osm_overzoom` | ![osm_overzoom](../images/dali/osm_overzoom.png) |
+| `osm_mixed_resolution` | ![osm_mixed_resolution](../images/dali/osm_mixed_resolution.png) |
+| `osm_fixed_zoom` | ![osm_fixed_zoom](../images/dali/osm_fixed_zoom.png) |
+
+### Projections
+
+The vector tiles are in Web Mercator, but the layer can be drawn in any projection.  These tests use the coarse world data.
+
+| Test | Projection | CRS | Input |
+|------|-----------|-----|-------|
+| `osm_europe_laea` | Lambert Azimuthal Equal Area (Europe) | `EPSG:3035` | [`osm_europe_laea.get`](../../test/input/osm_europe_laea.get) |
+| `osm_polar_stereographic` | Arctic Polar Stereographic | `EPSG:3995` | [`osm_polar_stereographic.get`](../../test/input/osm_polar_stereographic.get) |
+| `osm_webmercator` | Web Mercator | `EPSG:3857` | [`osm_webmercator.get`](../../test/input/osm_webmercator.get) |
+| `osm_world_robinson` | Robinson | `ESRI:54030` | [`osm_world_robinson.get`](../../test/input/osm_world_robinson.get) |
+| `osm_world_wgs84` | Geographic WGS84 | `WGS84` | [`osm_world_wgs84.get`](../../test/input/osm_world_wgs84.get) |
+
+| Projection | Output |
+|-----------|--------|
+| LAEA Europe | ![osm_europe_laea](../images/dali/osm_europe_laea.png) |
+| Polar Stereographic | ![osm_polar_stereographic](../images/dali/osm_polar_stereographic.png) |
+| Web Mercator | ![osm_webmercator](../images/dali/osm_webmercator.png) |
+| Robinson | ![osm_world_robinson](../images/dali/osm_world_robinson.png) |
+| WGS84 | ![osm_world_wgs84](../images/dali/osm_world_wgs84.png) |
+
+`osm_unknown_dataset` and `osm_unknown_style` check that an unknown `osm.dataset` or `osm.style` is an error.
+
+### Full OpenStreetMap data
+
+The `osmdata_*` tests render the full Protomaps OpenStreetMap build with the `osmdata` product ([`osmdata.json`](../../test/dali/customers/test/products/osmdata.json)).  The data is not distributed with the tests, so they run only when it is installed, see [`test/osm/README.md`](../../test/osm/README.md).
+
+| Test | Style | CRS | Output |
+|------|-------|-----|--------|
+| [`osmdata_world_meteo_light`](../../test/input/osmdata_world_meteo_light.get) | `meteo-light` | `WGS84` | ![osmdata_world_meteo_light](../images/dali/osmdata_world_meteo_light.png) |
+| [`osmdata_world_meteo_dark`](../../test/input/osmdata_world_meteo_dark.get) | `meteo-dark` | `WGS84` | ![osmdata_world_meteo_dark](../images/dali/osmdata_world_meteo_dark.png) |
+| [`osmdata_world_robinson_positrino`](../../test/input/osmdata_world_robinson_positrino.get) | `versatiles-positrino` | `ESRI:54030` | ![osmdata_world_robinson_positrino](../images/dali/osmdata_world_robinson_positrino.png) |
+| [`osmdata_europe_meteo_light`](../../test/input/osmdata_europe_meteo_light.get) | `meteo-light` | `EPSG:3035` | ![osmdata_europe_meteo_light](../images/dali/osmdata_europe_meteo_light.png) |
+| [`osmdata_europe_meteo_white`](../../test/input/osmdata_europe_meteo_white.get) | `meteo-white` | `EPSG:3035` | ![osmdata_europe_meteo_white](../images/dali/osmdata_europe_meteo_white.png) |
+| [`osmdata_europe_positrino_dark`](../../test/input/osmdata_europe_positrino_dark.get) | `versatiles-positrino-dark` | `EPSG:3035` | ![osmdata_europe_positrino_dark](../images/dali/osmdata_europe_positrino_dark.png) |
+| [`osmdata_europe_protomaps_grayscale`](../../test/input/osmdata_europe_protomaps_grayscale.get) | `protomaps-grayscale` | `EPSG:3035` | ![osmdata_europe_protomaps_grayscale](../images/dali/osmdata_europe_protomaps_grayscale.png) |
+| [`osmdata_scandinavia_meteo_light`](../../test/input/osmdata_scandinavia_meteo_light.get) | `meteo-light` | `EPSG:3067` | ![osmdata_scandinavia_meteo_light](../images/dali/osmdata_scandinavia_meteo_light.png) |
+| [`osmdata_scandinavia_meteo_dark`](../../test/input/osmdata_scandinavia_meteo_dark.get) | `meteo-dark` | `EPSG:3067` | ![osmdata_scandinavia_meteo_dark](../images/dali/osmdata_scandinavia_meteo_dark.png) |
+| [`osmdata_scandinavia_protomaps_light`](../../test/input/osmdata_scandinavia_protomaps_light.get) | `protomaps-light` | `EPSG:3067` | ![osmdata_scandinavia_protomaps_light](../images/dali/osmdata_scandinavia_protomaps_light.png) |
+| [`osmdata_scandinavia_protomaps_white`](../../test/input/osmdata_scandinavia_protomaps_white.get) | `protomaps-white` | `EPSG:3067` | ![osmdata_scandinavia_protomaps_white](../images/dali/osmdata_scandinavia_protomaps_white.png) |
+| [`osmdata_scandinavia_versatiles_gray`](../../test/input/osmdata_scandinavia_versatiles_gray.get) | `versatiles-gray` | `EPSG:3067` | ![osmdata_scandinavia_versatiles_gray](../images/dali/osmdata_scandinavia_versatiles_gray.png) |
+| [`osmdata_finland_meteo_light`](../../test/input/osmdata_finland_meteo_light.get) | `meteo-light` | `EPSG:3067` | ![osmdata_finland_meteo_light](../images/dali/osmdata_finland_meteo_light.png) |
+| [`osmdata_finland_positrino`](../../test/input/osmdata_finland_positrino.get) | `versatiles-positrino` | `EPSG:3067` | ![osmdata_finland_positrino](../images/dali/osmdata_finland_positrino.png) |
+| [`osmdata_helsinki_meteo_light`](../../test/input/osmdata_helsinki_meteo_light.get) | `meteo-light` | `EPSG:3067` | ![osmdata_helsinki_meteo_light](../images/dali/osmdata_helsinki_meteo_light.png) |
+| [`osmdata_helsinki_protomaps_light`](../../test/input/osmdata_helsinki_protomaps_light.get) | `protomaps-light` | `EPSG:3067` | ![osmdata_helsinki_protomaps_light](../images/dali/osmdata_helsinki_protomaps_light.png) |
+| [`osmdata_helsinki_protomaps_dark`](../../test/input/osmdata_helsinki_protomaps_dark.get) | `protomaps-dark` | `EPSG:3067` | ![osmdata_helsinki_protomaps_dark](../images/dali/osmdata_helsinki_protomaps_dark.png) |
+
+---

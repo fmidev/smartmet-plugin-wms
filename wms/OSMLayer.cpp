@@ -25,6 +25,7 @@
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <ogr_geometry.h>
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <string>
@@ -59,6 +60,61 @@ std::string getAttribute(const Fmi::Feature& feature, const std::string& key)
           return Fmi::to_iso_string(v);
       },
       it->second);
+}
+
+// Add an SVG element to a group. Text halos are marked with paint-order="stroke", which older
+// librsvg versions (2.42 in RHEL8) ignore, drawing the halo over the text. Such text is drawn
+// twice instead: first the halo alone, then the text without a stroke on top of it.
+void addElement(CTPP::CDT& theGroup,
+                const std::string& theTag,
+                const std::vector<std::pair<std::string, std::string>>& theAttributes,
+                const std::string& theContent)
+{
+  auto make_tag = [&](auto&& theSelect)
+  {
+    CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+    tag_cdt["start"] = "<" + theTag;
+    for (const auto& [name, value] : theAttributes)
+      theSelect(tag_cdt["attributes"], name, value);
+    if (theContent.empty())
+      tag_cdt["end"] = "/>";
+    else
+      tag_cdt["end"] = ">" + theContent + "</" + theTag + ">";
+    return tag_cdt;
+  };
+
+  const auto halo =
+      std::find(theAttributes.begin(),
+                theAttributes.end(),
+                std::pair<std::string, std::string>{"paint-order", "stroke"}) != theAttributes.end();
+
+  if (!halo)
+  {
+    theGroup.PushBack(make_tag([](CTPP::CDT& attrs, const std::string& name,
+                                  const std::string& value) { attrs[name] = value; }));
+    return;
+  }
+
+  // The halo: the stroke, and the fill in the stroke colour
+  theGroup.PushBack(make_tag(
+      [&](CTPP::CDT& attrs, const std::string& name, const std::string& value)
+      {
+        if (name == "paint-order" || name == "fill" || name == "fill-opacity")
+          return;
+        attrs[name] = value;
+        if (name == "stroke")
+          attrs["fill"] = value;
+        else if (name == "stroke-opacity")
+          attrs["fill-opacity"] = value;
+      }));
+
+  // The text without a stroke
+  theGroup.PushBack(make_tag(
+      [](CTPP::CDT& attrs, const std::string& name, const std::string& value)
+      {
+        if (name != "paint-order" && name.compare(0, 6, "stroke") != 0)
+          attrs[name] = value;
+      }));
 }
 
 // Convert Fmi::Attribute to MVTValue for Mapbox Vector Tile output
@@ -713,34 +769,21 @@ void OSMLayer::generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
     for (const auto& element : scene->elements)
-    {
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<" + element.tag;
-      for (const auto& [name, value] : element.attributes)
-        tag_cdt["attributes"][name] = value;
-      if (element.content.empty())
-        tag_cdt["end"] = "/>";
-      else
-        tag_cdt["end"] = ">" + element.content + "</" + element.tag + ">";
-      group_cdt["tags"].PushBack(tag_cdt);
-    }
+      addElement(group_cdt["tags"], element.tag, element.attributes, element.content);
 
     if (itsAttribution && !scene->attribution.empty())
-    {
-      CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-      text_cdt["start"] = "<text";
-      text_cdt["attributes"]["x"] = Fmi::to_string(static_cast<long>(scene->width) - 4);
-      text_cdt["attributes"]["y"] = Fmi::to_string(static_cast<long>(scene->height) - 4);
-      text_cdt["attributes"]["text-anchor"] = "end";
-      text_cdt["attributes"]["font-family"] = itsOptions.fontFamily;
-      text_cdt["attributes"]["font-size"] = "10";
-      text_cdt["attributes"]["fill"] = "#333333";
-      text_cdt["attributes"]["stroke"] = "#ffffff";
-      text_cdt["attributes"]["stroke-width"] = "2";
-      text_cdt["attributes"]["paint-order"] = "stroke";
-      text_cdt["end"] = ">" + Fmi::safexmlescape(scene->attribution) + "</text>";
-      group_cdt["tags"].PushBack(text_cdt);
-    }
+      addElement(group_cdt["tags"],
+                 "text",
+                 {{"x", Fmi::to_string(static_cast<long>(scene->width) - 4)},
+                  {"y", Fmi::to_string(static_cast<long>(scene->height) - 4)},
+                  {"text-anchor", "end"},
+                  {"font-family", itsOptions.fontFamily},
+                  {"font-size", "10"},
+                  {"fill", "#333333"},
+                  {"stroke", "#ffffff"},
+                  {"stroke-width", "2"},
+                  {"paint-order", "stroke"}},
+                 Fmi::safexmlescape(scene->attribution));
 
     theLayersCdt.PushBack(group_cdt);
   }

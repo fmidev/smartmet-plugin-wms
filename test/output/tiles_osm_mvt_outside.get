@@ -3,6 +3,8 @@ layers {
   features {
     tags: 0
     tags: 0
+    tags: 1
+    tags: 1
     type: POLYGON
     geometry: 9
     geometry: 127
@@ -16,7 +18,11 @@ layers {
     geometry: 8448
     geometry: 15
   }
+  keys: "sort_rank"
   keys: "kind"
+  values {
+    sint_value: 200
+  }
   values {
     string_value: "ocean"
   }

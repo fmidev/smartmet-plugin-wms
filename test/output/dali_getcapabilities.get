@@ -3359,8 +3359,8 @@
         {
           "image" : 
           {
-            "height" : 600,
-            "width" : 500
+            "height" : 500,
+            "width" : 600
           },
           "name" : "osm",
           "path" : 
@@ -3372,8 +3372,8 @@
           {
             "bboxcrs" : "EPSG:3067",
             "crs" : "EPSG:3067",
-            "xsize" : 500,
-            "ysize" : 600
+            "xsize" : 600,
+            "ysize" : 500
           },
           "title" : "OpenStreetMap background",
           "url_template" : "/dali?customer=test&product=osm&time={time}"
@@ -3381,8 +3381,8 @@
         {
           "image" : 
           {
-            "height" : 600,
-            "width" : 500
+            "height" : 500,
+            "width" : 600
           },
           "name" : "osm_overlay",
           "path" : 
@@ -3394,8 +3394,8 @@
           {
             "bboxcrs" : "EPSG:3067",
             "crs" : "EPSG:3067",
-            "xsize" : 500,
-            "ysize" : 600
+            "xsize" : 600,
+            "ysize" : 500
           },
           "title" : "Weather data between an OpenStreetMap background and its labels",
           "url_template" : "/dali?customer=test&product=osm_overlay&time={time}"

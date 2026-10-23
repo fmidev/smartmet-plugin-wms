@@ -5,9 +5,9 @@
 	"qid": "p",
 	"crs": "EPSG:3067",
 	"bboxcrs": "EPSG:3067",
-	"bbox": "-100000,6600000,900000,7800000",
-	"xsize": 500,
-	"ysize": 600
+	"bbox": "365000,6657000,410000,6694500",
+	"xsize": 600,
+	"ysize": 500
     },
     "views":
     [
@@ -18,14 +18,14 @@
 		{
 		    "qid": "base",
 		    "layer_type": "osm",
-		    "dataset": "synthetic",
+		    "dataset": "extract",
 		    "style": "meteo-light",
 		    "exclude": ["places_*", "boundaries*", "water_label_*"]
 		},
 		{
 		    "qid": "data",
 		    "layer_type": "wkt",
-		    "wkt": "POLYGON((18 58,30 58,30 66,18 66,18 58))",
+		    "wkt": "POLYGON((24.85 60.12,25.1 60.12,25.1 60.25,24.85 60.25,24.85 60.12))",
 		    "resolution": 10,
 		    "attributes":
 		    {
@@ -36,7 +36,7 @@
 		{
 		    "qid": "labels",
 		    "layer_type": "osm",
-		    "dataset": "synthetic",
+		    "dataset": "extract",
 		    "style": "meteo-light",
 		    "include": ["places_*", "boundaries*", "water_label_*"],
 		    "attribution": true

@@ -5,9 +5,9 @@
 	"qid": "p",
 	"crs": "EPSG:3067",
 	"bboxcrs": "EPSG:3067",
-	"bbox": "-100000,6600000,900000,7800000",
-	"xsize": 500,
-	"ysize": 600
+	"bbox": "365000,6657000,410000,6694500",
+	"xsize": 600,
+	"ysize": 500
     },
     "views":
     [
@@ -18,7 +18,7 @@
 		{
 		    "qid": "osm",
 		    "layer_type": "osm",
-		    "dataset": "synthetic",
+		    "dataset": "extract",
 		    "style": "meteo-light"
 		}
 	    ]

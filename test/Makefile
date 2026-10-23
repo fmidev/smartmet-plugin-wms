@@ -95,7 +95,7 @@ clean:	clean-valkey
 
 test: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
-	@if ./ParallelTestRunner.sh $(WMS_TEST_SHARDS); then \
+	@if ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(ALL_TESTS); then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \

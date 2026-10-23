@@ -204,3 +204,49 @@ GET /tiles/collections/test:t2m_circles/tiles/EPSG:4326/5/4/36?f=mvt&TIME=200808
 Returns circle-layer data (station point positions with radius attributes) as MVT `Point` features.
 
 **Output:** [`test/output/tiles_gettile_mvt_circles.get`](../../test/output/tiles_gettile_mvt_circles.get) — MVT (binary)
+
+## OpenStreetMap tiles and styles
+
+The `test:osm:meteo-light` collection renders the OSM engine's vector tile data (see [`test/osm/README.md`](../../test/osm/README.md) for the test extract and [the Dali examples](dali.md#openstreetmap-background-maps) for rendered maps).  Map data © OpenStreetMap contributors.
+
+### tiles_osm_png / tiles_osm_png_etrs_tm35fin
+
+**Input:** [`test/input/tiles_osm_png.get`](../../test/input/tiles_osm_png.get), [`test/input/tiles_osm_png_etrs_tm35fin.get`](../../test/input/tiles_osm_png_etrs_tm35fin.get)
+
+```
+GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3857/10/296/582?f=png HTTP/1.0
+GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3067/6/52/28?f=png HTTP/1.0
+```
+
+Rendered tiles over Helsinki in the Web Mercator and the ETRS-TM35FIN tile matrix sets.
+
+| Tile matrix set | Output |
+|-----------------|--------|
+| EPSG:3857 | ![tiles_osm_png](../images/tiles/tiles_osm_png.png) |
+| EPSG:3067 | ![tiles_osm_png_etrs_tm35fin](../images/tiles/tiles_osm_png_etrs_tm35fin.png) |
+
+### tiles_osm_mvt / tiles_osm_mvt_overzoom / tiles_osm_mvt_outside
+
+**Input:** [`test/input/tiles_osm_mvt.get`](../../test/input/tiles_osm_mvt.get), [`test/input/tiles_osm_mvt_overzoom.get`](../../test/input/tiles_osm_mvt_overzoom.get), [`test/input/tiles_osm_mvt_outside.get`](../../test/input/tiles_osm_mvt_outside.get)
+
+```
+GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3857/12/1186/2335?f=mvt HTTP/1.0
+GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3857/14/4745/9341?f=mvt HTTP/1.0
+GET /tiles/collections/test:osm:meteo-light/tiles/EPSG:3857/9/100/100?f=mvt HTTP/1.0
+```
+
+The vector tiles of an OSM collection are returned directly from the dataset.  The first tile is a zoom level 12 tile of the Helsinki archipelago as stored, the second its zoom level 14 descendant cut from it (the data ends at zoom level 12), and the third a tile in the Canadian Arctic, outside the detailed data, cut from the coarse world data.
+
+**Output:** [`test/output/tiles_osm_mvt.get`](../../test/output/tiles_osm_mvt.get), [`test/output/tiles_osm_mvt_overzoom.get`](../../test/output/tiles_osm_mvt_overzoom.get), [`test/output/tiles_osm_mvt_outside.get`](../../test/output/tiles_osm_mvt_outside.get) — MVT (decoded)
+
+### tiles_osm_style
+
+**Input:** [`test/input/tiles_osm_style.get`](../../test/input/tiles_osm_style.get)
+
+```
+GET /tiles/collections/test:osm:meteo-light/styles/default HTTP/1.0
+```
+
+Returns the MapLibre style of the collection (OGC API — Styles), with the tile URL template pointing back to the collection's vector tiles.
+
+**Output:** [`test/output/tiles_osm_style.get`](../../test/output/tiles_osm_style.get) — JSON

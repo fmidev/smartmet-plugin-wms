@@ -33,7 +33,7 @@
 		{
 		    "qid": "osm",
 		    "layer_type": "osm",
-		    "dataset": "synthetic",
+		    "dataset": "extract",
 		    "style": "meteo-light"
 		}
 	    ]

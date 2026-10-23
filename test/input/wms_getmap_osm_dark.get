@@ -1,1 +1,1 @@
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:osm:meteo-dark&styles=&crs=EPSG:3067&bbox=-100000,6600000,900000,7800000&width=500&height=600&format=image/png HTTP/1.0
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:osm:meteo-dark&styles=&crs=EPSG:3067&bbox=365000,6657000,410000,6694500&width=600&height=500&format=image/png HTTP/1.0

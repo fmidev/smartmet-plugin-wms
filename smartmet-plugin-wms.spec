@@ -190,6 +190,8 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-3.fmi
 - Removed the GTiff creation option WRITE_DATETIME_METADATA which GDAL does not know and warned about on every GeoTIFF request
 - Test for gridded pressure with the plain Barnes method
+- OSM layer text halos are drawn as separate elements, older librsvg (RHEL8) ignored paint-order and drew the halo over the text
+- OSM tests use a small OpenStreetMap extract (Helsinki and the world) instead of fictional data
 
 * Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-2.fmi
 - GeoTIFF output (OGC Tiles f=tiff) works for querydata layers too, not only for the grid engine

@@ -1,24 +1,139 @@
 layers {
   name: "earth"
   features {
-    tags: 0
-    tags: 0
+    tags: 2
+    tags: 4
     type: POLYGON
     geometry: 9
-    geometry: 8320
     geometry: 127
-    geometry: 26
+    geometry: 780
+    geometry: 202
+    geometry: 80
+    geometry: 83
     geometry: 0
-    geometry: 8448
-    geometry: 8447
+    geometry: 119
+    geometry: 160
+    geometry: 95
     geometry: 0
+    geometry: 119
+    geometry: 87
+    geometry: 183
+    geometry: 79
+    geometry: 55
+    geometry: 15
+    geometry: 63
+    geometry: 40
+    geometry: 39
+    geometry: 160
+    geometry: 79
+    geometry: 120
     geometry: 0
-    geometry: 8447
+    geometry: 96
+    geometry: 72
+    geometry: 24
+    geometry: 64
+    geometry: 23
+    geometry: 80
+    geometry: 95
+    geometry: 104
+    geometry: 72
+    geometry: 160
+    geometry: 224
+    geometry: 280
+    geometry: 63
+    geometry: 80
+    geometry: 40
+    geometry: 104
+    geometry: 151
+    geometry: 32
+    geometry: 55
+    geometry: 55
+    geometry: 39
+    geometry: 16
+    geometry: 96
+    geometry: 552
+    geometry: 167
+    geometry: 304
+    geometry: 263
+    geometry: 48
+    geometry: 63
+    geometry: 23
     geometry: 15
   }
+  keys: "name"
+  keys: "name:sv"
   keys: "kind"
+  keys: "name:fi"
+  values {
+    string_value: "Trutlandet"
+  }
+  values {
+    string_value: "island"
+  }
+  values {
+    string_value: "Hanskinen"
+  }
+  values {
+    string_value: "Handskholmen"
+  }
   values {
     string_value: "earth"
+  }
+  extent: 4096
+  version: 2
+}
+layers {
+  name: "pois"
+  features {
+    tags: 0
+    tags: 7
+    tags: 1
+    tags: 7
+    tags: 2
+    tags: 8
+    tags: 3
+    tags: 2
+    tags: 4
+    tags: 9
+    type: POINT
+    geometry: 9
+    geometry: 71
+    geometry: 984
+  }
+  keys: "name"
+  keys: "name:fi"
+  keys: "name:sv"
+  keys: "kind"
+  keys: "min_zoom"
+  values {
+    string_value: "Eestiluoto"
+  }
+  values {
+    string_value: "Estlotan"
+  }
+  values {
+    string_value: "coastline"
+  }
+  values {
+    sint_value: 12
+  }
+  values {
+    string_value: "Hanskinen"
+  }
+  values {
+    string_value: "Handskholmen"
+  }
+  values {
+    string_value: "Trutlandet"
+  }
+  values {
+    string_value: "Hanskisenkallio"
+  }
+  values {
+    string_value: "Handskholmsklippan"
+  }
+  values {
+    sint_value: 13
   }
   extent: 4096
   version: 2
@@ -28,6 +143,8 @@ layers {
   features {
     tags: 0
     tags: 0
+    tags: 1
+    tags: 1
     type: POLYGON
     geometry: 9
     geometry: 127
@@ -42,88 +159,61 @@ layers {
     geometry: 15
     geometry: 9
     geometry: 8447
-    geometry: 8447
-    geometry: 26
+    geometry: 6567
+    geometry: 178
+    geometry: 64
+    geometry: 24
+    geometry: 264
+    geometry: 47
+    geometry: 168
+    geometry: 303
+    geometry: 95
+    geometry: 551
+    geometry: 40
+    geometry: 15
+    geometry: 56
+    geometry: 56
+    geometry: 152
+    geometry: 31
+    geometry: 39
+    geometry: 103
+    geometry: 64
+    geometry: 79
+    geometry: 223
+    geometry: 279
+    geometry: 71
+    geometry: 159
+    geometry: 96
+    geometry: 103
+    geometry: 24
+    geometry: 79
+    geometry: 23
+    geometry: 63
+    geometry: 95
+    geometry: 71
+    geometry: 119
     geometry: 0
-    geometry: 8448
-    geometry: 8448
+    geometry: 199
+    geometry: 120
+    geometry: 136
+    geometry: 200
+    geometry: 48
+    geometry: 224
+    geometry: 159
+    geometry: 96
     geometry: 0
-    geometry: 0
-    geometry: 8447
+    geometry: 120
+    geometry: 79
+    geometry: 84
     geometry: 15
   }
+  keys: "sort_rank"
   keys: "kind"
+  values {
+    sint_value: 200
+  }
   values {
     string_value: "ocean"
-  }
-  extent: 4096
-  version: 2
-}
-layers {
-  name: "roads"
-  features {
-    tags: 0
-    tags: 0
-    tags: 1
-    tags: 1
-    type: LINESTRING
-    geometry: 9
-    geometry: 3384
-    geometry: 936
-    geometry: 18
-    geometry: 2511
-    geometry: 648
-    geometry: 999
-    geometry: 258
-  }
-  keys: "kind"
-  keys: "kind_detail"
-  values {
-    string_value: "highway"
-  }
-  values {
-    string_value: "primary"
-  }
-  extent: 4096
-  version: 2
-}
-layers {
-  name: "places"
-  features {
-    tags: 0
-    tags: 0
-    tags: 1
-    tags: 1
-    tags: 2
-    tags: 2
-    tags: 3
-    tags: 3
-    tags: 4
-    tags: 4
-    type: POINT
-    geometry: 9
-    geometry: 3384
-    geometry: 936
-  }
-  keys: "capital"
-  keys: "kind"
-  keys: "min_zoom"
-  keys: "name"
-  keys: "population_rank"
-  values {
-    string_value: "yes"
-  }
-  values {
-    string_value: "locality"
-  }
-  values {
-    sint_value: 2
-  }
-  values {
-    string_value: "Alphaville"
-  }
-  values {
-    sint_value: 12
   }
   extent: 4096
   version: 2
