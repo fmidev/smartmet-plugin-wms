@@ -46,7 +46,7 @@ BuildRequires: smartmet-engine-grid-devel >= 26.10.16
 BuildRequires: smartmet-engine-geonames-devel >= 26.10.16
 BuildRequires: smartmet-engine-querydata-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
-BuildRequires: smartmet-engine-osm-devel >= 26.10.22
+BuildRequires: smartmet-engine-osm-devel >= 26.10.23
 BuildRequires: smartmet-engine-contour-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-library-gis-devel >= 26.10.21
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jq
 #TestRequires: python3-jsonschema
 #TestRequires: python3-pyyaml
-#TestRequires: smartmet-engine-osm >= 26.10.22
+#TestRequires: smartmet-engine-osm >= 26.10.23
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
