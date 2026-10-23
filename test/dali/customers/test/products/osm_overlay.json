@@ -18,6 +18,7 @@
 		{
 		    "qid": "base",
 		    "layer_type": "osm",
+		    "font_family": "Roboto",
 		    "dataset": "extract",
 		    "style": "meteo-light",
 		    "exclude": ["places_*", "boundaries*", "water_label_*"]
@@ -36,6 +37,7 @@
 		{
 		    "qid": "labels",
 		    "layer_type": "osm",
+		    "font_family": "Roboto",
 		    "dataset": "extract",
 		    "style": "meteo-light",
 		    "include": ["places_*", "boundaries*", "water_label_*"],

@@ -300,7 +300,7 @@
    ],
    "layout": {
     "text-font": [
-     "Noto Sans Italic"
+     "Roboto Italic"
     ],
     "text-field": [
      "coalesce",
@@ -349,7 +349,7 @@
    ],
    "layout": {
     "text-font": [
-     "Noto Sans Italic"
+     "Roboto Italic"
     ],
     "text-field": [
      "coalesce",
@@ -413,7 +413,7 @@
      ]
     ],
     "text-font": [
-     "Noto Sans Regular"
+     "Roboto Regular"
     ],
     "text-size": [
      "interpolate",
@@ -495,13 +495,13 @@
      [
       "literal",
       [
-       "Noto Sans Medium"
+       "Roboto Medium"
       ]
      ],
      [
       "literal",
       [
-       "Noto Sans Regular"
+       "Roboto Regular"
       ]
      ]
     ],
@@ -770,7 +770,7 @@
      ]
     ],
     "text-font": [
-     "Noto Sans Medium"
+     "Roboto Medium"
     ],
     "text-size": [
      "interpolate",

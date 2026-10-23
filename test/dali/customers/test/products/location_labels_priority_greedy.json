@@ -81,7 +81,7 @@
                         "candidates": 8,
                         "offset": 0,
                         "symbol_size": 6,
-                        "font_family": "sans-serif",
+                        "font_family": "Roboto",
                         "font_size": 10,
                         "fill": "#333333",
                         "stroke": "white",

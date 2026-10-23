@@ -28,7 +28,9 @@ The data is © OpenStreetMap contributors, available under the Open Database
 License (ODbL) 1.0, https://www.openstreetmap.org/copyright.
 
 `styles/` holds copies of the engine styles so that the expected results do
-not change when the installed styles do.
+not change when the installed styles do. Their fonts are changed from Noto Sans
+to Roboto, the font of all the tests: Noto Sans is installed on RHEL 10 but
+not on RHEL 8, so the labels would differ between the platforms.
 
 ## Real OpenStreetMap data (run only when available)
 

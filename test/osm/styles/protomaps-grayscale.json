@@ -2202,7 +2202,7 @@
    "layout": {
     "symbol-placement": "point",
     "text-font": [
-     "Noto Sans Italic"
+     "Roboto Italic"
     ],
     "text-field": [
      "get",
@@ -2231,7 +2231,7 @@
    "layout": {
     "symbol-placement": "line",
     "text-font": [
-     "Noto Sans Italic"
+     "Roboto Italic"
     ],
     "text-field": [
      "case",
@@ -2371,7 +2371,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -2494,7 +2494,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -2532,7 +2532,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -2595,7 +2595,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -2652,7 +2652,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -2717,7 +2717,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -2755,7 +2755,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -2793,7 +2793,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -2859,7 +2859,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -2897,7 +2897,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -2961,7 +2961,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -2999,7 +2999,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3056,7 +3056,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3094,7 +3094,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3153,7 +3153,7 @@
     ],
     "symbol-placement": "line",
     "text-font": [
-     "Noto Sans Regular"
+     "Roboto Regular"
     ],
     "text-field": [
      "case",
@@ -3293,7 +3293,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3416,7 +3416,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -3454,7 +3454,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -3517,7 +3517,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3574,7 +3574,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3639,7 +3639,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -3677,7 +3677,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -3715,7 +3715,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -3781,7 +3781,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3819,7 +3819,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3883,7 +3883,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3921,7 +3921,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -3978,7 +3978,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4016,7 +4016,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4049,7 +4049,7 @@
    ],
    "layout": {
     "text-font": [
-     "Noto Sans Italic"
+     "Roboto Italic"
     ],
     "text-field": [
      "case",
@@ -4189,7 +4189,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4312,7 +4312,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -4350,7 +4350,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -4413,7 +4413,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4470,7 +4470,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4535,7 +4535,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -4573,7 +4573,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -4611,7 +4611,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -4677,7 +4677,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4715,7 +4715,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4779,7 +4779,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4817,7 +4817,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4874,7 +4874,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4912,7 +4912,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -4956,7 +4956,7 @@
    ],
    "layout": {
     "text-font": [
-     "Noto Sans Italic"
+     "Roboto Italic"
     ],
     "text-field": [
      "case",
@@ -5096,7 +5096,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5219,7 +5219,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -5257,7 +5257,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -5320,7 +5320,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5377,7 +5377,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5442,7 +5442,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -5480,7 +5480,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -5518,7 +5518,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -5584,7 +5584,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5622,7 +5622,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5686,7 +5686,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5724,7 +5724,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5781,7 +5781,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5819,7 +5819,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -5851,7 +5851,7 @@
    ],
    "layout": {
     "text-font": [
-     "Noto Sans Italic"
+     "Roboto Italic"
     ],
     "text-field": [
      "case",
@@ -5991,7 +5991,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6114,7 +6114,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -6152,7 +6152,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -6215,7 +6215,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6272,7 +6272,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6337,7 +6337,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -6375,7 +6375,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -6413,7 +6413,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -6479,7 +6479,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6517,7 +6517,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6581,7 +6581,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6619,7 +6619,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6676,7 +6676,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6714,7 +6714,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -6835,7 +6835,7 @@
      "shield_text"
     ],
     "text-font": [
-     "Noto Sans Medium"
+     "Roboto Medium"
     ],
     "text-size": 8,
     "icon-size": 0.8,
@@ -6866,7 +6866,7 @@
     ],
     "symbol-placement": "line",
     "text-font": [
-     "Noto Sans Regular"
+     "Roboto Regular"
     ],
     "text-field": [
      "case",
@@ -7006,7 +7006,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7129,7 +7129,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -7167,7 +7167,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -7230,7 +7230,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7287,7 +7287,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7352,7 +7352,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -7390,7 +7390,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -7428,7 +7428,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -7494,7 +7494,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7532,7 +7532,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7596,7 +7596,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7634,7 +7634,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7691,7 +7691,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7729,7 +7729,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -7911,7 +7911,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8034,7 +8034,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -8072,7 +8072,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -8135,7 +8135,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8192,7 +8192,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8257,7 +8257,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -8295,7 +8295,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -8333,7 +8333,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -8399,7 +8399,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8437,7 +8437,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8501,7 +8501,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8539,7 +8539,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8596,7 +8596,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8634,7 +8634,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -8644,7 +8644,7 @@
      ]
     ],
     "text-font": [
-     "Noto Sans Regular"
+     "Roboto Regular"
     ],
     "text-max-width": 7,
     "text-letter-spacing": 0.1,
@@ -8859,7 +8859,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -8982,7 +8982,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -9020,7 +9020,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -9083,7 +9083,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9140,7 +9140,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9205,7 +9205,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -9243,7 +9243,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -9281,7 +9281,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -9347,7 +9347,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9385,7 +9385,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9449,7 +9449,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9487,7 +9487,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9544,7 +9544,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9582,7 +9582,7 @@
            [
             "literal",
             [
-             "Noto Sans Regular"
+             "Roboto Regular"
             ]
            ]
           ]
@@ -9593,7 +9593,7 @@
      ]
     ],
     "text-font": [
-     "Noto Sans Regular"
+     "Roboto Regular"
     ],
     "text-size": [
      "interpolate",
@@ -9789,7 +9789,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -9912,7 +9912,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -9950,7 +9950,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -10013,7 +10013,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10070,7 +10070,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10135,7 +10135,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -10173,7 +10173,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -10211,7 +10211,7 @@
          [
           "literal",
           [
-           "Noto Sans Regular"
+           "Roboto Regular"
           ]
          ]
         ]
@@ -10277,7 +10277,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10315,7 +10315,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10379,7 +10379,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10417,7 +10417,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10474,7 +10474,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10512,7 +10512,7 @@
           [
            "literal",
            [
-            "Noto Sans Regular"
+            "Roboto Regular"
            ]
           ]
          ]
@@ -10534,13 +10534,13 @@
      [
       "literal",
       [
-       "Noto Sans Medium"
+       "Roboto Medium"
       ]
      ],
      [
       "literal",
       [
-       "Noto Sans Regular"
+       "Roboto Regular"
       ]
      ]
     ],
@@ -10813,7 +10813,7 @@
      {}
     ],
     "text-font": [
-     "Noto Sans Medium"
+     "Roboto Medium"
     ],
     "text-size": [
      "interpolate",

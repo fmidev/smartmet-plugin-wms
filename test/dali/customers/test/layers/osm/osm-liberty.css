@@ -61,5 +61,5 @@
 
 /* ---------- Labels ---------- */
 
-.place_label { font-family: sans-serif; font-size: 12px; fill: #3a3a3a; stroke: #ffffff; stroke-width: 3; paint-order: stroke; }
-.road_label  { font-family: sans-serif; font-size: 9px; fill: #606060; stroke: #ffffff; stroke-width: 2; paint-order: stroke; }
+.place_label { font-family: Roboto; font-size: 12px; fill: #3a3a3a; stroke: #ffffff; stroke-width: 3; paint-order: stroke; }
+.road_label  { font-family: Roboto; font-size: 9px; fill: #606060; stroke: #ffffff; stroke-width: 2; paint-order: stroke; }

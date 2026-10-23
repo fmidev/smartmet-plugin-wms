@@ -105,7 +105,7 @@
                         "free_space_weight": 1.5,
                         "free_space_radius": 120,
                         "symbol_size": 4,
-                        "font_family": "sans-serif",
+                        "font_family": "Roboto",
                         "font_size": 10,
                         "fill": "#222222",
                         "stroke": "white",

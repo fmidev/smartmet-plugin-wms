@@ -18,6 +18,7 @@
 		{
 		    "qid": "osm",
 		    "layer_type": "osm",
+		    "font_family": "Roboto",
 		    "dataset": "protomaps",
 		    "style": "meteo-light"
 		}
