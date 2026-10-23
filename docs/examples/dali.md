@@ -3425,7 +3425,30 @@ These products draw point observations gridded with the terrain by the plugin it
 `test/cnf/wms.conf`: `synop_europe` grids the European SYNOP point querydata of
 smartmet-test-data, `opendata_europe` the Finnish observations of the observation engine's test
 database. Both use the 20 km Europe terrain `test/cnf/gridding/europe_3035_20km.tif` in
-EPSG:3035, so `"crs": "data"` draws the whole gridding area.
+EPSG:3035; the Europe products draw the whole gridding area, the extent of the grid points
+`2010000,1210000,6990000,5590000` in EPSG:3035.
+
+On top of the gridded field the products draw the observations themselves as small circles, with
+a symbol layer reading the source of the gridding (`synop` point querydata or `opendata`
+observations) at every station (`"layout": "data"`):
+
+```json
+{
+    "qid": "obs",
+    "layer_type": "symbol",
+    "producer": "synop",
+    "parameter": "Temperature",
+    "symbols": "json:obsgrid/temperature_markers.json",
+    "css": "isobands/temperature.css",
+    "positions": { "layout": "data" }
+}
+```
+
+The marker selections (`layers/obsgrid/*_markers.json`) are the isoband limits with the `obsdot`
+symbol (radius 3 px, a 0.3 px black outline), so each circle has the colour of the isoband its
+observed value belongs to. Where the colour of a circle differs from the field around it, the
+gridded value at the station differs from the observation by at least the band boundary.
+Stations without a value are not drawn.
 
 ---
 
@@ -3444,8 +3467,9 @@ GET /dali?customer=test&product=obsgrid_temperature&time=200812050600 HTTP/1.0
 Isobands and isolines of the SYNOP temperatures of 2008-12-05 06 UTC. The default method fits a
 local height and terrain position regression and spreads the residuals with height-aware Barnes
 passes, so the Alps, the Scandinavian mountains and the other ranges come out colder than the
-valleys and the sea, although no station lies on most of the summits. The same product as PNG
-is tested by `obsgrid_temperature_png`.
+valleys and the sea, although no station lies on most of the summits. The image is 1024x901
+pixels so that the individual stations can be told apart. The same product as PNG is tested by
+`obsgrid_temperature_png`.
 
 **Output:**
 
@@ -3469,7 +3493,9 @@ The `Pressure` parameter of `synop_europe` is configured with `method = "barnes"
 predictors, one 80 km residual pass and a looser gross error threshold. Sea level pressure has
 no height dependency, so the result is a smooth field: here a low over the North Sea and high
 pressure over Russia and the eastern Mediterranean. Country borders are drawn from the
-`natural_earth` test database.
+`natural_earth` test database. The station circles show the smoothing: some stations on the west
+coast of Britain observe 980-990 hPa inside the 970-980 hPa low, and single stations north of
+Scotland and in the North Sea observe 970-980 hPa outside it.
 
 **Output:**
 
@@ -3491,8 +3517,8 @@ GET /dali?customer=test&product=obsgrid_opendata_temperature&time=201308051500&t
 | `type` | `png` | PNG output |
 
 Temperatures of 2013-08-05 15 UTC from the observation engine (`opendata`, hourly), gridded on
-the same European terrain and drawn in EPSG:3067 over Finland. The test database holds Finnish
-stations only, so the field is defined by them alone.
+the same European terrain and drawn in EPSG:3067 over Finland at 614x1024 pixels. The test
+database holds Finnish stations only, so the field is defined by them alone.
 
 **Output:**
 

@@ -8,8 +8,8 @@
         "y1": 59.5,
         "x2": 32.0,
         "y2": 70.2,
-        "xsize": 300,
-        "ysize": 500
+        "xsize": 614,
+        "ysize": 1024
     },
     "views": [
         {
@@ -35,6 +35,15 @@
                         "id": "temperature_isolines",
                         "class": "Temperature"
                     }
+                },
+                {
+                    "qid": "obs",
+                    "layer_type": "symbol",
+                    "producer": "opendata",
+                    "parameter": "Temperature",
+                    "symbols": "json:obsgrid/temperature_markers.json",
+                    "css": "isobands/temperature.css",
+                    "positions": { "layout": "data" }
                 }
             ]
         }

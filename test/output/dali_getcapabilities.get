@@ -3013,8 +3013,8 @@
         {
           "image" : 
           {
-            "height" : 500,
-            "width" : 300
+            "height" : 1024,
+            "width" : 614
           },
           "name" : "obsgrid_opendata_temperature",
           "path" : 
@@ -3029,10 +3029,10 @@
             "crs" : "EPSG:3067",
             "x1" : 19.0,
             "x2" : 32.0,
-            "xsize" : 300,
+            "xsize" : 614,
             "y1" : 59.5,
             "y2" : 70.200000000000003,
-            "ysize" : 500
+            "ysize" : 1024
           },
           "title" : "Temperature observations of the observation engine gridded with the terrain",
           "url_template" : "/dali?customer=test&product=obsgrid_opendata_temperature&time={time}"
@@ -3040,8 +3040,8 @@
         {
           "image" : 
           {
-            "height" : 440,
-            "width" : 500
+            "height" : 901,
+            "width" : 1024
           },
           "name" : "obsgrid_pressure",
           "path" : 
@@ -3052,9 +3052,10 @@
           "producer" : "synop_europe",
           "projection" : 
           {
-            "crs" : "data",
-            "xsize" : 500,
-            "ysize" : 440
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
           },
           "title" : "Pressure observations gridded with the plain Barnes method",
           "url_template" : "/dali?customer=test&product=obsgrid_pressure&time={time}"
@@ -3062,8 +3063,8 @@
         {
           "image" : 
           {
-            "height" : 440,
-            "width" : 500
+            "height" : 901,
+            "width" : 1024
           },
           "name" : "obsgrid_temperature",
           "path" : 
@@ -3074,9 +3075,10 @@
           "producer" : "synop_europe",
           "projection" : 
           {
-            "crs" : "data",
-            "xsize" : 500,
-            "ysize" : 440
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
           },
           "title" : "Temperature observations gridded with the terrain",
           "url_template" : "/dali?customer=test&product=obsgrid_temperature&time={time}"

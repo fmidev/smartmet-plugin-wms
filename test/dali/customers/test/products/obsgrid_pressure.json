@@ -3,9 +3,11 @@
     "producer": "synop_europe",
     "projection":
     {
-	"crs": "data",
-	"xsize": 500,
-	"ysize": 440
+	"crs": "EPSG:3035",
+	"bboxcrs": "EPSG:3035",
+	"bbox": "2010000,1210000,6990000,5590000",
+	"xsize": 1024,
+	"ysize": 901
     },
     "views": [
         {
@@ -50,6 +52,15 @@
 			"stroke": "#222",
 			"stroke-width": "0.3px"
 		    }
+                },
+                {
+                    "qid": "obs",
+                    "layer_type": "symbol",
+                    "producer": "synop",
+                    "parameter": "Pressure",
+                    "symbols": "json:obsgrid/pressure_markers.json",
+                    "css": "isobands/pressure.css",
+                    "positions": { "layout": "data" }
                 }
             ]
         }

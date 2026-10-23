@@ -1085,7 +1085,7 @@ The OSM background combined with a weather layer in one request.  The background
 
 ```
 GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:obsgrid_t2m&styles=
-    &crs=EPSG:4326&bbox=35,-10,70,40&width=600&height=500
+    &crs=EPSG:4326&bbox=35,-10,70,40&width=1024&height=853
     &format=image/png&time=20081205T0600 HTTP/1.0
 ```
 
