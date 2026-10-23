@@ -8324,6 +8324,330 @@
 
 			},
 			{
+				"Title": "OpenStreetMap dark background for weather data",
+				"queryable": 1,
+				"Name": "test:osm:meteo-dark",
+				"Abstract": "Background map rendered from a vector tile dataset with MapLibre styles",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -180,
+					"eastBoundLongitude": 180,
+					"southBoundLatitude": -90,
+					"northBoundLatitude": 90
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4460461.91185,
+						"miny": -6612906.73204,
+						"maxx": 3387669.86061,
+						"maxy": -476105.949907
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": -146473.113242,
+						"miny": 1527541.11022,
+						"maxx": 4672093.28728,
+						"maxy": 6905958.26288
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -20037508.3428,
+						"miny": -20048966.104,
+						"maxx": 20037508.3428,
+						"maxy": 20048966.104
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					}
+				]
+
+			},
+			{
+				"Title": "OpenStreetMap light background for weather data",
+				"queryable": 1,
+				"Name": "test:osm:meteo-light",
+				"Abstract": "Background map rendered from a vector tile dataset with MapLibre styles",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -180,
+					"eastBoundLongitude": 180,
+					"southBoundLatitude": -90,
+					"northBoundLatitude": 90
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4460461.91185,
+						"miny": -6612906.73204,
+						"maxx": 3387669.86061,
+						"maxy": -476105.949907
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": -146473.113242,
+						"miny": 1527541.11022,
+						"maxx": 4672093.28728,
+						"maxy": 6905958.26288
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -20037508.3428,
+						"miny": -20048966.104,
+						"maxx": 20037508.3428,
+						"maxy": 20048966.104
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					}
+				]
+
+			},
+			{
+				"Title": "OpenStreetMap white background for weather data",
+				"queryable": 1,
+				"Name": "test:osm:meteo-white",
+				"Abstract": "Background map rendered from a vector tile dataset with MapLibre styles",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -180,
+					"eastBoundLongitude": 180,
+					"southBoundLatitude": -90,
+					"northBoundLatitude": 90
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4460461.91185,
+						"miny": -6612906.73204,
+						"maxx": 3387669.86061,
+						"maxy": -476105.949907
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": -146473.113242,
+						"miny": 1527541.11022,
+						"maxx": 4672093.28728,
+						"maxy": 6905958.26288
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -20037508.3428,
+						"miny": -20048966.104,
+						"maxx": 20037508.3428,
+						"maxy": 20048966.104
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					}
+				]
+
+			},
+			{
+				"Title": "Protomaps light basemap",
+				"queryable": 1,
+				"Name": "test:osm:protomaps-light",
+				"Abstract": "Background map rendered from a vector tile dataset with MapLibre styles",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -180,
+					"eastBoundLongitude": 180,
+					"southBoundLatitude": -90,
+					"northBoundLatitude": 90
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -4460461.91185,
+						"miny": -6612906.73204,
+						"maxx": 3387669.86061,
+						"maxy": -476105.949907
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2093861.75205,
+						"miny": -3626674.93858,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": -146473.113242,
+						"miny": 1527541.11022,
+						"maxx": 4672093.28728,
+						"maxy": 6905958.26288
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -20037508.3428,
+						"miny": -20048966.104,
+						"maxx": 20037508.3428,
+						"maxy": 20048966.104
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -180,
+						"miny": -90,
+						"maxx": 180,
+						"maxy": 90
+					}
+				]
+
+			},
+			{
 				"Title": "Demo product",
 				"queryable": 1,
 				"Name": "test:precipitation",

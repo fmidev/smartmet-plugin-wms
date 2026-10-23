@@ -4864,6 +4864,198 @@
                    template="http://localhost/wmts/1.0.0/test:opendata_temperature_symbols_mindistance_priority_none/{Style}/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
     </Layer>
     <Layer>
+      <ows:Title>OpenStreetMap dark background for weather data</ows:Title>
+      <ows:Abstract>Background map rendered from a vector tile dataset with MapLibre styles</ows:Abstract>
+      <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+        <ows:LowerCorner>-180 -90</ows:LowerCorner>
+        <ows:UpperCorner>180 90</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+      <ows:Identifier>test:osm:meteo-dark</ows:Identifier>
+      <Style>
+        <ows:Title>Default</ows:Title>
+        <ows:Identifier>default</ows:Identifier>
+      </Style>
+      <Format>application/x-datatile+png</Format>
+      <Format>image/png</Format>
+      <Format>image/svg+xml</Format>
+      <Format>image/tiff</Format>
+      <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3035</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3067</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3857</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:4326</TileMatrixSet>
+      </TileMatrixSetLink>
+
+      <ResourceURL format="image/png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-dark/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+      <ResourceURL format="image/webp"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-dark/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-dark/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-dark/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-dark/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
+    </Layer>
+    <Layer>
+      <ows:Title>OpenStreetMap light background for weather data</ows:Title>
+      <ows:Abstract>Background map rendered from a vector tile dataset with MapLibre styles</ows:Abstract>
+      <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+        <ows:LowerCorner>-180 -90</ows:LowerCorner>
+        <ows:UpperCorner>180 90</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+      <ows:Identifier>test:osm:meteo-light</ows:Identifier>
+      <Style>
+        <ows:Title>Default</ows:Title>
+        <ows:Identifier>default</ows:Identifier>
+      </Style>
+      <Format>application/x-datatile+png</Format>
+      <Format>image/png</Format>
+      <Format>image/svg+xml</Format>
+      <Format>image/tiff</Format>
+      <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3035</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3067</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3857</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:4326</TileMatrixSet>
+      </TileMatrixSetLink>
+
+      <ResourceURL format="image/png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+      <ResourceURL format="image/webp"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
+    </Layer>
+    <Layer>
+      <ows:Title>OpenStreetMap white background for weather data</ows:Title>
+      <ows:Abstract>Background map rendered from a vector tile dataset with MapLibre styles</ows:Abstract>
+      <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+        <ows:LowerCorner>-180 -90</ows:LowerCorner>
+        <ows:UpperCorner>180 90</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+      <ows:Identifier>test:osm:meteo-white</ows:Identifier>
+      <Style>
+        <ows:Title>Default</ows:Title>
+        <ows:Identifier>default</ows:Identifier>
+      </Style>
+      <Format>application/x-datatile+png</Format>
+      <Format>image/png</Format>
+      <Format>image/svg+xml</Format>
+      <Format>image/tiff</Format>
+      <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3035</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3067</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3857</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:4326</TileMatrixSet>
+      </TileMatrixSetLink>
+
+      <ResourceURL format="image/png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-white/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+      <ResourceURL format="image/webp"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-white/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-white/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-white/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:meteo-white/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
+    </Layer>
+    <Layer>
+      <ows:Title>Protomaps light basemap</ows:Title>
+      <ows:Abstract>Background map rendered from a vector tile dataset with MapLibre styles</ows:Abstract>
+      <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+        <ows:LowerCorner>-180 -90</ows:LowerCorner>
+        <ows:UpperCorner>180 90</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+      <ows:Identifier>test:osm:protomaps-light</ows:Identifier>
+      <Style>
+        <ows:Title>Default</ows:Title>
+        <ows:Identifier>default</ows:Identifier>
+      </Style>
+      <Format>application/x-datatile+png</Format>
+      <Format>image/png</Format>
+      <Format>image/svg+xml</Format>
+      <Format>image/tiff</Format>
+      <Format>image/webp</Format>
+      <InfoFormat>application/json</InfoFormat>
+      <InfoFormat>text/html</InfoFormat>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3035</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3067</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:3857</TileMatrixSet>
+      </TileMatrixSetLink>
+      <TileMatrixSetLink>
+        <TileMatrixSet>EPSG:4326</TileMatrixSet>
+      </TileMatrixSetLink>
+
+      <ResourceURL format="image/png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:protomaps-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+      <ResourceURL format="image/webp"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:protomaps-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+      <ResourceURL format="application/x-datatile+png"
+                   resourceType="tile"
+                   template="http://localhost/wmts/1.0.0/test:osm:protomaps-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.datatile"/>
+      <ResourceURL format="application/json"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:protomaps-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.json"/>
+      <ResourceURL format="text/html"
+                   resourceType="FeatureInfo"
+                   template="http://localhost/wmts/1.0.0/test:osm:protomaps-light/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}/{J}/{I}.html"/>
+    </Layer>
+    <Layer>
       <ows:Title>Demo product</ows:Title>
       <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
         <ows:LowerCorner>-9.09870632718 51.3</ows:LowerCorner>

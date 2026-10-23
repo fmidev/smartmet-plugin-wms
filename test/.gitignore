@@ -2,3 +2,5 @@
 /dali-access-log
 /tmp-geonames-db*
 /TestConfigCreator
+/cnf/osm.conf
+/osm/__pycache__

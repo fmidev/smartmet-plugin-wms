@@ -1,0 +1,27 @@
+{
+    "title": "OpenStreetMap background",
+    "projection":
+    {
+	"qid": "p",
+	"crs": "EPSG:3067",
+	"bboxcrs": "EPSG:3067",
+	"bbox": "-100000,6600000,900000,7800000",
+	"xsize": 500,
+	"ysize": 600
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "layers":
+	    [
+		{
+		    "qid": "osm",
+		    "layer_type": "osm",
+		    "dataset": "synthetic",
+		    "style": "meteo-light"
+		}
+	    ]
+	}
+    ]
+}

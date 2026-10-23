@@ -4,7 +4,7 @@ REQUIRES = gdal jsoncpp configpp ctpp2 fmt librsvg libpqxx
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
-CFLAGS = -DUNIX -O0 -g $(FLAGS) -Wno-unknown-pragmas -DWITHOUT_OSM
+CFLAGS = -DUNIX -O0 -g $(FLAGS) -Wno-unknown-pragmas
 
 INCLUDES += \
 	-I../wms \
@@ -43,6 +43,14 @@ ALL_TESTS   := $(wildcard input/*.get)
 WMS_TESTS   := $(wildcard input/wms_*.get)
 WMTS_TESTS  := $(wildcard input/wmts_*.get)
 TILES_TESTS := $(wildcard input/tiles_*.get)
+
+# Tests using real OpenStreetMap data are run only if the data is available,
+# see osm/README.md. The data is never packaged.
+OSM_DATA_DIR ?= /smartmet/data/osm
+OSMDATA_ALL_TESTS := $(wildcard input/osmdata_*.get)
+OSMDATA_TESTS := $(if $(wildcard $(OSM_DATA_DIR)/protomaps),$(OSMDATA_ALL_TESTS))
+ALL_TESTS := $(filter-out $(OSMDATA_ALL_TESTS), $(ALL_TESTS)) $(OSMDATA_TESTS)
+
 DALI_TESTS  := $(filter-out $(WMS_TESTS) $(WMTS_TESTS) $(TILES_TESTS), $(ALL_TESTS))
 
 TEST_PREPARE_TARGETS := \
@@ -52,6 +60,7 @@ TEST_PREPARE_TARGETS := \
 	cnf/gis.conf \
 	cnf/avi.conf \
 	cnf/observation.conf \
+	cnf/osm.conf \
 	start-valkey-db
 
 PLUGIN_TEST_SRC := PluginTest.cpp
@@ -80,7 +89,7 @@ all: $(PROG)
 
 clean:	clean-valkey
 	rm -f $(PROG) *~
-	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
+	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf cnf/osm.conf
 	-if [ -f tmp-geonames-db/postmaster.pid ] ; then $(MAKE) stop-geonames-db; fi
 	rm -rf tmp-geonames-db* obj failures
 
@@ -254,6 +263,23 @@ cnf/observation.conf: cnf/observation.conf.in
 cnf/avi.conf: cnf/avi.conf.in
 	$(AVI_CONF_EDIT) $@.in >$@
 
+cnf/osm.conf: cnf/osm.conf.in FORCE
+	sed -e 's|@OSM_DATA_DIR@|$(OSM_DATA_DIR)|g' $@.in >$@
+	@if [ -z "$(OSMDATA_TESTS)" ]; then \
+	  echo "*** No OSM data in $(OSM_DATA_DIR)/protomaps, the osmdata tests are skipped"; \
+	fi
+
+FORCE:
+
+# Run only the tests using OSM data
+test-osm: $(PROG) $(TEST_PREPARE_TARGETS)
+	@rm -f failures/*
+	@if ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(wildcard input/osm_*.get input/tiles_osm_*.get input/wms_getmap_osm*.get) $(OSMDATA_TESTS); then \
+		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
+	else \
+		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
+	fi; $$ok
+
 templates:
 	$(MAKE) -C .. $@
 
@@ -266,7 +292,7 @@ obj/%.o: %.cpp objdir
 objdir:
 	mkdir -p $(objdir)
 
-.PHONY: validate-openapi cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/avi.conf cnf/observation.conf dummy \
+.PHONY: test-osm FORCE validate-openapi cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/avi.conf cnf/observation.conf dummy \
         test test-dali test-wms test-wmts test-tiles update-outputs
 
 -include $(wildcard obj/*.d)

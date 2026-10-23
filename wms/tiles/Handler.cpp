@@ -1117,11 +1117,10 @@ void collectStyleLayers(const Json::Value& node,
 }
 }  // namespace
 
-std::vector<Dali::MapboxStyleLayer> Handler::resolveStyleLayers(
-    const std::string& collId,
-    const std::string& styleId,
-    Dali::State& theState,
-    const Spine::HTTP::Request& theRequest)
+Json::Value Handler::resolveProductJson(const std::string& collId,
+                                       const std::string& styleId,
+                                       Dali::State& theState,
+                                       const Spine::HTTP::Request& theRequest)
 {
   const auto& wmsConfig = itsTilesConfig->wmsConfig();
   const std::string customer = wmsConfig.layerCustomer(collId);
@@ -1142,6 +1141,16 @@ std::vector<Dali::MapboxStyleLayer> Handler::resolveStyleLayers(
   // CSS is loaded via the same customer lookup the raster tile path uses.
   theState.setName(collId);
   theState.setCustomer(customer);
+  return json;
+}
+
+std::vector<Dali::MapboxStyleLayer> Handler::resolveStyleLayers(
+    const std::string& collId,
+    const std::string& styleId,
+    Dali::State& theState,
+    const Spine::HTTP::Request& theRequest)
+{
+  const Json::Value json = resolveProductJson(collId, styleId, theState, theRequest);
 
   // Style only the active render tree ("views"); the product's top-level "styles"
   // array holds selectable variants (inactive alternatives) that useStyle() folds
@@ -1152,6 +1161,79 @@ std::vector<Dali::MapboxStyleLayer> Handler::resolveStyleLayers(
   collectStyleLayers(renderRoot, theState, layers);
   return layers;
 }
+
+#ifndef WITHOUT_OSM
+// -----------------------------------------------------------------------
+/*!
+ * \brief The MapLibre style of a collection made of an OSM dataset layer
+ *
+ * Returns the style of the first OSM layer with a dataset in the product,
+ * with its vector sources pointing at the tiles of the collection, or an
+ * empty optional if the product has no such layer.
+ */
+// -----------------------------------------------------------------------
+std::optional<std::string> Handler::osmStyle(const Json::Value& theProduct,
+                                             const Dali::State& theState,
+                                             const std::string& theTileUrlTemplate) const
+{
+  // Find the first OSM layer of the render tree
+  std::function<const Json::Value*(const Json::Value&)> find =
+      [&find](const Json::Value& json) -> const Json::Value*
+  {
+    if (json.isObject())
+    {
+      if (json.get("layer_type", "").asString() == "osm" && json.isMember("dataset") &&
+          json.isMember("style"))
+        return &json;
+      for (const auto& name : json.getMemberNames())
+        if (const auto* found = find(json[name]))
+          return found;
+    }
+    else if (json.isArray())
+    {
+      for (const auto& item : json)
+        if (const auto* found = find(item))
+          return found;
+    }
+    return nullptr;
+  };
+
+  const auto* layer = find(theProduct.isMember("views") ? theProduct["views"] : theProduct);
+  if (layer == nullptr)
+    return {};
+
+  auto* osm = theState.getOSMEngine();
+  if (osm == nullptr)
+    throw Fmi::Exception(BCP, "OSM engine is not available");
+
+  const auto dataset = (*layer)["dataset"].asString();
+  auto info = osm->getDatasetInfo(dataset);
+  if (!info)
+    throw Fmi::Exception(BCP, "OSM dataset is not available").addParameter("dataset", dataset);
+
+  Json::Value style = osm->getStyle((*layer)["style"].asString())->json();
+
+  // Point the vector sources at the tiles of this collection
+  auto& sources = style["sources"];
+  for (const auto& name : sources.getMemberNames())
+  {
+    auto& source = sources[name];
+    if (source.get("type", "").asString() != "vector")
+      continue;
+    Json::Value replacement(Json::objectValue);
+    replacement["type"] = "vector";
+    replacement["tiles"].append(theTileUrlTemplate);
+    replacement["minzoom"] = info->minzoom;
+    replacement["maxzoom"] = info->maxzoom;
+    replacement["attribution"] = source.get("attribution", "© OpenStreetMap contributors");
+    source = replacement;
+  }
+
+  Json::StreamWriterBuilder builder;
+  builder["indentation"] = "";
+  return Json::writeString(builder, style);
+}
+#endif
 
 // -----------------------------------------------------------------------
 /*!
@@ -1184,6 +1266,26 @@ QueryStatus Handler::handleStyle(const std::string& base,
       return QueryStatus::OK;
     }
 
+    // MVT tile template the style's vector source points at. Clients that manage
+    // their own (time-parameterised) source may instead lift just the paint.
+    const std::string tms = "EPSG:3857";
+    const std::string tileUrlTemplate = base + "/collections/" + collId + "/tiles/" + tms +
+                                        "/{tileMatrix}/{tileRow}/{tileCol}"
+                                        "?f=application/vnd.mapbox-vector-tile";
+
+#ifndef WITHOUT_OSM
+    // An OSM dataset collection is styled by its MapLibre style
+    auto osmstyle =
+        osmStyle(resolveProductJson(collId, styleId, theState, theRequest), theState, tileUrlTemplate);
+    if (osmstyle)
+    {
+      resp.setHeader("Content-Type", "application/vnd.mapbox.style+json; charset=UTF-8");
+      resp.setStatus(Spine::HTTP::Status::ok);
+      resp.setContent(std::move(*osmstyle));
+      return QueryStatus::OK;
+    }
+#endif
+
     auto layers = resolveStyleLayers(collId, styleId, theState, theRequest);
     if (layers.empty())
     {
@@ -1193,13 +1295,6 @@ QueryStatus Handler::handleStyle(const std::string& base,
                 resp);
       return QueryStatus::OK;
     }
-
-    // MVT tile template the style's vector source points at. Clients that manage
-    // their own (time-parameterised) source may instead lift just the paint.
-    const std::string tms = "EPSG:3857";
-    const std::string tileUrlTemplate = base + "/collections/" + collId + "/tiles/" + tms +
-                                        "/{tileMatrix}/{tileRow}/{tileCol}"
-                                        "?f=application/vnd.mapbox-vector-tile";
 
     std::string style = Dali::mapboxStyle(collId, tileUrlTemplate, layers);
 
@@ -1554,16 +1649,12 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     renderState.setName(collId);
     renderState.setCustomer(wmsConfig.layerCustomer(collId));
 
-    // Store tile z/x/y in State so PMTiles-backed OSMLayers can do direct passthrough.
-    // tmId is the zoom level identifier ("0"-"21"); col=x, row=y in tile coordinates.
-    try
-    {
-      const auto zoom = static_cast<uint8_t>(Fmi::stoul(tmId));
-      renderState.setTileCoords(zoom, static_cast<uint32_t>(col), static_cast<uint32_t>(row));
-    }
-    catch (...)
-    { /* non-numeric tmId — no tile coords set, passthrough disabled */
-    }
+    // Store the tile z/x/y in State so that layers backed by vector tile datasets
+    // can return the tiles directly. Only the WebMercatorQuad tiling matches them.
+    const int zoom = WMTS::webMercatorZoom(*tms, *tm);
+    if (zoom >= 0)
+      renderState.setTileCoords(
+          static_cast<uint8_t>(zoom), static_cast<uint32_t>(col), static_cast<uint32_t>(row));
 
     Dali::Product product;
     product.init(json, renderState, itsDaliConfig);

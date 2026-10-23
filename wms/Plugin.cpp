@@ -906,10 +906,13 @@ void Plugin::init()
       return;
 
 #ifndef WITHOUT_OSM
-    // OSM (optional — only loaded when the engine is configured)
+    // OSM (optional — only loaded when the engine is configured). A static
+    // cast avoids referencing the type information of the engine, so that
+    // the plugin can be loaded without the engine even without lazy linking.
     try
     {
-      itsOSMEngine = itsReactor->getEngine<Engine::OSM::Engine>("OSM", nullptr);
+      itsOSMEngine =
+          std::static_pointer_cast<Engine::OSM::Engine>(itsReactor->getSingleton("OSM", nullptr));
     }
     catch (...)
     {

@@ -1,0 +1,25 @@
+layers {
+  name: "water"
+  features {
+    tags: 0
+    tags: 0
+    type: POLYGON
+    geometry: 9
+    geometry: 127
+    geometry: 8320
+    geometry: 26
+    geometry: 0
+    geometry: 8447
+    geometry: 8448
+    geometry: 0
+    geometry: 0
+    geometry: 8448
+    geometry: 15
+  }
+  keys: "kind"
+  values {
+    string_value: "ocean"
+  }
+  extent: 4096
+  version: 2
+}

@@ -1,0 +1,42 @@
+{
+    "variants":
+    [
+	{
+	    "name": "test:osm:meteo-light",
+	    "title": "OpenStreetMap light background for weather data",
+	    "osm.style": "meteo-light"
+	},
+	{
+	    "name": "test:osm:meteo-dark",
+	    "title": "OpenStreetMap dark background for weather data",
+	    "osm.style": "meteo-dark"
+	},
+	{
+	    "name": "test:osm:meteo-white",
+	    "title": "OpenStreetMap white background for weather data",
+	    "osm.style": "meteo-white"
+	},
+	{
+	    "name": "test:osm:protomaps-light",
+	    "title": "Protomaps light basemap",
+	    "osm.style": "protomaps-light"
+	}
+    ],
+    "title": "OpenStreetMap background",
+    "abstract": "Background map rendered from a vector tile dataset with MapLibre styles",
+    "projection": { },
+    "views":
+    [
+	{
+	    "layers":
+	    [
+		{
+		    "qid": "osm",
+		    "layer_type": "osm",
+		    "dataset": "synthetic",
+		    "style": "meteo-light"
+		}
+	    ]
+	}
+    ]
+}

@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm&p.crs=ESRI:54030&p.bboxcrs=ESRI:54030&p.bbox=-17000000,-8600000,17000000,8600000&p.xsize=800&p.ysize=400&type=png HTTP/1.0

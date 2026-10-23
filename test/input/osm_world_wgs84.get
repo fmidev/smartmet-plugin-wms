@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm&p.crs=WGS84&p.bboxcrs=WGS84&p.bbox=-90,-180,90,180&p.xsize=800&p.ysize=400&type=png HTTP/1.0

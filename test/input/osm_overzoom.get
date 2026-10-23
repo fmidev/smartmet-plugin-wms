@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm&p.bbox=380000,6660000,400000,6680000&p.xsize=500&p.ysize=500&type=png HTTP/1.0

@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm&p.crs=EPSG:3857&p.bboxcrs=EPSG:3857&p.bbox=1000000,7000000,4000000,10500000&p.xsize=500&p.ysize=580&type=png HTTP/1.0

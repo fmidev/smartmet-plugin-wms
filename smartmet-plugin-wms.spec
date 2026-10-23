@@ -46,6 +46,7 @@ BuildRequires: smartmet-engine-grid-devel >= 26.10.16
 BuildRequires: smartmet-engine-geonames-devel >= 26.10.16
 BuildRequires: smartmet-engine-querydata-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
+BuildRequires: smartmet-engine-osm-devel >= 26.10.22
 BuildRequires: smartmet-engine-contour-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-library-gis-devel >= 26.10.21
@@ -124,6 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jq
 #TestRequires: python3-jsonschema
 #TestRequires: python3-pyyaml
+#TestRequires: smartmet-engine-osm >= 26.10.22
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
@@ -188,6 +190,18 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-2.fmi
 - GeoTIFF output (OGC Tiles f=tiff) works for querydata layers too, not only for the grid engine
 - Gridded observations: producers of the new gridding settings grid point observations (observation engine or point querydata) with the terrain, and the isoline, isoband and isolabel layers draw them like querydata in WMS, WMTS and OGC Tiles
+- OSM layer: render vector tile datasets of the OSM engine with MapLibre styles
+  ("dataset", "style", "labels", "icons", "include", "exclude", "zoom",
+  "zoom_offset", "font_family", "attribution"); OSM support is no longer
+  compiled out, and the OSM engine stays optional at runtime
+- OGC API Tiles and WMTS return the vector tiles of OSM datasets directly only
+  for the WebMercatorQuad tiling, tiles beyond the available zoom levels are cut
+  from their ancestors
+- OSM layers are non-temporal WMS layers
+- OGC API Styles returns the MapLibre style of OSM dataset collections with the
+  vector source pointing at the collection's tiles
+- Tests with a synthetic OSM dataset, and with real OpenStreetMap data when
+  it is installed (OSM_DATA_DIR, default /smartmet/data/osm)
 
 * Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-1.fmi
 - GetCapabilities with layout=recursive no longer declares interval_start/interval_end

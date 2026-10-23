@@ -223,7 +223,7 @@ load that engine in a disabled (dummy) mode or tell the plugin not to use it:
 | Observation | Unless `observation_disabled = true` | Set `observation_disabled = true` in the plugin configuration, or use the engine's dummy mode, as for querydata. |
 | grid | Unless `gridengine_disabled = true` | Set `gridengine_disabled = true` in the plugin configuration. Alternatively, load the engine with `smartmet.engine.grid.enabled = false` in its configuration file. An empty configuration file name is not supported. |
 | Authentication | When `authenticate = true` (the default) | Set `authenticate = false` in the plugin configuration. |
-| Satellite, OSM | Never | Leave the engine out of the server configuration. Satellite layers and OSM map layers are then unavailable. The OSM layer is compiled out by default (`-DWITHOUT_OSM` in the Makefile), and the OSM engine is then not used at all. |
+| Satellite, OSM | Never | Leave the engine out of the server configuration. Satellite layers and OSM map layers are then unavailable. Without the OSM engine, products using OSM vector tile datasets fail and the rest work. |
 
 Do not use `disabled = true` in the server's `engines` section for an engine the plugin
 requires. That setting stops the server from loading the engine at all, unlike the

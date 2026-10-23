@@ -136,15 +136,16 @@ Required engines (loaded at runtime via SmartMet Server):
 - **Grid** -- grid data (GRIB/NetCDF via Redis)
 - **Contour** -- isoline/isoband generation
 - **GIS** -- PostGIS features, projections, DEM
-- **OSM** -- OpenStreetMap background data, optional: the `osm` layer is compiled out
-  (`-DWITHOUT_OSM` in the Makefile)
+- **OSM** -- OpenStreetMap vector tile datasets and their MapLibre rendering for the `osm`
+  layer, optional at runtime (obtained with `static_pointer_cast` so the plugin does not link
+  against it)
 - **Geonames** -- location/place name lookup
 
 Optional engines: **Observation**, **Avi** (aviation), **Authentication**
 
 ### Product definitions
 
-Products are JSON files organized as `{root}/customers/{customer}/products/{product}.json`. Layers can be defined inline or referenced via `"json:path/to/layer.json"`. A product contains views, each view contains layers. Layer types include: `isoband`, `isoline`, `isolabel`, `arrow`, `symbol`, `number`, `circle`, `stream`, `map`, `postgis`, `location`, `time`, `background`, `legend`, `raster`, `fronts`, `windrose`, `graticule`, `frame`, and others (see `LayerFactory.cpp`; `osm` only when built without `-DWITHOUT_OSM`).
+Products are JSON files organized as `{root}/customers/{customer}/products/{product}.json`. Layers can be defined inline or referenced via `"json:path/to/layer.json"`. A product contains views, each view contains layers. Layer types include: `isoband`, `isoline`, `isolabel`, `arrow`, `symbol`, `number`, `circle`, `stream`, `map`, `postgis`, `location`, `time`, `background`, `legend`, `raster`, `fronts`, `windrose`, `graticule`, `frame`, and others `osm` (see `LayerFactory.cpp`).
 
 Dali requests: `?customer=X&product=Y&time=...&type=png`
 

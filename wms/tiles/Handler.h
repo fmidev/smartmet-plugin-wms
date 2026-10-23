@@ -150,6 +150,19 @@ class Handler
   // Resolve every styleable (isoband/isoline) MVT layer in a collection's
   // product: source-layer (qid), level table and CSS — the join material for a
   // Mapbox style. Returns the layers in product order (empty when none).
+  // The product JSON of a collection as rendered, with the style applied
+  Json::Value resolveProductJson(const std::string& collId,
+                                 const std::string& styleId,
+                                 Dali::State& theState,
+                                 const Spine::HTTP::Request& theRequest);
+
+#ifndef WITHOUT_OSM
+  // MapLibre style of a collection rendered from an OSM dataset
+  std::optional<std::string> osmStyle(const Json::Value& theProduct,
+                                      const Dali::State& theState,
+                                      const std::string& theTileUrlTemplate) const;
+#endif
+
   std::vector<Dali::MapboxStyleLayer> resolveStyleLayers(const std::string& collId,
                                                          const std::string& styleId,
                                                          Dali::State& theState,

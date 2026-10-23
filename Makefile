@@ -11,7 +11,7 @@ sysconfdir ?= /etc
 
 FLAGS += -Wno-maybe-uninitialized -Wno-variadic-macros -Wno-deprecated-declarations
 
-DEFINES = -DUNIX -D_REENTRANT -DWITHOUT_OSM
+DEFINES = -DUNIX -D_REENTRANT
 
 # Local-build override for smartmet-library-dynlib: point DYNLIB_STAGE at
 # a staging tree (e.g. $HOME/smartmet-dynlib-staging) to link against a

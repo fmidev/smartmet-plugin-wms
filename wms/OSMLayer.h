@@ -2,11 +2,16 @@
 /*!
  * \brief OpenStreetMap layer
  *
- * Renders OSM data loaded into PostGIS via osm2pgsql. Supports polygons
- * (landuse, water, buildings), linear features (roads, coastlines,
- * administrative boundaries) and place labels. ETag is based on the
- * modification time of a configurable timestamp file that should be
- * touched after each osm2pgsql import.
+ * Two data sources are supported:
+ *
+ *  1. Vector tile datasets of the OSM engine ("dataset"), rendered by the
+ *     engine with a MapLibre style ("style"). This is the recommended way:
+ *     the data is a directory of PMTiles files such as the Protomaps builds,
+ *     and the resolution adapts to what is available in each region.
+ *
+ *  2. OSM data loaded into PostGIS via osm2pgsql ("feature_sets"). ETag is
+ *     based on the modification time of a configurable timestamp file that
+ *     should be touched after each osm2pgsql import.
  *
  * Output: SVG (raster products) and Mapbox Vector Tiles (OGC Tiles).
  */
@@ -47,17 +52,9 @@ class OSMLayer : public Layer
   void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
   void addMVTLayer(class MVTTileBuilder& builder, State& theState) override;
 
-  // For OGC Tiles MVT output: if this layer uses the pmtiles backend, return
-  // the raw (possibly compressed) tile bytes directly from the mmap'd file.
-  // Returns an empty optional for the postgis backend or if the tile is missing.
-  std::optional<Engine::OSM::TileData> getRawMVTTile(uint8_t z,
-                                                      uint32_t x,
-                                                      uint32_t y,
-                                                      const State& theState) const;
-
-  // Layer interface: for pmtiles backend, returns the raw MVT protobuf bytes
-  // from the mmap'd PMTiles file using tile coordinates stored in State.
-  // Returns std::nullopt for the postgis backend or if no tile coords are set.
+  // Layer interface: for vector tile datasets, returns the MVT tile at the
+  // WebMercatorQuad tile coordinates stored in State. Returns std::nullopt for
+  // the PostGIS backend or if no tile coordinates are set.
   std::optional<std::string> getRawMVTBytes(const State& theState) const override;
 
   std::size_t hash_value(const State& theState) const override;
@@ -77,12 +74,12 @@ class OSMLayer : public Layer
 
   std::vector<FeatureSet> itsFeatureSets;
 
-  // ---- PMTiles backend (alternative to PostGIS feature_sets) ----
-  // When backend == "pmtiles", addMVTLayer() returns raw tile bytes from the
-  // OSM engine, and generate() falls back to decoding them via OGR.
-  // When backend == "postgis" (default), feature_sets are used.
-  std::string itsBackend = "postgis";      // "postgis" | "pmtiles"
-  std::string itsOSMSource;               // source name in OSM engine config
+  // ---- Vector tile datasets (alternative to PostGIS feature_sets) ----
+  bool isDataset() const { return !itsOptions.dataset.empty(); }
+  void generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
+  Engine::OSM::MapOptions itsOptions;  // dataset, style and rendering options
+  bool itsAttribution = false;         // draw the data attribution into the image
 
   // For postgis backend: touched after each osm2pgsql import
   std::filesystem::path itsTimestampFile;

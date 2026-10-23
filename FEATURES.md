@@ -83,7 +83,7 @@ and discovered via `LayerFactory`:
 ### Vector data
 - **WKTLayer** — arbitrary geometries from WKT strings.
 - **PostGISLayer** — features from a configured PostGIS database.
-- **OSMLayer** — OpenStreetMap-derived overlays (optional, compiled out by default with `-DWITHOUT_OSM`).
+- **OSMLayer** — OpenStreetMap basemaps: vector tile datasets of the OSM engine rendered with MapLibre styles, or osm2pgsql data in PostGIS.
 - **WeatherObjects** + **WeatherFronts** — synoptic objects.
 
 ### Grid / forecast data
@@ -188,7 +188,7 @@ The plugin wires to these SmartMet engines:
 - **avi engine** — METAR messages.
 - **authentication engine** — API keys (optional).
 - **satellite engine** — satellite imagery (optional).
-- **OSM engine** — OpenStreetMap data, only when built without `-DWITHOUT_OSM`.
+- **OSM engine** — OpenStreetMap vector tile datasets (PMTiles files or PostgreSQL), optional.
 
 ## 13. Caching
 
