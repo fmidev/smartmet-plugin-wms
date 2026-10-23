@@ -1,0 +1,33 @@
+{
+    "title": "Regression test layer with intervals",
+    "producer": "pal_skandinavia",
+    "intervals": [{"interval_start": 15, "interval_end": 0, "default": true},{"interval_start": 60, "interval_end": 0}],
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 256,
+	"ysize": 256
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "number",
+                    "parameter": "Temperature",
+		    "label":
+		    {
+			"missing": "-"
+		    },
+		    "positions":
+		    {
+			"layout": "grid",
+			"dx": 60,
+			"dy": 60
+		    }
+                }
+            ]
+        }
+    ]
+}

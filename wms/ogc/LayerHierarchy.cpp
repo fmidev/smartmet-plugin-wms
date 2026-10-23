@@ -277,32 +277,24 @@ struct LayerGroup
   std::vector<const LayerHierarchy*> members;
 };
 
-// The geo key if all the leaves share it, otherwise an empty string. The representative
-// is the first leaf with the shared non-empty key, or nullptr.
-std::string unanimous_geo_key(const std::list<const LayerHierarchy*>& leaves,
-                              const LayerHierarchy*& geo_repr)
+// The key if all the leaves share it, otherwise an empty string. A leaf without the
+// attribute (an empty key) breaks the unanimity too, since it would otherwise inherit
+// the value from the group. The representative is the first leaf, or nullptr.
+std::string unanimous_key(const std::list<const LayerHierarchy*>& leaves,
+                          std::string (*key_function)(const LayerHierarchy&),
+                          const LayerHierarchy*& repr)
 {
-  std::string g;
-  bool geo_unanimous = true;
+  repr = nullptr;
+  if (leaves.empty())
+    return "";
+  std::string k = key_function(*leaves.front());
+  if (k.empty())
+    return "";
   for (const auto* leaf : leaves)
-  {
-    std::string k = geo_key(*leaf);
-    if (g.empty())
-    {
-      g = k;
-      if (!k.empty())
-        geo_repr = leaf;
-    }
-    else if (k != g)
-    {
-      geo_unanimous = false;
-      break;
-    }
-  }
-  std::string child_geo = geo_unanimous ? g : "";
-  if (child_geo.empty())
-    geo_repr = nullptr;
-  return child_geo;
+    if (key_function(*leaf) != k)
+      return "";
+  repr = leaves.front();
+  return k;
 }
 
 // The most common key across the leaves. The representative is the first leaf with
@@ -398,7 +390,7 @@ std::vector<LayerGroup> group_children(
     const LayerHierarchy* elev_repr = nullptr;
 
     // geo: unanimous only
-    std::string child_geo = unanimous_geo_key(leaves, geo_repr);
+    std::string child_geo = unanimous_key(leaves, geo_key, geo_repr);
 
     // time: most common across leaves
     std::string child_time = most_common_key(leaves, time_key, time_repr);
@@ -406,10 +398,11 @@ std::vector<LayerGroup> group_children(
     // elev: most common across leaves
     std::string child_elev = most_common_key(leaves, elev_key, elev_repr);
 
-    // interval: most common across leaves. Not part of the group key — group
-    // members may share geo/time/elev yet differ in intervals; the per-key
-    // suppression in emit_interval() lets the odd ones out declare their own.
-    std::string child_interval = most_common_key(leaves, interval_key, interval_repr);
+    // interval: unanimous only. Not part of the group key — group members may
+    // share geo/time/elev yet differ in intervals, and then each declares its
+    // own. Unlike the other dimensions the interval dimension is optional, and
+    // a layer without one must not inherit it from the group.
+    std::string child_interval = unanimous_key(leaves, interval_key, interval_repr);
 
     auto key = std::make_tuple(child_geo, child_time, child_elev);
     auto& grp = groups[key];
@@ -422,13 +415,18 @@ std::vector<LayerGroup> group_children(
       grp.timeSource = time_repr;
     if (elev_repr && !grp.elevSource)
       grp.elevSource = elev_repr;
-    // Interval is not in the group key, so keep grp.intervalKey consistent
-    // with grp.intervalSource by setting both from the first member that
-    // actually carries an interval dimension.
-    if (interval_repr && !grp.intervalSource)
+    // Interval is not in the group key, so the group declares it only if all
+    // members share it. A member with different or no intervals disables it
+    // for the rest of the group.
+    if (grp.members.empty())
     {
       grp.intervalSource = interval_repr;
       grp.intervalKey = child_interval;
+    }
+    else if (child_interval != grp.intervalKey)
+    {
+      grp.intervalSource = nullptr;
+      grp.intervalKey.clear();
     }
     grp.members.push_back(child.get());
   }
