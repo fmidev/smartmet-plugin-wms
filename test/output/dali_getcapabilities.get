@@ -3013,6 +3013,162 @@
         {
           "image" : 
           {
+            "height" : 660,
+            "width" : 400
+          },
+          "name" : "obsgrid_bg_hirlam_background",
+          "path" : 
+          [
+            "test",
+            "obsgrid_bg_hirlam_background"
+          ],
+          "producer" : "hirlam",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 400,
+            "ysize" : 660
+          },
+          "time" : 
+          {
+            "default" : "20130320T060000",
+            "origintime" : "20130318T000000",
+            "values" : "20130318T000000/20130320T060000/PT1H"
+          },
+          "title" : "The HIRLAM forecast used as the background",
+          "url_template" : "/dali?customer=test&product=obsgrid_bg_hirlam_background&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 660,
+            "width" : 400
+          },
+          "name" : "obsgrid_bg_hirlam_temperature",
+          "path" : 
+          [
+            "test",
+            "obsgrid_bg_hirlam_temperature"
+          ],
+          "producer" : "fmi_hirlam",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 400,
+            "ysize" : 660
+          },
+          "title" : "FMI temperatures correcting a HIRLAM forecast",
+          "url_template" : "/dali?customer=test&product=obsgrid_bg_hirlam_temperature&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 440,
+            "width" : 500
+          },
+          "name" : "obsgrid_bg_ifs_background",
+          "path" : 
+          [
+            "test",
+            "obsgrid_bg_ifs_background"
+          ],
+          "producer" : "ifs_europe",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 500,
+            "ysize" : 440
+          },
+          "time" : 
+          {
+            "default" : "20260121T060000",
+            "origintime" : "20260120T060000",
+            "values" : "20260121T060000"
+          },
+          "title" : "The IFS forecast used as the background",
+          "url_template" : "/dali?customer=test&product=obsgrid_bg_ifs_background&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 440,
+            "width" : 500
+          },
+          "name" : "obsgrid_bg_ifs_pressure",
+          "path" : 
+          [
+            "test",
+            "obsgrid_bg_ifs_pressure"
+          ],
+          "producer" : "ifs_europe_corrected",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 500,
+            "ysize" : 440
+          },
+          "title" : "European pressures correcting an IFS forecast",
+          "url_template" : "/dali?customer=test&product=obsgrid_bg_ifs_pressure&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 440,
+            "width" : 500
+          },
+          "name" : "obsgrid_bg_ifs_pressure_background",
+          "path" : 
+          [
+            "test",
+            "obsgrid_bg_ifs_pressure_background"
+          ],
+          "producer" : "ifs_europe",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 500,
+            "ysize" : 440
+          },
+          "time" : 
+          {
+            "default" : "20260121T060000",
+            "origintime" : "20260120T060000",
+            "values" : "20260121T060000"
+          },
+          "title" : "The IFS pressure forecast used as the background",
+          "url_template" : "/dali?customer=test&product=obsgrid_bg_ifs_pressure_background&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 440,
+            "width" : 500
+          },
+          "name" : "obsgrid_bg_ifs_temperature",
+          "path" : 
+          [
+            "test",
+            "obsgrid_bg_ifs_temperature"
+          ],
+          "producer" : "ifs_europe_corrected",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 500,
+            "ysize" : 440
+          },
+          "title" : "European temperatures correcting an IFS forecast",
+          "url_template" : "/dali?customer=test&product=obsgrid_bg_ifs_temperature&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 1024,
             "width" : 614
           },
