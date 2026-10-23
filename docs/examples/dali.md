@@ -41,6 +41,7 @@ Each request URL is decomposed into a table showing every query parameter and it
 - [Map simplification](#map-simplification)
 - [World Map Products](#world-map-products)
 - [OpenStreetMap Background Maps](#openstreetmap-background-maps)
+- [Gridded Observations](#gridded-observations)
 
 ---
 
@@ -3414,5 +3415,87 @@ The `osmdata_*` tests render the full Protomaps OpenStreetMap build with the `os
 | [`osmdata_helsinki_meteo_light`](../../test/input/osmdata_helsinki_meteo_light.get) | `meteo-light` | `EPSG:3067` | ![osmdata_helsinki_meteo_light](../images/dali/osmdata_helsinki_meteo_light.png) |
 | [`osmdata_helsinki_protomaps_light`](../../test/input/osmdata_helsinki_protomaps_light.get) | `protomaps-light` | `EPSG:3067` | ![osmdata_helsinki_protomaps_light](../images/dali/osmdata_helsinki_protomaps_light.png) |
 | [`osmdata_helsinki_protomaps_dark`](../../test/input/osmdata_helsinki_protomaps_dark.get) | `protomaps-dark` | `EPSG:3067` | ![osmdata_helsinki_protomaps_dark](../images/dali/osmdata_helsinki_protomaps_dark.png) |
+
+---
+
+## Gridded Observations
+
+These products draw point observations gridded with the terrain by the plugin itself (see
+[Gridded observations](../gridding.md)). The producers are defined in the `gridding` group of
+`test/cnf/wms.conf`: `synop_europe` grids the European SYNOP point querydata of
+smartmet-test-data, `opendata_europe` the Finnish observations of the observation engine's test
+database. Both use the 20 km Europe terrain `test/cnf/gridding/europe_3035_20km.tif` in
+EPSG:3035, so `"crs": "data"` draws the whole gridding area.
+
+---
+
+### obsgrid_temperature — Temperature gridded with the terrain
+
+**Input:** [`test/input/obsgrid_temperature.get`](../../test/input/obsgrid_temperature.get)
+
+```
+GET /dali?customer=test&product=obsgrid_temperature&time=200812050600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `obsgrid_temperature` | Product JSON: [`test/dali/customers/test/products/obsgrid_temperature.json`](../../test/dali/customers/test/products/obsgrid_temperature.json) |
+
+Isobands and isolines of the SYNOP temperatures of 2008-12-05 06 UTC. The default method fits a
+local height and terrain position regression and spreads the residuals with height-aware Barnes
+passes, so the Alps, the Scandinavian mountains and the other ranges come out colder than the
+valleys and the sea, although no station lies on most of the summits. The same product as PNG
+is tested by `obsgrid_temperature_png`.
+
+**Output:**
+
+![obsgrid_temperature](../images/dali/obsgrid_temperature.png)
+
+---
+
+### obsgrid_pressure — Pressure with the plain Barnes method
+
+**Input:** [`test/input/obsgrid_pressure.get`](../../test/input/obsgrid_pressure.get)
+
+```
+GET /dali?customer=test&product=obsgrid_pressure&time=200812050600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `obsgrid_pressure` | Product JSON: [`test/dali/customers/test/products/obsgrid_pressure.json`](../../test/dali/customers/test/products/obsgrid_pressure.json) |
+
+The `Pressure` parameter of `synop_europe` is configured with `method = "barnes"`: no terrain
+predictors, one 80 km residual pass and a looser gross error threshold. Sea level pressure has
+no height dependency, so the result is a smooth field: here a low over the North Sea and high
+pressure over Russia and the eastern Mediterranean. Country borders are drawn from the
+`natural_earth` test database.
+
+**Output:**
+
+![obsgrid_pressure](../images/dali/obsgrid_pressure.png)
+
+---
+
+### obsgrid_opendata_temperature — Observation engine source
+
+**Input:** [`test/input/obsgrid_opendata_temperature.get`](../../test/input/obsgrid_opendata_temperature.get)
+
+```
+GET /dali?customer=test&product=obsgrid_opendata_temperature&time=201308051500&type=png HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `obsgrid_opendata_temperature` | Product JSON: [`test/dali/customers/test/products/obsgrid_opendata_temperature.json`](../../test/dali/customers/test/products/obsgrid_opendata_temperature.json) |
+| `type` | `png` | PNG output |
+
+Temperatures of 2013-08-05 15 UTC from the observation engine (`opendata`, hourly), gridded on
+the same European terrain and drawn in EPSG:3067 over Finland. The test database holds Finnish
+stations only, so the field is defined by them alone.
+
+**Output:**
+
+![obsgrid_opendata_temperature](../images/dali/obsgrid_opendata_temperature.png)
 
 ---

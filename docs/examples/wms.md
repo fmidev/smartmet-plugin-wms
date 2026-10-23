@@ -28,6 +28,7 @@ The WMS tests exercise the `/wms` endpoint.  Test inputs are in [`test/input/wms
 - [GetMap — Error handling](#getmap--error-handling)
 - [GetMap — Grid Engine layers](#getmap--grid-engine-layers)
 - [GetMap — OpenStreetMap background](#getmap--openstreetmap-background)
+- [GetMap — Gridded observations](#getmap--gridded-observations)
 - [GetFeatureInfo](#getfeatureinfo)
 - [GetLegendGraphic](#getlegendgraphic) — see also the [Legend Examples](legends.md) page
 
@@ -1075,6 +1076,33 @@ GET /wms?service=wms&request=GetMap&version=1.3.0
 The OSM background combined with a weather layer in one request.  The background comes from the coarse world data of the extract.
 
 ![wms_getmap_osm_with_data](../images/wms/wms_getmap_osm_with_data.png)
+
+## GetMap — Gridded observations
+
+### wms_getmap_obsgrid_t2m
+
+**Input:** [`test/input/wms_getmap_obsgrid_t2m.get`](../../test/input/wms_getmap_obsgrid_t2m.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:obsgrid_t2m&styles=
+    &crs=EPSG:4326&bbox=35,-10,70,40&width=600&height=500
+    &format=image/png&time=20081205T0600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:obsgrid_t2m` | Temperature isobands of the gridded producer `synop_europe` |
+| `crs` | `EPSG:4326` | WGS 84 geographic CRS |
+| `bbox` | `35,-10,70,40` | Europe: minLat, minLon, maxLat, maxLon |
+| `time` | `20081205T0600` | Valid time of the observations |
+
+The producer of the layer is a gridded observation producer of the `gridding` settings, so the
+plugin grids the SYNOP temperatures with the terrain for the requested time and draws the
+isobands from the result like from any querydata (see [Gridded observations](../gridding.md)).
+
+Product config: [`test/wms/customers/test/products/obsgrid_t2m.json`](../../test/wms/customers/test/products/obsgrid_t2m.json)
+
+![wms_getmap_obsgrid_t2m](../images/wms/wms_getmap_obsgrid_t2m.png)
 
 ## GetFeatureInfo
 

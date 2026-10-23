@@ -162,4 +162,6 @@ The test configuration grids the European SYNOP point querydata of 2008-12-05 fr
 smartmet-test-data and the Finnish observations of the test database with a 20 km Europe
 terrain (`test/cnf/gridding/europe_3035_20km.tif`). The tests `obsgrid_*`,
 `wms_getmap_obsgrid_t2m`, `tiles_gettile_obsgrid` and `tiles_gettile_geotiff_obsgrid` draw and
-deliver them.
+deliver them. Their requests and outputs are shown in the [Dali](examples/dali.md#gridded-observations),
+[WMS](examples/wms.md#getmap--gridded-observations) and
+[OGC API Tiles](examples/tiles.md#tiles_gettile_obsgrid) examples.

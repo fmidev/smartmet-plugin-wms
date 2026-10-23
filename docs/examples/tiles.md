@@ -37,6 +37,9 @@ Omitted dimensions fall back to their defaults (e.g. the most current time).
 - [tiles_gettile_temperature_numbers](#tiles_gettile_temperature_numbers)
 - [tiles_gettile_geotiff](#tiles_gettile_geotiff)
 - [tiles_gettile_geotiff_wind_speed_and_direction_1 and _2](#tiles_gettile_geotiff_wind_speed_and_direction_1-and-_2)
+- [tiles_gettile_geotiff_querydata and _epsg3067](#tiles_gettile_geotiff_querydata-and-_epsg3067)
+- [tiles_gettile_obsgrid](#tiles_gettile_obsgrid)
+- [tiles_gettile_geotiff_obsgrid](#tiles_gettile_geotiff_obsgrid)
 - [Mapbox Vector Tile (MVT) outputs](#mapbox-vector-tile-mvt-outputs)
   - [tiles_gettile_mvt_isoband](#tiles_gettile_mvt_isoband)
   - [tiles_gettile_mvt_isoline](#tiles_gettile_mvt_isoline)
@@ -148,6 +151,51 @@ GET /tiles/collections/grid:wind_speed_and_direction_2/tiles/EPSG:4326/5/4/36?f=
 Wind speed and direction are encoded in separate GeoTIFF bands, allowing clients to reconstruct vector wind fields.
 
 **Output:** [`test/output/tiles_gettile_geotiff_wind_speed_and_direction_1.get`](../../test/output/tiles_gettile_geotiff_wind_speed_and_direction_1.get) / [`_2`](../../test/output/tiles_gettile_geotiff_wind_speed_and_direction_2.get) — GeoTIFF
+
+## tiles_gettile_geotiff_querydata and _epsg3067
+
+GeoTIFF tiles of a querydata layer instead of a grid engine one:
+
+```
+GET /tiles/collections/test:t2m/tiles/EPSG:4326/5/4/36?f=tiff&TIME=20080805T030000 HTTP/1.0
+GET /tiles/collections/test:t2m/tiles/EPSG:3067/3/2/4?f=tiff&TIME=20080805T030000 HTTP/1.0
+```
+
+The temperature of `pal_skandinavia` is interpolated to the centre of every output pixel, with
+the layer's multiplier and offset applied; pixels outside the data are written as nodata. The
+second test uses a projected tile matrix set, so the pixel centres are transformed from
+EPSG:3067 to geographic coordinates before the interpolation.
+
+**Output:** [`test/output/tiles_gettile_geotiff_querydata.get`](../../test/output/tiles_gettile_geotiff_querydata.get) / [`_epsg3067`](../../test/output/tiles_gettile_geotiff_querydata_epsg3067.get) — `gdalinfo -stats` of the GeoTIFF
+
+## tiles_gettile_obsgrid
+
+**Input:** [`test/input/tiles_gettile_obsgrid.get`](../../test/input/tiles_gettile_obsgrid.get)
+
+```
+GET /tiles/collections/test:obsgrid_t2m/tiles/EPSG:4326/3/1/9?f=png&TIME=20081205T060000 HTTP/1.0
+```
+
+A tile of the gridded SYNOP temperatures (see [Gridded observations](../gridding.md)). The
+observations are gridded once for the whole Europe area and every tile is cut from the same
+field, so the isobands continue seamlessly across tile edges.
+
+**Output:** [`test/output/tiles_gettile_obsgrid.get`](../../test/output/tiles_gettile_obsgrid.get) — PNG (1024×1024)
+
+![tiles_gettile_obsgrid](../images/tiles/tiles_gettile_obsgrid.png)
+
+## tiles_gettile_geotiff_obsgrid
+
+**Input:** [`test/input/tiles_gettile_geotiff_obsgrid.get`](../../test/input/tiles_gettile_geotiff_obsgrid.get)
+
+```
+GET /tiles/collections/test:obsgrid_t2m/tiles/EPSG:4326/3/1/9?f=tiff&TIME=20081205T060000 HTTP/1.0
+```
+
+The same tile as raw values: a single Float32 band of the gridded temperatures, here between
+−8.4 and 14.7 °C.
+
+**Output:** [`test/output/tiles_gettile_geotiff_obsgrid.get`](../../test/output/tiles_gettile_geotiff_obsgrid.get) — `gdalinfo -stats` of the GeoTIFF
 
 ## Mapbox Vector Tile (MVT) outputs
 
