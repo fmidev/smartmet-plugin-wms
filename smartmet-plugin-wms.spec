@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.23
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-3.fmi
+- Removed the GTiff creation option WRITE_DATETIME_METADATA which GDAL does not know and warned about on every GeoTIFF request
+- Test for gridded pressure with the plain Barnes method
+
 * Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-2.fmi
 - GeoTIFF output (OGC Tiles f=tiff) works for querydata layers too, not only for the grid engine
 - Gridded observations: producers of the new gridding settings grid point observations (observation engine or point querydata) with the terrain, and the isoline, isoband and isolabel layers draw them like querydata in WMS, WMTS and OGC Tiles
