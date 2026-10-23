@@ -1,0 +1,40 @@
+{
+    "title": "Pressure observations gridded with the plain Barnes method",
+    "producer": "synop_europe",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 440
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/pressure.json",
+		    "css": "isobands/pressure.css",
+                    "parameter": "Pressure",
+		    "attributes":
+		    {
+			"id": "pressure_isobands"
+		    }
+                },
+                {
+		    "qid": "l2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+		    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+		    "attributes":
+		    {
+			"id": "pressure_isolines",
+			"class": "Pressure"
+		    }
+                }
+            ]
+        }
+    ]
+}

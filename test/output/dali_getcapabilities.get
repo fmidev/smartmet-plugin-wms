@@ -3043,6 +3043,28 @@
             "height" : 440,
             "width" : 500
           },
+          "name" : "obsgrid_pressure",
+          "path" : 
+          [
+            "test",
+            "obsgrid_pressure"
+          ],
+          "producer" : "synop_europe",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 440
+          },
+          "title" : "Pressure observations gridded with the plain Barnes method",
+          "url_template" : "/dali?customer=test&product=obsgrid_pressure&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 440,
+            "width" : 500
+          },
           "name" : "obsgrid_temperature",
           "path" : 
           [
