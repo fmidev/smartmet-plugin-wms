@@ -3,6 +3,7 @@
 #include "Hash.h"
 
 #include <macgyver/Exception.h>
+#include <newbase/NFmiGlobals.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -27,6 +28,10 @@ bool AttributeSelection::matches(double theValue) const
 
     if (value)
       return (theValue == *value);
+
+    // A missing value is not inside any range, f.ex. 32700 is not in [38,inf)
+    if (theValue == kFloatMissing && (lolimit || hilimit))
+      return false;
 
     if (lolimit && (theValue < *lolimit))
       return false;
