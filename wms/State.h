@@ -109,7 +109,7 @@ class State
   const Engine::Satellite::Engine* getSatelliteEngine() const;
   // nullptr if engine not loaded
   const Gridding::Gridder* getGridder() const;
-  // Whether the producer is gridded observations from the ObsGrid engine
+  // Whether the producer is gridded observations of the gridding settings
   bool isObsGrid(const std::string& theProducer) const;
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
