@@ -246,21 +246,7 @@ void ObservationLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
       theInfo["longitude"] = std::round(result.longitude * 1e5) / 1e5;
       theInfo["latitude"] = std::round(result.latitude * 1e5) / 1e5;
       theInfo["features"]["Value"] = result.symbol;
-      theInfo["features"]["Fmisid"] = fmisid;
-      theInfo["features"]["URL"] = "https://hav.fmi.fi/hav/asema/?fmisid=" + std::to_string(fmisid);
-
-      // Add more station information
-      Engine::Observation::Settings settings;
-      settings.maxdistance = maxdistance_km * 1000;
-      settings.taggedFMISIDs.emplace_back("tag", fmisid);
-
-      Spine::Stations stations;
-      theState.getObsEngine().getStations(stations, settings);
-      if (!stations.empty() && stations.front().fmisid == fmisid)
-      {
-        const auto& s = stations.front();
-        theInfo["features"]["StationName"] = s.formal_name_fi;
-      }
+      enrich_with_station_info(theInfo, theState, fmisid);
     }
   }
   catch (...)

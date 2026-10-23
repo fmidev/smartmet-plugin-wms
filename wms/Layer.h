@@ -191,6 +191,10 @@ class Layer : public Properties
                                                            const Fmi::Box& box,
                                                            const Fmi::SpatialReference& crs) const;
 
+  // GetFeatureInfo features are written into the JSON output as they are, so string values
+  // must be stored as quoted and escaped JSON strings.
+  static std::string json_string(const std::string& theValue);
+
   // Fill station metadata (Fmisid, URL, StationName) into theInfo["features"].
   void enrich_with_station_info(CTPP::CDT& theInfo, const State& theState, int fmisid) const;
 

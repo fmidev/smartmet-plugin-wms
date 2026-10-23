@@ -655,10 +655,44 @@ std::optional<std::pair<double, double>> Layer::pixel_to_lonlat(
  */
 // ----------------------------------------------------------------------
 
+std::string Layer::json_string(const std::string& theValue)
+{
+  std::string ret = "\"";
+  for (const char c : theValue)
+  {
+    switch (c)
+    {
+      case '"':
+        ret += "\\\"";
+        break;
+      case '\\':
+        ret += "\\\\";
+        break;
+      case '\n':
+        ret += "\\n";
+        break;
+      case '\r':
+        ret += "\\r";
+        break;
+      case '\t':
+        ret += "\\t";
+        break;
+      default:
+        if (static_cast<unsigned char>(c) < 0x20)
+          ret += fmt::format("\\u{:04x}", static_cast<unsigned char>(c));
+        else
+          ret += c;
+    }
+  }
+  ret += '"';
+  return ret;
+}
+
 void Layer::enrich_with_station_info(CTPP::CDT& theInfo, const State& theState, int fmisid) const
 {
   theInfo["features"]["Fmisid"] = fmisid;
-  theInfo["features"]["URL"] = "https://hav.fmi.fi/hav/asema/?fmisid=" + std::to_string(fmisid);
+  theInfo["features"]["URL"] =
+      json_string("https://hav.fmi.fi/hav/asema/?fmisid=" + std::to_string(fmisid));
 
   Engine::Observation::Settings settings;
   settings.maxdistance = maxdistance_km * 1000;
@@ -667,7 +701,7 @@ void Layer::enrich_with_station_info(CTPP::CDT& theInfo, const State& theState, 
   Spine::Stations stations;
   theState.getObsEngine().getStations(stations, settings);
   if (!stations.empty() && stations.front().fmisid == fmisid)
-    theInfo["features"]["StationName"] = stations.front().formal_name_fi;
+    theInfo["features"]["StationName"] = json_string(stations.front().formal_name_fi);
 }
 
 // ----------------------------------------------------------------------
@@ -918,7 +952,7 @@ void Layer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
     theInfo["features"][paraminfo.parameter] = value;
     const auto label = getLegendLabelText(value, theState);
     if (!label.empty())
-      theInfo["features"][paraminfo.parameter + "_label"] = "\"" + label + "\"";
+      theInfo["features"][paraminfo.parameter + "_label"] = json_string(label);
     theInfo["time"] = Fmi::to_iso_string(valid_time);
     theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
     theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
@@ -1052,7 +1086,7 @@ void Layer::getGridValue(CTPP::CDT& theInfo, const State& theState)
     theInfo["features"][paraminfo.parameter] = value;
     const auto label = getLegendLabelText(value, theState);
     if (!label.empty())
-      theInfo["features"][paraminfo.parameter + "_label"] = "\"" + label + "\"";
+      theInfo["features"][paraminfo.parameter + "_label"] = json_string(label);
     theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
     theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
   }
