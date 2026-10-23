@@ -1058,6 +1058,42 @@
 
 	      
 	      <Layer queryable="0">
+      <Title>test:zzreginterval</Title>
+
+	      
+	        <Layer queryable="1">
+      <Name>test:zzreginterval:with</Name>
+      <Title>Regression test layer with intervals</Title>
+      <Dimension name="interval_start" units="minute" default="15" multipleValues="0" nearestValue="0">15,60</Dimension>
+      
+      <Dimension name="interval_end" units="minute" default="0" multipleValues="0" nearestValue="0">0</Dimension>
+      
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzreginterval%3Awith&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+		
+	        <Layer queryable="1">
+      <Name>test:zzreginterval:without</Name>
+      <Title>Regression test layer without intervals</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Azzreginterval%3Awithout&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+		</Layer>
+	      <Layer queryable="0">
       <Title>test:zzregtime</Title>
 
 	      

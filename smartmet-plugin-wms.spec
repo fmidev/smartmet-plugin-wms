@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.22
-Release: 1%{?dist}.fmi
+Version: 26.10.23
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -185,9 +185,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
-* Thu Oct 22 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.10.22-1.fmi
+* Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-2.fmi
 - GeoTIFF output (OGC Tiles f=tiff) works for querydata layers too, not only for the grid engine
 - Gridded observations: producers of the new gridding settings grid point observations (observation engine or point querydata) with the terrain, and the isoline, isoband and isolabel layers draw them like querydata in WMS, WMTS and OGC Tiles
+
+* Fri Oct 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.23-1.fmi
+- GetCapabilities with layout=recursive no longer declares interval_start/interval_end
+  on a group node unless all its members share them, layers without intervals
+  inherited them and clients got InvalidDimensionValue from GetMap
 
 * Tue Oct 20 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.10.20-1.fmi
 - Use UNIX socket with Valkey/Redis db for tests
