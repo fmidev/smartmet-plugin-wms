@@ -3543,9 +3543,9 @@ corrected analysis they blend in.
 | [`obsgrid_bg_hirlam_background`](../../test/input/obsgrid_bg_hirlam_background.get) | `hirlam` | 2013-03-19 12 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_hirlam_background.json) |
 | [`obsgrid_bg_hirlam_temperature`](../../test/input/obsgrid_bg_hirlam_temperature.get) | `fmi_hirlam` | 2013-03-19 12 UTC | [JSON](../../test/dali/customers/test/products/obsgrid_bg_hirlam_temperature.json) |
 
-**ECMWF IFS +24 h temperature corrected by 2966 European stations.** The winter morning
-forecast was too warm in Finland and the Baltic countries and too cold in places in
-Scandinavia; the corrected analysis follows the stations and keeps the forecast over the seas.
+**ECMWF IFS +24 h temperature corrected by 2966 European stations.** On the forecast many
+stations differ from the isobands around them; on the corrected analysis they blend in, while
+over the seas the forecast is kept.
 
 | Forecast | Corrected |
 |----------|-----------|
