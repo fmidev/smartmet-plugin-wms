@@ -1,5 +1,5 @@
 {
-    "title": "Coastline of the world",
+    "title": "Coastline of the world over the land",
     "projection": {
         "qid": "p",
         "crs": "WGS84",
@@ -15,8 +15,14 @@
                 {
                     "layer_type": "background",
                     "attributes": {
-                        "fill": "white"
+                        "fill": "#a0c8f0"
                     }
+                },
+                {
+                    "qid": "land",
+                    "layer_type": "osm",
+                    "dataset": "extract",
+                    "style": "land-lightgray"
                 },
                 {
                     "qid": "coast",

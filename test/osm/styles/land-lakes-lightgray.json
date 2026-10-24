@@ -1,0 +1,92 @@
+{
+ "version": 8,
+ "name": "Land and lakes, light gray and blue",
+ "metadata": {
+  "smartmet:description": "Land polygons in light gray and lakes in the ocean blue of the coastline tests, with the lake filter of the coastline-lakes styles, so that the fill matches the shores exactly",
+  "smartmet:license": "CC0-1.0",
+  "smartmet:schema": "protomaps"
+ },
+ "sources": {
+  "protomaps": {
+   "type": "vector",
+   "attribution": "\u00a9 OpenStreetMap contributors"
+  }
+ },
+ "layers": [
+  {
+   "id": "land",
+   "type": "fill",
+   "source": "protomaps",
+   "source-layer": "earth",
+   "paint": {
+    "fill-color": "#e4e4e4"
+   }
+  },
+  {
+   "id": "lakes",
+   "type": "fill",
+   "source": "protomaps",
+   "source-layer": "water",
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "geometry-type"
+     ],
+     "Polygon"
+    ],
+    [
+     "any",
+     [
+      "==",
+      [
+       "get",
+       "kind"
+      ],
+      "lake"
+     ],
+     [
+      "all",
+      [
+       "==",
+       [
+        "get",
+        "kind"
+       ],
+       "water"
+      ],
+      [
+       "!",
+       [
+        "in",
+        [
+         "coalesce",
+         [
+          "get",
+          "kind_detail"
+         ],
+         ""
+        ],
+        [
+         "literal",
+         [
+          "river",
+          "stream",
+          "canal",
+          "ditch",
+          "drain",
+          "basin"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "paint": {
+    "fill-color": "#a0c8f0"
+   }
+  }
+ ]
+}

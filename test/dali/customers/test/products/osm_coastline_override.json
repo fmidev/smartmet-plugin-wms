@@ -22,7 +22,7 @@
                     "qid": "land",
                     "layer_type": "osm",
                     "dataset": "extract",
-                    "style": "land-lightgray"
+                    "style": "land-lakes-lightgray"
                 },
                 {
                     "qid": "coast",
