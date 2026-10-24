@@ -32,6 +32,7 @@
 #include <json/reader.h>
 #include <json/writer.h>
 #include <macgyver/AnsiEscapeCodes.h>
+#include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
@@ -123,6 +124,18 @@ const std::set<std::string, Spine::HTTP::ParamMap::key_compare> allowed_keys = {
     "source",       "svg_tmpl",   "time",     "time_offset",  "timestep",
     "title",        "type",       "tz",       "views",        "webp",
     "width",        "xmargin",    "ymargin"};
+
+// Settings which select database contents and are passed to the database as such: the product
+// files define them, the query string must not
+const std::set<std::string> database_keys = {
+    "where", "pgname", "schema", "table", "time_column", "fieldnames", "geometry_column"};
+
+bool is_database_key(const std::string &theName)
+{
+  auto pos = theName.rfind('.');
+  auto key = Fmi::ascii_tolower_copy(pos == std::string::npos ? theName : theName.substr(pos + 1));
+  return database_keys.find(key) != database_keys.end();
+}
 
 void check_remaining_dali_json(Json::Value &json, const std::string &name)
 {
@@ -264,7 +277,8 @@ void set_cache_headers(Spine::HTTP::Response& theResponse, const State& state)
 
 }  // namespace
 
-// Keep only acceptable querystring replacements (allowed keys or names with dots)
+// Keep only acceptable querystring replacements (allowed keys or names with dots, but not
+// settings passed to the database)
 
 Spine::HTTP::ParamMap Dali::Plugin::extractValidParameters(const Spine::HTTP::ParamMap &theParams)
 {
@@ -274,7 +288,7 @@ Spine::HTTP::ParamMap Dali::Plugin::extractValidParameters(const Spine::HTTP::Pa
   {
     const auto &name = name_value.first;
     bool has_dot = (name.find('.') != std::string::npos);
-    if (has_dot || allowed_keys.find(name) != allowed_keys.end())
+    if ((has_dot || allowed_keys.find(name) != allowed_keys.end()) && !is_database_key(name))
       ret.insert(name_value);
   }
 

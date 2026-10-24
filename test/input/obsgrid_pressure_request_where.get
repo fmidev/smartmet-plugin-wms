@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=obsgrid_pressure&time=200812050600&m1.map.where=1%3D0 HTTP/1.0

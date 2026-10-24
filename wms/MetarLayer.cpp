@@ -809,6 +809,7 @@ void MetarLayer::init(Json::Value& theJson,
     JsonTools::remove_bool(show_weather, theJson, "show_weather");
     JsonTools::remove_bool(show_sky_info, theJson, "show_sky_info");
     JsonTools::remove_string(color, theJson, "color");
+    color = Fmi::safexmlescape(color);  // used in SVG attributes
     JsonTools::remove_int(mindistance, theJson, "mindistance");
 
     auto icao_json = JsonTools::remove(theJson, "icaos");

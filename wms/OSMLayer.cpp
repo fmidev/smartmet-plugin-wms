@@ -777,7 +777,7 @@ void OSMLayer::generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
                  {{"x", Fmi::to_string(static_cast<long>(scene->width) - 4)},
                   {"y", Fmi::to_string(static_cast<long>(scene->height) - 4)},
                   {"text-anchor", "end"},
-                  {"font-family", itsOptions.fontFamily},
+                  {"font-family", Fmi::safexmlescape(itsOptions.fontFamily)},
                   {"font-size", "10"},
                   {"fill", "#333333"},
                   {"stroke", "#ffffff"},

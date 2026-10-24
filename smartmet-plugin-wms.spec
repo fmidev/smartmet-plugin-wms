@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.24
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-3.fmi
+- Escape the font family of the OSM layer attribution and the colour of the METAR layer in SVG output
+- Database selection settings of the products (where, pgname, schema, table, time_column, fieldnames, geometry_column) can no longer be changed with query string parameters
+
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-2.fmi
 - GetLegendGraphic uses the defs.styles of the legend templates too, only their defs.layers were used
 - Image tests are decided by smartimagediff, which tolerates displacements of 1-2 pixels; the legend tests use Roboto
