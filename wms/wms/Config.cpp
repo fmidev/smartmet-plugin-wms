@@ -1837,6 +1837,10 @@ void Config::getLegendGraphic(const std::string& theLayerName,
     auto defs = legendL.get("defs", nulljson);
     if (!defs.isNull())
     {
+      auto defStyles = defs.get("styles", nulljson);
+      if (!defStyles.isNull())
+        theProduct.defs.styles.init(defStyles, itsDaliConfig);
+
       auto defLayers = defs.get("layers", nulljson);
       if (!defLayers.isNull())
       {

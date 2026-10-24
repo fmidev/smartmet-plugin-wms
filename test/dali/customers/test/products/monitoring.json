@@ -17,7 +17,8 @@
             "attributes" :
             {
             "x" : 250,
-            "y" : 250
+            "y" : 250,
+            "font-family" : "Roboto"
             }
             }
             ]

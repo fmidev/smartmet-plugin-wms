@@ -2,7 +2,7 @@
 <title>Demo product</title>
 <defs>
 <style type="text/css"><![CDATA[
-
+ text { font-family:Roboto; }
 /*  contourfill - -38 134,0,212 */
 /*  contourfill -38 -36 95,13,189 */
 /*  contourfill -36 -34 107,27,227 */

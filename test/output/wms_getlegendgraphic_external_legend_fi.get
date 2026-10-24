@@ -2,7 +2,7 @@
 
 <defs>
 <style type="text/css"><![CDATA[
-
+ text { font-family:Roboto; }
 .ModerateWind_3_5	{ stroke:none; fill: rgb(0,229,255) }
 .ModerateWind_5_7	{ stroke:none; fill: rgb(0,195,255) }
 .FreshWind_7_10		{ stroke:none; fill: rgb(0,110,255) }

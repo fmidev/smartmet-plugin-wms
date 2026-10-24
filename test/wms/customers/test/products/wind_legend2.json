@@ -5,6 +5,16 @@
     "projection":
     {
     },
+    "defs":
+    {
+	"styles":
+	{
+	    "text":
+	    {
+		"font-family": "Roboto"
+	    }
+	}
+    },
     "views": [
         {
 	    "qid": "v1",

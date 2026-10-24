@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.24
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-2.fmi
+- GetLegendGraphic uses the defs.styles of the legend templates too, only their defs.layers were used
+- Image tests are decided by smartimagediff, which tolerates displacements of 1-2 pixels; the legend tests use Roboto
+
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-1.fmi
 - A missing value no longer matches a value range of symbol, number and other attribute selections: 32700 fell into the open top class, f.ex. stations without a temperature were drawn as >= 38 C
 - Gridded observation tests draw the observations as small circles coloured like the isobands, at 1024 pixels

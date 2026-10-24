@@ -2,7 +2,7 @@
 <title>Demo product</title>
 <defs>
 <style type="text/css"><![CDATA[
-
+ text { font-family:Roboto; }
 .Precipitation_01_02	{ stroke: none; fill: rgb(10,155,255) }
 .Precipitation_02_05	{ stroke: none; fill: rgb(5,205,170) }
 .Precipitation_05_1	{ stroke: none; fill: rgb(140,230,20) }

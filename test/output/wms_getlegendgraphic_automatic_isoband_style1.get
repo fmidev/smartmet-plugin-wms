@@ -2,7 +2,7 @@
 <title>Demo product</title>
 <defs>
 <style type="text/css"><![CDATA[
-
+ text { font-family:Roboto; }
 .HiResTemperature_inf_50 	{ stroke:none; fill: #69038a }
 .HiResTemperature_50_49 	{ stroke:none; fill: #3c0271 }
 .HiResTemperature_49_48 	{ stroke:none; fill: #551e8a }

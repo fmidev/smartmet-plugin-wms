@@ -1,6 +1,13 @@
 {
     "defs":
     {
+	"styles":
+	{
+	    "text":
+	    {
+		"font-family": "Roboto"
+	    }
+	},
 	"layers": [
 	    {
 		"tag": "symbol",

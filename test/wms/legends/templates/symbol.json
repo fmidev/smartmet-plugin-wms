@@ -1,4 +1,14 @@
 {
+    "defs":
+    {
+	"styles":
+	{
+	    "text":
+	    {
+		"font-family": "Roboto"
+	    }
+	}
+    },
     "layer_type": "legend",
     "x": 99999,  // will be replaced in the code
     "y": 99999,  // will be replaced in the code

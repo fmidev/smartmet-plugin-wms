@@ -3,6 +3,10 @@
     {
 	"styles":
 	{
+	    "text":
+	    {
+		"font-family": "Roboto"
+	    },
 	    ".Label":
 	    {
 		"font-family": "Roboto",

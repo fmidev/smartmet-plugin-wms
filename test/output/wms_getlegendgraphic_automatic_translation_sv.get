@@ -2,7 +2,7 @@
 <title>HARMONIE Snow Drift Index</title>
 <defs>
 <style type="text/css"><![CDATA[
-
+ text { font-family:Roboto; }
 .SnowDriftIndex_1   { stroke: none; fill: yellow; }
 .SnowDriftIndex_2   { stroke: none; fill: orange; }
 .SnowDriftIndex_3   { stroke: none; fill: red; }
