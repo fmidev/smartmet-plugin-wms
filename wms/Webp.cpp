@@ -1,6 +1,8 @@
 #include "Webp.h"
+#include "Config.h"
 #include "Hash.h"
 
+#include <fmt/format.h>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
@@ -15,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Webp::init(Json::Value& theJson, const Config& /* theConfig */)
+void Webp::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -39,8 +41,9 @@ void Webp::init(Json::Value& theJson, const Config& /* theConfig */)
       else if (name == "frames")
       {
         int n = json.asInt();
-        if (n < 1 || n > 1000)
-          throw Fmi::Exception(BCP, "Webp 'frames' must be in the range 1...1000");
+        const auto maxframes = theConfig.maxAnimationFrames();
+        if (n < 1 || static_cast<unsigned int>(n) > maxframes)
+          throw Fmi::Exception(BCP, fmt::format("Webp 'frames' must be in the range 1...{}", maxframes));
         frames = n;
       }
       else if (name == "frame_duration")

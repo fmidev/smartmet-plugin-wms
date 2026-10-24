@@ -277,7 +277,7 @@ own compression speed and animation controls in a top level "webp" tag:
 | Name           | Type   | Default value | Description                                                                                                                                                          |
 | -------------- | ------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | level          | (int)  | 1             | The WebP lossless compression preset level, 0...9. 0 = fastest encoding with the largest file, 9 = slowest encoding with the smallest file. The default 1 is roughly 2.5 times faster to encode than the libwebp default settings at the cost of a slightly larger file. |
-| frames         | (int)  | -             | Setting this enables animated WebP output with the given number of frames, 1...1000. See [WebP time animation](#webp-time-animation) below.                          |
+| frames         | (int)  | -             | Setting this enables animated WebP output with the given number of frames, 1...`max_animation_frames` (400 by default). See [WebP time animation](#webp-time-animation) below.                          |
 | frame_duration | (int)  | 100           | The display duration of each animation frame in milliseconds.                                                                                                        |
 | loop           | (int)  | 0             | The animation loop count. Zero loops forever.                                                                                                                        |
 | accumulate     | (bool) | false         | If true, the animated elements accumulate over the loop instead of each frame showing only its own time bucket.                                                      |
@@ -5747,6 +5747,7 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | `flash_expiration_seconds` | 30 | Expiration time of images whose flash (lightning) observation window may still receive strokes. |
 | `flash_data_latency_seconds` | 120 | A flash observation window ending this long ago or earlier is considered closed. |
 | `max_image_size` | 20971520 | Maximum allowed image area in pixels (width × height). |
+| `max_animation_frames` | 400 | Maximum number of frames in an animation: `animation.timesteps` × `animation.loopsteps`, and `webp.frames`. |
 | `featureinfo.location_search_radius` | 50 | Search radius in kilometers for the nearest place name in GetFeatureInfo responses. Zero disables the lookup. |
 | `contour.worker_threads` | 0 | Size of the contouring worker pool of the trax library, as a count or as a percentage of the cores (`"50%"`), capped to the number of cores. Zero disables the pool. |
 | `wms.url` | `/wms` | URL path of the WMS endpoint. |
@@ -5884,6 +5885,7 @@ cache:
 }
 
 max_image_size = 20971520;  // 20 M pixels
+max_animation_frames = 400;
 
 unit_conversion:
 {

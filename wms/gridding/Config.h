@@ -100,12 +100,16 @@ class Config
   // Threads used for gridding one dataset, 0 for all cores
   unsigned int threads() const { return itsThreads; }
 
+  // Datasets gridded at the same time, further griddings wait for their turn
+  unsigned int maxConcurrent() const { return itsMaxConcurrent; }
+
  private:
   void parseProducer(const libconfig::Setting& theSetting);
 
   std::map<std::string, ProducerConfig> itsProducers;
   std::size_t itsCacheSize = 50;
   unsigned int itsThreads = 0;
+  unsigned int itsMaxConcurrent = 2;
 };
 
 }  // namespace Gridding

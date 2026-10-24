@@ -38,6 +38,42 @@ namespace Gridding
 {
 namespace
 {
+// Waits until fewer than max griddings run, and holds a place until destroyed
+class RunningSlot
+{
+ public:
+  RunningSlot(std::mutex& theMutex,
+              std::condition_variable& theCondition,
+              unsigned int& theRunning,
+              unsigned int theMax)
+      : itsMutex(theMutex), itsCondition(theCondition), itsRunning(theRunning)
+  {
+    std::unique_lock<std::mutex> lock(itsMutex);
+    itsCondition.wait(lock, [&] { return itsRunning < theMax; });
+    ++itsRunning;
+  }
+
+  ~RunningSlot()
+  {
+    {
+      std::lock_guard<std::mutex> lock(itsMutex);
+      --itsRunning;
+    }
+    itsCondition.notify_one();
+  }
+
+  RunningSlot() = delete;
+  RunningSlot(const RunningSlot&) = delete;
+  RunningSlot& operator=(const RunningSlot&) = delete;
+  RunningSlot(RunningSlot&&) = delete;
+  RunningSlot& operator=(RunningSlot&&) = delete;
+
+ private:
+  std::mutex& itsMutex;
+  std::condition_variable& itsCondition;
+  unsigned int& itsRunning;
+};
+
 // Gridding options use the configured thread count unless the parameter sets its own
 Fmi::PointGridding::Options with_threads(Fmi::PointGridding::Options options, unsigned int threads)
 {
@@ -429,6 +465,9 @@ Engine::Querydata::SharedModel Gridder::grid(const ProducerConfig& p,
 
   try
   {
+    // Distinct times are gridded separately, so limit the CPU they can take
+    RunningSlot slot(itsRunningMutex, itsRunningCondition, itsRunning, itsConfig.maxConcurrent());
+
     const Area& area = *itsAreas.at(p.name);
     auto data = create_querydata(area, p, theTime);
 

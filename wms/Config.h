@@ -62,6 +62,7 @@ class Config
   unsigned int flashDataLatencySeconds() const;
 
   unsigned int maxImageSize() const;
+  unsigned int maxAnimationFrames() const;
   unsigned int maxWMSLayers() const;
 
   // Tile dimensions for WMTS and OGC API - Tiles responses (default 1024×1024).
@@ -121,6 +122,7 @@ class Config
   unsigned int itsFlashDataLatencySeconds = 120;  // flash windows ending earlier are closed
 
   unsigned int itsMaxImageSize = 20 * 1024 * 1024;  // 20M pixels
+  unsigned int itsMaxAnimationFrames = 400;
   unsigned int itsMaxWMSLayers = 10;                // no more than 10 layers, ddos protection
   unsigned itsMaxHeatmapPoints = 2000 * 2000;
   unsigned int itsWmtsTileWidth = 1024;

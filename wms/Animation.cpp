@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
 
@@ -19,7 +20,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Animation::init(Json::Value& theJson, const Config& /* theConfig */)
+void Animation::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -43,6 +44,15 @@ void Animation::init(Json::Value& theJson, const Config& /* theConfig */)
     JsonTools::remove_int(data_timestep, theJson, "data_timestep");
     JsonTools::remove_int(loopsteps, theJson, "loopsteps");
     JsonTools::remove_int(loopstep_interval, theJson, "loopstep_interval");
+
+    // All frames are kept in memory, and the counts can be set in the query string
+    const long long maxframes = theConfig.maxAnimationFrames();
+    if (timesteps < 1 || loopsteps < 1 ||
+        static_cast<long long>(timesteps) * loopsteps > maxframes)
+      throw Fmi::Exception(BCP, "Animation frame count out of range")
+          .addParameter("timesteps", std::to_string(timesteps))
+          .addParameter("loopsteps", std::to_string(loopsteps))
+          .addParameter("max_animation_frames", std::to_string(maxframes));
   }
   catch (...)
   {

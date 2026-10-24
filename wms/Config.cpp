@@ -126,6 +126,7 @@ Config::Config(const string& configfile)
         Spine::lookupSizeSetting(itsConfig, "cache.filesystem_bytes", itsMaxFilesystemCacheSize);
 
     itsConfig.lookupValue("max_image_size", itsMaxImageSize);
+    itsConfig.lookupValue("max_animation_frames", itsMaxAnimationFrames);
     itsConfig.lookupValue("wms.max_layers", itsMaxWMSLayers);
     itsConfig.lookupValue("wmts.tile_width", itsWmtsTileWidth);
     itsConfig.lookupValue("wmts.tile_height", itsWmtsTileHeight);
@@ -408,6 +409,11 @@ bool Config::quiet() const
 unsigned int Config::maxImageSize() const
 {
   return itsMaxImageSize;
+}
+
+unsigned int Config::maxAnimationFrames() const
+{
+  return itsMaxAnimationFrames;
 }
 
 unsigned int Config::maxWMSLayers() const

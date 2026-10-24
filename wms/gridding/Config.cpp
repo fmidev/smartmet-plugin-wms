@@ -168,6 +168,11 @@ Config::Config(const libconfig::Setting& theSetting)
       throw Fmi::Exception(BCP, "Setting 'gridding.threads' must not be negative");
     itsThreads = static_cast<unsigned int>(threads);
 
+    int concurrency = static_cast<int>(itsMaxConcurrent);
+    if (theSetting.lookupValue("max_concurrent", concurrency) && concurrency < 1)
+      throw Fmi::Exception(BCP, "Setting 'gridding.max_concurrent' must be at least 1");
+    itsMaxConcurrent = static_cast<unsigned int>(concurrency);
+
     if (theSetting.exists("producers"))
     {
       const auto& producers = theSetting.lookup("producers");

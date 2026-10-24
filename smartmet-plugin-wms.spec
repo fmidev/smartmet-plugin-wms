@@ -190,6 +190,8 @@ rm -rf $RPM_BUILD_ROOT
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-3.fmi
 - Escape the font family of the OSM layer attribution and the colour of the METAR layer in SVG output
 - Database selection settings of the products (where, pgname, schema, table, time_column, fieldnames, geometry_column) can no longer be changed with query string parameters
+- New setting max_animation_frames (default 400) limits the frames of animations
+- New setting gridding.max_concurrent (default 2) limits the number of observation griddings running at the same time
 
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-2.fmi
 - GetLegendGraphic uses the defs.styles of the legend templates too, only their defs.layers were used

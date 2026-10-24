@@ -22,6 +22,7 @@
 #include <engines/querydata/Q.h>
 #include <macgyver/Cache.h>
 #include <macgyver/DateTime.h>
+#include <condition_variable>
 #include <future>
 #include <map>
 #include <memory>
@@ -116,6 +117,11 @@ class Gridder
   mutable Fmi::Cache::Cache<std::size_t, Engine::Querydata::SharedModel> itsCache;
   mutable std::mutex itsPendingMutex;
   mutable std::map<std::size_t, std::shared_future<Engine::Querydata::SharedModel>> itsPending;
+
+  // Number of griddings running, limited to max_concurrent
+  mutable std::mutex itsRunningMutex;
+  mutable std::condition_variable itsRunningCondition;
+  mutable unsigned int itsRunning = 0;
 };
 
 }  // namespace Gridding
