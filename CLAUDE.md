@@ -21,7 +21,8 @@ make format             # clang-format all source files
 ### Running specific tests
 
 Override the test variable for the relevant group, and use that group's target. The plain
-`test` target runs all of `ALL_TESTS`, so it ignores these variables -- only `test-dali`, `test-wms`,
+`test` target runs all of `ALL_TESTS` (every test except the `osmdata_*` tests when no OSM
+data is installed), so it ignores these variables -- only `test-dali`, `test-wms`,
 `test-wmts` and `test-tiles` consume them.
 
 ```bash

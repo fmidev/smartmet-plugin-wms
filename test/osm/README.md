@@ -32,10 +32,28 @@ not change when the installed styles do. Their fonts are changed from Noto Sans
 to Roboto, the font of all the tests: Noto Sans is installed on RHEL 10 but
 not on RHEL 8, so the labels would differ between the platforms.
 
-## Real OpenStreetMap data
+## Real OpenStreetMap data (run only when available)
 
-The tests use only the extract above: the full OpenStreetMap data (the planet is about 140 GB)
-is never packaged or committed and is not available in CI. Some images in
-`docs/images/dali/osmdata_*.png` were rendered from the full Protomaps build 20261017 for the
-documentation; they are not test results, see the OpenStreetMap section of
-`docs/examples/dali.md`.
+The `osmdata_*` tests render real OpenStreetMap data: global, European,
+Scandinavian, Finnish and Helsinki views with several styles. The full data
+is never packaged or committed: the planet file is about 140 GB. The tests run
+only if the dataset directory exists:
+
+    $(OSM_DATA_DIR)/protomaps/*.pmtiles      default OSM_DATA_DIR=/smartmet/data/osm
+
+Install the data with the engine's update tool, for example the whole planet
+
+    smartmet-osm-update -d /smartmet/data/osm
+
+or a smaller set of files, which the engine combines by resolution:
+
+    smartmet-osm-update -d /smartmet/data/osm -m extract -n world -z 8
+    smartmet-osm-update -d /smartmet/data/osm -m extract -n nordic -z 15 -b 4,54,33,72
+
+Then run `make test` or only the OSM tests with `make test-osm`, optionally
+with `OSM_DATA_DIR=/other/dir`.
+
+The expected results were made with the Protomaps build 20261017 (the whole
+planet). Newer builds change the results slightly as OpenStreetMap is edited,
+so after updating the data inspect the differences in `failures/` and accept
+them if they only reflect changes in the data.
