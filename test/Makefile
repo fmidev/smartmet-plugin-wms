@@ -218,14 +218,32 @@ validate-openapi:
 
 # Copy actual test outputs from failures/ to output/ to accept them as new expected outputs.
 # Workflow: run the tests, inspect failures/, then run this target to accept correct results.
+# The expected outputs are rendered on RHEL $(BASE_RHEL). On other platforms a result differing
+# from output/ is accepted into output-el<N>/, which TestRunner.sh prefers on that platform,
+# and an override equal to output/ is removed.
+BASE_RHEL := 8
+RHEL := $(shell rpm -E %rhel 2>/dev/null)
+
 update-outputs:
-	@if ls failures/*.get 2>/dev/null | grep -q .; then \
+	@if ! ls failures/*.get 2>/dev/null | grep -q .; then \
+		echo "No failures to accept."; \
+	elif [ -z "$(RHEL)" ] || [ "$(RHEL)" = "$(BASE_RHEL)" ]; then \
 		for f in failures/*.get; do \
 			cp "$$f" "output/$$(basename $$f)"; \
 			echo "Accepted output/$$(basename $$f)"; \
 		done; \
 	else \
-		echo "No failures to accept."; \
+		for f in failures/*.get; do \
+			name=$$(basename $$f); \
+			if cmp -s "$$f" "output/$$name"; then \
+				rm -f "output-el$(RHEL)/$$name"; \
+				echo "Same as output/$$name, no override for RHEL $(RHEL)"; \
+			else \
+				mkdir -p output-el$(RHEL); \
+				cp "$$f" "output-el$(RHEL)/$$name"; \
+				echo "Accepted output-el$(RHEL)/$$name"; \
+			fi; \
+		done; \
 	fi
 
 geonames-database:

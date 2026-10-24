@@ -4,6 +4,12 @@
 
 [ -n "$KEEP_FAILURES" ] || rm -f failures/*
 
+# The expected outputs are in output/, rendered on RHEL 8. A platform whose
+# results differ may have its own expected outputs in output-el<N>/, for
+# example output-el10/, which are used when they exist (make update-outputs).
+
+rhel=$(rpm -E %rhel 2>/dev/null)
+
 # Start the test handler with named pipes
 
 in=/tmp/test.in.$$
@@ -107,6 +113,9 @@ for f in "${TEST_FILES[@]}"; do
 
     result=failures/$request_name
     expected=output/$request_name
+    if [[ -n "$rhel" && -f output-el$rhel/$request_name ]]; then
+	expected=output-el$rhel/$request_name
+    fi
 
     # The plugin will echo DONE when it's done producing the result,
     # but it may print something else first, hence we start by

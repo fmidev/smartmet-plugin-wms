@@ -54,7 +54,7 @@
 .HiResTemperature_3_2 	{ stroke:none; fill: #7fd9e6 }
 .HiResTemperature_2_1 	{ stroke:none; fill: #97e9f4 }
 .HiResTemperature_1_0 	{ stroke:none; fill: #b1f1fa }
-.HiResTemperature_0_1 	{ stroke:none; fill: #28860  }
+.HiResTemperature_0_1 	{ stroke:none; fill: #028860 }
 .HiResTemperature_1_2 	{ stroke:none; fill: #13a06e }
 .HiResTemperature_2_3 	{ stroke:none; fill: #3db481 }
 .HiResTemperature_3_4 	{ stroke:none; fill: #5ac48a }

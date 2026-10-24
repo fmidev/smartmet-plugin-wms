@@ -43,11 +43,16 @@ After running tests, inspect `test/failures/` for actual outputs, then:
 make update-outputs     # Copies all failures/*.get to output/*.get
 ```
 
+The expected outputs in `test/output/` are rendered on RHEL 8. A platform whose results differ may
+have its own expected outputs in `test/output-el<N>/` (e.g. `output-el10/`), which `TestRunner.sh`
+prefers on that platform; `make update-outputs` on such a platform writes there instead (and
+removes an override equal to `output/`). Currently no overrides are needed.
+
 Individual acceptance: `cp test/failures/foo.get test/output/foo.get`
 
 ### Test infrastructure
 
-Tests are integration tests: `PluginTest.cpp` starts a SmartMet Reactor with the plugin loaded, `TestRunner.sh` feeds HTTP requests from `test/input/*.get` (and `.post`) via named pipes, and `CompareImages.pl` compares actual output against `test/output/` expected files. The make targets run `ParallelTestRunner.sh`, which deals the tests to `WMS_TEST_SHARDS` (default 3) `TestRunner.sh` processes running in parallel and prints the results in the original order once all are done; each process starts its own PluginTest of about 3 GB, and `WMS_TEST_SHARDS=1` runs the tests serially. Comparison is format-aware: images are compared via ImageMagick, SVG is rasterized then compared, XML uses xmllint, JSON uses jq, MVT uses protoc decode.
+Tests are integration tests: `PluginTest.cpp` starts a SmartMet Reactor with the plugin loaded, `TestRunner.sh` feeds HTTP requests from `test/input/*.get` (and `.post`) via named pipes, and `CompareImages.pl` compares actual output against `test/output/` expected files. The make targets run `ParallelTestRunner.sh`, which deals the tests to `WMS_TEST_SHARDS` (default 3) `TestRunner.sh` processes running in parallel and prints the results in the original order once all are done; each process starts its own PluginTest of about 3 GB, and `WMS_TEST_SHARDS=1` runs the tests serially. Comparison is format-aware: images are compared with `smartimagediff` of smartmet-library-regression (tolerates displacements of 1-2 pixels, fails on solid changes and large pale-colour area changes; the PSNR is printed for information only), SVG is rasterized then compared, XML uses xmllint, JSON uses jq, MVT uses protoc decode.
 
 Tests to skip are listed in `test/input/.testignore`.
 

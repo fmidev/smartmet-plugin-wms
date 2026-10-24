@@ -149,7 +149,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-utils-devel >= 26.9.3
 #TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
-#TestRequires: smartmet-library-regression >= 26.10.17
+#TestRequires: smartmet-library-regression >= 26.10.24
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: protobuf-compiler
