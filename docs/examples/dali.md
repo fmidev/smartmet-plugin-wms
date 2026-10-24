@@ -3392,6 +3392,30 @@ The vector tiles are in Web Mercator, but the layer can be drawn in any projecti
 
 `osm_unknown_dataset` and `osm_unknown_style` check that an unknown `osm.dataset` or `osm.style` is an error.
 
+### Coastlines
+
+The `coastline-*` styles draw only the sea coastline (and with `coastline-lakes-*` also the shores of lakes) on a transparent background, so the layer goes on top of the weather data.  The `override` setting replaces the SVG attributes of the rendered paths, for example the colour and the width of the line (see [OSMLayer](../reference.md#osmlayer)).
+
+- `osm_coastline` ([input](../../test/input/osm_coastline.get), [product](../../test/dali/customers/test/products/osm_coastline.json)) draws `coastline-black` over a WKT polygon standing in for weather data.
+- `osm_coastline_override` ([input](../../test/input/osm_coastline_override.get), [product](../../test/dali/customers/test/products/osm_coastline_override.json)) draws `coastline-lakes-black` with `"override": {"stroke": "#c00000", "stroke-width": 2, "stroke-opacity": 0.8}`.  `osm_coastline_override_svg` is the same product as SVG.
+- `osm_coastline_world` ([input](../../test/input/osm_coastline_world.get), [product](../../test/dali/customers/test/products/osm_coastline_world.json)) draws `coastline-gray` over a `meteo-white` background without labels.
+
+| Test | Output |
+|------|--------|
+| `osm_coastline` | ![osm_coastline](../images/dali/osm_coastline.png) |
+| `osm_coastline_override` | ![osm_coastline_override](../images/dali/osm_coastline_override.png) |
+| `osm_coastline_world` | ![osm_coastline_world](../images/dali/osm_coastline_world.png) |
+
+`osm_coastline_bad_override` checks that overriding an attribute other than the stroke and fill ones (here `font-size`) is an error.
+
+With the full OpenStreetMap data (see below) the `osmdata_coastline` product ([`osmdata_coastline.json`](../../test/dali/customers/test/products/osmdata_coastline.json)) draws the coastline of the Protomaps build:
+
+| Test | Style | CRS | Output |
+|------|-------|-----|--------|
+| [`osmdata_scandinavia_coastline`](../../test/input/osmdata_scandinavia_coastline.get) | `coastline-black` | `EPSG:3067` | ![osmdata_scandinavia_coastline](../images/dali/osmdata_scandinavia_coastline.png) |
+| [`osmdata_finland_coastline_lakes`](../../test/input/osmdata_finland_coastline_lakes.get) | `coastline-lakes-black` | `EPSG:3067` | ![osmdata_finland_coastline_lakes](../images/dali/osmdata_finland_coastline_lakes.png) |
+| [`osmdata_world_coastline`](../../test/input/osmdata_world_coastline.get) | `coastline-black` | `WGS84` | ![osmdata_world_coastline](../images/dali/osmdata_world_coastline.png) |
+
 ### Full OpenStreetMap data
 
 The `osmdata_*` tests render the full Protomaps OpenStreetMap build with the `osmdata` product ([`osmdata.json`](../../test/dali/customers/test/products/osmdata.json)).  The data is not distributed with the tests, so they run only when it is installed, see [`test/osm/README.md`](../../test/osm/README.md).
