@@ -1,5 +1,5 @@
 {
-    "title": "Coastline over an OpenStreetMap background, world",
+    "title": "Coastline of the world",
     "projection": {
         "qid": "p",
         "crs": "WGS84",
@@ -13,12 +13,10 @@
             "qid": "v1",
             "layers": [
                 {
-                    "qid": "base",
-                    "layer_type": "osm",
-                    "font_family": "Roboto",
-                    "dataset": "extract",
-                    "style": "meteo-white",
-                    "labels": false
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "white"
+                    }
                 },
                 {
                     "qid": "coast",

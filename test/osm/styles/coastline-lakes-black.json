@@ -43,16 +43,59 @@
    "source": "protomaps",
    "source-layer": "water",
    "filter": [
-    "in",
+    "all",
     [
-     "get",
-     "kind"
+     "==",
+     [
+      "geometry-type"
+     ],
+     "Polygon"
     ],
     [
-     "literal",
+     "any",
      [
-      "lake",
-      "water"
+      "==",
+      [
+       "get",
+       "kind"
+      ],
+      "lake"
+     ],
+     [
+      "all",
+      [
+       "==",
+       [
+        "get",
+        "kind"
+       ],
+       "water"
+      ],
+      [
+       "!",
+       [
+        "in",
+        [
+         "coalesce",
+         [
+          "get",
+          "kind_detail"
+         ],
+         ""
+        ],
+        [
+         "literal",
+         [
+          "river",
+          "stream",
+          "canal",
+          "ditch",
+          "drain",
+          "basin"
+         ]
+        ]
+       ]
+      ]
      ]
     ]
    ],

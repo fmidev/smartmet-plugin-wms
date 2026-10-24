@@ -1,44 +1,30 @@
 {
     "title": "Coastline drawn over weather data",
-    "projection":
-    {
-	"qid": "p",
-	"crs": "EPSG:3067",
-	"bboxcrs": "EPSG:3067",
-	"bbox": "365000,6657000,410000,6694500",
-	"xsize": 600,
-	"ysize": 500
+    "projection": {
+        "qid": "p",
+        "crs": "EPSG:3067",
+        "bboxcrs": "EPSG:3067",
+        "bbox": "365000,6657000,410000,6694500",
+        "xsize": 600,
+        "ysize": 500
     },
-    "views":
-    [
-	{
-	    "qid": "v1",
-	    "layers":
-	    [
-		{
-		    "layer_type": "background",
-		    "attributes":
-		    {
-			"fill": "white"
-		    }
-		},
-		{
-		    "qid": "data",
-		    "layer_type": "wkt",
-		    "wkt": "POLYGON((24.7 60.0,25.4 60.0,25.4 60.4,24.7 60.4,24.7 60.0))",
-		    "resolution": 10,
-		    "attributes":
-		    {
-			"fill": "#a0c8f0"
-		    }
-		},
-		{
-		    "qid": "coast",
-		    "layer_type": "osm",
-		    "dataset": "extract",
-		    "style": "coastline-black"
-		}
-	    ]
-	}
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "#a0c8f0"
+                    }
+                },
+                {
+                    "qid": "coast",
+                    "layer_type": "osm",
+                    "dataset": "extract",
+                    "style": "coastline-black"
+                }
+            ]
+        }
     ]
 }
