@@ -3394,7 +3394,7 @@ The vector tiles are in Web Mercator, but the layer can be drawn in any projecti
 
 ### Coastlines
 
-The `coastline-*` styles draw only the sea coastline (and with `coastline-lakes-*` also the shores of lakes) on a transparent background, so the layer goes on top of the weather data.  The `override` setting replaces the SVG attributes of the rendered paths, for example the colour and the width of the line (see [OSMLayer](../reference.md#osmlayer)).
+The `coastline-*` styles draw only the sea coastline (and with `coastline-lakes-*` also the shores of lakes) on a transparent background, so the layer goes on top of the weather data.  The test products draw a white `background` layer first, since the images would otherwise be transparent outside the data.  The `override` setting replaces the SVG attributes of the rendered paths, for example the colour and the width of the line (see [OSMLayer](../reference.md#osmlayer)).
 
 - `osm_coastline` ([input](../../test/input/osm_coastline.get), [product](../../test/dali/customers/test/products/osm_coastline.json)) draws `coastline-black` over a WKT polygon standing in for weather data.
 - `osm_coastline_override` ([input](../../test/input/osm_coastline_override.get), [product](../../test/dali/customers/test/products/osm_coastline_override.json)) draws `coastline-lakes-black` with `"override": {"stroke": "#c00000", "stroke-width": 2, "stroke-opacity": 0.8}`.  `osm_coastline_override_svg` is the same product as SVG.

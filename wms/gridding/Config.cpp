@@ -173,6 +173,11 @@ Config::Config(const libconfig::Setting& theSetting)
       throw Fmi::Exception(BCP, "Setting 'gridding.max_concurrent' must be at least 1");
     itsMaxConcurrent = static_cast<unsigned int>(concurrency);
 
+    int cacheseconds = static_cast<int>(itsObservationCacheSeconds);
+    if (theSetting.lookupValue("observation_cache_seconds", cacheseconds) && cacheseconds < 0)
+      throw Fmi::Exception(BCP, "Setting 'gridding.observation_cache_seconds' must not be negative");
+    itsObservationCacheSeconds = static_cast<unsigned int>(cacheseconds);
+
     if (theSetting.exists("producers"))
     {
       const auto& producers = theSetting.lookup("producers");

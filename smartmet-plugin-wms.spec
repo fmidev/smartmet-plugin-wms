@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.24
-Release: 4%{?dist}.fmi
+Release: 5%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-5.fmi
+- Gridded observations: a recent observation read is shared by requests for the same time (gridding.observation_cache_seconds, default 10)
+- Coastline test products draw a white background
+
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-4.fmi
 - New osm layer setting override replaces the stroke and fill attributes of the rendered lines and polygons, for example the colour and width of the coastline-* styles of the OSM engine
 

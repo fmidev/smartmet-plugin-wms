@@ -22,6 +22,7 @@
 #include <engines/querydata/Q.h>
 #include <macgyver/Cache.h>
 #include <macgyver/DateTime.h>
+#include <chrono>
 #include <condition_variable>
 #include <future>
 #include <map>
@@ -90,9 +91,10 @@ class Gridder
  private:
   // The background models of the parameters, null where there is none
   using Backgrounds = std::vector<Engine::Querydata::Q>;
+  using SharedStationData = std::shared_ptr<const StationData>;
 
   const ProducerConfig& producer(const std::string& theProducer) const;
-  StationData read(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const;
+  SharedStationData read(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const;
   Backgrounds backgrounds(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const;
   std::size_t dataHash(const ProducerConfig& theProducer,
                        const Fmi::DateTime& theTime,
@@ -117,6 +119,16 @@ class Gridder
   mutable Fmi::Cache::Cache<std::size_t, Engine::Querydata::SharedModel> itsCache;
   mutable std::mutex itsPendingMutex;
   mutable std::map<std::size_t, std::shared_future<Engine::Querydata::SharedModel>> itsPending;
+
+  // Recent observation reads by producer and time, so that the requests for the map tiles of
+  // a time read the observations once (observation_cache_seconds)
+  struct RecentRead
+  {
+    std::chrono::steady_clock::time_point time;
+    std::shared_future<SharedStationData> data;
+  };
+  mutable std::mutex itsRecentReadsMutex;
+  mutable std::map<std::string, RecentRead> itsRecentReads;
 
   // Number of griddings running, limited to max_concurrent
   mutable std::mutex itsRunningMutex;

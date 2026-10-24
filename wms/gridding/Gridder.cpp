@@ -351,15 +351,66 @@ std::vector<Fmi::DateTime> Gridder::validTimes(const std::string& theProducer) c
 
 // ----------------------------------------------------------------------
 
-StationData Gridder::read(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const
+Gridder::SharedStationData Gridder::read(const ProducerConfig& theProducer,
+                                         const Fmi::DateTime& theTime) const
 {
 #ifndef WITHOUT_OBSERVATION
   if (theProducer.source == SourceType::Observations)
-    return read_observations(
-        *itsObsEngine, theProducer, itsAreas.at(theProducer.name)->lonlatBBox(), theTime);
+  {
+    auto read_now = [&]()
+    {
+      return std::make_shared<const StationData>(read_observations(
+          *itsObsEngine, theProducer, itsAreas.at(theProducer.name)->lonlatBBox(), theTime));
+    };
+
+    const auto maxage = std::chrono::seconds(itsConfig.observationCacheSeconds());
+    if (maxage.count() == 0)
+      return read_now();
+
+    // Reuse a recent or ongoing read of the same time, or start one
+    const auto key = theProducer.name + ' ' + Fmi::to_iso_string(theTime);
+    const auto now = std::chrono::steady_clock::now();
+    std::promise<SharedStationData> promise;
+    std::shared_future<SharedStationData> future;
+    bool owner = false;
+    {
+      std::lock_guard<std::mutex> lock(itsRecentReadsMutex);
+      for (auto it = itsRecentReads.begin(); it != itsRecentReads.end();)
+      {
+        if (now - it->second.time > maxage)
+          it = itsRecentReads.erase(it);
+        else
+          ++it;
+      }
+      auto pos = itsRecentReads.find(key);
+      if (pos != itsRecentReads.end())
+        future = pos->second.data;
+      else
+      {
+        future = promise.get_future().share();
+        itsRecentReads[key] = RecentRead{now, future};
+        owner = true;
+      }
+    }
+
+    if (owner)
+    {
+      try
+      {
+        promise.set_value(read_now());
+      }
+      catch (...)
+      {
+        promise.set_exception(std::current_exception());
+        std::lock_guard<std::mutex> lock(itsRecentReadsMutex);
+        itsRecentReads.erase(key);  // the next request tries again
+      }
+    }
+    return future.get();
+  }
 #endif
-  return read_querydata(
-      *itsQEngine, theProducer, itsStationElevations.at(theProducer.name), theTime);
+  return std::make_shared<const StationData>(read_querydata(
+      *itsQEngine, theProducer, itsStationElevations.at(theProducer.name), theTime));
 }
 
 // ----------------------------------------------------------------------
@@ -398,7 +449,7 @@ std::size_t Gridder::hashValue(const std::string& theProducer, const Fmi::DateTi
   try
   {
     const auto& p = producer(theProducer);
-    return dataHash(p, theTime, read(p, theTime), backgrounds(p, theTime));
+    return dataHash(p, theTime, *read(p, theTime), backgrounds(p, theTime));
   }
   catch (...)
   {
@@ -424,7 +475,7 @@ Engine::Querydata::Q Gridder::get(const std::string& theProducer,
   {
     const auto& p = producer(theProducer);
     return std::make_shared<Engine::Querydata::QImpl>(
-        grid(p, theTime, read(p, theTime), backgrounds(p, theTime)));
+        grid(p, theTime, *read(p, theTime), backgrounds(p, theTime)));
   }
   catch (...)
   {

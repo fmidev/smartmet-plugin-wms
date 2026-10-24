@@ -13,6 +13,12 @@
             "qid": "v1",
             "layers": [
                 {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "white"
+                    }
+                },
+                {
                     "qid": "data",
                     "layer_type": "wkt",
                     "wkt": "POLYGON((10 55,35 55,35 72,10 72,10 55))",

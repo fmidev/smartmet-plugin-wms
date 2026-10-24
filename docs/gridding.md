@@ -34,9 +34,11 @@ The code is in `wms/gridding/`.
   querydata `Q`, with one time and all the parameters of the producer, in the coordinate system
   of the terrain raster. Its grid points are the cell centres of the raster. `State::getModel`
   returns it for gridded producers, so the layers need no changes.
-- **Observations are read on every request.** The hash of the observations identifies the
-  gridded data, so new and corrected observations are picked up as soon as they are in the
-  source. ETags use the same hash without gridding.
+- **Observations are read again after a few seconds.** The hash of the observations identifies
+  the gridded data, so new and corrected observations are picked up soon after they are in the
+  source. A read is shared by the requests for the same time during `observation_cache_seconds`
+  (default 10), so the tiles of a map read the observations once. ETags use the same hash
+  without gridding.
 - **Cache.** Gridded datasets are cached by that hash (`cache_size`), and simultaneous requests
   for a dataset which is being gridded wait for it instead of gridding it again. The cache holds
   the data, and every request gets a new `Q` over it: a `Q` holds an iterator to the data and
@@ -61,6 +63,9 @@ gridding:
 
 	# Datasets gridded at the same time, further griddings wait for their turn
 	max_concurrent = 10;
+
+	# Seconds an observation read is shared by requests for the same time, 0 disables
+	observation_cache_seconds = 10;
 
 	producers:
 	{

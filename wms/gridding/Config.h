@@ -103,6 +103,9 @@ class Config
   // Datasets gridded at the same time, further griddings wait for their turn
   unsigned int maxConcurrent() const { return itsMaxConcurrent; }
 
+  // Seconds an observation read is reused by other requests for the same time, 0 to disable
+  unsigned int observationCacheSeconds() const { return itsObservationCacheSeconds; }
+
  private:
   void parseProducer(const libconfig::Setting& theSetting);
 
@@ -110,6 +113,7 @@ class Config
   std::size_t itsCacheSize = 50;
   unsigned int itsThreads = 0;
   unsigned int itsMaxConcurrent = 10;
+  unsigned int itsObservationCacheSeconds = 10;
 };
 
 }  // namespace Gridding
