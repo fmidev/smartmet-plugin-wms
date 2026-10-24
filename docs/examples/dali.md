@@ -3445,7 +3445,7 @@ observations) at every station (`"layout": "data"`):
 ```
 
 The marker selections (`layers/obsgrid/*_markers.json`) are the isoband limits with the `obsdot`
-symbol (radius 3 px, a 0.3 px black outline), so each circle has the colour of the isoband its
+symbol (radius 1.5 px, a 0.2 px black outline), so each circle has the colour of the isoband its
 observed value belongs to. Where the colour of a circle differs from the field around it, the
 gridded value at the station differs from the observation by at least the band boundary.
 Stations without a value are not drawn.
