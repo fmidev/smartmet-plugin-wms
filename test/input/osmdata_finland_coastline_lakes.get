@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osmdata_coastline&osm.style=coastline-lakes-black&p.bbox=200000,6620000,700000,7000000&p.xsize=800&p.ysize=608&type=png HTTP/1.0

@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.24
-Release: 3%{?dist}.fmi
+Release: 4%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-4.fmi
+- New osm layer setting override replaces the stroke and fill attributes of the rendered lines and polygons, for example the colour and width of the coastline-* styles of the OSM engine
+
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-3.fmi
 - Escape the font family of the OSM layer attribution and the colour of the METAR layer in SVG output
 - Database selection settings of the products (where, pgname, schema, table, time_column, fieldnames, geometry_column) can no longer be changed with query string parameters

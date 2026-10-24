@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <set>
 #include <string>
 
 namespace SmartMet
@@ -65,6 +66,47 @@ std::string getAttribute(const Fmi::Feature& feature, const std::string& key)
 // Add an SVG element to a group. Text halos are marked with paint-order="stroke", which older
 // librsvg versions (2.42 in RHEL8) ignore, drawing the halo over the text. Such text is drawn
 // twice instead: first the halo alone, then the text without a stroke on top of it.
+// The attributes of the rendered paths a layer may override. The stroke attributes apply to
+// lines and polygon outlines, the fill attributes to polygon fills.
+const std::set<std::string> overridable_attributes{
+    "stroke", "stroke-width", "stroke-opacity", "stroke-dasharray", "fill", "fill-opacity"};
+
+// Replace or add the overridden attributes of a path element
+std::vector<std::pair<std::string, std::string>> apply_overrides(
+    const std::string& theTag,
+    const std::vector<std::pair<std::string, std::string>>& theAttributes,
+    const std::vector<std::pair<std::string, std::string>>& theOverrides)
+{
+  if (theOverrides.empty() || theTag != "path")
+    return theAttributes;
+
+  auto value = [&](const std::string& name) -> std::string
+  {
+    for (const auto& attr : theAttributes)
+      if (attr.first == name)
+        return attr.second;
+    return "none";
+  };
+
+  const bool stroked = (value("stroke") != "none");
+  const bool filled = (value("fill") != "none");
+
+  auto ret = theAttributes;
+  for (const auto& [name, val] : theOverrides)
+  {
+    const bool is_stroke = (name.compare(0, 6, "stroke") == 0);
+    if ((is_stroke && !stroked) || (!is_stroke && !filled))
+      continue;
+    auto pos =
+        std::find_if(ret.begin(), ret.end(), [&](const auto& attr) { return attr.first == name; });
+    if (pos != ret.end())
+      pos->second = val;
+    else
+      ret.emplace_back(name, val);
+  }
+  return ret;
+}
+
 void addElement(CTPP::CDT& theGroup,
                 const std::string& theTag,
                 const std::vector<std::pair<std::string, std::string>>& theAttributes,
@@ -291,6 +333,40 @@ std::int64_t OSMLayer::getDataTimestamp(const State& theState) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Read the SVG attribute overrides of the rendered paths
+ */
+// ----------------------------------------------------------------------
+
+void OSMLayer::parseOverrides(const Json::Value& theJson)
+{
+  if (theJson.isNull())
+    return;
+  if (!theJson.isObject())
+    throw Fmi::Exception(BCP, "OSMLayer 'override' must be an object");
+
+  for (const auto& name : theJson.getMemberNames())
+  {
+    if (overridable_attributes.count(name) == 0)
+      throw Fmi::Exception(BCP, "OSMLayer 'override' does not support this attribute")
+          .addParameter("Attribute", name);
+
+    const auto& json = theJson[name];
+    std::string value;
+    if (json.isString())
+      value = json.asString();
+    else if (json.isNumeric())
+      value = Fmi::to_string(json.asDouble());
+    else
+      throw Fmi::Exception(BCP, "OSMLayer 'override' values must be strings or numbers")
+          .addParameter("Attribute", name);
+
+    // The values end up in SVG attributes
+    itsOverrides.emplace_back(name, Fmi::safexmlescape(value));
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize from JSON
  *
  * Vector tile dataset rendered with a MapLibre style:
@@ -305,7 +381,8 @@ std::int64_t OSMLayer::getDataTimestamp(const State& theState) const
  *   "zoom": 6,                       // fixed style zoom level instead of automatic
  *   "zoom_offset": 0,                // adjustment to the automatic zoom level
  *   "font_family": "Noto Sans, sans-serif",  // fallback fonts
- *   "attribution": false             // draw "© OpenStreetMap" into the image
+ *   "attribution": false,            // draw "© OpenStreetMap" into the image
+ *   "override": { "stroke": "#303030", "stroke-width": 1.5 }  // line and fill attributes
  * }
  *
  * PostGIS data loaded with osm2pgsql:
@@ -361,6 +438,7 @@ void OSMLayer::init(Json::Value& theJson,
       itsOptions.zoom = zoom;
       JsonTools::remove_string(itsOptions.fontFamily, theJson, "font_family");
       JsonTools::remove_bool(itsAttribution, theJson, "attribution");
+      parseOverrides(JsonTools::remove(theJson, "override"));
 
       for (const auto* name : {"include", "exclude"})
       {
@@ -769,7 +847,10 @@ void OSMLayer::generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
     for (const auto& element : scene->elements)
-      addElement(group_cdt["tags"], element.tag, element.attributes, element.content);
+      addElement(group_cdt["tags"],
+                 element.tag,
+                 apply_overrides(element.tag, element.attributes, itsOverrides),
+                 element.content);
 
     if (itsAttribution && !scene->attribution.empty())
       addElement(group_cdt["tags"],
@@ -836,6 +917,11 @@ std::size_t OSMLayer::hash_value(const State& theState) const
       for (const auto& id : o.exclude)
         Fmi::hash_combine(hash, Fmi::hash_value(id) + 1);
       Fmi::hash_combine(hash, Fmi::hash_value(itsAttribution));
+      for (const auto& [name, value] : itsOverrides)
+      {
+        Fmi::hash_combine(hash, Fmi::hash_value(name));
+        Fmi::hash_combine(hash, Fmi::hash_value(value));
+      }
 
       // The dataset version changes when its files change, the style when it is edited
       if (auto* osm = theState.getOSMEngine())

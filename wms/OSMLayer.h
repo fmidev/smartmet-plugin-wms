@@ -77,9 +77,12 @@ class OSMLayer : public Layer
   // ---- Vector tile datasets (alternative to PostGIS feature_sets) ----
   bool isDataset() const { return !itsOptions.dataset.empty(); }
   void generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void parseOverrides(const Json::Value& theJson);
 
   Engine::OSM::MapOptions itsOptions;  // dataset, style and rendering options
   bool itsAttribution = false;         // draw the data attribution into the image
+  // SVG attributes replacing those of the rendered lines and polygon fills
+  std::vector<std::pair<std::string, std::string>> itsOverrides;
 
   // For postgis backend: touched after each osm2pgsql import
   std::filesystem::path itsTimestampFile;

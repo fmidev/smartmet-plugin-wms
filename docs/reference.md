@@ -3068,6 +3068,8 @@ The styles are MapLibre style documents in the engine's style directory (`/usr/s
 | `versatiles-positrino`, `versatiles-positrino-dark`, `versatiles-gray`, `versatiles-gray-dark` | Muted general purpose basemaps (Positron and Dark Matter lookalikes), good for data visualization |
 | `protomaps-white`, `protomaps-grayscale`, `protomaps-black` | Protomaps data visualization flavors |
 | `protomaps-light`, `protomaps-dark`, `versatiles-muted`, `versatiles-colorful` | Full general purpose maps, too busy as backgrounds for most weather data |
+| `coastline-black`, `coastline-white`, `coastline-gray` | Transparent overlay of the sea coastline, to be drawn on top of weather data |
+| `coastline-lakes-black`, `coastline-lakes-white`, `coastline-lakes-gray` | The same with the shores of lakes and other inland water |
 
 The renderer supports background, fill, line and point symbol layers with MapLibre expressions, legacy filters and legacy functions. Line labels, icons (except as dots for point symbols), patterns and 3D features are not rendered. The image may be in any projection; the zoom level is chosen like MapLibre does from the resolution at the centre of the image.
 
@@ -3083,6 +3085,7 @@ The renderer supports background, fill, line and point symbol layers with MapLib
 | `zoom_offset` | number | 0 | Adjustment to the automatic zoom level, for example 1 for more detail |
 | `font_family` | string | `Noto Sans, DejaVu Sans, sans-serif` | Fallback fonts for the labels |
 | `attribution` | bool | false | Draw the data attribution (© OpenStreetMap) into the lower right corner |
+| `override` | object | none | SVG attributes replacing those of the rendered paths: `stroke`, `stroke-width`, `stroke-opacity` and `stroke-dasharray` of lines and polygon outlines, `fill` and `fill-opacity` of polygon fills. Labels and point symbols are not changed. |
 
 OpenStreetMap data requires the attribution "© OpenStreetMap contributors" to be visible on maps; draw it with `attribution` or show it in the client.
 
@@ -3097,6 +3100,18 @@ Weather data is best drawn between the background and its labels, which is done 
     "include": ["places_*", "boundaries*", "water_label_*"], "attribution": true }
 ]
 ```
+
+**Coastlines.** The `coastline-*` styles draw the outline of the land polygons, which is the sea coastline, on a transparent background. The land and water polygons of the OpenStreetMap data are cut into pieces of 1x1 degrees, but the cuts are not drawn: only the real shores are stroked. Draw the coastline after the weather data, and choose the colour and the line width with `override` if the shipped variants do not fit:
+
+```json
+"layers": [
+  { "layer_type": "isoband", "...": "the weather data" },
+  { "layer_type": "osm", "dataset": "protomaps", "style": "coastline-black",
+    "override": { "stroke": "#404040", "stroke-width": 1.2 } }
+]
+```
+
+The line widths of the styles grow with the zoom level (from 0.5 pixels for the whole world to 1.2 pixels at city scale); a `stroke-width` override is the same at all scales. `include` and `exclude` select the `coastline` and `shoreline` layers of the `coastline-lakes-*` styles separately, so lake shores can be drawn thinner in a second layer.
 
 The OGC API - Tiles interface returns the vector tiles of the dataset directly for `f=mvt` requests in the WebMercatorQuad tiling (`EPSG:3857`), cutting tiles beyond the available zoom levels from their ancestors. Raster tiles are rendered in any tiling. The OGC API - Styles resource of such a collection (`/tiles/collections/{id}/styles/default`) returns the MapLibre style of the layer with its vector source pointing at the tiles of the collection, so that clients such as MapLibre GL JS can render the same basemap themselves.
 
@@ -3225,22 +3240,14 @@ The example below combines Natural Earth (global background) with an OSM PostGIS
 
 > **Note:** A rendered sample image will be added once OSM data has been imported. See the data setup instructions above.
 
-OSMLayer supports two backends. The `backend` attribute selects which one is used; the required companion attributes differ between them.
-
-**PostGIS backend** (`"backend": "postgis"`, default): renders from `osm2pgsql`-imported PostGIS tables via the GIS engine. Requires `feature_sets`.
-
-**PMTiles backend** (`"backend": "pmtiles"`): renders from a memory-mapped `.pmtiles` file managed by the OSM engine (`engines/osm`). Requires the OSM engine to be configured and loaded. For OGC Tiles / MVT requests the raw pre-encoded tile bytes are passed through directly — zero decoding or re-encoding. For WMS/SVG requests the tile is decoded via OGR. Requires `source` (the OSM engine source name).
-
-The table below lists OSMLayer-specific attributes (in addition to the common layer attributes).
+A layer with `dataset` renders a vector tile dataset of the OSM engine (see above); otherwise it renders the PostGIS `feature_sets`. The table below lists the attributes of the PostGIS mode (in addition to the common layer attributes).
 
 <pre><b>OSMLayer</b></pre>
 | Name             | Type              | Default      | Description |
 | ---------------- | ----------------- | ------------ | ----------- |
-| backend          | string            | `"postgis"`  | Data backend: `"postgis"` (via GIS engine) or `"pmtiles"` (via OSM engine mmap). |
-| source           | string            | -            | **Required for pmtiles backend.** Source name as defined in the OSM engine configuration (e.g. `"scandinavia"`). |
-| timestamp_file   | string            | -            | **PostGIS backend only.** Path to a file whose modification time represents the OSM data age. Touch after each `osm2pgsql` import to invalidate HTTP ETags. For the pmtiles backend the ETag is derived from the `.pmtiles` file's own modification time automatically. |
-| precision        | double            | 1.0          | Coordinate precision for SVG path output (PostGIS backend only). |
-| feature_sets     | _[FeatureSet]_    | -            | **Required for postgis backend.** Array of feature set definitions (see below). |
+| timestamp_file   | string            | -            | Path to a file whose modification time represents the OSM data age. Touch after each `osm2pgsql` import to invalidate HTTP ETags. (With `dataset` the ETag follows the files of the dataset automatically.) |
+| precision        | double            | 1.0          | Coordinate precision for SVG path output. |
+| feature_sets     | _[FeatureSet]_    | -            | **Required.** Array of feature set definitions (see below). |
 
 <pre><b>OSMLayer FeatureSet</b></pre>
 | Name             | Type              | Default         | Description |

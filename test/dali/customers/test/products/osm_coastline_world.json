@@ -1,0 +1,32 @@
+{
+    "title": "Coastline over an OpenStreetMap background, world",
+    "projection": {
+        "qid": "p",
+        "crs": "WGS84",
+        "bboxcrs": "WGS84",
+        "bbox": "-90,-180,90,180",
+        "xsize": 720,
+        "ysize": 360
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "base",
+                    "layer_type": "osm",
+                    "font_family": "Roboto",
+                    "dataset": "extract",
+                    "style": "meteo-white",
+                    "labels": false
+                },
+                {
+                    "qid": "coast",
+                    "layer_type": "osm",
+                    "dataset": "extract",
+                    "style": "coastline-gray"
+                }
+            ]
+        }
+    ]
+}
