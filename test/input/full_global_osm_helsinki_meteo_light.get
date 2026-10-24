@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=full_global_osm&p.crs=EPSG:3067&p.bboxcrs=EPSG:3067&p.bbox=370000,6660000,400000,6685000&p.xsize=900&p.ysize=750&osm.style=meteo-light&type=png HTTP/1.0

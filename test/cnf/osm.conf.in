@@ -2,7 +2,7 @@
 //
 // The extract dataset is a small OpenStreetMap extract committed with the
 // tests (Helsinki in detail, the world coarsely) and is always available.
-// The osmdata_* tests use the full data and are run only if
+// The full_global_osm_* tests use the full data and are run only if
 // @OSM_DATA_DIR@/protomaps exists, see osm/README.md.
 
 directory = "@OSM_DATA_DIR@";

@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=osmdata&p.crs=EPSG:3035&p.bboxcrs=EPSG:3035&p.bbox=2400000,1300000,7000000,5500000&p.xsize=1000&p.ysize=913&osm.style=meteo-white&type=png HTTP/1.0

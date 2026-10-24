@@ -32,9 +32,10 @@ not change when the installed styles do. Their fonts are changed from Noto Sans
 to Roboto, the font of all the tests: Noto Sans is installed on RHEL 10 but
 not on RHEL 8, so the labels would differ between the platforms.
 
-## Real OpenStreetMap data (run only when available)
+## Real OpenStreetMap data (optional, local only)
 
-The `osmdata_*` tests render real OpenStreetMap data: global, European,
+The `full_global_osm_*` tests are the only tests using the full data, and they never run in CI.
+They render real OpenStreetMap data: global, European,
 Scandinavian, Finnish and Helsinki views with several styles. The full data
 is never packaged or committed: the planet file is about 140 GB. The tests run
 only if the dataset directory exists:

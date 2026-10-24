@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=full_global_osm&p.crs=EPSG:3035&p.bboxcrs=EPSG:3035&p.bbox=2400000,1300000,7000000,5500000&p.xsize=1000&p.ysize=913&osm.style=protomaps-grayscale&type=png HTTP/1.0

@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=full_global_osm&p.crs=WGS84&p.bboxcrs=WGS84&p.bbox=-90,-180,90,180&p.xsize=1200&p.ysize=600&osm.style=meteo-dark&type=png HTTP/1.0
