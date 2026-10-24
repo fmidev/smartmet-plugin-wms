@@ -3542,6 +3542,94 @@
             "height" : 500,
             "width" : 600
           },
+          "name" : "osm_coastline",
+          "path" : 
+          [
+            "test",
+            "osm_coastline"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 600,
+            "ysize" : 500
+          },
+          "title" : "Coastline drawn over weather data",
+          "url_template" : "/dali?customer=test&product=osm_coastline&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 600
+          },
+          "name" : "osm_coastline_bad_override",
+          "path" : 
+          [
+            "test",
+            "osm_coastline_bad_override"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 600,
+            "ysize" : 500
+          },
+          "title" : "An attribute the osm layer cannot override",
+          "url_template" : "/dali?customer=test&product=osm_coastline_bad_override&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 600
+          },
+          "name" : "osm_coastline_override",
+          "path" : 
+          [
+            "test",
+            "osm_coastline_override"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 600,
+            "ysize" : 500
+          },
+          "title" : "Coastline and lake shores with the colour and width overridden",
+          "url_template" : "/dali?customer=test&product=osm_coastline_override&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 360,
+            "width" : 720
+          },
+          "name" : "osm_coastline_world",
+          "path" : 
+          [
+            "test",
+            "osm_coastline_world"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "WGS84",
+            "xsize" : 720,
+            "ysize" : 360
+          },
+          "title" : "Coastline over an OpenStreetMap background, world",
+          "url_template" : "/dali?customer=test&product=osm_coastline_world&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 600
+          },
           "name" : "osm_overlay",
           "path" : 
           [
@@ -3579,6 +3667,28 @@
           },
           "title" : "OpenStreetMap background from real data",
           "url_template" : "/dali?customer=test&product=osmdata&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 500
+          },
+          "name" : "osmdata_coastline",
+          "path" : 
+          [
+            "test",
+            "osmdata_coastline"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 500,
+            "ysize" : 600
+          },
+          "title" : "Coastline from real data",
+          "url_template" : "/dali?customer=test&product=osmdata_coastline&time={time}"
         },
         {
           "image" : 
