@@ -109,7 +109,7 @@ class Config
   std::map<std::string, ProducerConfig> itsProducers;
   std::size_t itsCacheSize = 50;
   unsigned int itsThreads = 0;
-  unsigned int itsMaxConcurrent = 2;
+  unsigned int itsMaxConcurrent = 10;
 };
 
 }  // namespace Gridding

@@ -40,7 +40,7 @@ The code is in `wms/gridding/`.
 - **Cache.** Gridded datasets are cached by that hash (`cache_size`), and simultaneous requests
   for a dataset which is being gridded wait for it instead of gridding it again. The cache holds
   the data, and every request gets a new `Q` over it: a `Q` holds an iterator to the data and
-  must not be shared between threads. At most `max_concurrent` datasets (default 2) are gridded
+  must not be shared between threads. At most `max_concurrent` datasets (default 10) are gridded
   at the same time, since every distinct time is a gridding of its own.
 - **Capabilities.** WMS layers of gridded producers are `ogc/ObsGridLayer`s: the bounding box
   and the time dimension come from the gridding configuration, and the default time is the
@@ -60,7 +60,7 @@ gridding:
 	threads = 0;
 
 	# Datasets gridded at the same time, further griddings wait for their turn
-	max_concurrent = 2;
+	max_concurrent = 10;
 
 	producers:
 	{
