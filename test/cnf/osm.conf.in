@@ -1,11 +1,9 @@
 // OSM engine configuration for the WMS plugin tests.
 //
 // The extract dataset is a small OpenStreetMap extract committed with the
-// tests (Helsinki in detail, the world coarsely) and is always available.
-// The osmdata_* tests use the full data and are run only if
-// @OSM_DATA_DIR@/protomaps exists, see osm/README.md.
+// tests (Helsinki in detail, the world coarsely). The tests use nothing else,
+// since the full data is not available in CI.
 
-directory = "@OSM_DATA_DIR@";
 styles = "osm/styles";
 rescan_interval = 0;
 min_file_age = 0;

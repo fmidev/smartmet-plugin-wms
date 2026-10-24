@@ -3408,31 +3408,39 @@ The `coastline-*` styles draw only the sea coastline (and with `coastline-lakes-
 
 `osm_coastline_bad_override` checks that overriding an attribute other than the stroke and fill ones (here `font-size`) is an error.
 
-### Full OpenStreetMap data
+### Images rendered from the full OpenStreetMap data
 
-The `osmdata_*` tests render the full Protomaps OpenStreetMap build with the `osmdata` product ([`osmdata.json`](../../test/dali/customers/test/products/osmdata.json)).  The data is not distributed with the tests, so they run only when it is installed, see [`test/osm/README.md`](../../test/osm/README.md).
+**These images are not test results.** They were rendered from the full Protomaps OpenStreetMap
+build 20261017 (the whole planet, about 140 GB), not from the small extract committed with the
+tests, to show the styles on real detailed data in views the extract does not cover. The tests
+cannot use the full data, since it is not available in CI, so these images are not regenerated
+or checked by the test suite.
 
-| Test | Style | CRS | Output |
-|------|-------|-----|--------|
-| [`osmdata_world_meteo_light`](../../test/input/osmdata_world_meteo_light.get) | `meteo-light` | `WGS84` | ![osmdata_world_meteo_light](../images/dali/osmdata_world_meteo_light.png) |
-| [`osmdata_world_meteo_dark`](../../test/input/osmdata_world_meteo_dark.get) | `meteo-dark` | `WGS84` | ![osmdata_world_meteo_dark](../images/dali/osmdata_world_meteo_dark.png) |
-| [`osmdata_world_robinson_positrino`](../../test/input/osmdata_world_robinson_positrino.get) | `versatiles-positrino` | `ESRI:54030` | ![osmdata_world_robinson_positrino](../images/dali/osmdata_world_robinson_positrino.png) |
-| [`osmdata_europe_meteo_light`](../../test/input/osmdata_europe_meteo_light.get) | `meteo-light` | `EPSG:3035` | ![osmdata_europe_meteo_light](../images/dali/osmdata_europe_meteo_light.png) |
-| [`osmdata_europe_meteo_white`](../../test/input/osmdata_europe_meteo_white.get) | `meteo-white` | `EPSG:3035` | ![osmdata_europe_meteo_white](../images/dali/osmdata_europe_meteo_white.png) |
-| [`osmdata_europe_positrino_dark`](../../test/input/osmdata_europe_positrino_dark.get) | `versatiles-positrino-dark` | `EPSG:3035` | ![osmdata_europe_positrino_dark](../images/dali/osmdata_europe_positrino_dark.png) |
-| [`osmdata_europe_protomaps_grayscale`](../../test/input/osmdata_europe_protomaps_grayscale.get) | `protomaps-grayscale` | `EPSG:3035` | ![osmdata_europe_protomaps_grayscale](../images/dali/osmdata_europe_protomaps_grayscale.png) |
-| [`osmdata_scandinavia_meteo_light`](../../test/input/osmdata_scandinavia_meteo_light.get) | `meteo-light` | `EPSG:3067` | ![osmdata_scandinavia_meteo_light](../images/dali/osmdata_scandinavia_meteo_light.png) |
-| [`osmdata_scandinavia_meteo_dark`](../../test/input/osmdata_scandinavia_meteo_dark.get) | `meteo-dark` | `EPSG:3067` | ![osmdata_scandinavia_meteo_dark](../images/dali/osmdata_scandinavia_meteo_dark.png) |
-| [`osmdata_scandinavia_protomaps_light`](../../test/input/osmdata_scandinavia_protomaps_light.get) | `protomaps-light` | `EPSG:3067` | ![osmdata_scandinavia_protomaps_light](../images/dali/osmdata_scandinavia_protomaps_light.png) |
-| [`osmdata_scandinavia_protomaps_white`](../../test/input/osmdata_scandinavia_protomaps_white.get) | `protomaps-white` | `EPSG:3067` | ![osmdata_scandinavia_protomaps_white](../images/dali/osmdata_scandinavia_protomaps_white.png) |
-| [`osmdata_scandinavia_versatiles_gray`](../../test/input/osmdata_scandinavia_versatiles_gray.get) | `versatiles-gray` | `EPSG:3067` | ![osmdata_scandinavia_versatiles_gray](../images/dali/osmdata_scandinavia_versatiles_gray.png) |
-| [`osmdata_finland_meteo_light`](../../test/input/osmdata_finland_meteo_light.get) | `meteo-light` | `EPSG:3067` | ![osmdata_finland_meteo_light](../images/dali/osmdata_finland_meteo_light.png) |
-| [`osmdata_finland_positrino`](../../test/input/osmdata_finland_positrino.get) | `versatiles-positrino` | `EPSG:3067` | ![osmdata_finland_positrino](../images/dali/osmdata_finland_positrino.png) |
-| [`osmdata_helsinki_meteo_light`](../../test/input/osmdata_helsinki_meteo_light.get) | `meteo-light` | `EPSG:3067` | ![osmdata_helsinki_meteo_light](../images/dali/osmdata_helsinki_meteo_light.png) |
-| [`osmdata_helsinki_protomaps_light`](../../test/input/osmdata_helsinki_protomaps_light.get) | `protomaps-light` | `EPSG:3067` | ![osmdata_helsinki_protomaps_light](../images/dali/osmdata_helsinki_protomaps_light.png) |
-| [`osmdata_helsinki_protomaps_dark`](../../test/input/osmdata_helsinki_protomaps_dark.get) | `protomaps-dark` | `EPSG:3067` | ![osmdata_helsinki_protomaps_dark](../images/dali/osmdata_helsinki_protomaps_dark.png) |
+Each image is an `osm` layer (`"dataset": "protomaps"`, `"font_family": "Roboto"`) with the
+style, projection, bounding box (in the projection) and size below; with the data installed (see
+the OSM engine's `smartmet-osm-update`) they can be reproduced with a product like
+`{"projection": {"crs": CRS, "bboxcrs": CRS, "bbox": BBOX, "xsize": W, "ysize": H},
+"views": [{"layers": [{"layer_type": "osm", "dataset": "protomaps", "style": STYLE}]}]}`.
 
----
+| Image | Style | CRS | BBox | Size | Image |
+|-------|-------|-----|------|------|-------|
+| `osmdata_world_meteo_dark` | `meteo-dark` | `WGS84` | `-90,-180,90,180` | 1200×600 | ![osmdata_world_meteo_dark](../images/dali/osmdata_world_meteo_dark.png) |
+| `osmdata_world_meteo_light` | `meteo-light` | `WGS84` | `-90,-180,90,180` | 1200×600 | ![osmdata_world_meteo_light](../images/dali/osmdata_world_meteo_light.png) |
+| `osmdata_world_robinson_positrino` | `versatiles-positrino` | `ESRI:54030` | `-17000000,-8600000,17000000,8600000` | 1200×600 | ![osmdata_world_robinson_positrino](../images/dali/osmdata_world_robinson_positrino.png) |
+| `osmdata_europe_meteo_light` | `meteo-light` | `EPSG:3035` | `2400000,1300000,7000000,5500000` | 1000×913 | ![osmdata_europe_meteo_light](../images/dali/osmdata_europe_meteo_light.png) |
+| `osmdata_europe_meteo_white` | `meteo-white` | `EPSG:3035` | `2400000,1300000,7000000,5500000` | 1000×913 | ![osmdata_europe_meteo_white](../images/dali/osmdata_europe_meteo_white.png) |
+| `osmdata_europe_positrino_dark` | `versatiles-positrino-dark` | `EPSG:3035` | `2400000,1300000,7000000,5500000` | 1000×913 | ![osmdata_europe_positrino_dark](../images/dali/osmdata_europe_positrino_dark.png) |
+| `osmdata_europe_protomaps_grayscale` | `protomaps-grayscale` | `EPSG:3035` | `2400000,1300000,7000000,5500000` | 1000×913 | ![osmdata_europe_protomaps_grayscale](../images/dali/osmdata_europe_protomaps_grayscale.png) |
+| `osmdata_scandinavia_meteo_dark` | `meteo-dark` | `EPSG:3067` | `-600000,6100000,1100000,7900000` | 800×847 | ![osmdata_scandinavia_meteo_dark](../images/dali/osmdata_scandinavia_meteo_dark.png) |
+| `osmdata_scandinavia_meteo_light` | `meteo-light` | `EPSG:3067` | `-600000,6100000,1100000,7900000` | 800×847 | ![osmdata_scandinavia_meteo_light](../images/dali/osmdata_scandinavia_meteo_light.png) |
+| `osmdata_scandinavia_protomaps_light` | `protomaps-light` | `EPSG:3067` | `-600000,6100000,1100000,7900000` | 800×847 | ![osmdata_scandinavia_protomaps_light](../images/dali/osmdata_scandinavia_protomaps_light.png) |
+| `osmdata_scandinavia_protomaps_white` | `protomaps-white` | `EPSG:3067` | `-600000,6100000,1100000,7900000` | 800×847 | ![osmdata_scandinavia_protomaps_white](../images/dali/osmdata_scandinavia_protomaps_white.png) |
+| `osmdata_scandinavia_versatiles_gray` | `versatiles-gray` | `EPSG:3067` | `-600000,6100000,1100000,7900000` | 800×847 | ![osmdata_scandinavia_versatiles_gray](../images/dali/osmdata_scandinavia_versatiles_gray.png) |
+| `osmdata_finland_meteo_light` | `meteo-light` | `EPSG:3067` | `60000,6620000,760000,7800000` | 600×1011 | ![osmdata_finland_meteo_light](../images/dali/osmdata_finland_meteo_light.png) |
+| `osmdata_finland_positrino` | `versatiles-positrino` | `EPSG:3067` | `60000,6620000,760000,7800000` | 600×1011 | ![osmdata_finland_positrino](../images/dali/osmdata_finland_positrino.png) |
+| `osmdata_helsinki_meteo_light` | `meteo-light` | `EPSG:3067` | `370000,6660000,400000,6685000` | 900×750 | ![osmdata_helsinki_meteo_light](../images/dali/osmdata_helsinki_meteo_light.png) |
+| `osmdata_helsinki_protomaps_dark` | `protomaps-dark` | `EPSG:3067` | `370000,6660000,400000,6685000` | 900×750 | ![osmdata_helsinki_protomaps_dark](../images/dali/osmdata_helsinki_protomaps_dark.png) |
+| `osmdata_helsinki_protomaps_light` | `protomaps-light` | `EPSG:3067` | `370000,6660000,400000,6685000` | 900×750 | ![osmdata_helsinki_protomaps_light](../images/dali/osmdata_helsinki_protomaps_light.png) |
 
 ## Gridded Observations
 

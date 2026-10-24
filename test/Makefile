@@ -46,10 +46,6 @@ TILES_TESTS := $(wildcard input/tiles_*.get)
 
 # Tests using real OpenStreetMap data are run only if the data is available,
 # see osm/README.md. The data is never packaged.
-OSM_DATA_DIR ?= /smartmet/data/osm
-OSMDATA_ALL_TESTS := $(wildcard input/osmdata_*.get)
-OSMDATA_TESTS := $(if $(wildcard $(OSM_DATA_DIR)/protomaps),$(OSMDATA_ALL_TESTS))
-ALL_TESTS := $(filter-out $(OSMDATA_ALL_TESTS), $(ALL_TESTS)) $(OSMDATA_TESTS)
 
 DALI_TESTS  := $(filter-out $(WMS_TESTS) $(WMTS_TESTS) $(TILES_TESTS), $(ALL_TESTS))
 
@@ -281,18 +277,13 @@ cnf/observation.conf: cnf/observation.conf.in
 cnf/avi.conf: cnf/avi.conf.in
 	$(AVI_CONF_EDIT) $@.in >$@
 
-cnf/osm.conf: cnf/osm.conf.in FORCE
-	sed -e 's|@OSM_DATA_DIR@|$(OSM_DATA_DIR)|g' $@.in >$@
-	@if [ -z "$(OSMDATA_TESTS)" ]; then \
-	  echo "*** No OSM data in $(OSM_DATA_DIR)/protomaps, the osmdata tests are skipped"; \
-	fi
-
-FORCE:
+cnf/osm.conf: cnf/osm.conf.in
+	cp $@.in $@
 
 # Run only the tests using OSM data
 test-osm: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
-	@if ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(wildcard input/osm_*.get input/tiles_osm_*.get input/wms_getmap_osm*.get) $(OSMDATA_TESTS); then \
+	@if ./ParallelTestRunner.sh $(WMS_TEST_SHARDS) $(wildcard input/osm_*.get input/tiles_osm_*.get input/wms_getmap_osm*.get); then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
