@@ -1,0 +1,26 @@
+{
+ "version": 8,
+ "name": "Land, light gray",
+ "metadata": {
+  "smartmet:description": "Land polygons only, for the coastline tests: shows where land and sea are under the coastline overlays",
+  "smartmet:license": "CC0-1.0",
+  "smartmet:schema": "protomaps"
+ },
+ "sources": {
+  "protomaps": {
+   "type": "vector",
+   "attribution": "© OpenStreetMap contributors"
+  }
+ },
+ "layers": [
+  {
+   "id": "land",
+   "type": "fill",
+   "source": "protomaps",
+   "source-layer": "earth",
+   "paint": {
+    "fill-color": "#e4e4e4"
+   }
+  }
+ ]
+}

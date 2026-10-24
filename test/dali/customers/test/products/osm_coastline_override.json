@@ -19,6 +19,12 @@
                     }
                 },
                 {
+                    "qid": "land",
+                    "layer_type": "osm",
+                    "dataset": "extract",
+                    "style": "land-lightgray"
+                },
+                {
                     "qid": "coast",
                     "layer_type": "osm",
                     "dataset": "extract",

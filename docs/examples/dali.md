@@ -3394,10 +3394,10 @@ The vector tiles are in Web Mercator, but the layer can be drawn in any projecti
 
 ### Coastlines
 
-The `coastline-*` styles draw only the sea coastline (and with `coastline-lakes-*` also the shores of lakes) on a transparent background, so the layer goes on top of the weather data.  The shores are those of lakes only: OpenStreetMap river and canal areas are water polygons too, and the styles leave them out by their `kind_detail`.  The test products fill the view with a light blue `background` standing in for the weather data, which also keeps the images opaque.  The `override` setting replaces the SVG attributes of the rendered paths, for example the colour and the width of the line (see [OSMLayer](../reference.md#osmlayer)).
+The `coastline-*` styles draw only the sea coastline (and with `coastline-lakes-*` also the shores of lakes) on a transparent background, so the layer goes on top of the weather data.  The shores are those of lakes only: OpenStreetMap river and canal areas are water polygons too, and the styles leave them out by their `kind_detail`.  The Helsinki test products fill the view with a light blue `background` standing in for the weather data and draw the land in light gray (the test-only `land-lightgray` style) so that land and sea can be told apart; the fill also keeps the images opaque.  The `override` setting replaces the SVG attributes of the rendered paths, for example the colour and the width of the line (see [OSMLayer](../reference.md#osmlayer)).
 
-- `osm_coastline` ([input](../../test/input/osm_coastline.get), [product](../../test/dali/customers/test/products/osm_coastline.json)) draws `coastline-black` over the data fill.
-- `osm_coastline_override` ([input](../../test/input/osm_coastline_override.get), [product](../../test/dali/customers/test/products/osm_coastline_override.json)) draws `coastline-lakes-black` with `"override": {"stroke": "#c00000", "stroke-width": 2, "stroke-opacity": 0.8}`.  `osm_coastline_override_svg` is the same product as SVG.
+- `osm_coastline` ([input](../../test/input/osm_coastline.get), [product](../../test/dali/customers/test/products/osm_coastline.json)) draws `coastline-black` over the data fill and the land.
+- `osm_coastline_override` ([input](../../test/input/osm_coastline_override.get), [product](../../test/dali/customers/test/products/osm_coastline_override.json)) draws `coastline-lakes-black` with `"override": {"stroke": "#c00000", "stroke-width": 2, "stroke-opacity": 0.8}`.  The Vantaa and Kerava river areas in the view are not outlined, only the lakes.  `osm_coastline_override_svg` is the same product as SVG.
 - `osm_coastline_world` ([input](../../test/input/osm_coastline_world.get), [product](../../test/dali/customers/test/products/osm_coastline_world.json)) draws `coastline-gray` alone over a white background, so that the image shows nothing but the coastline.
 
 | Test | Output |
@@ -3407,14 +3407,6 @@ The `coastline-*` styles draw only the sea coastline (and with `coastline-lakes-
 | `osm_coastline_world` | ![osm_coastline_world](../images/dali/osm_coastline_world.png) |
 
 `osm_coastline_bad_override` checks that overriding an attribute other than the stroke and fill ones (here `font-size`) is an error.
-
-With the full OpenStreetMap data (see below) the `osmdata_coastline` product ([`osmdata_coastline.json`](../../test/dali/customers/test/products/osmdata_coastline.json)) draws the coastline of the Protomaps build:
-
-| Test | Style | CRS | Output |
-|------|-------|-----|--------|
-| [`osmdata_scandinavia_coastline`](../../test/input/osmdata_scandinavia_coastline.get) | `coastline-black` | `EPSG:3067` | ![osmdata_scandinavia_coastline](../images/dali/osmdata_scandinavia_coastline.png) |
-| [`osmdata_finland_coastline_lakes`](../../test/input/osmdata_finland_coastline_lakes.get) | `coastline-lakes-black` | `EPSG:3067` | ![osmdata_finland_coastline_lakes](../images/dali/osmdata_finland_coastline_lakes.png) |
-| [`osmdata_world_coastline`](../../test/input/osmdata_world_coastline.get) | `coastline-black` | `WGS84` | ![osmdata_world_coastline](../images/dali/osmdata_world_coastline.png) |
 
 ### Full OpenStreetMap data
 
