@@ -59,7 +59,7 @@ const std::string css =
 
 const std::string tpl =
     "https://x/collections/fmi:ecmwf:dailymeantemperature/tiles/EPSG:3857/"
-    "{tileMatrix}/{tileRow}/{tileCol}?f=application/vnd.mapbox-vector-tile";
+    "{z}/{y}/{x}?f=application/vnd.mapbox-vector-tile";
 
 // Collect the class→colour pairs from a ["match", ["get","class"], …, default]
 // expression (everything between index 2 and the trailing default element).

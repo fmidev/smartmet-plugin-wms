@@ -43,7 +43,7 @@ The OGC API - Tiles handler dispatches these routes on `splitTilesPath()`:
    `State::getStyle()`.
 3. **Tile template**: the style's vector source points at the same MVT template
    the tiles handler serves
-   (`…/collections/{id}/tiles/EPSG:3857/{tileMatrix}/{tileRow}/{tileCol}?f=application/vnd.mapbox-vector-tile`).
+   (`…/collections/{id}/tiles/EPSG:3857/{z}/{y}/{x}?f=application/vnd.mapbox-vector-tile`).
 4. **Advertised**: a landing-page link (`rel="styles"`,
    `http://www.opengis.net/def/rel/ogc/1.0/styles`) plus the OGC API - Styles
    core + mapbox-styles conformance class URIs in `/conformance`.

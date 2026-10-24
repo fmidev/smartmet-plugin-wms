@@ -189,6 +189,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Oct 25 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.25-1.fmi
 - The quiet=1 option silences the error log of all failed requests, and WMS errors are logged once instead of twice
+- The MapLibre style documents of OGC API - Styles (/tiles/collections/{id}/styles/{styleId}?f=mapbox) give the tile URL as {z}/{y}/{x}: the style specification does not know the OGC {tileMatrix}/{tileRow}/{tileCol} placeholders, so MapLibre clients could not use the vector source
 
 * Sat Oct 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.24-5.fmi
 - Gridded observations: a recent observation read is shared by requests for the same time (gridding.observation_cache_seconds, default 10)

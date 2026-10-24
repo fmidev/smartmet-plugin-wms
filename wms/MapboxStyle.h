@@ -59,7 +59,7 @@ struct MapboxStyleLayer
  *
  * @param styleName        Style / collection name (used for ids and source id).
  * @param tileUrlTemplate  MVT tile URL template, e.g.
- *                         ".../collections/<id>/tiles/EPSG:3857/{tileMatrix}/{tileRow}/{tileCol}?f=application/vnd.mapbox-vector-tile"
+ *                         ".../collections/<id>/tiles/EPSG:3857/{z}/{y}/{x}?f=application/vnd.mapbox-vector-tile"
  * @param layers           The MVT layers to style (isoband/isoline …).
  * @return                 Mapbox GL style document (JSON string).
  */

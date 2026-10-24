@@ -129,7 +129,7 @@
       "maxzoom" : 14,
       "tiles" : 
       [
-        "http://localhost/tiles/collections/test:t2m/tiles/EPSG:3857/{tileMatrix}/{tileRow}/{tileCol}?f=application/vnd.mapbox-vector-tile"
+        "http://localhost/tiles/collections/test:t2m/tiles/EPSG:3857/{z}/{y}/{x}?f=application/vnd.mapbox-vector-tile"
       ],
       "type" : "vector"
     }

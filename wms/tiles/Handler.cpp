@@ -1266,11 +1266,12 @@ QueryStatus Handler::handleStyle(const std::string& base,
       return QueryStatus::OK;
     }
 
-    // MVT tile template the style's vector source points at. Clients that manage
-    // their own (time-parameterised) source may instead lift just the paint.
+    // MVT tile template the style's vector source points at. The style specification
+    // knows only {z}/{x}/{y}, not the OGC {tileMatrix}/{tileRow}/{tileCol}. Clients
+    // that manage their own (time-parameterised) source may instead lift just the paint.
     const std::string tms = "EPSG:3857";
     const std::string tileUrlTemplate = base + "/collections/" + collId + "/tiles/" + tms +
-                                        "/{tileMatrix}/{tileRow}/{tileCol}"
+                                        "/{z}/{y}/{x}"
                                         "?f=application/vnd.mapbox-vector-tile";
 
 #ifndef WITHOUT_OSM
