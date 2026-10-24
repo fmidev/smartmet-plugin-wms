@@ -1176,6 +1176,28 @@
         {
           "image" : 
           {
+            "height" : 600,
+            "width" : 500
+          },
+          "name" : "full_global_osm",
+          "path" : 
+          [
+            "test",
+            "full_global_osm"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 500,
+            "ysize" : 600
+          },
+          "title" : "OpenStreetMap background from real data",
+          "url_template" : "/dali?customer=test&product=full_global_osm&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 800,
             "width" : 800
           },
@@ -3621,7 +3643,7 @@
             "xsize" : 720,
             "ysize" : 360
           },
-          "title" : "Coastline over an OpenStreetMap background, world",
+          "title" : "Coastline of the world over the land",
           "url_template" : "/dali?customer=test&product=osm_coastline_world&time={time}"
         },
         {
@@ -3645,50 +3667,6 @@
           },
           "title" : "Weather data between an OpenStreetMap background and its labels",
           "url_template" : "/dali?customer=test&product=osm_overlay&time={time}"
-        },
-        {
-          "image" : 
-          {
-            "height" : 600,
-            "width" : 500
-          },
-          "name" : "osmdata",
-          "path" : 
-          [
-            "test",
-            "osmdata"
-          ],
-          "projection" : 
-          {
-            "bboxcrs" : "EPSG:3067",
-            "crs" : "EPSG:3067",
-            "xsize" : 500,
-            "ysize" : 600
-          },
-          "title" : "OpenStreetMap background from real data",
-          "url_template" : "/dali?customer=test&product=osmdata&time={time}"
-        },
-        {
-          "image" : 
-          {
-            "height" : 600,
-            "width" : 500
-          },
-          "name" : "osmdata_coastline",
-          "path" : 
-          [
-            "test",
-            "osmdata_coastline"
-          ],
-          "projection" : 
-          {
-            "bboxcrs" : "EPSG:3067",
-            "crs" : "EPSG:3067",
-            "xsize" : 500,
-            "ysize" : 600
-          },
-          "title" : "Coastline from real data",
-          "url_template" : "/dali?customer=test&product=osmdata_coastline&time={time}"
         },
         {
           "image" : 
