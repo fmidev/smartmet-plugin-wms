@@ -36,7 +36,22 @@ not on RHEL 8, so the labels would differ between the platforms.
 
 The `full_global_osm_*` tests are the only tests using the full data, and they never run in CI.
 They render real OpenStreetMap data: global, European,
-Scandinavian, Finnish and Helsinki views with several styles. The full data
+Scandinavian, Finnish and Helsinki views with several styles.
+
+The `full_global_osm_radar_*` tests replicate the radar animation of the FMI
+precipitation map at https://www.ilmatieteenlaitos.fi/sadekartta with the
+rain rate composite of 2026-07-18 18:15 UTC from smartmet-test-data: the
+national (EPSG:3067 and LAEA EPSG:3035), regional and Tampere city scales.
+The isobands are those of the production layer
+`wwwfmifi:tutkahavainto_isoband`, including the translucent band of missing
+values which shades the area outside the radar coverage. The radar is drawn
+between two OSM layers like on the web page: `sadekartta-base` draws the land
+and water under it, `sadekartta-overlay` the coastline, roads, boundaries and
+place names over it so that the rain can be located. The two styles are copies
+of the styles of the web page (`wwwfmifi/base.json`, `wwwfmifi/overlay_fi.json`)
+with the fonts changed to Roboto; the web page itself uses Web Mercator.
+
+The full data
 is never packaged or committed: the planet file is about 140 GB. The tests run
 only if the dataset directory exists:
 

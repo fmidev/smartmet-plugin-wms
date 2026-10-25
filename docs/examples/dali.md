@@ -3438,6 +3438,27 @@ The `full_global_osm_*` tests render the full Protomaps OpenStreetMap build with
 | [`full_global_osm_helsinki_protomaps_light`](../../test/input/full_global_osm_helsinki_protomaps_light.get) | `protomaps-light` | `EPSG:3067` | ![full_global_osm_helsinki_protomaps_light](../images/dali/full_global_osm_helsinki_protomaps_light.png) |
 | [`full_global_osm_helsinki_protomaps_dark`](../../test/input/full_global_osm_helsinki_protomaps_dark.get) | `protomaps-dark` | `EPSG:3067` | ![full_global_osm_helsinki_protomaps_dark](../images/dali/full_global_osm_helsinki_protomaps_dark.png) |
 
+#### Radar precipitation map
+
+The `full_global_osm_radar_*` tests replicate the radar animation of the FMI precipitation map at
+[www.ilmatieteenlaitos.fi/sadekartta](https://www.ilmatieteenlaitos.fi/sadekartta) at several
+scales, but in the Finnish EPSG:3067 and in LAEA instead of the Web Mercator of the web page, which
+exaggerates the areas in the north. The product
+([`full_global_osm_radar.json`](../../test/dali/customers/test/products/full_global_osm_radar.json))
+draws the rain rate composite of 2026-07-18 18:15 UTC with the isobands of the production layer
+`wwwfmifi:tutkahavainto_isoband` between two OSM layers: the `sadekartta-base` style draws the land
+and water under the radar, the `sadekartta-overlay` style the coastline, roads, boundaries and place
+names over it, so that the rain can be located. The translucent band of missing values darkens the
+area outside the radar coverage. The styles are copies of those of the web page with the fonts
+changed to Roboto.
+
+| Test | Scale | CRS | Output |
+|------|-------|-----|--------|
+| [`full_global_osm_radar_finland`](../../test/input/full_global_osm_radar_finland.get) | Finland | `EPSG:3067` | ![full_global_osm_radar_finland](../images/dali/full_global_osm_radar_finland.png) |
+| [`full_global_osm_radar_finland_laea`](../../test/input/full_global_osm_radar_finland_laea.get) | Finland, LAEA | `EPSG:3035` | ![full_global_osm_radar_finland_laea](../images/dali/full_global_osm_radar_finland_laea.png) |
+| [`full_global_osm_radar_region`](../../test/input/full_global_osm_radar_region.get) | Western Finland, Vaasa to Lahti | `EPSG:3067` | ![full_global_osm_radar_region](../images/dali/full_global_osm_radar_region.png) |
+| [`full_global_osm_radar_tampere`](../../test/input/full_global_osm_radar_tampere.get) | Tampere | `EPSG:3067` | ![full_global_osm_radar_tampere](../images/dali/full_global_osm_radar_tampere.png) |
+
 ---
 
 ## Gridded Observations

@@ -1,0 +1,57 @@
+[
+  {
+    "attributes": {
+      "class": "PrecipitationRate_01_02"
+    },
+    "hilimit": 0.2,
+    "lolimit": 0.1,
+    "qid": "PrecipitationRate_01_02"
+  },
+  {
+    "attributes": {
+      "class": "PrecipitationRate_02_05"
+    },
+    "hilimit": 0.5,
+    "lolimit": 0.2,
+    "qid": "PrecipitationRate_02_05"
+  },
+  {
+    "attributes": {
+      "class": "PrecipitationRate_05_10"
+    },
+    "hilimit": 1,
+    "lolimit": 0.5,
+    "qid": "PrecipitationRate_05_10"
+  },
+  {
+    "attributes": {
+      "class": "PrecipitationRate_1_2"
+    },
+    "hilimit": 2,
+    "lolimit": 1,
+    "qid": "PrecipitationRate_1_2"
+  },
+  {
+    "attributes": {
+      "class": "PrecipitationRate_2_5"
+    },
+    "hilimit": 5,
+    "lolimit": 2,
+    "qid": "PrecipitationRate_2_5"
+  },
+  {
+    "attributes": {
+      "class": "PrecipitationRate_5_10"
+    },
+    "hilimit": 10,
+    "lolimit": 5,
+    "qid": "PrecipitationRate_5_10"
+  },
+  {
+    "attributes": {
+      "class": "PrecipitationRate_10"
+    },
+    "lolimit": 10,
+    "qid": "PrecipitationRate_10"
+  }
+]

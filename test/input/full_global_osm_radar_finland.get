@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=full_global_osm_radar&time=202607181815&p.crs=EPSG:3067&p.bboxcrs=EPSG:3067&p.bbox=-100000,6600000,900000,7800000&p.xsize=500&p.ysize=600&type=png HTTP/1.0

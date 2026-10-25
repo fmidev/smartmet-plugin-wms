@@ -91,7 +91,7 @@ clean:	clean-valkey
 	rm -f $(PROG) *~
 	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf cnf/osm.conf
 	-if [ -f tmp-geonames-db/postmaster.pid ] ; then $(MAKE) stop-geonames-db; fi
-	rm -rf tmp-geonames-db* obj failures
+	rm -rf tmp-geonames-db* obj failures tmp
 
 test: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*

@@ -1,0 +1,59 @@
+{
+    "title": "Radar precipitation map in the style of www.ilmatieteenlaitos.fi/sadekartta",
+    "abstract": "Rain rate isobands between an OpenStreetMap background and an overlay of the coastline, roads, boundaries and place names, which locate the radar data. The isobands are those of the production layer wwwfmifi:tutkahavainto_isoband, the OSM styles copies of the styles of the web page.",
+    "producer": "radar_accrate",
+    "projection":
+    {
+	"qid": "p",
+	"crs": "EPSG:3067",
+	"bboxcrs": "EPSG:3067",
+	"bbox": "-100000,6600000,900000,7800000",
+	"xsize": 500,
+	"ysize": 600
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "layers":
+	    [
+		{
+		    "qid": "base",
+		    "layer_type": "osm",
+		    "font_family": "Roboto",
+		    "dataset": "protomaps",
+		    "style": "sadekartta-base"
+		},
+		{
+		    "qid": "rate",
+		    "layer_type": "isoband",
+		    "parameter": "PrecipitationRate",
+		    "isobands": "json:isobands/precipitation_rate_homeyer.json",
+		    "css": "isobands/precipitation_rate_homeyer.css",
+		    "attributes":
+		    {
+			"shape-rendering": "crispEdges"
+		    }
+		},
+		{
+		    "qid": "missing",
+		    "layer_type": "isoband",
+		    "parameter": "PrecipitationRate",
+		    "isobands": "json:isobands/precipitation_rate_missing.json",
+		    "css": "isobands/precipitation_rate_missing.css",
+		    "attributes":
+		    {
+			"shape-rendering": "crispEdges"
+		    }
+		},
+		{
+		    "qid": "overlay",
+		    "layer_type": "osm",
+		    "font_family": "Roboto",
+		    "dataset": "protomaps",
+		    "style": "sadekartta-overlay"
+		}
+	    ]
+	}
+    ]
+}

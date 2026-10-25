@@ -1,0 +1,45 @@
+{
+ "version": 8,
+ "name": "Sadekartta base",
+ "metadata": {
+  "smartmet:description": "Land and water under the radar data, as in the FMI precipitation map at www.ilmatieteenlaitos.fi/sadekartta (style wwwfmifi/base.json); fonts changed from Noto Sans to Roboto",
+  "smartmet:schema": "protomaps"
+ },
+ "sources": {
+  "protomaps": {
+   "type": "vector",
+   "attribution": "© OpenStreetMap contributors"
+  }
+ },
+ "layers": [
+  {
+   "id": "earth",
+   "type": "fill",
+   "source": "protomaps",
+   "source-layer": "earth",
+   "filter": [
+    "==",
+    "$type",
+    "Polygon"
+   ],
+   "paint": {
+    "fill-color": "#cccccc",
+    "fill-opacity": 1
+   }
+  },
+  {
+   "id": "water",
+   "type": "fill",
+   "source": "protomaps",
+   "source-layer": "water",
+   "filter": [
+    "==",
+    "$type",
+    "Polygon"
+   ],
+   "paint": {
+    "fill-color": "#a3a3a3"
+   }
+  }
+ ]
+}

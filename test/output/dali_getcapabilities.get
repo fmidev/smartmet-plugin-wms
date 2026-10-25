@@ -1196,6 +1196,36 @@
           "url_template" : "/dali?customer=test&product=full_global_osm&time={time}"
         },
         {
+          "abstract" : "Rain rate isobands between an OpenStreetMap background and an overlay of the coastline, roads, boundaries and place names, which locate the radar data. The isobands are those of the production layer wwwfmifi:tutkahavainto_isoband, the OSM styles copies of the styles of the web page.",
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 500
+          },
+          "name" : "full_global_osm_radar",
+          "path" : 
+          [
+            "test",
+            "full_global_osm_radar"
+          ],
+          "producer" : "radar_accrate",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 500,
+            "ysize" : 600
+          },
+          "time" : 
+          {
+            "default" : "20260718T181500",
+            "origintime" : "20260718T181500",
+            "values" : "20260718T181500"
+          },
+          "title" : "Radar precipitation map in the style of www.ilmatieteenlaitos.fi/sadekartta",
+          "url_template" : "/dali?customer=test&product=full_global_osm_radar&time={time}"
+        },
+        {
           "image" : 
           {
             "height" : 800,
