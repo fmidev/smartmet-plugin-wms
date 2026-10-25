@@ -25,7 +25,7 @@
                 {
                     "qid": "europe1a",
                     "layer_type": "map",
-		    "minresolution": 2,
+		    "maxresolution": 2,
                     "map":
                     {
                         "schema": "natural_earth",
@@ -41,7 +41,7 @@
                 {
                     "qid": "europe1b",
                     "layer_type": "map",
-		    "maxresolution": 2,
+		    "minresolution": 2,
                     "map":
                     {
                         "schema": "natural_earth",
@@ -79,7 +79,7 @@
                 {
                     "qid": "europe2a",
                     "layer_type": "map",
-		    "minresolution": 2,
+		    "maxresolution": 2,
                     "map":
                     {
                         "schema": "natural_earth",
@@ -95,7 +95,7 @@
                 {
                     "qid": "europe2b",
                     "layer_type": "map",
-		    "maxresolution": 2,
+		    "minresolution": 2,
                     "map":
                     {
                         "schema": "natural_earth",

@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.25
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Oct 25 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.25-2.fmi
+- Layer and sampling minresolution/maxresolution now work as documented: the layer is used only if minresolution <= resolution < maxresolution (km/pixel). The comparisons were inverted, configurations using them must swap the two settings
+- Layer minresolution/maxresolution work with a rectangular bounding box such as in WMS GetMap requests; previously only a projection given with cx, cy and resolution worked, others failed with an error
+
 * Sun Oct 25 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.25-1.fmi
 - The quiet=1 option silences the error log of all failed requests, and WMS errors are logged once instead of twice
 - The MapLibre style documents of OGC API - Styles (/tiles/collections/{id}/styles/{styleId}?f=mapbox) give the tile URL as {z}/{y}/{x}: the style specification does not know the OGC {tileMatrix}/{tileRow}/{tileCol} placeholders, so MapLibre clients could not use the vector source

@@ -1196,7 +1196,7 @@
           "url_template" : "/dali?customer=test&product=full_global_osm&time={time}"
         },
         {
-          "abstract" : "Rain rate isobands between an OpenStreetMap background and an overlay of the coastline, roads, boundaries and place names, which locate the radar data. The isobands are those of the production layer wwwfmifi:tutkahavainto_isoband, the OSM styles copies of the styles of the web page.",
+          "abstract" : "Rain rate isobands between an OpenStreetMap background and an overlay of the coastline, roads, boundaries and place names, which locate the radar data. At regional and finer scales water darkens the rain slightly (multiply by 0.92, masked by the precipitation area) so that lakes and the coast can be recognised under widespread rain. The isobands are those of the production layer wwwfmifi:tutkahavainto_isoband, the OSM styles copies of the styles of the web page.",
           "image" : 
           {
             "height" : 600,
@@ -4031,6 +4031,36 @@
           },
           "title" : "Two views side by side with different resolutions",
           "url_template" : "/dali?customer=test&product=resolution&time={time}"
+        },
+        {
+          "abstract" : "The detailed black borders are drawn when the resolution is finer than 2 km/pixel (maxresolution), the generalized red borders at 2 km/pixel or coarser (minresolution). The resolution is computed from the bounding box and the image size.",
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "resolution_bbox",
+          "path" : 
+          [
+            "test",
+            "resolution_bbox"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Layers selected by the resolution of a rectangular bounding box",
+          "url_template" : "/dali?customer=test&product=resolution_bbox&time={time}"
         },
         {
           "image" : 

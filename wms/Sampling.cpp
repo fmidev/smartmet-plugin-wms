@@ -75,10 +75,11 @@ std::optional<double> Sampling::getResolution(const Projection& theProjection) c
 
     // Not in valid range --> no resolution
 
-    if (minresolution && *minresolution <= *theProjection.resolution)
+    // Valid if minresolution <= resolution < maxresolution
+    if (minresolution && *theProjection.resolution < *minresolution)
       return {};
 
-    if (maxresolution && *maxresolution > *theProjection.resolution)
+    if (maxresolution && *theProjection.resolution >= *maxresolution)
       return {};
 
     if (resolution)

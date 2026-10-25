@@ -1,0 +1,54 @@
+{
+    "title": "Layers selected by the resolution of a rectangular bounding box",
+    "abstract": "The detailed black borders are drawn when the resolution is finer than 2 km/pixel (maxresolution), the generalized red borders at 2 km/pixel or coarser (minresolution). The resolution is computed from the bounding box and the image size.",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"qid": "p",
+	"crs": "EPSG:3067",
+	"bboxcrs": "EPSG:3067",
+	"bbox": "0,6600000,500000,7100000",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+                    "qid": "detailed",
+                    "layer_type": "map",
+		    "maxresolution": 2,
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries"
+                    },
+                    "attributes":
+                    {
+			"stroke": "rgb(0,0,0)",
+			"stroke-width": 1,
+			"fill": "none"
+                    }
+                },
+                {
+                    "qid": "generalized",
+                    "layer_type": "map",
+		    "minresolution": 2,
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+			"minarea": 50
+                    },
+                    "attributes":
+                    {
+			"stroke": "rgb(255,0,0)",
+			"stroke-width": 1,
+			"fill": "none"
+                    }
+                }
+            ]
+        }
+    ]
+}

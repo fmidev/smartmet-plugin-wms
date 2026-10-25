@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=resolution_bbox&time=200808050300&type=svg HTTP/1.0

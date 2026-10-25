@@ -414,15 +414,20 @@ bool Layer::validResolution() const
     if (!minresolution && !maxresolution)
       return true;
 
+    // A rectangular bounding box gets its resolution when the box is established
+    if (!projection.resolution && (projection.xsize || projection.ysize))
+      projection.getBox();
+
     if (!projection.resolution)
       throw Fmi::Exception(
           BCP,
           "Projection resolution has not been specified, cannot use min/maxresolution settings");
 
-    if (minresolution && *minresolution <= *projection.resolution)
+    // Valid if minresolution <= resolution < maxresolution
+    if (minresolution && *projection.resolution < *minresolution)
       return false;
 
-    if (maxresolution && *maxresolution > *projection.resolution)
+    if (maxresolution && *projection.resolution >= *maxresolution)
       return false;
 
     return true;

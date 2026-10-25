@@ -410,8 +410,8 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>weather_objects</td><td>WeatherObjectsLayer</td></tr>
 <tr><td>windrose</td><td>WindRoseLayer</td></tr>
 <tr><td>wkt</td><td>WKTLayer</td></tr>
-<tr><td>minresolution</td><td>(double)</td><td>-</td><td colspan="2">Minimum resolution of the projection for the layer to be generated at all.</td></tr>
-<tr><td>maxresolution</td><td>(double)</td><td>-</td><td colspan="2">Maximum resolution of the projection for the layer to be generated at all.</td></tr>
+<tr><td>minresolution</td><td>(double)</td><td>-</td><td colspan="2">The layer is generated only if the projection resolution (km/pixel) is at least this, i.e. the map is at least this coarse.</td></tr>
+<tr><td>maxresolution</td><td>(double)</td><td>-</td><td colspan="2">The layer is generated only if the projection resolution (km/pixel) is less than this, i.e. the map is finer than this.</td></tr>
 <tr><td>enable</td><td>[string]</td><td>-</td><td colspan="2">The output formats (for example "png") for which the layer is generated. Setting both enable and disable is an error.</td></tr>
 <tr><td>disable</td><td>[string]</td><td>-</td><td colspan="2">The output formats for which the layer is not generated.</td></tr>
 <tr><td>visible</td><td>(bool)</td><td>true</td><td colspan="2">If false, the layer is not generated.</td></tr>
@@ -425,7 +425,7 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>animation_effects</td><td>[object]</td><td>-</td><td colspan="2">Animation effects, each an object with "effect" (currently "hide"), "enabled", "start_step" (default 0) and "end_step" (default 10000). A "hide" effect hides the layer during the given animation loop steps.</td></tr>
 </table>
 
-Notice that the term "resolution" used above might be a little bit misleading in this case, since it refers to the number of kilometers represented by one pixel. Hence the higher the resolution the worse the accuracy of the image actually is. The actual condition to be satisfied is minresolution <= resolution < maxresolution, where one or both of the limits may be missing.
+Notice that the term "resolution" used above might be a little bit misleading in this case, since it refers to the number of kilometers represented by one pixel. Hence the higher the resolution the worse the accuracy of the image actually is. The actual condition to be satisfied is minresolution <= resolution < maxresolution, where one or both of the limits may be missing. The resolution is the one given in the projection, or computed from the bounding box and the image size.
 
 #### BackgroundLayer
 
@@ -4535,8 +4535,8 @@ Data to be contoured may be interpolated to another resolution. When used for te
 | ------------------ | ------ | ------------- | ----------------------------------------------------------------------------------- |
 | resolution         | double | -             | Desired resolution in kilometers per pixel                                          |
 | relativeresolution | double | -             | Desired relative resolution with respect to the resolution of the image resolution. |
-| minresolution      | double | -             | Minimum resolution for applying sampling                                            |
-| maxresolution      | double | -             | Maximum resolution for applying sampling                                            |
+| minresolution      | double | -             | Sampling is applied only if the image resolution (km/pixel) is at least this        |
+| maxresolution      | double | -             | Sampling is applied only if the image resolution (km/pixel) is less than this       |
 
 #### Heatmap structure
 

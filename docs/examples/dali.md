@@ -561,11 +561,34 @@ GET /dali?customer=test&product=resolution&time=200808050300 HTTP/1.0
 |-----------|-------|-------------|
 | `product` | `resolution` | Product JSON: [`test/dali/customers/test/products/resolution.json`](../../test/dali/customers/test/products/resolution.json) |
 
-Two 500×500 views centred on Finland are placed side by side, each with a different `resolution` setting in their `projection` block (2.5 and 1.5 km/px).  Map layers use `minresolution` and `maxresolution` to select detail levels: coarse data is shown in black for coarse resolutions, fine data in red for fine resolutions.
+Two 500×500 views centred on Finland are placed side by side, each with a different `resolution` setting in their `projection` block (2.5 and 1.5 km/px).  Map layers use `minresolution` and `maxresolution` to select detail levels: a layer is drawn only when `minresolution <= resolution < maxresolution`.  The generalized borders (`minarea` 50, red) have `minresolution` 2 and are drawn in the coarser left view, the detailed borders (black) have `maxresolution` 2 and are drawn in the finer right view.
 
 **Output:**
 
 ![resolution](../images/dali/resolution.png)
+
+---
+
+#### resolution_bbox — Resolution of a rectangular bounding box
+
+**Input:** [`test/input/resolution_bbox_fine.get`](../../test/input/resolution_bbox_fine.get), [`test/input/resolution_bbox_coarse.get`](../../test/input/resolution_bbox_coarse.get)
+
+```
+GET /dali?customer=test&product=resolution_bbox&time=200808050300&type=svg HTTP/1.0
+GET /dali?customer=test&product=resolution_bbox&time=200808050300&p.bbox=-500000,6400000,1500000,8400000&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `resolution_bbox` | Product JSON: [`test/dali/customers/test/products/resolution_bbox.json`](../../test/dali/customers/test/products/resolution_bbox.json) |
+| `p.bbox` | `-500000,6400000,1500000,8400000` | A four times larger EPSG:3067 bounding box in the coarse test |
+
+The same layer selection as above, but with the projection given as a bounding box and an image size, as in WMS GetMap requests: the resolution is computed from them (1 km/px and 4 km/px).  The fine image draws only the detailed black borders, the coarse one only the generalized red borders.
+
+| Test | Output |
+|------|--------|
+| `resolution_bbox_fine` | ![resolution_bbox_fine](../images/dali/resolution_bbox_fine.png) |
+| `resolution_bbox_coarse` | ![resolution_bbox_coarse](../images/dali/resolution_bbox_coarse.png) |
 
 ---
 
