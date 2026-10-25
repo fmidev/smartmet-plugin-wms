@@ -1,6 +1,6 @@
 {
     "title": "Radar precipitation map in the style of www.ilmatieteenlaitos.fi/sadekartta",
-    "abstract": "Rain rate isobands between an OpenStreetMap background and an overlay of the coastline, roads, boundaries and place names, which locate the radar data. The isobands are those of the production layer wwwfmifi:tutkahavainto_isoband, the OSM styles copies of the styles of the web page.",
+    "abstract": "Rain rate isobands between an OpenStreetMap background and an overlay of the coastline, roads, boundaries and place names, which locate the radar data. At regional and finer scales water darkens the rain slightly (multiply by 0.92, masked by the precipitation area) so that lakes and the coast can be recognised under widespread rain. The isobands are those of the production layer wwwfmifi:tutkahavainto_isoband, the OSM styles copies of the styles of the web page.",
     "producer": "radar_accrate",
     "projection":
     {
@@ -32,7 +32,38 @@
 		    "css": "isobands/precipitation_rate_homeyer.css",
 		    "attributes":
 		    {
+			"id": "rainarea",
 			"shape-rendering": "crispEdges"
+		    }
+		},
+		{
+		    "tag": "mask",
+		    "attributes":
+		    {
+			"id": "rainmask"
+		    },
+		    "layers":
+		    [
+			{
+			    "tag": "use",
+			    "attributes":
+			    {
+				"xlink:href": "#rainarea",
+				"filter": "url(#alphawhite)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "lakes",
+		    "layer_type": "osm",
+		    "font_family": "Roboto",
+		    "dataset": "protomaps",
+		    "style": "sadekartta-lakes",
+		    "attributes":
+		    {
+			"mask": "url(#rainmask)",
+			"mix-blend-mode": "multiply"
 		    }
 		},
 		{

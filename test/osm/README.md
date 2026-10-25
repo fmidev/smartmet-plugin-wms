@@ -50,6 +50,10 @@ and water under it, `sadekartta-overlay` the coastline, roads, boundaries and
 place names over it so that the rain can be located. The two styles are copies
 of the styles of the web page (`wwwfmifi/base.json`, `wwwfmifi/overlay_fi.json`)
 with the fonts changed to Roboto; the web page itself uses Web Mercator.
+The third style, `sadekartta-lakes`, is not from the web page: at regional and
+finer scales it multiplies the rain colours by 0.92 where there is water, masked
+by the rain area, so that lakes and the coast can be recognised under
+widespread rain.
 
 The full data
 is never packaged or committed: the planet file is about 140 GB. The tests run

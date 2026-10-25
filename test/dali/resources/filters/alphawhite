@@ -1,0 +1,4 @@
+<filter id="alphawhite">
+ <feFlood flood-color="white"/>
+ <feComposite in2="SourceAlpha" operator="in"/>
+</filter>

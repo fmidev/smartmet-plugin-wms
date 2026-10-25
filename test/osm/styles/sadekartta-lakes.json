@@ -1,0 +1,31 @@
+{
+ "version": 8,
+ "name": "Sadekartta lakes",
+ "metadata": {
+  "smartmet:description": "Water drawn over the radar data with mix-blend-mode multiply and masked by the precipitation area, so that lakes and the sea show through the rain as slightly darker colours (x0.92) while dry areas are unchanged; only at regional and finer scales",
+  "smartmet:schema": "protomaps"
+ },
+ "sources": {
+  "protomaps": {
+   "type": "vector",
+   "attribution": "© OpenStreetMap contributors"
+  }
+ },
+ "layers": [
+  {
+   "id": "water",
+   "type": "fill",
+   "source": "protomaps",
+   "source-layer": "water",
+   "minzoom": 6,
+   "filter": [
+    "==",
+    "$type",
+    "Polygon"
+   ],
+   "paint": {
+    "fill-color": "rgb(235, 235, 235)"
+   }
+  }
+ ]
+}

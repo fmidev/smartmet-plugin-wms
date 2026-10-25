@@ -1849,6 +1849,15 @@ names over it, so that the rain can be located. The translucent band of missing 
 area outside the radar coverage. The styles are copies of those of the web page with the fonts
 changed to Roboto.
 
+When rain covers the whole map the lakes and the coast under it would be lost, so at regional and
+finer scales a third OSM style, `sadekartta-lakes` (from zoom level 6), draws the water over the
+isobands with `mix-blend-mode: multiply` in a grey of 0.92, which darkens the rain colours slightly
+where there is water. The layer is masked by the rain area, so dry land and water are unchanged:
+the `rate` isobands are given the id `rainarea`, and a `mask` tag layer draws them with the
+`alphawhite` filter, which turns every covered pixel white. The masking is done per pixel by the
+renderer, no polygons are clipped. `mix-blend-mode` must be listed in `presentation_attributes`
+of the configuration.
+
 | Test | Scale | CRS | Output |
 |------|-------|-----|--------|
 | [`full_global_osm_radar_finland`](../../test/input/full_global_osm_radar_finland.get) | Finland | `EPSG:3067` | ![full_global_osm_radar_finland](../images/dali/full_global_osm_radar_finland.png) |
