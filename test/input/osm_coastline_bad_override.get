@@ -1,1 +1,1 @@
-GET /dali?customer=test&product=osm_coastline_bad_override&type=png HTTP/1.0
+GET /dali?customer=test&product=osm_coastline_bad_override&type=png&quiet=1 HTTP/1.0

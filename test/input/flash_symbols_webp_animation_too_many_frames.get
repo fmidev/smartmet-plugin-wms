@@ -1,1 +1,1 @@
-GET /dali?customer=test&product=flash_symbols_webp_animation&time=20130805T1500&type=webp&webp.frames=401 HTTP/1.0
+GET /dali?customer=test&product=flash_symbols_webp_animation&time=20130805T1500&type=webp&webp.frames=401&quiet=1 HTTP/1.0

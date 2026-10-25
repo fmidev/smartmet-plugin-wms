@@ -166,6 +166,9 @@ class Plugin : public SmartMetPlugin
 
   static Spine::HTTP::ParamMap extractValidParameters(const Spine::HTTP::ParamMap& theParams);
 
+  // True if the request asks not to log its errors (quiet=1)
+  static bool isQuiet(const Spine::HTTP::Request& theRequest);
+
  private:
   friend class WMS::Handler;
 

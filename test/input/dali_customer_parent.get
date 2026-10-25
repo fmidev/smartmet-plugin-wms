@@ -1,2 +1,2 @@
-GET /dali?customer=..&product=test/products/circle&time=200808050300 HTTP/1.0
+GET /dali?customer=..&product=test/products/circle&time=200808050300&quiet=1 HTTP/1.0
 

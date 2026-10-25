@@ -1528,7 +1528,8 @@ QueryStatus Handler::wmsGenerateFeatureInfo(Dali::State &theState,
     const bool check_token = true;
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
     e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
-    e.printError();
+    if (!Dali::Plugin::isQuiet(theRequest))
+      e.printError();
   }
 
   return QueryStatus::OK;
@@ -1660,10 +1661,6 @@ QueryStatus Handler::handleWmsException(Fmi::Exception &exception,
   auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
   exception.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
 
-  auto quiet = theRequest.getParameter("quiet");
-  if (!quiet || (*quiet == "0" || *quiet == "false"))
-    exception.printError();
-
   CaseInsensitiveComparator cicomp;
   ExceptionFormat exceptionFormat = ExceptionFormat::XML;
   std::string exceptionFormatStr =
@@ -1685,9 +1682,14 @@ QueryStatus Handler::handleWmsException(Fmi::Exception &exception,
       mapFormat = "application/json";
 
     formatWmsExceptionResponse(exception, mapFormat, isdebug, theState, theRequest, theResponse);
-    // Note: a simple throw is not sufficient, the exception object may not have been thrown
+    // Note: a simple throw is not sufficient, the exception object may not have been thrown.
+    // The error is logged by the caller (Plugin::wmsQuery).
     throw exception;
   }
+
+  // The error is reported in the image instead of being thrown, hence log it here
+  if (!Dali::Plugin::isQuiet(theRequest))
+    exception.printError();
 
   std::optional<std::string> width = theRequest.getParameter("WIDTH");
   std::optional<std::string> height = theRequest.getParameter("HEIGHT");

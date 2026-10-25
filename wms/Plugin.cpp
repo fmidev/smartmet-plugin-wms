@@ -295,6 +295,15 @@ Spine::HTTP::ParamMap Dali::Plugin::extractValidParameters(const Spine::HTTP::Pa
   return ret;
 }
 
+// Any value except 0 or false silences the error log. Called from exception handlers,
+// hence the value is not validated.
+
+bool Dali::Plugin::isQuiet(const Spine::HTTP::Request &theRequest)
+{
+  auto quiet = theRequest.getParameter("quiet");
+  return (quiet && *quiet != "0" && *quiet != "false");
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \print Information on product parameters
@@ -692,7 +701,8 @@ void Plugin::wmsQuery(Spine::Reactor& theReactor,
 
   catch (const Fmi::Exception& wmsException)
   {
-    wmsException.printError();
+    if (!isQuiet(theRequest))
+      wmsException.printError();
 
     // The default for most responses:
     theResponse.setStatus(Spine::HTTP::Status::bad_request);
@@ -803,9 +813,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
       exception.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
 
-      auto quiet = theRequest.getParameter("quiet");
-      // if (!quiet || (*quiet == "0" && *quiet == "false"))
-      exception.printError();
+      if (!isQuiet(theRequest))
+        exception.printError();
 
       if (isdebug)
       {
