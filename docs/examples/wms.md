@@ -6,65 +6,65 @@ The WMS tests exercise the `/wms` endpoint.  Test inputs are in [`test/input/wms
 
 - [GetCapabilities](#getcapabilities)
   - [Response Formats and Languages](#response-formats-and-languages)
-    - [`wms_getcapabilities`](#wms_getcapabilities) · [`wms_getcapabilities_fi`](#wms_getcapabilities_fi) · [`wms_getcapabilities_json`](#wms_getcapabilities_json)
+    - <sub>[wms_getcapabilities](#wms_getcapabilities) · [wms_getcapabilities_fi](#wms_getcapabilities_fi) · [wms_getcapabilities_json](#wms_getcapabilities_json)</sub>
   - [Filtering and Layout](#filtering-and-layout)
-    - [`wms_getcapabilities_namespace`](#wms_getcapabilities_namespace) · [`wms_getcapabilities_recursive`](#wms_getcapabilities_recursive) · [`wms_getcapabilities_timeinterval`](#wms_getcapabilities_timeinterval)
+    - <sub>[wms_getcapabilities_namespace](#wms_getcapabilities_namespace) · [wms_getcapabilities_recursive](#wms_getcapabilities_recursive) · [wms_getcapabilities_timeinterval](#wms_getcapabilities_timeinterval)</sub>
 - [GetMap — Output Formats](#getmap--output-formats)
   - [PNG and SVG](#png-and-svg)
-    - [`wms_getmap_png`](#wms_getmap_png-epsg4326-png) · [`wms_getmap_svgxml`](#wms_getmap_svgxml-case-insensitive-parameters)
+    - <sub>[wms_getmap_png](#wms_getmap_png-epsg4326-png) · [wms_getmap_svgxml](#wms_getmap_svgxml-case-insensitive-parameters)</sub>
   - [GeoJSON Output](#geojson-output)
-    - [`wms_getmap_geojson`](#wms_getmap_geojson) · [`wms_getmap_geojson_precision`](#wms_getmap_geojson_precision)
+    - <sub>[wms_getmap_geojson](#wms_getmap_geojson) · [wms_getmap_geojson_precision](#wms_getmap_geojson_precision)</sub>
   - [PDF Output](#pdf-output)
-    - [`wms_getmap_pdf`](#wms_getmap_pdf)
+    - <sub>[wms_getmap_pdf](#wms_getmap_pdf)</sub>
   - [DataTile Output](#datatile-output)
-    - [`wms_getmap_datatile`](#wms_getmap_datatile)
+    - <sub>[wms_getmap_datatile](#wms_getmap_datatile)</sub>
 - [GetMap — Projections](#getmap--projections)
   - [CRS Variants](#crs-variants)
-    - [`wms_getmap_crs_auto2_42001`](#wms_getmap_crs_auto2_42001-auto2-utm-zone) · [`wms_getmap_crs_auto2_42004`](#wms_getmap_crs_auto2_42004) · [`wms_getmap_crs_scandinavia`](#wms_getmap_crs_scandinavia-named-crs)
+    - <sub>[wms_getmap_crs_auto2_42001](#wms_getmap_crs_auto2_42001-auto2-utm-zone) · [wms_getmap_crs_auto2_42004](#wms_getmap_crs_auto2_42004) · [wms_getmap_crs_scandinavia](#wms_getmap_crs_scandinavia-named-crs)</sub>
 - [GetMap — Isobands, Isolines and Isolabels](#getmap--isobands-isolines-and-isolabels)
   - [Isoband Styles](#isoband-styles)
-    - [`wms_getmap_isoband_style1`](#wms_getmap_isoband_style1) · [`wms_getmap_isoband_style2`](#wms_getmap_isoband_style2) · [`wms_getmap_isoband_style3`](#wms_getmap_isoband_style3) · [`wms_getmap_isoband_tile`](#wms_getmap_isoband_tile)
+    - <sub>[wms_getmap_isoband_style1](#wms_getmap_isoband_style1) · [wms_getmap_isoband_style2](#wms_getmap_isoband_style2) · [wms_getmap_isoband_style3](#wms_getmap_isoband_style3) · [wms_getmap_isoband_tile](#wms_getmap_isoband_tile)</sub>
   - [Isoline Styles](#isoline-styles)
-    - [`wms_getmap_isoline_style1`](#wms_getmap_isoline_style1) · [`wms_getmap_isoline_style2`](#wms_getmap_isoline_style2) · [`wms_getmap_isoline_groups`](#wms_getmap_isoline_groups)
+    - <sub>[wms_getmap_isoline_style1](#wms_getmap_isoline_style1) · [wms_getmap_isoline_style2](#wms_getmap_isoline_style2) · [wms_getmap_isoline_groups](#wms_getmap_isoline_groups)</sub>
     - [Time-aggregate variants — isoline groups](#time-aggregate-variants--isoline-groups)
   - [Isolabel Styles](#isolabel-styles)
-    - [`wms_getmap_isolabel_style1`](#wms_getmap_isolabel_style1) · [`wms_getmap_isolabel_style2`](#wms_getmap_isolabel_style2)
+    - <sub>[wms_getmap_isolabel_style1](#wms_getmap_isolabel_style1) · [wms_getmap_isolabel_style2](#wms_getmap_isolabel_style2)</sub>
 - [GetMap — Point Data: Numbers and Symbols](#getmap--point-data-numbers-and-symbols)
   - [Temperature Numbers](#temperature-numbers)
-    - [`wms_getmap_temperature_numbers`](#wms_getmap_temperature_numbers) · [`wms_getmap_temperature_numbers_svgxml`](#wms_getmap_temperature_numbers_svgxml--svg-output)
+    - <sub>[wms_getmap_temperature_numbers](#wms_getmap_temperature_numbers) · [wms_getmap_temperature_numbers_svgxml](#wms_getmap_temperature_numbers_svgxml--svg-output)</sub>
     - [Mindistance and priority variants](#mindistance-and-priority-variants)
   - [Temperature Symbols](#temperature-symbols)
-    - [`wms_getmap_temperature_symbols`](#wms_getmap_temperature_symbols)
+    - <sub>[wms_getmap_temperature_symbols](#wms_getmap_temperature_symbols)</sub>
     - [Mindistance and priority variants — temperature symbols](#mindistance-and-priority-variants--temperature-symbols)
   - [Symbol Style](#symbol-style)
-    - [`wms_getmap_symbol_style`](#wms_getmap_symbol_style)
+    - <sub>[wms_getmap_symbol_style](#wms_getmap_symbol_style)</sub>
 - [GetMap — Wind](#getmap--wind)
   - [Meteorological Wind Arrows](#meteorological-wind-arrows)
-    - [`wms_getmap_meteorological_windarrows`](#wms_getmap_meteorological_windarrows) · [`wms_getmap_meteorological_windarrows_svgxml`](#wms_getmap_meteorological_windarrows_svgxml--svg-output)
+    - <sub>[wms_getmap_meteorological_windarrows](#wms_getmap_meteorological_windarrows) · [wms_getmap_meteorological_windarrows_svgxml](#wms_getmap_meteorological_windarrows_svgxml--svg-output)</sub>
     - [Mindistance and priority variants — meteorological windarrows](#mindistance-and-priority-variants--meteorological-windarrows)
   - [Wind Arrows (Model Data)](#wind-arrows-model-data)
-    - [`wms_getmap_windarrows`](#wms_getmap_windarrows) · [`wms_getmap_windarrows_style`](#wms_getmap_windarrows_style) · [`wms_getmap_windarrows_style_svg`](#wms_getmap_windarrows_style_svg--svg-style)
+    - <sub>[wms_getmap_windarrows](#wms_getmap_windarrows) · [wms_getmap_windarrows_style](#wms_getmap_windarrows_style) · [wms_getmap_windarrows_style_svg](#wms_getmap_windarrows_style_svg--svg-style)</sub>
     - [Time-aggregate variants — windarrows](#time-aggregate-variants--windarrows)
   - [Wind Numbers](#wind-numbers)
-    - [`wms_getmap_windnumbers_style1`](#wms_getmap_windnumbers_style1) · [`wms_getmap_windnumbers_style2`](#wms_getmap_windnumbers_style2)
+    - <sub>[wms_getmap_windnumbers_style1](#wms_getmap_windnumbers_style1) · [wms_getmap_windnumbers_style2](#wms_getmap_windnumbers_style2)</sub>
     - [Time-aggregate variants — windnumbers](#time-aggregate-variants--windnumbers)
 - [GetMap — Time Handling](#getmap--time-handling)
   - [Time Interpolation](#time-interpolation)
-    - [`wms_getmap_svgxml_interpolated_time`](#wms_getmap_svgxml_interpolated_time)
+    - <sub>[wms_getmap_svgxml_interpolated_time](#wms_getmap_svgxml_interpolated_time)</sub>
   - [Time Intervals](#time-intervals)
 - [GetMap — Layer Composition](#getmap--layer-composition)
   - [Multiple Layers](#multiple-layers)
-    - [`wms_getmap_multiple_layers`](#wms_getmap_multiple_layers) · [`wms_getmap_multiple_layers_with_style`](#wms_getmap_multiple_layers_with_style)
+    - <sub>[wms_getmap_multiple_layers](#wms_getmap_multiple_layers) · [wms_getmap_multiple_layers_with_style](#wms_getmap_multiple_layers_with_style)</sub>
   - [Variants](#variants)
   - [Frame Layer](#frame-layer)
-    - [`wms_getmap_frame`](#wms_getmap_frame)
+    - <sub>[wms_getmap_frame](#wms_getmap_frame)</sub>
 - [GetMap — Maps and Backgrounds](#getmap--maps-and-backgrounds)
   - [Plain Background Map](#plain-background-map)
-    - [`wmsmap`](#wmsmap--plain-background-map)
+    - <sub>[wmsmap](#wmsmap--plain-background-map)</sub>
   - [OpenStreetMap Background](#openstreetmap-background)
-    - [`wms_getmap_osm / wms_getmap_osm_dark`](#wms_getmap_osm--wms_getmap_osm_dark) · [`wms_getmap_osm_with_data`](#wms_getmap_osm_with_data)
+    - <sub>[wms_getmap_osm / wms_getmap_osm_dark](#wms_getmap_osm--wms_getmap_osm_dark) · [wms_getmap_osm_with_data](#wms_getmap_osm_with_data)</sub>
   - [Ice Chart](#ice-chart)
-    - [`wms_icechart_fmi_color`](#wms_icechart_fmi_color) · [`wms_icechart_areas`](#wms_icechart_areas) · [`wms_icechart_fmi_color_epsg3857`](#wms_icechart_fmi_color_epsg3857--ice-chart-in-web-mercator)
+    - <sub>[wms_icechart_fmi_color](#wms_icechart_fmi_color) · [wms_icechart_areas](#wms_icechart_areas) · [wms_icechart_fmi_color_epsg3857](#wms_icechart_fmi_color_epsg3857--ice-chart-in-web-mercator)</sub>
 - [GetMap — Data Sources](#getmap--data-sources)
   - [Grid Engine Layers](#grid-engine-layers)
     - [Temperature](#temperature)
@@ -73,16 +73,16 @@ The WMS tests exercise the `/wms` endpoint.  Test inputs are in [`test/input/wms
     - [Wind direction / speed](#wind-direction--speed)
     - [Wind streamlines](#wind-streamlines)
   - [Observation Data](#observation-data)
-    - [`wms_getmap_netatmo_observations`](#wms_getmap_netatmo_observations) · [`wms_getmap_roadcloud_observations`](#wms_getmap_roadcloud_observations)
+    - <sub>[wms_getmap_netatmo_observations](#wms_getmap_netatmo_observations) · [wms_getmap_roadcloud_observations](#wms_getmap_roadcloud_observations)</sub>
   - [Gridded Observations](#gridded-observations)
-    - [`wms_getmap_obsgrid_t2m`](#wms_getmap_obsgrid_t2m)
+    - <sub>[wms_getmap_obsgrid_t2m](#wms_getmap_obsgrid_t2m)</sub>
 - [GetMap — Error Handling](#getmap--error-handling)
   - [Service Exceptions](#service-exceptions)
 - [GetFeatureInfo](#getfeatureinfo)
   - [Response Formats](#response-formats)
-    - [`wms_getfeatureinfo_json`](#wms_getfeatureinfo_json) · [`wms_getfeatureinfo_html`](#wms_getfeatureinfo_html)
+    - <sub>[wms_getfeatureinfo_json](#wms_getfeatureinfo_json) · [wms_getfeatureinfo_html](#wms_getfeatureinfo_html)</sub>
   - [Layer Types](#layer-types)
-    - [`wms_getfeatureinfo_precipitation_json`](#wms_getfeatureinfo_precipitation_json) · [`wms_getfeatureinfo_numbers_json`](#wms_getfeatureinfo_numbers_json)
+    - <sub>[wms_getfeatureinfo_precipitation_json](#wms_getfeatureinfo_precipitation_json) · [wms_getfeatureinfo_numbers_json](#wms_getfeatureinfo_numbers_json)</sub>
 - [GetLegendGraphic](#getlegendgraphic)
 
 ---
