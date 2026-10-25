@@ -1,1 +1,1 @@
-GET /wmts?service=WMTS&version=1.0.0&request=GetTile&layer=test:satellite_meteosat&style=&tilematrixset=WGS84_2m&tilematrix=6&tilerow=10&tilecol=40&format=image/png HTTP/1.0
+GET /wmts/1.0.0/test:satellite_meteosat/default/20260826T1415/EPSG:3857/3/2/4.png HTTP/1.0

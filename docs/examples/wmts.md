@@ -28,6 +28,8 @@ Test inputs are in [`test/input/wmts_*.get`](../../test/input/) and expected out
     - <sub>[wmts_gettile_elevation_850 / _500](#wmts_gettile_elevation_850--_500)</sub>
   - [Product Variants](#product-variants)
     - <sub>[wmts_gettile_variant_ground](#wmts_gettile_variant_ground) · [wmts_gettile_variant_hires](#wmts_gettile_variant_hires)</sub>
+  - [Satellite Images](#satellite-images)
+    - <sub>[wmts_satellite_gettile](#wmts_satellite_gettile)</sub>
   - [Resource Resolution](#resource-resolution)
     - <sub>[wmts_gettile_wms_root_css](#wmts_gettile_wms_root_css)</sub>
 - [GetFeatureInfo](#getfeatureinfo)
@@ -312,6 +314,22 @@ The `hirestemperature` variant overrides the isoband definitions (`l1.isobands`,
 **Output:** [`test/output/wmts_gettile_variant_hires.get`](../../test/output/wmts_gettile_variant_hires.get) — PNG (1024×1024)
 
 ![wmts_gettile_variant_hires](../images/wmts/wmts_gettile_variant_hires.png)
+
+### Satellite Images
+
+#### wmts_satellite_gettile
+
+**Input:** [`test/input/wmts_satellite_gettile.get`](../../test/input/wmts_satellite_gettile.get)
+
+```
+GET /wmts/1.0.0/test:satellite_meteosat/default/20260826T1415/EPSG:3857/3/2/4.png HTTP/1.0
+```
+
+A Web Mercator tile of the `test:satellite_meteosat` layer: the SEVIRI natural colour composite of the satellite engine with country borders on top.  The composite is an RGBA image in EPSG:3035 from the smartmet-test-data package, reprojected to the tile; the area the satellite does not see is transparent.
+
+**Output:** [`test/output/wmts_satellite_gettile.get`](../../test/output/wmts_satellite_gettile.get) — PNG (1024×1024, shown here at 512×512)
+
+![wmts_satellite_gettile](../images/wmts/wmts_satellite_gettile.png)
 
 ### Resource Resolution
 
