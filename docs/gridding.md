@@ -215,5 +215,5 @@ The `obsgrid_bg_*` tests correct a background and draw the background alone for 
   IFS open data forecast (CC-BY-4.0, `test/data/gridding/ifs_europe`, made with
   `obs-gridding/make_ifs_fixture.py`), whose orography is derived from its surface and sea
   level pressures. The pressure tests show the correction fading out over the seas. Their requests and outputs are shown in the [Dali](examples/dali.md#gridded-observations),
-[WMS](examples/wms.md#getmap--gridded-observations) and
+[WMS](examples/wms.md#gridded-observations) and
 [OGC API Tiles](examples/tiles.md#tiles_gettile_obsgrid) examples.

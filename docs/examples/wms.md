@@ -5,36 +5,93 @@ The WMS tests exercise the `/wms` endpoint.  Test inputs are in [`test/input/wms
 ## Contents
 
 - [GetCapabilities](#getcapabilities)
-- [GetMap — Isoband styles](#getmap--isoband-styles)
-- [GetMap — Isoline styles](#getmap--isoline-styles)
-- [GetMap — Isolabel styles](#getmap--isolabel-styles)
-- [GetMap — Temperature numbers](#getmap--temperature-numbers)
-- [GetMap — Meteorological wind arrows](#getmap--meteorological-wind-arrows)
-- [GetMap — Wind arrows (model data)](#getmap--wind-arrows-model-data)
-- [GetMap — Wind numbers](#getmap--wind-numbers)
-- [GetMap — Temperature symbols](#getmap--temperature-symbols)
-- [GetMap — Multiple layers](#getmap--multiple-layers)
-- [GetMap — CRS variants](#getmap--crs-variants)
-- [GetMap — Time interpolation](#getmap--time-interpolation)
-- [GetMap — Time intervals](#getmap--time-intervals)
-- [GetMap — GeoJSON output](#getmap--geojson-output)
-- [GetMap — PDF output](#getmap--pdf-output)
-- [GetMap — DataTile output](#getmap--datatile-output)
-- [GetMap — Observation data](#getmap--observation-data)
-- [GetMap — Variants](#getmap--variants)
-- [GetMap — Frame layer](#getmap--frame-layer)
-- [GetMap — Ice chart](#getmap--ice-chart)
-- [GetMap — Symbol style](#getmap--symbol-style)
-- [GetMap — Error handling](#getmap--error-handling)
-- [GetMap — Grid Engine layers](#getmap--grid-engine-layers)
-- [GetMap — OpenStreetMap background](#getmap--openstreetmap-background)
-- [GetMap — Gridded observations](#getmap--gridded-observations)
+  - [Response Formats and Languages](#response-formats-and-languages)
+    - [`wms_getcapabilities`](#wms_getcapabilities) · [`wms_getcapabilities_fi`](#wms_getcapabilities_fi) · [`wms_getcapabilities_json`](#wms_getcapabilities_json)
+  - [Filtering and Layout](#filtering-and-layout)
+    - [`wms_getcapabilities_namespace`](#wms_getcapabilities_namespace) · [`wms_getcapabilities_recursive`](#wms_getcapabilities_recursive) · [`wms_getcapabilities_timeinterval`](#wms_getcapabilities_timeinterval)
+- [GetMap — Output Formats](#getmap--output-formats)
+  - [PNG and SVG](#png-and-svg)
+    - [`wms_getmap_png`](#wms_getmap_png-epsg4326-png) · [`wms_getmap_svgxml`](#wms_getmap_svgxml-case-insensitive-parameters)
+  - [GeoJSON Output](#geojson-output)
+    - [`wms_getmap_geojson`](#wms_getmap_geojson) · [`wms_getmap_geojson_precision`](#wms_getmap_geojson_precision)
+  - [PDF Output](#pdf-output)
+    - [`wms_getmap_pdf`](#wms_getmap_pdf)
+  - [DataTile Output](#datatile-output)
+    - [`wms_getmap_datatile`](#wms_getmap_datatile)
+- [GetMap — Projections](#getmap--projections)
+  - [CRS Variants](#crs-variants)
+    - [`wms_getmap_crs_auto2_42001`](#wms_getmap_crs_auto2_42001-auto2-utm-zone) · [`wms_getmap_crs_auto2_42004`](#wms_getmap_crs_auto2_42004) · [`wms_getmap_crs_scandinavia`](#wms_getmap_crs_scandinavia-named-crs)
+- [GetMap — Isobands, Isolines and Isolabels](#getmap--isobands-isolines-and-isolabels)
+  - [Isoband Styles](#isoband-styles)
+    - [`wms_getmap_isoband_style1`](#wms_getmap_isoband_style1) · [`wms_getmap_isoband_style2`](#wms_getmap_isoband_style2) · [`wms_getmap_isoband_style3`](#wms_getmap_isoband_style3) · [`wms_getmap_isoband_tile`](#wms_getmap_isoband_tile)
+  - [Isoline Styles](#isoline-styles)
+    - [`wms_getmap_isoline_style1`](#wms_getmap_isoline_style1) · [`wms_getmap_isoline_style2`](#wms_getmap_isoline_style2) · [`wms_getmap_isoline_groups`](#wms_getmap_isoline_groups)
+    - [Time-aggregate variants — isoline groups](#time-aggregate-variants--isoline-groups)
+  - [Isolabel Styles](#isolabel-styles)
+    - [`wms_getmap_isolabel_style1`](#wms_getmap_isolabel_style1) · [`wms_getmap_isolabel_style2`](#wms_getmap_isolabel_style2)
+- [GetMap — Point Data: Numbers and Symbols](#getmap--point-data-numbers-and-symbols)
+  - [Temperature Numbers](#temperature-numbers)
+    - [`wms_getmap_temperature_numbers`](#wms_getmap_temperature_numbers) · [`wms_getmap_temperature_numbers_svgxml`](#wms_getmap_temperature_numbers_svgxml--svg-output)
+    - [Mindistance and priority variants](#mindistance-and-priority-variants)
+  - [Temperature Symbols](#temperature-symbols)
+    - [`wms_getmap_temperature_symbols`](#wms_getmap_temperature_symbols)
+    - [Mindistance and priority variants — temperature symbols](#mindistance-and-priority-variants--temperature-symbols)
+  - [Symbol Style](#symbol-style)
+    - [`wms_getmap_symbol_style`](#wms_getmap_symbol_style)
+- [GetMap — Wind](#getmap--wind)
+  - [Meteorological Wind Arrows](#meteorological-wind-arrows)
+    - [`wms_getmap_meteorological_windarrows`](#wms_getmap_meteorological_windarrows) · [`wms_getmap_meteorological_windarrows_svgxml`](#wms_getmap_meteorological_windarrows_svgxml--svg-output)
+    - [Mindistance and priority variants — meteorological windarrows](#mindistance-and-priority-variants--meteorological-windarrows)
+  - [Wind Arrows (Model Data)](#wind-arrows-model-data)
+    - [`wms_getmap_windarrows`](#wms_getmap_windarrows) · [`wms_getmap_windarrows_style`](#wms_getmap_windarrows_style) · [`wms_getmap_windarrows_style_svg`](#wms_getmap_windarrows_style_svg--svg-style)
+    - [Time-aggregate variants — windarrows](#time-aggregate-variants--windarrows)
+  - [Wind Numbers](#wind-numbers)
+    - [`wms_getmap_windnumbers_style1`](#wms_getmap_windnumbers_style1) · [`wms_getmap_windnumbers_style2`](#wms_getmap_windnumbers_style2)
+    - [Time-aggregate variants — windnumbers](#time-aggregate-variants--windnumbers)
+- [GetMap — Time Handling](#getmap--time-handling)
+  - [Time Interpolation](#time-interpolation)
+    - [`wms_getmap_svgxml_interpolated_time`](#wms_getmap_svgxml_interpolated_time)
+  - [Time Intervals](#time-intervals)
+- [GetMap — Layer Composition](#getmap--layer-composition)
+  - [Multiple Layers](#multiple-layers)
+    - [`wms_getmap_multiple_layers`](#wms_getmap_multiple_layers) · [`wms_getmap_multiple_layers_with_style`](#wms_getmap_multiple_layers_with_style)
+  - [Variants](#variants)
+  - [Frame Layer](#frame-layer)
+    - [`wms_getmap_frame`](#wms_getmap_frame)
+- [GetMap — Maps and Backgrounds](#getmap--maps-and-backgrounds)
+  - [Plain Background Map](#plain-background-map)
+    - [`wmsmap`](#wmsmap--plain-background-map)
+  - [OpenStreetMap Background](#openstreetmap-background)
+    - [`wms_getmap_osm / wms_getmap_osm_dark`](#wms_getmap_osm--wms_getmap_osm_dark) · [`wms_getmap_osm_with_data`](#wms_getmap_osm_with_data)
+  - [Ice Chart](#ice-chart)
+    - [`wms_icechart_fmi_color`](#wms_icechart_fmi_color) · [`wms_icechart_areas`](#wms_icechart_areas) · [`wms_icechart_fmi_color_epsg3857`](#wms_icechart_fmi_color_epsg3857--ice-chart-in-web-mercator)
+- [GetMap — Data Sources](#getmap--data-sources)
+  - [Grid Engine Layers](#grid-engine-layers)
+    - [Temperature](#temperature)
+    - [Precipitation](#precipitation)
+    - [Raster](#raster)
+    - [Wind direction / speed](#wind-direction--speed)
+    - [Wind streamlines](#wind-streamlines)
+  - [Observation Data](#observation-data)
+    - [`wms_getmap_netatmo_observations`](#wms_getmap_netatmo_observations) · [`wms_getmap_roadcloud_observations`](#wms_getmap_roadcloud_observations)
+  - [Gridded Observations](#gridded-observations)
+    - [`wms_getmap_obsgrid_t2m`](#wms_getmap_obsgrid_t2m)
+- [GetMap — Error Handling](#getmap--error-handling)
+  - [Service Exceptions](#service-exceptions)
 - [GetFeatureInfo](#getfeatureinfo)
-- [GetLegendGraphic](#getlegendgraphic) — see also the [Legend Examples](legends.md) page
+  - [Response Formats](#response-formats)
+    - [`wms_getfeatureinfo_json`](#wms_getfeatureinfo_json) · [`wms_getfeatureinfo_html`](#wms_getfeatureinfo_html)
+  - [Layer Types](#layer-types)
+    - [`wms_getfeatureinfo_precipitation_json`](#wms_getfeatureinfo_precipitation_json) · [`wms_getfeatureinfo_numbers_json`](#wms_getfeatureinfo_numbers_json)
+- [GetLegendGraphic](#getlegendgraphic)
+
+---
 
 ## GetCapabilities
 
-### wms_getcapabilities
+### Response Formats and Languages
+
+#### wms_getcapabilities
 
 **Input:** [`test/input/wms_getcapabilities.get`](../../test/input/wms_getcapabilities.get)
 
@@ -52,7 +109,7 @@ Returns a WMS 1.3.0 XML capabilities document listing all advertised layers, sty
 
 **Output:** [`test/output/wms_getcapabilities.get`](../../test/output/wms_getcapabilities.get) — XML
 
-### wms_getcapabilities_fi
+#### wms_getcapabilities_fi
 
 **Input:** [`test/input/wms_getcapabilities_fi.get`](../../test/input/wms_getcapabilities_fi.get)
 
@@ -69,7 +126,7 @@ Demonstrates multi-language support in GetCapabilities: layer titles and abstrac
 
 **Output:** [`test/output/wms_getcapabilities_fi.get`](../../test/output/wms_getcapabilities_fi.get) — XML
 
-### wms_getcapabilities_json
+#### wms_getcapabilities_json
 
 **Input:** [`test/input/wms_getcapabilities_json.get`](../../test/input/wms_getcapabilities_json.get)
 
@@ -86,7 +143,9 @@ Returns the same layer metadata as the XML capabilities but in JSON format, suit
 
 **Output:** [`test/output/wms_getcapabilities_json.get`](../../test/output/wms_getcapabilities_json.get) — JSON
 
-### wms_getcapabilities_namespace
+### Filtering and Layout
+
+#### wms_getcapabilities_namespace
 
 **Input:** [`test/input/wms_getcapabilities_namespace.get`](../../test/input/wms_getcapabilities_namespace.get)
 
@@ -102,7 +161,7 @@ Returns a capabilities document scoped to a single customer namespace.
 
 **Output:** [`test/output/wms_getcapabilities_namespace.get`](../../test/output/wms_getcapabilities_namespace.get) — XML
 
-### wms_getcapabilities_recursive
+#### wms_getcapabilities_recursive
 
 **Input:** [`test/input/wms_getcapabilities_recursive.get`](../../test/input/wms_getcapabilities_recursive.get)
 
@@ -116,7 +175,7 @@ GET /wms?service=wms&request=GetCapabilities&debug=1&layout=recursive HTTP/1.0
 
 **Output:** [`test/output/wms_getcapabilities_recursive.get`](../../test/output/wms_getcapabilities_recursive.get) — XML
 
-### wms_getcapabilities_timeinterval
+#### wms_getcapabilities_timeinterval
 
 **Input:** [`test/input/wms_getcapabilities_timeinterval.get`](../../test/input/wms_getcapabilities_timeinterval.get)
 
@@ -135,11 +194,170 @@ Returns capabilities with time dimension values limited to the specified interva
 
 ---
 
-## GetMap — Isoband styles
+## GetMap — Output Formats
+
+### PNG and SVG
+
+#### wms_getmap_png (EPSG:4326, PNG)
+
+**Input:** [`test/input/wms_getmap_png.get`](../../test/input/wms_getmap_png.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=ely:wmsmap&styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png&time=200808050300 HTTP/1.0
+```
+
+Standard WMS GetMap request using EPSG:4326 with PNG output.
+
+Product config: [`test/wms/customers/ely/products/wmsmap.json`](../../test/wms/customers/ely/products/wmsmap.json)
+
+![wms_getmap_png](../images/wms/wms_getmap_png.png)
+
+#### wms_getmap_svgxml (case-insensitive parameters)
+
+**Input:** [`test/input/wms_getmap_svgxml.get`](../../test/input/wms_getmap_svgxml.get)
+
+Same request with mixed-case parameter names (`servicE`, `requesT`, etc.) and `format=image/svg+xml`.  Verifies that all WMS standard parameters are parsed case-insensitively.
+
+![wms_getmap_svgxml](../images/wms/wms_getmap_svgxml.png)
+
+### GeoJSON Output
+
+#### wms_getmap_geojson
+
+**Input:** [`test/input/wms_getmap_geojson.get`](../../test/input/wms_getmap_geojson.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:precipitation_areas&styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500
+    &format=application/geo%2Bjson
+    &time=20080805120000 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `format` | `application/geo+json` | Returns isoband geometry as a GeoJSON FeatureCollection |
+
+Isobands are returned as GeoJSON MultiPolygon features with the band's lower/upper limits as properties.  Used for programmatic access to contour geometry.
+
+**Output:** [`test/output/wms_getmap_geojson.get`](../../test/output/wms_getmap_geojson.get) — GeoJSON
+
+#### wms_getmap_geojson_precision
+
+Same but tests that coordinate precision is controlled by the `precision` configuration setting.
+
+**Output:** [`test/output/wms_getmap_geojson_precision.get`](../../test/output/wms_getmap_geojson_precision.get) — GeoJSON
+
+---
+
+### PDF Output
+
+#### wms_getmap_pdf
+
+**Input:** [`test/input/wms_getmap_pdf.get`](../../test/input/wms_getmap_pdf.get)
+
+```
+GET /wms?...&layers=ely:wmsmap&format=application/pdf&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `format` | `application/pdf` | Returns the map as a PDF vector document |
+
+**Output:** [`test/output/wms_getmap_pdf.get`](../../test/output/wms_getmap_pdf.get) — PDF
+
+---
+
+### DataTile Output
+
+#### wms_getmap_datatile
+
+**Input:** [`test/input/wms_getmap_datatile.get`](../../test/input/wms_getmap_datatile.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:datatile_temperature&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=64&height=64&format=application/x-datatile%2Bpng&time=200808050800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `grid:datatile_temperature` | Temperature datatile product from the grid customer |
+| `format` | `application/x-datatile+png` | Requests RGBA-encoded float data PNG instead of a visual image |
+| `width` / `height` | `64` | Tile dimensions |
+| `bbox` | `34,-12,74,40` | Bounding box covering Europe |
+
+Returns a datatile PNG where pixel values encode temperature data for client-side processing (particle animations, colour ramps, etc.).  The MIME type `application/x-datatile+png` triggers the datatile pipeline, which bypasses SVG rendering entirely and queries the grid engine directly.
+
+**Output:** [`test/output/wms_getmap_datatile.get`](../../test/output/wms_getmap_datatile.get) — PNG (binary, not a visual image)
+
+---
+
+## GetMap — Projections
+
+### CRS Variants
+
+#### wms_getmap_crs_auto2_42001 (AUTO2 UTM zone)
+
+**Input:** [`test/input/wms_getmap_crs_auto2_42001.get`](../../test/input/wms_getmap_crs_auto2_42001.get)
+
+```
+GET /wms?service=wms&request=getmap&version=1.3.0
+    &layers=ely:wmsmap&styles=
+    &crs=AUTO2:42001,1,25,60
+    &debug=1
+    &bbox=221000,6660000,690000,7770000
+    &width=500&height=500
+    &format=image/svg%2bxml
+    &time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `crs` | `AUTO2:42001,1,25,60` | OGC AUTO2 Universal Transverse Mercator; zone determined by `lon=25°E, lat=60°N` |
+| `bbox` | `221000,6660000,690000,7770000` | Bounding box in metres (AUTO2 projected coordinates) |
+
+OGC AUTO2 CRS codes automatically derive a projection from supplied reference coordinates.  `42001` = UTM.
+
+![wms_getmap_crs_auto2_42001](../images/wms/wms_getmap_crs_auto2_42001.png)
+
+#### wms_getmap_crs_auto2_42004
+
+Same but with `AUTO2:42004` (Equidistant Cylindrical).
+
+![wms_getmap_crs_auto2_42004](../images/wms/wms_getmap_crs_auto2_42004.png)
+
+#### wms_getmap_crs_scandinavia (named CRS)
+
+**Input:** [`test/input/wms_getmap_crs_scandinavia.get`](../../test/input/wms_getmap_crs_scandinavia.get)
+
+```
+GET /wms?...&crs=CRS:SmartMetScandinavia
+    &bbox=-1010040,-4051052,1005949,-1814781
+    &width=500&height=500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `crs` | `CRS:SmartMetScandinavia` | Named CRS defined in the server's GIS configuration |
+| `bbox` | (metres) | Bounding box in the named CRS's projected coordinate system |
+
+Demonstrates the use of server-defined named CRS strings in addition to standard EPSG/AUTO2 codes.
+
+![wms_getmap_crs_scandinavia](../images/wms/wms_getmap_crs_scandinavia.png)
+
+---
+
+## GetMap — Isobands, Isolines and Isolabels
+
+### Isoband Styles
 
 All three tests render temperature isobands for the `test:t2m` layer over Scandinavia (EPSG:4326, bbox 59–71°N, 17–34°E, 300×500 px, PNG).  They differ only in the `styles` parameter, which selects the isoband interval width.
 
-### wms_getmap_isoband_style1
+#### wms_getmap_isoband_style1
 
 **Input:** [`test/input/wms_getmap_isoband_style1.get`](../../test/input/wms_getmap_isoband_style1.get)
 
@@ -171,7 +389,7 @@ Product config: [`test/wms/customers/test/products/t2m.json`](../../test/wms/cus
 
 ![wms_getmap_isoband_style1](../images/wms/wms_getmap_isoband_style1.png)
 
-### wms_getmap_isoband_style2
+#### wms_getmap_isoband_style2
 
 **Input:** [`test/input/wms_getmap_isoband_style2.get`](../../test/input/wms_getmap_isoband_style2.get)
 
@@ -179,7 +397,7 @@ Same as above with `styles=temperature_two_degrees` (2°C isoband width).
 
 ![wms_getmap_isoband_style2](../images/wms/wms_getmap_isoband_style2.png)
 
-### wms_getmap_isoband_style3
+#### wms_getmap_isoband_style3
 
 **Input:** [`test/input/wms_getmap_isoband_style3.get`](../../test/input/wms_getmap_isoband_style3.get)
 
@@ -187,7 +405,7 @@ Same as above with `styles=temperature_three_degrees` (3°C isoband width).
 
 ![wms_getmap_isoband_style3](../images/wms/wms_getmap_isoband_style3.png)
 
-### wms_getmap_isoband_tile
+#### wms_getmap_isoband_tile
 
 **Input:** [`test/input/wms_getmap_isoband_tile.get`](../../test/input/wms_getmap_isoband_tile.get)
 
@@ -197,9 +415,9 @@ Renders the same `test:t2m` layer cropped to a WMS tile-compatible bounding box,
 
 ---
 
-## GetMap — Isoline styles
+### Isoline Styles
 
-### wms_getmap_isoline_style1
+#### wms_getmap_isoline_style1
 
 **Input:** [`test/input/wms_getmap_isoline_style1.get`](../../test/input/wms_getmap_isoline_style1.get)
 
@@ -223,7 +441,7 @@ Product config: [`test/wms/customers/test/products/precipitation_areas.json`](..
 
 ![wms_getmap_isoline_style1](../images/wms/wms_getmap_isoline_style1.png)
 
-### wms_getmap_isoline_style2
+#### wms_getmap_isoline_style2
 
 **Input:** [`test/input/wms_getmap_isoline_style2.get`](../../test/input/wms_getmap_isoline_style2.get)
 
@@ -231,7 +449,7 @@ Same request with `styles=precipitation_thick_style` (2 px isoline width).
 
 ![wms_getmap_isoline_style2](../images/wms/wms_getmap_isoline_style2.png)
 
-### wms_getmap_isoline_groups
+#### wms_getmap_isoline_groups
 
 **Input:** [`test/input/wms_getmap_isoline_groups.get`](../../test/input/wms_getmap_isoline_groups.get)
 
@@ -257,7 +475,7 @@ Product config: [`test/wms/customers/test/products/pressure_isoline_groups.json`
 
 ![wms_getmap_isoline_groups](../images/wms/wms_getmap_isoline_groups.png)
 
-### Time-aggregate variants — isoline groups
+#### Time-aggregate variants — isoline groups
 
 | Test | Output |
 |------|--------|
@@ -266,9 +484,9 @@ Product config: [`test/wms/customers/test/products/pressure_isoline_groups.json`
 
 ---
 
-## GetMap — Isolabel styles
+### Isolabel Styles
 
-### wms_getmap_isolabel_style1
+#### wms_getmap_isolabel_style1
 
 **Input:** [`test/input/wms_getmap_isolabel_style1.get`](../../test/input/wms_getmap_isolabel_style1.get)
 
@@ -294,7 +512,7 @@ Product config: [`test/wms/customers/test/products/isolabel.json`](../../test/wm
 
 ![wms_getmap_isolabel_style1](../images/wms/wms_getmap_isolabel_style1.png)
 
-### wms_getmap_isolabel_style2
+#### wms_getmap_isolabel_style2
 
 **Input:** [`test/input/wms_getmap_isolabel_style2.get`](../../test/input/wms_getmap_isolabel_style2.get)
 
@@ -304,9 +522,11 @@ Same request with `styles=isolabel_big_red_text_style` (36 px red Roboto font).
 
 ---
 
-## GetMap — Temperature numbers
+## GetMap — Point Data: Numbers and Symbols
 
-### wms_getmap_temperature_numbers
+### Temperature Numbers
+
+#### wms_getmap_temperature_numbers
 
 **Input:** [`test/input/wms_getmap_temperature_numbers.get`](../../test/input/wms_getmap_temperature_numbers.get)
 
@@ -333,7 +553,15 @@ Product config: [`test/wms/customers/test/products/opendata_temperature_numbers.
 
 ![wms_getmap_temperature_numbers](../images/wms/wms_getmap_temperature_numbers.png)
 
-### Mindistance and priority variants
+#### wms_getmap_temperature_numbers_svgxml — SVG output
+
+The same `opendata_temperature_numbers` layer requested with `format=image/svg+xml` instead of PNG.
+
+![wms_getmap_temperature_numbers_svgxml](../images/wms/wms_getmap_temperature_numbers_svgxml.png)
+
+---
+
+#### Mindistance and priority variants
 
 The following tests verify label collision avoidance and priority selection for dense station networks:
 
@@ -348,17 +576,73 @@ The following tests verify label collision avoidance and priority selection for 
 | `wms_getmap_temperature_numbers_aggregate_min` | — | — | Time-aggregate: minimum over interval | ![aggmin](../images/wms/wms_getmap_temperature_numbers_aggregate_min.png) |
 | `wms_getmap_temperature_numbers_aggregate_max` | — | — | Time-aggregate: maximum over interval | ![aggmax](../images/wms/wms_getmap_temperature_numbers_aggregate_max.png) |
 
-### wms_getmap_temperature_numbers_svgxml — SVG output
+### Temperature Symbols
 
-The same `opendata_temperature_numbers` layer requested with `format=image/svg+xml` instead of PNG.
+#### wms_getmap_temperature_symbols
 
-![wms_getmap_temperature_numbers_svgxml](../images/wms/wms_getmap_temperature_numbers_svgxml.png)
+**Input:** [`test/input/wms_getmap_temperature_symbols.get`](../../test/input/wms_getmap_temperature_symbols.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:opendata_temperature_symbols
+    &styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=600&height=1000
+    &format=image/svg%2Bxml
+    &time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:opendata_temperature_symbols` | Temperature observations as colour-coded SVG symbols |
+
+Renders temperature observations as coloured circle symbols using the `symbol` layer type.
+
+![wms_getmap_temperature_symbols](../images/wms/wms_getmap_temperature_symbols.png)
+
+#### Mindistance and priority variants — temperature symbols
+
+Same priority-selection scheme as for temperature numbers, applied to the symbol layer:
+
+| Test | Output |
+|------|--------|
+| `wms_getmap_temperature_symbols_mindistance` | ![md](../images/wms/wms_getmap_temperature_symbols_mindistance.png) |
+| `wms_getmap_temperature_symbols_mindistance_priority_none` | ![none](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_none.png) |
+| `wms_getmap_temperature_symbols_mindistance_priority_min` | ![min](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_min.png) |
+| `wms_getmap_temperature_symbols_mindistance_priority_max` | ![max](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_max.png) |
+| `wms_getmap_temperature_symbols_mindistance_priority_extrema` | ![extrema](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_extrema.png) |
+| `wms_getmap_temperature_symbols_mindistance_priority_array` | ![array](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_array.png) |
 
 ---
 
-## GetMap — Meteorological wind arrows
+### Symbol Style
 
-### wms_getmap_meteorological_windarrows
+#### wms_getmap_symbol_style
+
+**Input:** [`test/input/wms_getmap_symbol_style.get`](../../test/input/wms_getmap_symbol_style.get)
+
+```
+GET /wms?...&layers=test:precipitation&styles=precipitation_red_rain_style
+    &crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500
+    &format=image/png&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:precipitation` | Precipitation layer |
+| `styles` | `precipitation_red_rain_style` | Custom style that uses a rain SVG symbol instead of filled isobands |
+
+Demonstrates that an isoband layer can be rendered as repeated SVG symbols rather than filled polygons by specifying a symbol-based style.
+
+![wms_getmap_symbol_style](../images/wms/wms_getmap_symbol_style.png)
+
+---
+
+## GetMap — Wind
+
+### Meteorological Wind Arrows
+
+#### wms_getmap_meteorological_windarrows
 
 **Input:** [`test/input/wms_getmap_meteorological_windarrows.get`](../../test/input/wms_getmap_meteorological_windarrows.get)
 
@@ -383,13 +667,13 @@ Product config: [`test/wms/customers/test/products/opendata_meteorological_winda
 
 ![wms_getmap_meteorological_windarrows](../images/wms/wms_getmap_meteorological_windarrows.png)
 
-### wms_getmap_meteorological_windarrows_svgxml — SVG output
+#### wms_getmap_meteorological_windarrows_svgxml — SVG output
 
 Same data with `format=image/svg+xml`.
 
 ![wms_getmap_meteorological_windarrows_svgxml](../images/wms/wms_getmap_meteorological_windarrows_svgxml.png)
 
-### Mindistance and priority variants — meteorological windarrows
+#### Mindistance and priority variants — meteorological windarrows
 
 | Test | Output |
 |------|--------|
@@ -406,9 +690,9 @@ Same data with `format=image/svg+xml`.
 
 ---
 
-## GetMap — Wind arrows (model data)
+### Wind Arrows (Model Data)
 
-### wms_getmap_windarrows
+#### wms_getmap_windarrows
 
 **Input:** [`test/input/wms_getmap_windarrows.get`](../../test/input/wms_getmap_windarrows.get)
 
@@ -434,7 +718,7 @@ Product config: [`test/wms/customers/test/products/windarrows.json`](../../test/
 
 ![wms_getmap_windarrows](../images/wms/wms_getmap_windarrows.png)
 
-### wms_getmap_windarrows_style
+#### wms_getmap_windarrows_style
 
 **Input:** [`test/input/wms_getmap_windarrows_style.get`](../../test/input/wms_getmap_windarrows_style.get)
 
@@ -453,13 +737,13 @@ GET /wms?service=wms&request=GetMap&version=1.3.0
 
 ![wms_getmap_windarrows_style](../images/wms/wms_getmap_windarrows_style.png)
 
-### wms_getmap_windarrows_style_svg — SVG style
+#### wms_getmap_windarrows_style_svg — SVG style
 
 Same sparser style requested with `format=image/svg+xml`.
 
 ![wms_getmap_windarrows_style_svg](../images/wms/wms_getmap_windarrows_style_svg.png)
 
-### Time-aggregate variants — windarrows
+#### Time-aggregate variants — windarrows
 
 | Test | Output |
 |------|--------|
@@ -468,9 +752,9 @@ Same sparser style requested with `format=image/svg+xml`.
 
 ---
 
-## GetMap — Wind numbers
+### Wind Numbers
 
-### wms_getmap_windnumbers_style1
+#### wms_getmap_windnumbers_style1
 
 **Input:** [`test/input/wms_getmap_windnumbers_style1.get`](../../test/input/wms_getmap_windnumbers_style1.get)
 
@@ -492,13 +776,13 @@ Product config: [`test/wms/customers/test/products/windnumbers.json`](../../test
 
 ![wms_getmap_windnumbers_style1](../images/wms/wms_getmap_windnumbers_style1.png)
 
-### wms_getmap_windnumbers_style2
+#### wms_getmap_windnumbers_style2
 
 Same with `styles=windnumbers_sparse_style` (60×60 px grid).
 
 ![wms_getmap_windnumbers_style2](../images/wms/wms_getmap_windnumbers_style2.png)
 
-### Time-aggregate variants — windnumbers
+#### Time-aggregate variants — windnumbers
 
 | Test | Output |
 |------|--------|
@@ -507,48 +791,53 @@ Same with `styles=windnumbers_sparse_style` (60×60 px grid).
 
 ---
 
-## GetMap — Temperature symbols
+## GetMap — Time Handling
 
-### wms_getmap_temperature_symbols
+### Time Interpolation
 
-**Input:** [`test/input/wms_getmap_temperature_symbols.get`](../../test/input/wms_getmap_temperature_symbols.get)
+#### wms_getmap_svgxml_interpolated_time
+
+**Input:** [`test/input/wms_getmap_svgxml_interpolated_time.get`](../../test/input/wms_getmap_svgxml_interpolated_time.get)
 
 ```
-GET /wms?service=wms&request=GetMap&version=1.3.0
-    &layers=test:opendata_temperature_symbols
-    &styles=
-    &crs=EPSG:4326&bbox=59,17,71,34
-    &width=600&height=1000
-    &format=image/svg%2Bxml
-    &time=20130805T1500 HTTP/1.0
+GET /wms?...&layers=ely:wmsmap&time=200808050330 HTTP/1.0
 ```
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| `layers` | `test:opendata_temperature_symbols` | Temperature observations as colour-coded SVG symbols |
+| `time` | `200808050330` | 03:30 UTC — halfway between data timesteps at 03:00 and 04:00 |
 
-Renders temperature observations as coloured circle symbols using the `symbol` layer type.
+Tests that the server correctly interpolates or snaps to the nearest available data timestep when the requested time does not exactly match a data timestep.
 
-![wms_getmap_temperature_symbols](../images/wms/wms_getmap_temperature_symbols.png)
-
-### Mindistance and priority variants — temperature symbols
-
-Same priority-selection scheme as for temperature numbers, applied to the symbol layer:
-
-| Test | Output |
-|------|--------|
-| `wms_getmap_temperature_symbols_mindistance` | ![md](../images/wms/wms_getmap_temperature_symbols_mindistance.png) |
-| `wms_getmap_temperature_symbols_mindistance_priority_none` | ![none](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_none.png) |
-| `wms_getmap_temperature_symbols_mindistance_priority_min` | ![min](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_min.png) |
-| `wms_getmap_temperature_symbols_mindistance_priority_max` | ![max](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_max.png) |
-| `wms_getmap_temperature_symbols_mindistance_priority_extrema` | ![extrema](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_extrema.png) |
-| `wms_getmap_temperature_symbols_mindistance_priority_array` | ![array](../images/wms/wms_getmap_temperature_symbols_mindistance_priority_array.png) |
+![wms_getmap_svgxml_interpolated_time](../images/wms/wms_getmap_svgxml_interpolated_time.png)
 
 ---
 
-## GetMap — Multiple layers
+### Time Intervals
 
-### wms_getmap_multiple_layers
+The `flash15min` layer stores data in 15-minute slots.  The `time` parameter can specify either a point in time or an interval using ISO 8601 duration syntax.
+
+| Test | `time` value | Description |
+|------|-------------|-------------|
+| `wms_getmap_interval_default` | `201308051200` | Point in time; server uses the default aggregation interval |
+| `wms_getmap_interval_start_30m` | `201308051200/PT30M` | 30-minute window starting at 12:00 |
+| `wms_getmap_interval_end_30m` | `PT30M/201308051200` | 30-minute window ending at 12:00 |
+| `wms_getmap_interval_30m30m` | `PT30M/201308051200/PT30M` | 30-minute window centred at 12:00 |
+
+| Test | Output |
+|------|--------|
+| `wms_getmap_interval_default` | ![interval_default](../images/wms/wms_getmap_interval_default.png) |
+| `wms_getmap_interval_start_30m` | ![interval_start_30m](../images/wms/wms_getmap_interval_start_30m.png) |
+| `wms_getmap_interval_end_30m` | ![interval_end_30m](../images/wms/wms_getmap_interval_end_30m.png) |
+| `wms_getmap_interval_30m30m` | ![interval_30m30m](../images/wms/wms_getmap_interval_30m30m.png) |
+
+---
+
+## GetMap — Layer Composition
+
+### Multiple Layers
+
+#### wms_getmap_multiple_layers
 
 **Input:** [`test/input/wms_getmap_multiple_layers.get`](../../test/input/wms_getmap_multiple_layers.get)
 
@@ -571,7 +860,7 @@ Demonstrates composite multi-layer rendering: a background map, precipitation is
 
 ![wms_getmap_multiple_layers](../images/wms/wms_getmap_multiple_layers.png)
 
-### wms_getmap_multiple_layers_with_style
+#### wms_getmap_multiple_layers_with_style
 
 **Input:** [`test/input/wms_getmap_multiple_layers_with_style.get`](../../test/input/wms_getmap_multiple_layers_with_style.get)
 
@@ -590,227 +879,7 @@ The `styles` list must have the same number of comma-separated entries as `layer
 
 ---
 
-## GetMap — CRS variants
-
-### wms_getmap_png (EPSG:4326, PNG)
-
-**Input:** [`test/input/wms_getmap_png.get`](../../test/input/wms_getmap_png.get)
-
-```
-GET /wms?service=wms&request=GetMap&version=1.3.0
-    &layers=ely:wmsmap&styles=
-    &crs=EPSG:4326&bbox=59,17,71,34
-    &width=300&height=500
-    &format=image/png&time=200808050300 HTTP/1.0
-```
-
-Standard WMS GetMap request using EPSG:4326 with PNG output.
-
-Product config: [`test/wms/customers/ely/products/wmsmap.json`](../../test/wms/customers/ely/products/wmsmap.json)
-
-![wms_getmap_png](../images/wms/wms_getmap_png.png)
-
-### wms_getmap_svgxml (case-insensitive parameters)
-
-**Input:** [`test/input/wms_getmap_svgxml.get`](../../test/input/wms_getmap_svgxml.get)
-
-Same request with mixed-case parameter names (`servicE`, `requesT`, etc.) and `format=image/svg+xml`.  Verifies that all WMS standard parameters are parsed case-insensitively.
-
-![wms_getmap_svgxml](../images/wms/wms_getmap_svgxml.png)
-
-### wms_getmap_crs_auto2_42001 (AUTO2 UTM zone)
-
-**Input:** [`test/input/wms_getmap_crs_auto2_42001.get`](../../test/input/wms_getmap_crs_auto2_42001.get)
-
-```
-GET /wms?service=wms&request=getmap&version=1.3.0
-    &layers=ely:wmsmap&styles=
-    &crs=AUTO2:42001,1,25,60
-    &debug=1
-    &bbox=221000,6660000,690000,7770000
-    &width=500&height=500
-    &format=image/svg%2bxml
-    &time=200808050300 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `crs` | `AUTO2:42001,1,25,60` | OGC AUTO2 Universal Transverse Mercator; zone determined by `lon=25°E, lat=60°N` |
-| `bbox` | `221000,6660000,690000,7770000` | Bounding box in metres (AUTO2 projected coordinates) |
-
-OGC AUTO2 CRS codes automatically derive a projection from supplied reference coordinates.  `42001` = UTM.
-
-![wms_getmap_crs_auto2_42001](../images/wms/wms_getmap_crs_auto2_42001.png)
-
-### wms_getmap_crs_auto2_42004
-
-Same but with `AUTO2:42004` (Equidistant Cylindrical).
-
-![wms_getmap_crs_auto2_42004](../images/wms/wms_getmap_crs_auto2_42004.png)
-
-### wms_getmap_crs_scandinavia (named CRS)
-
-**Input:** [`test/input/wms_getmap_crs_scandinavia.get`](../../test/input/wms_getmap_crs_scandinavia.get)
-
-```
-GET /wms?...&crs=CRS:SmartMetScandinavia
-    &bbox=-1010040,-4051052,1005949,-1814781
-    &width=500&height=500 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `crs` | `CRS:SmartMetScandinavia` | Named CRS defined in the server's GIS configuration |
-| `bbox` | (metres) | Bounding box in the named CRS's projected coordinate system |
-
-Demonstrates the use of server-defined named CRS strings in addition to standard EPSG/AUTO2 codes.
-
-![wms_getmap_crs_scandinavia](../images/wms/wms_getmap_crs_scandinavia.png)
-
----
-
-## GetMap — Time interpolation
-
-### wms_getmap_svgxml_interpolated_time
-
-**Input:** [`test/input/wms_getmap_svgxml_interpolated_time.get`](../../test/input/wms_getmap_svgxml_interpolated_time.get)
-
-```
-GET /wms?...&layers=ely:wmsmap&time=200808050330 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `time` | `200808050330` | 03:30 UTC — halfway between data timesteps at 03:00 and 04:00 |
-
-Tests that the server correctly interpolates or snaps to the nearest available data timestep when the requested time does not exactly match a data timestep.
-
-![wms_getmap_svgxml_interpolated_time](../images/wms/wms_getmap_svgxml_interpolated_time.png)
-
----
-
-## GetMap — Time intervals
-
-The `flash15min` layer stores data in 15-minute slots.  The `time` parameter can specify either a point in time or an interval using ISO 8601 duration syntax.
-
-| Test | `time` value | Description |
-|------|-------------|-------------|
-| `wms_getmap_interval_default` | `201308051200` | Point in time; server uses the default aggregation interval |
-| `wms_getmap_interval_start_30m` | `201308051200/PT30M` | 30-minute window starting at 12:00 |
-| `wms_getmap_interval_end_30m` | `PT30M/201308051200` | 30-minute window ending at 12:00 |
-| `wms_getmap_interval_30m30m` | `PT30M/201308051200/PT30M` | 30-minute window centred at 12:00 |
-
-| Test | Output |
-|------|--------|
-| `wms_getmap_interval_default` | ![interval_default](../images/wms/wms_getmap_interval_default.png) |
-| `wms_getmap_interval_start_30m` | ![interval_start_30m](../images/wms/wms_getmap_interval_start_30m.png) |
-| `wms_getmap_interval_end_30m` | ![interval_end_30m](../images/wms/wms_getmap_interval_end_30m.png) |
-| `wms_getmap_interval_30m30m` | ![interval_30m30m](../images/wms/wms_getmap_interval_30m30m.png) |
-
----
-
-## GetMap — GeoJSON output
-
-### wms_getmap_geojson
-
-**Input:** [`test/input/wms_getmap_geojson.get`](../../test/input/wms_getmap_geojson.get)
-
-```
-GET /wms?service=wms&request=GetMap&version=1.3.0
-    &layers=test:precipitation_areas&styles=
-    &crs=EPSG:4326&bbox=59,17,71,34
-    &width=300&height=500
-    &format=application/geo%2Bjson
-    &time=20080805120000 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `format` | `application/geo+json` | Returns isoband geometry as a GeoJSON FeatureCollection |
-
-Isobands are returned as GeoJSON MultiPolygon features with the band's lower/upper limits as properties.  Used for programmatic access to contour geometry.
-
-**Output:** [`test/output/wms_getmap_geojson.get`](../../test/output/wms_getmap_geojson.get) — GeoJSON
-
-### wms_getmap_geojson_precision
-
-Same but tests that coordinate precision is controlled by the `precision` configuration setting.
-
-**Output:** [`test/output/wms_getmap_geojson_precision.get`](../../test/output/wms_getmap_geojson_precision.get) — GeoJSON
-
----
-
-## GetMap — PDF output
-
-### wms_getmap_pdf
-
-**Input:** [`test/input/wms_getmap_pdf.get`](../../test/input/wms_getmap_pdf.get)
-
-```
-GET /wms?...&layers=ely:wmsmap&format=application/pdf&time=200808050300 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `format` | `application/pdf` | Returns the map as a PDF vector document |
-
-**Output:** [`test/output/wms_getmap_pdf.get`](../../test/output/wms_getmap_pdf.get) — PDF
-
----
-
-## GetMap — DataTile output
-
-### wms_getmap_datatile
-
-**Input:** [`test/input/wms_getmap_datatile.get`](../../test/input/wms_getmap_datatile.get)
-
-```
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:datatile_temperature&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=64&height=64&format=application/x-datatile%2Bpng&time=200808050800 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `layers` | `grid:datatile_temperature` | Temperature datatile product from the grid customer |
-| `format` | `application/x-datatile+png` | Requests RGBA-encoded float data PNG instead of a visual image |
-| `width` / `height` | `64` | Tile dimensions |
-| `bbox` | `34,-12,74,40` | Bounding box covering Europe |
-
-Returns a datatile PNG where pixel values encode temperature data for client-side processing (particle animations, colour ramps, etc.).  The MIME type `application/x-datatile+png` triggers the datatile pipeline, which bypasses SVG rendering entirely and queries the grid engine directly.
-
-**Output:** [`test/output/wms_getmap_datatile.get`](../../test/output/wms_getmap_datatile.get) — PNG (binary, not a visual image)
-
----
-
-## GetMap — Observation data
-
-### wms_getmap_netatmo_observations
-
-**Input:** [`test/input/wms_getmap_netatmo_observations.get`](../../test/input/wms_getmap_netatmo_observations.get)
-
-```
-GET /wms?...&layers=test:netatmo5min&crs=EPSG:4326
-    &bbox=53.5,3.5,72,33&width=600&height=800
-    &format=image/png&time=20190325090500 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `layers` | `test:netatmo5min` | Netatmo citizen weather station observations |
-| `time` | `20190325090500` | Observation time (5-minute data) |
-
-Renders crowd-sourced Netatmo temperature observations as coloured dots.
-
-![wms_getmap_netatmo_observations](../images/wms/wms_getmap_netatmo_observations.png)
-
-### wms_getmap_roadcloud_observations
-
-Same pattern for RoadCloud road-condition sensor data.
-
-![wms_getmap_roadcloud_observations](../images/wms/wms_getmap_roadcloud_observations.png)
-
----
-
-## GetMap — Variants
+### Variants
 
 The `variant` layer prefix selects an alternative data producer using the variant layer syntax `variant:{variant_name}:{layer_name}`.
 
@@ -823,9 +892,9 @@ The `variant` layer prefix selects an alternative data producer using the varian
 
 ---
 
-## GetMap — Frame layer
+### Frame Layer
 
-### wms_getmap_frame
+#### wms_getmap_frame
 
 **Input:** [`test/input/wms_getmap_frame.get`](../../test/input/wms_getmap_frame.get)
 
@@ -849,9 +918,59 @@ Product config: [`test/wms/customers/test/products/frame_layer.json`](../../test
 
 ---
 
-## GetMap — Ice chart
+## GetMap — Maps and Backgrounds
 
-### wms_icechart_fmi_color
+### Plain Background Map
+
+#### wmsmap — Plain background map
+
+`wmsmap` (under the `ely` customer) is the simple Natural-Earth + graticule background that the WMS GetCapabilities tests use for projection coverage.
+
+![wmsmap](../images/wms/wms_getmap_png.png)
+
+(Same image as [`wms_getmap_png`](#wms_getmap_png-epsg4326-png) above — `wmsmap` is the underlying product name.)
+
+---
+
+### OpenStreetMap Background
+
+The `test:osm` layer ([`test/wms/customers/test/products/osm.json`](../../test/wms/customers/test/products/osm.json)) renders the OSM engine's vector tile data as a non-temporal background layer, with one variant per style (`test:osm:meteo-light`, `test:osm:meteo-dark`, `test:osm:meteo-white`, `test:osm:protomaps-light`).  The tests use the small OpenStreetMap extract described in [`test/osm/README.md`](../../test/osm/README.md); see also the [OpenStreetMap examples](dali.md#openstreetmap-background-maps) of the Dali interface.  Map data © OpenStreetMap contributors.
+
+#### wms_getmap_osm / wms_getmap_osm_dark
+
+**Input:** [`test/input/wms_getmap_osm.get`](../../test/input/wms_getmap_osm.get), [`test/input/wms_getmap_osm_dark.get`](../../test/input/wms_getmap_osm_dark.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:osm:meteo-light&styles=
+    &crs=EPSG:3067&bbox=365000,6657000,410000,6694500
+    &width=600&height=500&format=image/png HTTP/1.0
+```
+
+The Helsinki area with the light and dark meteorological styles.
+
+![wms_getmap_osm](../images/wms/wms_getmap_osm.png)
+
+![wms_getmap_osm_dark](../images/wms/wms_getmap_osm_dark.png)
+
+#### wms_getmap_osm_with_data
+
+**Input:** [`test/input/wms_getmap_osm_with_data.get`](../../test/input/wms_getmap_osm_with_data.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:osm:meteo-light,test:precipitation_areas&styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500&format=image/png&time=20080805120000 HTTP/1.0
+```
+
+The OSM background combined with a weather layer in one request.  The background comes from the coarse world data of the extract.
+
+![wms_getmap_osm_with_data](../images/wms/wms_getmap_osm_with_data.png)
+
+### Ice Chart
+
+#### wms_icechart_fmi_color
 
 **Input:** [`test/input/wms_icechart_fmi_color.get`](../../test/input/wms_icechart_fmi_color.get)
 
@@ -870,7 +989,7 @@ Renders Baltic Sea ice coverage using the FMI ice-chart color conventions.
 
 ![wms_icechart_fmi_color](../images/wms/wms_icechart_fmi_color.png)
 
-### wms_icechart_areas
+#### wms_icechart_areas
 
 **Input:** [`test/input/wms_icechart_areas.get`](../../test/input/wms_icechart_areas.get)
 
@@ -878,7 +997,7 @@ Same ice chart data rendered as named area polygons rather than coloured fills.
 
 ![wms_icechart_areas](../images/wms/wms_icechart_areas.png)
 
-### wms_icechart_fmi_color_epsg3857 — Ice chart in Web Mercator
+#### wms_icechart_fmi_color_epsg3857 — Ice chart in Web Mercator
 
 **Input:** [`test/input/wms_icechart_fmi_color_epsg3857.get`](../../test/input/wms_icechart_fmi_color_epsg3857.get)
 
@@ -888,30 +1007,155 @@ Same FMI-colour ice chart but reprojected to Web Mercator (`crs=EPSG:3857`) for 
 
 ---
 
-## GetMap — Symbol style
+## GetMap — Data Sources
 
-### wms_getmap_symbol_style
+### Grid Engine Layers
 
-**Input:** [`test/input/wms_getmap_symbol_style.get`](../../test/input/wms_getmap_symbol_style.get)
+The `grid:` layer namespace is served by the SmartMet **grid-content engine** (Redis-backed GRIB1/GRIB2/NetCDF) rather than the QueryData engine.  Tests are named `wms::grid::<layer>::<producer>` (and `wms::qd::...` for the analogous QueryData wind-stream cases) — the `::` segments survive intentionally in the filename so the test harness can derive the layer / producer pair from the path.
+
+All requests use `format=image/svg+xml`; the PNG previews here are rasterised from the SVG outputs.  Producers exercised by the suite:
+
+- `pal` — Finland-area model (default bbox `59,17,71,34`, 300×500 px)
+- `ecmwf_eurooppa_pinta` — ECMWF Europe surface (bbox `34,-12,74,40`, 500×500 px) selected with `&producer=ecmwf_eurooppa_pinta`
+- `ecmwf_maailma_pinta` — ECMWF global surface, world bbox
+
+Product configurations live in [`test/wms/customers/grid/products/`](../../test/wms/customers/grid/products/).
+
+#### Temperature
+
+Six temperature layers with progressively richer styling — base isobands, isolines, smoothing, labels, multi-style composite.
+
+| Test | Producer | Output |
+|------|----------|--------|
+| `wms::grid::temperature_1::pal` | `pal` | ![t1_pal](../images/wms/grid/wms__grid__temperature_1__pal.png) |
+| `wms::grid::temperature_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![t1_eu](../images/wms/grid/wms__grid__temperature_1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::temperature_1::ecmwf_eurooppa_pinta::time_interpolation` | ECMWF Europe, interpolated time | ![t1_eu_ti](../images/wms/grid/wms__grid__temperature_1__ecmwf_eurooppa_pinta__time_interpolation.png) |
+| `wms::grid::temperature_1::ecmwf_maailma_pinta` | ECMWF World | ![t1_w](../images/wms/grid/wms__grid__temperature_1__ecmwf_maailma_pinta.png) |
+| `wms::grid::temperature_2::pal` | `pal` | ![t2_pal](../images/wms/grid/wms__grid__temperature_2__pal.png) |
+| `wms::grid::temperature_3::pal` | `pal` | ![t3_pal](../images/wms/grid/wms__grid__temperature_3__pal.png) |
+| `wms::grid::temperature_4::pal` | `pal` | ![t4_pal](../images/wms/grid/wms__grid__temperature_4__pal.png) |
+| `wms::grid::temperature_4::pal::time_interpolation` | `pal`, interpolated time | ![t4_pal_ti](../images/wms/grid/wms__grid__temperature_4__pal__time_interpolation.png) |
+| `wms::grid::temperature_5::pal` | `pal` | ![t5_pal](../images/wms/grid/wms__grid__temperature_5__pal.png) |
+| `wms::grid::temperature_6::pal` | `pal` | ![t6_pal](../images/wms/grid/wms__grid__temperature_6__pal.png) |
+
+The `::time_interpolation` suffix tests requesting a timestamp between two stored timesteps; the grid engine interpolates linearly.  TopoJSON output of the same isobands is exercised by `wms::grid::temperature_1::pal::topojson` and `wms::grid::temperature_2::pal::topojson` (JSON output, not shown here).
+
+#### Precipitation
+
+| Test | Producer | Output |
+|------|----------|--------|
+| `wms::grid::precipitation_1::pal` | `pal` | ![p1_pal](../images/wms/grid/wms__grid__precipitation_1__pal.png) |
+| `wms::grid::precipitation_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![p1_eu](../images/wms/grid/wms__grid__precipitation_1__ecmwf_eurooppa_pinta.png) |
+
+#### Raster
+
+The `raster_*` products render gridded data through a `RasterLayer` that emits PNG-in-SVG `<image>` elements.  `_t1` / `_t2` suffixes select between alternative styling templates.
+
+| Test | Producer | Output |
+|------|----------|--------|
+| `wms::grid::raster_1_t1::pal` | `pal` | ![r1t1_pal](../images/wms/grid/wms__grid__raster_1_t1__pal.png) |
+| `wms::grid::raster_1_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r1t1_eu](../images/wms/grid/wms__grid__raster_1_t1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::raster_1_t2::pal` | `pal` | ![r1t2_pal](../images/wms/grid/wms__grid__raster_1_t2__pal.png) |
+| `wms::grid::raster_1_t2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r1t2_eu](../images/wms/grid/wms__grid__raster_1_t2__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::raster_2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r2_eu](../images/wms/grid/wms__grid__raster_2__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::raster_3_t1::pal` | `pal` | ![r3t1_pal](../images/wms/grid/wms__grid__raster_3_t1__pal.png) |
+| `wms::grid::raster_3_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r3t1_eu](../images/wms/grid/wms__grid__raster_3_t1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::raster_3_t2::pal` | `pal` | ![r3t2_pal](../images/wms/grid/wms__grid__raster_3_t2__pal.png) |
+| `wms::grid::raster_3_t2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r3t2_eu](../images/wms/grid/wms__grid__raster_3_t2__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::raster_4_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r4t1_eu](../images/wms/grid/wms__grid__raster_4_t1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::raster_5_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r5t1_eu](../images/wms/grid/wms__grid__raster_5_t1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::raster_6_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r6t1_eu](../images/wms/grid/wms__grid__raster_6_t1__ecmwf_eurooppa_pinta.png) |
+
+#### Wind direction / speed
+
+Vector quantities decomposed into separate direction and speed layers, plus a combined-style layer.
+
+| Test | Producer | Output |
+|------|----------|--------|
+| `wms::grid::wind_direction_1::pal` | `pal` | ![wd1_pal](../images/wms/grid/wms__grid__wind_direction_1__pal.png) |
+| `wms::grid::wind_direction_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![wd1_eu](../images/wms/grid/wms__grid__wind_direction_1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::wind_speed_1::pal` | `pal` | ![ws1_pal](../images/wms/grid/wms__grid__wind_speed_1__pal.png) |
+| `wms::grid::wind_speed_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![ws1_eu](../images/wms/grid/wms__grid__wind_speed_1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::wind_speed_2::pal` | `pal` | ![ws2_pal](../images/wms/grid/wms__grid__wind_speed_2__pal.png) |
+| `wms::grid::wind_speed_2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![ws2_eu](../images/wms/grid/wms__grid__wind_speed_2__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::wind_speed_and_direction_1::pal` | `pal` | ![wsd1_pal](../images/wms/grid/wms__grid__wind_speed_and_direction_1__pal.png) |
+| `wms::grid::wind_speed_and_direction_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![wsd1_eu](../images/wms/grid/wms__grid__wind_speed_and_direction_1__ecmwf_eurooppa_pinta.png) |
+
+`wms::grid::wind_speed_1::ecmwf_eurooppa_pinta::topojson` exercises the same layer with TopoJSON output (not shown).
+
+#### Wind streamlines
+
+Streamline traces driven by U/V wind components, served from both grid and QueryData engines for parity testing.
+
+| Test | Engine / Producer | Output |
+|------|-------------------|--------|
+| `wms::grid::wind_stream_1::pal` | grid / `pal` | ![wst1_pal](../images/wms/grid/wms__grid__wind_stream_1__pal.png) |
+| `wms::grid::wind_stream_1::ecmwf_eurooppa_pinta` | grid / ECMWF Europe | ![wst1_eu](../images/wms/grid/wms__grid__wind_stream_1__ecmwf_eurooppa_pinta.png) |
+| `wms::grid::wind_stream_4::ecmwf_eurooppa_pinta` | grid / ECMWF Europe | ![wst4_eu](../images/wms/grid/wms__grid__wind_stream_4__ecmwf_eurooppa_pinta.png) |
+| `wms::qd::wind_stream_2::ecmwf_maailma_pinta` | QueryData / ECMWF World | ![qd_wst2_w](../images/wms/grid/wms__qd__wind_stream_2__ecmwf_maailma_pinta.png) |
+| `wms::qd::wind_stream_3::pal` | QueryData / `pal` | ![qd_wst3_pal](../images/wms/grid/wms__qd__wind_stream_3__pal.png) |
+| `wms::qd::wind_stream_3::ecmwf_maailma_pinta` | QueryData / ECMWF World | ![qd_wst3_w](../images/wms/grid/wms__qd__wind_stream_3__ecmwf_maailma_pinta.png) |
+| `wms::qd::wind_stream_4::ecmwf_maailma_pinta` | QueryData / ECMWF World | ![qd_wst4_w](../images/wms/grid/wms__qd__wind_stream_4__ecmwf_maailma_pinta.png) |
+
+### Observation Data
+
+#### wms_getmap_netatmo_observations
+
+**Input:** [`test/input/wms_getmap_netatmo_observations.get`](../../test/input/wms_getmap_netatmo_observations.get)
 
 ```
-GET /wms?...&layers=test:precipitation&styles=precipitation_red_rain_style
-    &crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500
-    &format=image/png&time=200808050300 HTTP/1.0
+GET /wms?...&layers=test:netatmo5min&crs=EPSG:4326
+    &bbox=53.5,3.5,72,33&width=600&height=800
+    &format=image/png&time=20190325090500 HTTP/1.0
 ```
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| `layers` | `test:precipitation` | Precipitation layer |
-| `styles` | `precipitation_red_rain_style` | Custom style that uses a rain SVG symbol instead of filled isobands |
+| `layers` | `test:netatmo5min` | Netatmo citizen weather station observations |
+| `time` | `20190325090500` | Observation time (5-minute data) |
 
-Demonstrates that an isoband layer can be rendered as repeated SVG symbols rather than filled polygons by specifying a symbol-based style.
+Renders crowd-sourced Netatmo temperature observations as coloured dots.
 
-![wms_getmap_symbol_style](../images/wms/wms_getmap_symbol_style.png)
+![wms_getmap_netatmo_observations](../images/wms/wms_getmap_netatmo_observations.png)
+
+#### wms_getmap_roadcloud_observations
+
+Same pattern for RoadCloud road-condition sensor data.
+
+![wms_getmap_roadcloud_observations](../images/wms/wms_getmap_roadcloud_observations.png)
 
 ---
 
-## GetMap — Error handling
+### Gridded Observations
+
+#### wms_getmap_obsgrid_t2m
+
+**Input:** [`test/input/wms_getmap_obsgrid_t2m.get`](../../test/input/wms_getmap_obsgrid_t2m.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:obsgrid_t2m&styles=
+    &crs=EPSG:4326&bbox=35,-10,70,40&width=1024&height=853
+    &format=image/png&time=20081205T0600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:obsgrid_t2m` | Temperature isobands of the gridded producer `synop_europe` |
+| `crs` | `EPSG:4326` | WGS 84 geographic CRS |
+| `bbox` | `35,-10,70,40` | Europe: minLat, minLon, maxLat, maxLon |
+| `time` | `20081205T0600` | Valid time of the observations |
+
+The producer of the layer is a gridded observation producer of the `gridding` settings, so the
+plugin grids the SYNOP temperatures with the terrain for the requested time and draws the
+isobands from the result like from any querydata (see [Gridded observations](../gridding.md)).
+
+Product config: [`test/wms/customers/test/products/obsgrid_t2m.json`](../../test/wms/customers/test/products/obsgrid_t2m.json)
+
+![wms_getmap_obsgrid_t2m](../images/wms/wms_getmap_obsgrid_t2m.png)
+
+## GetMap — Error Handling
+
+### Service Exceptions
 
 When a request contains invalid parameters the server returns either an XML service exception (default) or an in-image error (when `EXCEPTIONS=INIMAGE` or format-specific variants are used).
 
@@ -943,172 +1187,13 @@ In-image error renderings (`EXCEPTIONS=INIMAGE`) carry the failure message insid
 
 ---
 
-## GetMap — Grid Engine layers
-
-The `grid:` layer namespace is served by the SmartMet **grid-content engine** (Redis-backed GRIB1/GRIB2/NetCDF) rather than the QueryData engine.  Tests are named `wms::grid::<layer>::<producer>` (and `wms::qd::...` for the analogous QueryData wind-stream cases) — the `::` segments survive intentionally in the filename so the test harness can derive the layer / producer pair from the path.
-
-All requests use `format=image/svg+xml`; the PNG previews here are rasterised from the SVG outputs.  Producers exercised by the suite:
-
-- `pal` — Finland-area model (default bbox `59,17,71,34`, 300×500 px)
-- `ecmwf_eurooppa_pinta` — ECMWF Europe surface (bbox `34,-12,74,40`, 500×500 px) selected with `&producer=ecmwf_eurooppa_pinta`
-- `ecmwf_maailma_pinta` — ECMWF global surface, world bbox
-
-Product configurations live in [`test/wms/customers/grid/products/`](../../test/wms/customers/grid/products/).
-
-### Temperature
-
-Six temperature layers with progressively richer styling — base isobands, isolines, smoothing, labels, multi-style composite.
-
-| Test | Producer | Output |
-|------|----------|--------|
-| `wms::grid::temperature_1::pal` | `pal` | ![t1_pal](../images/wms/grid/wms__grid__temperature_1__pal.png) |
-| `wms::grid::temperature_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![t1_eu](../images/wms/grid/wms__grid__temperature_1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::temperature_1::ecmwf_eurooppa_pinta::time_interpolation` | ECMWF Europe, interpolated time | ![t1_eu_ti](../images/wms/grid/wms__grid__temperature_1__ecmwf_eurooppa_pinta__time_interpolation.png) |
-| `wms::grid::temperature_1::ecmwf_maailma_pinta` | ECMWF World | ![t1_w](../images/wms/grid/wms__grid__temperature_1__ecmwf_maailma_pinta.png) |
-| `wms::grid::temperature_2::pal` | `pal` | ![t2_pal](../images/wms/grid/wms__grid__temperature_2__pal.png) |
-| `wms::grid::temperature_3::pal` | `pal` | ![t3_pal](../images/wms/grid/wms__grid__temperature_3__pal.png) |
-| `wms::grid::temperature_4::pal` | `pal` | ![t4_pal](../images/wms/grid/wms__grid__temperature_4__pal.png) |
-| `wms::grid::temperature_4::pal::time_interpolation` | `pal`, interpolated time | ![t4_pal_ti](../images/wms/grid/wms__grid__temperature_4__pal__time_interpolation.png) |
-| `wms::grid::temperature_5::pal` | `pal` | ![t5_pal](../images/wms/grid/wms__grid__temperature_5__pal.png) |
-| `wms::grid::temperature_6::pal` | `pal` | ![t6_pal](../images/wms/grid/wms__grid__temperature_6__pal.png) |
-
-The `::time_interpolation` suffix tests requesting a timestamp between two stored timesteps; the grid engine interpolates linearly.  TopoJSON output of the same isobands is exercised by `wms::grid::temperature_1::pal::topojson` and `wms::grid::temperature_2::pal::topojson` (JSON output, not shown here).
-
-### Precipitation
-
-| Test | Producer | Output |
-|------|----------|--------|
-| `wms::grid::precipitation_1::pal` | `pal` | ![p1_pal](../images/wms/grid/wms__grid__precipitation_1__pal.png) |
-| `wms::grid::precipitation_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![p1_eu](../images/wms/grid/wms__grid__precipitation_1__ecmwf_eurooppa_pinta.png) |
-
-### Raster
-
-The `raster_*` products render gridded data through a `RasterLayer` that emits PNG-in-SVG `<image>` elements.  `_t1` / `_t2` suffixes select between alternative styling templates.
-
-| Test | Producer | Output |
-|------|----------|--------|
-| `wms::grid::raster_1_t1::pal` | `pal` | ![r1t1_pal](../images/wms/grid/wms__grid__raster_1_t1__pal.png) |
-| `wms::grid::raster_1_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r1t1_eu](../images/wms/grid/wms__grid__raster_1_t1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::raster_1_t2::pal` | `pal` | ![r1t2_pal](../images/wms/grid/wms__grid__raster_1_t2__pal.png) |
-| `wms::grid::raster_1_t2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r1t2_eu](../images/wms/grid/wms__grid__raster_1_t2__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::raster_2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r2_eu](../images/wms/grid/wms__grid__raster_2__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::raster_3_t1::pal` | `pal` | ![r3t1_pal](../images/wms/grid/wms__grid__raster_3_t1__pal.png) |
-| `wms::grid::raster_3_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r3t1_eu](../images/wms/grid/wms__grid__raster_3_t1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::raster_3_t2::pal` | `pal` | ![r3t2_pal](../images/wms/grid/wms__grid__raster_3_t2__pal.png) |
-| `wms::grid::raster_3_t2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r3t2_eu](../images/wms/grid/wms__grid__raster_3_t2__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::raster_4_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r4t1_eu](../images/wms/grid/wms__grid__raster_4_t1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::raster_5_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r5t1_eu](../images/wms/grid/wms__grid__raster_5_t1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::raster_6_t1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![r6t1_eu](../images/wms/grid/wms__grid__raster_6_t1__ecmwf_eurooppa_pinta.png) |
-
-### Wind direction / speed
-
-Vector quantities decomposed into separate direction and speed layers, plus a combined-style layer.
-
-| Test | Producer | Output |
-|------|----------|--------|
-| `wms::grid::wind_direction_1::pal` | `pal` | ![wd1_pal](../images/wms/grid/wms__grid__wind_direction_1__pal.png) |
-| `wms::grid::wind_direction_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![wd1_eu](../images/wms/grid/wms__grid__wind_direction_1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::wind_speed_1::pal` | `pal` | ![ws1_pal](../images/wms/grid/wms__grid__wind_speed_1__pal.png) |
-| `wms::grid::wind_speed_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![ws1_eu](../images/wms/grid/wms__grid__wind_speed_1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::wind_speed_2::pal` | `pal` | ![ws2_pal](../images/wms/grid/wms__grid__wind_speed_2__pal.png) |
-| `wms::grid::wind_speed_2::ecmwf_eurooppa_pinta` | ECMWF Europe | ![ws2_eu](../images/wms/grid/wms__grid__wind_speed_2__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::wind_speed_and_direction_1::pal` | `pal` | ![wsd1_pal](../images/wms/grid/wms__grid__wind_speed_and_direction_1__pal.png) |
-| `wms::grid::wind_speed_and_direction_1::ecmwf_eurooppa_pinta` | ECMWF Europe | ![wsd1_eu](../images/wms/grid/wms__grid__wind_speed_and_direction_1__ecmwf_eurooppa_pinta.png) |
-
-`wms::grid::wind_speed_1::ecmwf_eurooppa_pinta::topojson` exercises the same layer with TopoJSON output (not shown).
-
-### Wind streamlines
-
-Streamline traces driven by U/V wind components, served from both grid and QueryData engines for parity testing.
-
-| Test | Engine / Producer | Output |
-|------|-------------------|--------|
-| `wms::grid::wind_stream_1::pal` | grid / `pal` | ![wst1_pal](../images/wms/grid/wms__grid__wind_stream_1__pal.png) |
-| `wms::grid::wind_stream_1::ecmwf_eurooppa_pinta` | grid / ECMWF Europe | ![wst1_eu](../images/wms/grid/wms__grid__wind_stream_1__ecmwf_eurooppa_pinta.png) |
-| `wms::grid::wind_stream_4::ecmwf_eurooppa_pinta` | grid / ECMWF Europe | ![wst4_eu](../images/wms/grid/wms__grid__wind_stream_4__ecmwf_eurooppa_pinta.png) |
-| `wms::qd::wind_stream_2::ecmwf_maailma_pinta` | QueryData / ECMWF World | ![qd_wst2_w](../images/wms/grid/wms__qd__wind_stream_2__ecmwf_maailma_pinta.png) |
-| `wms::qd::wind_stream_3::pal` | QueryData / `pal` | ![qd_wst3_pal](../images/wms/grid/wms__qd__wind_stream_3__pal.png) |
-| `wms::qd::wind_stream_3::ecmwf_maailma_pinta` | QueryData / ECMWF World | ![qd_wst3_w](../images/wms/grid/wms__qd__wind_stream_3__ecmwf_maailma_pinta.png) |
-| `wms::qd::wind_stream_4::ecmwf_maailma_pinta` | QueryData / ECMWF World | ![qd_wst4_w](../images/wms/grid/wms__qd__wind_stream_4__ecmwf_maailma_pinta.png) |
-
-### wmsmap — Plain background map
-
-`wmsmap` (under the `ely` customer) is the simple Natural-Earth + graticule background that the WMS GetCapabilities tests use for projection coverage.
-
-![wmsmap](../images/wms/wms_getmap_png.png)
-
-(Same image as [`wms_getmap_png`](#wms_getmap_png-epsg4326-png) above — `wmsmap` is the underlying product name.)
-
----
-
-## GetMap — OpenStreetMap background
-
-The `test:osm` layer ([`test/wms/customers/test/products/osm.json`](../../test/wms/customers/test/products/osm.json)) renders the OSM engine's vector tile data as a non-temporal background layer, with one variant per style (`test:osm:meteo-light`, `test:osm:meteo-dark`, `test:osm:meteo-white`, `test:osm:protomaps-light`).  The tests use the small OpenStreetMap extract described in [`test/osm/README.md`](../../test/osm/README.md); see also the [OpenStreetMap examples](dali.md#openstreetmap-background-maps) of the Dali interface.  Map data © OpenStreetMap contributors.
-
-### wms_getmap_osm / wms_getmap_osm_dark
-
-**Input:** [`test/input/wms_getmap_osm.get`](../../test/input/wms_getmap_osm.get), [`test/input/wms_getmap_osm_dark.get`](../../test/input/wms_getmap_osm_dark.get)
-
-```
-GET /wms?service=wms&request=GetMap&version=1.3.0
-    &layers=test:osm:meteo-light&styles=
-    &crs=EPSG:3067&bbox=365000,6657000,410000,6694500
-    &width=600&height=500&format=image/png HTTP/1.0
-```
-
-The Helsinki area with the light and dark meteorological styles.
-
-![wms_getmap_osm](../images/wms/wms_getmap_osm.png)
-
-![wms_getmap_osm_dark](../images/wms/wms_getmap_osm_dark.png)
-
-### wms_getmap_osm_with_data
-
-**Input:** [`test/input/wms_getmap_osm_with_data.get`](../../test/input/wms_getmap_osm_with_data.get)
-
-```
-GET /wms?service=wms&request=GetMap&version=1.3.0
-    &layers=test:osm:meteo-light,test:precipitation_areas&styles=
-    &crs=EPSG:4326&bbox=59,17,71,34
-    &width=300&height=500&format=image/png&time=20080805120000 HTTP/1.0
-```
-
-The OSM background combined with a weather layer in one request.  The background comes from the coarse world data of the extract.
-
-![wms_getmap_osm_with_data](../images/wms/wms_getmap_osm_with_data.png)
-
-## GetMap — Gridded observations
-
-### wms_getmap_obsgrid_t2m
-
-**Input:** [`test/input/wms_getmap_obsgrid_t2m.get`](../../test/input/wms_getmap_obsgrid_t2m.get)
-
-```
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:obsgrid_t2m&styles=
-    &crs=EPSG:4326&bbox=35,-10,70,40&width=1024&height=853
-    &format=image/png&time=20081205T0600 HTTP/1.0
-```
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `layers` | `test:obsgrid_t2m` | Temperature isobands of the gridded producer `synop_europe` |
-| `crs` | `EPSG:4326` | WGS 84 geographic CRS |
-| `bbox` | `35,-10,70,40` | Europe: minLat, minLon, maxLat, maxLon |
-| `time` | `20081205T0600` | Valid time of the observations |
-
-The producer of the layer is a gridded observation producer of the `gridding` settings, so the
-plugin grids the SYNOP temperatures with the terrain for the requested time and draws the
-isobands from the result like from any querydata (see [Gridded observations](../gridding.md)).
-
-Product config: [`test/wms/customers/test/products/obsgrid_t2m.json`](../../test/wms/customers/test/products/obsgrid_t2m.json)
-
-![wms_getmap_obsgrid_t2m](../images/wms/wms_getmap_obsgrid_t2m.png)
-
 ## GetFeatureInfo
 
 GetFeatureInfo returns data values at a specified pixel location within a previously rendered map.
 
-### wms_getfeatureinfo_json
+### Response Formats
+
+#### wms_getfeatureinfo_json
 
 **Input:** [`test/input/wms_getfeatureinfo_json.get`](../../test/input/wms_getfeatureinfo_json.get)
 
@@ -1135,13 +1220,15 @@ GET /wms?service=wms&request=GetFeatureInfo&version=1.3.0
 
 **Output:** [`test/output/wms_getfeatureinfo_json.get`](../../test/output/wms_getfeatureinfo_json.get) — JSON
 
-### wms_getfeatureinfo_html
+#### wms_getfeatureinfo_html
 
 Same request with `info_format=text/html`.
 
 **Output:** [`test/output/wms_getfeatureinfo_html.get`](../../test/output/wms_getfeatureinfo_html.get) — HTML
 
-### wms_getfeatureinfo_precipitation_json
+### Layer Types
+
+#### wms_getfeatureinfo_precipitation_json
 
 **Input:** [`test/input/wms_getfeatureinfo_precipitation_json.get`](../../test/input/wms_getfeatureinfo_precipitation_json.get)
 
@@ -1156,7 +1243,7 @@ Queries the precipitation isoband value at pixel (150, 250) — the centre of th
 
 **Output:** [`test/output/wms_getfeatureinfo_precipitation_json.get`](../../test/output/wms_getfeatureinfo_precipitation_json.get) — JSON
 
-### wms_getfeatureinfo_numbers_json
+#### wms_getfeatureinfo_numbers_json
 
 **Input:** [`test/input/wms_getfeatureinfo_numbers_json.get`](../../test/input/wms_getfeatureinfo_numbers_json.get)
 
@@ -1178,4 +1265,3 @@ Additional GetFeatureInfo tests:
 `GetLegendGraphic` returns a legend image for a given layer and style.  The complete gallery — automatic, style variants, modified, product-specific templates, multilingual, internal, and external legends — is on its own page: see [Legend Examples](legends.md).
 
 ---
-
