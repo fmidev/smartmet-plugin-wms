@@ -185,6 +185,7 @@ LabelConfig parseLabelConfig(Json::Value& json, const Config& /*config*/)
   JsonTools::remove_double(cfg.stroke_width, json, "stroke_width");
   JsonTools::remove_double(cfg.stroke_opacity, json, "stroke_opacity");
   JsonTools::remove_int(cfg.max_labels, json, "max_labels");
+  JsonTools::remove_bool(cfg.marker_eviction, json, "marker_eviction");
 
   // Fixed-specific
   JsonTools::remove_string(cfg.fixed_position, json, "fixed_position");
@@ -229,6 +230,7 @@ std::size_t hashLabelConfig(const LabelConfig& cfg)
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.stroke_width));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.stroke_opacity));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.max_labels));
+  Fmi::hash_combine(hash, Fmi::hash_value(cfg.marker_eviction));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.fixed_position));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.sa_iterations));
   Fmi::hash_combine(hash, Fmi::hash_value(cfg.sa_initial_temp));
@@ -399,7 +401,9 @@ std::vector<AcceptedLocation> accept_locations(const Spine::LocationList& locati
                                                double by1,
                                                double bx2,
                                                double by2,
-                                               double mindistance)
+                                               double mindistance,
+                                               const std::set<std::string>& countries,
+                                               const std::set<std::string>& features)
 {
   std::vector<AcceptedLocation> accepted;
 
@@ -407,6 +411,12 @@ std::vector<AcceptedLocation> accept_locations(const Spine::LocationList& locati
 
   for (const auto& location : locations)
   {
+    // Country and feature code filters. Countries are stored in lower case.
+    if (!countries.empty() && countries.count(Fmi::ascii_tolower_copy(location->iso2)) == 0)
+      continue;
+    if (!features.empty() && features.count(location->feature) == 0)
+      continue;
+
     // WGS84 prefilter (cheap O(1) box check; runs once per location).
     if (prefilter.rejects(location->longitude, location->latitude))
       continue;
@@ -801,7 +811,16 @@ void LocationLayer::init(Json::Value& theJson,
 
     auto json = JsonTools::remove(theJson, "countries");
     if (!json.isNull())
-      JsonTools::extract_set("countries", countries, json);
+    {
+      std::set<std::string> codes;
+      JsonTools::extract_set("countries", codes, json);
+      for (const auto& code : codes)
+        countries.insert(Fmi::ascii_tolower_copy(code));
+    }
+
+    json = JsonTools::remove(theJson, "features");
+    if (!json.isNull())
+      JsonTools::extract_set("features", features, json);
 
     JsonTools::remove_string(symbol, theJson, "symbol");
 
@@ -938,7 +957,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       prefilter = wgs84_prefilter(crs, box, bx1, by1, bx2, by2);
 
     std::vector<AcceptedLocation> accepted = accept_locations(
-        locations, prefilter, transformation, box, bx1, by1, bx2, by2, mindistance);
+        locations, prefilter, transformation, box, bx1, by1, bx2, by2, mindistance, countries, features);
 
     // ----------------------------------------------------------------
     // PASS 2 (optional): run label placement on the accepted set.
@@ -1074,6 +1093,7 @@ std::size_t LocationLayer::hash_value(const State& theState) const
     if (placement_margin)
       Fmi::hash_combine(hash, Fmi::hash_value(*placement_margin));
     Fmi::hash_combine(hash, Fmi::hash_value(countries));
+    Fmi::hash_combine(hash, Fmi::hash_value(features));
     Fmi::hash_combine(hash, Fmi::hash_value(symbol));
     Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
 

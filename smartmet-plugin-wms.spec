@@ -190,6 +190,8 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Oct 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.26-2.fmi
 - OSM layer: no captured structured bindings, which are a C++20 extension
 - OSM layer and the OSM collection styles of OGC API Tiles split into smaller functions
+- Location layer: features setting limits the geonames feature codes, and the countries setting now takes effect
+- Label placement: marker_eviction setting of the greedy algorithm lets a label displace the markers of lower priority locations
 
 * Mon Oct 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.26-1.fmi
 - Gridded observations: lolimit and hilimit settings limit the values of a parameter to its physical range, for example 0...100 for relative humidity or 0 upwards for wind speed

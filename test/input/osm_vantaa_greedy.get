@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=osm_vantaa_greedy&type=png HTTP/1.0

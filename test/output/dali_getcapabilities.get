@@ -3747,6 +3747,138 @@
         {
           "image" : 
           {
+            "height" : 560,
+            "width" : 800
+          },
+          "name" : "osm_vantaa_features",
+          "path" : 
+          [
+            "test",
+            "osm_vantaa_features"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 800,
+            "ysize" : 560
+          },
+          "title" : "Vantaa with populated places only",
+          "url_template" : "/dali?customer=test&product=osm_vantaa_features&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 560,
+            "width" : 800
+          },
+          "name" : "osm_vantaa_greedy",
+          "path" : 
+          [
+            "test",
+            "osm_vantaa_greedy"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 800,
+            "ysize" : 560
+          },
+          "title" : "Vantaa with all geonames places, greedy placement",
+          "url_template" : "/dali?customer=test&product=osm_vantaa_greedy&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 560,
+            "width" : 800
+          },
+          "name" : "osm_vantaa_municipalities",
+          "path" : 
+          [
+            "test",
+            "osm_vantaa_municipalities"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 800,
+            "ysize" : 560
+          },
+          "title" : "Vantaa with geonames municipalities",
+          "url_template" : "/dali?customer=test&product=osm_vantaa_municipalities&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 560,
+            "width" : 800
+          },
+          "name" : "osm_vantaa_osm_labels",
+          "path" : 
+          [
+            "test",
+            "osm_vantaa_osm_labels"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 800,
+            "ysize" : 560
+          },
+          "title" : "Vantaa with the place names of OpenStreetMap",
+          "url_template" : "/dali?customer=test&product=osm_vantaa_osm_labels&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 558,
+            "width" : 800
+          },
+          "name" : "osm_vantaa_region_eviction",
+          "path" : 
+          [
+            "test",
+            "osm_vantaa_region_eviction"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 800,
+            "ysize" : 558
+          },
+          "title" : "Helsinki region with populated places and marker eviction",
+          "url_template" : "/dali?customer=test&product=osm_vantaa_region_eviction&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 558,
+            "width" : 800
+          },
+          "name" : "osm_vantaa_region_features",
+          "path" : 
+          [
+            "test",
+            "osm_vantaa_region_features"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3067",
+            "crs" : "EPSG:3067",
+            "xsize" : 800,
+            "ysize" : 558
+          },
+          "title" : "Helsinki region with populated places, no mindistance",
+          "url_template" : "/dali?customer=test&product=osm_vantaa_region_features&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 500,
             "width" : 500
           },

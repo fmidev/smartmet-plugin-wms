@@ -405,6 +405,7 @@ std::vector<PlacedLabel> fixedPlacement(const LabelConfig& config,
   for (size_t i = 0; i < n; i++)
   {
     const auto& cand = candidates[i];
+
     const auto [sym_half_w, sym_half_h] = candidateSymbolHalf(cand);
     auto bboxes = candidateBBoxes(cand.anchor_x, cand.anchor_y,
                                   cand.label_w, cand.label_h,
@@ -503,20 +504,23 @@ bool overlapsAny(const LabelBBox& test, const std::vector<LabelBBox>& placed_bbo
 // against the label's own marker — the candidate position
 // was deliberately laid out to clear it, and applying padding
 // there would push the label uselessly far from its own
-// anchor.  Also skip markers of higher-priority candidates
-// whose labels have been dropped: those markers won't be
-// rendered, so they shouldn't constrain placement either.
+// anchor.  Also skip markers of candidates whose labels have
+// been dropped (or evicted in advance by marker_eviction): those
+// markers won't be rendered, so they shouldn't constrain placement
+// either.  With higher_only set only the markers of higher-priority
+// candidates are tested.
 bool overlapsOtherMarker(const LabelBBox& test,
                          size_t i,
                          const std::vector<LabelCandidate>& candidates,
-                         const std::vector<bool>& dropped)
+                         const std::vector<bool>& dropped,
+                         bool higher_only = false)
 {
-  const size_t n = candidates.size();
+  const size_t n = higher_only ? i : candidates.size();
   for (size_t j = 0; j < n; j++)
   {
     if (j == i)
       continue;
-    if (j < i && dropped[j])
+    if (dropped[j])
       continue;
     const auto& ob = candidates[j].obstacle;
     if (!ob.valid())
@@ -573,6 +577,14 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
   for (size_t i = 0; i < n; i++)
   {
     const auto& cand = candidates[i];
+
+    // Evicted in advance by a higher-priority label
+    if (dropped[i])
+    {
+      result.push_back(makeDropped(cand));
+      continue;
+    }
+
     const auto [sym_half_w, sym_half_h] = candidateSymbolHalf(cand);
     auto bboxes = candidateBBoxes(cand.anchor_x, cand.anchor_y,
                                   cand.label_w, cand.label_h,
@@ -584,34 +596,46 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
     const std::vector<int> order =
         orderedPositionIndices(static_cast<int>(bboxes.size()), free_dir,
                                config.free_space_weight);
+    // The second pass, if enabled, ignores the markers of lower-priority candidates
     bool placed = false;
-    for (int oi : order)
+    const int passes = (config.marker_eviction ? 2 : 1);
+    for (int pass = 0; pass < passes && !placed; pass++)
     {
-      const auto& bbox = bboxes[static_cast<size_t>(oi)];
-      if (!withinBounds(bbox, map_w, map_h))
-        continue;
-
-      // Country constraint: skip positions that would render this label in a
-      // different country.  Tested on the natural bbox (geography ignores the
-      // collision padding).  If every position is rejected the label falls
-      // through to makeDropped below, exactly like an unplaceable label.
-      if (feasible && !feasible(cand, bbox))
-        continue;
-
-      // Inflate for collision testing only — absorbs sub-pixel font-metric
-      // variation between systems and gives a small visual breathing space.
-      const LabelBBox test = (pad > 0.0) ? bbox.inflated(pad) : bbox;
-
-      const bool overlap = overlapsAny(test, placed_bboxes) ||
-                           overlapsOtherMarker(test, i, candidates, dropped);
-      if (!overlap)
+      for (int oi : order)
       {
-        result.push_back(makePlaced(cand, bbox));
-        placed_bboxes.push_back(test);
-        if (fs_on)
-          placed_centroids.emplace_back((bbox.x1 + bbox.x2) / 2.0, (bbox.y1 + bbox.y2) / 2.0);
-        placed = true;
-        break;
+        const auto& bbox = bboxes[static_cast<size_t>(oi)];
+        if (!withinBounds(bbox, map_w, map_h))
+          continue;
+
+        // Country constraint: skip positions that would render this label in a
+        // different country.  Tested on the natural bbox (geography ignores the
+        // collision padding).  If every position is rejected the label falls
+        // through to makeDropped below, exactly like an unplaceable label.
+        if (feasible && !feasible(cand, bbox))
+          continue;
+
+        // Inflate for collision testing only — absorbs sub-pixel font-metric
+        // variation between systems and gives a small visual breathing space.
+        const LabelBBox test = (pad > 0.0) ? bbox.inflated(pad) : bbox;
+
+        const bool overlap = overlapsAny(test, placed_bboxes) ||
+                             overlapsOtherMarker(test, i, candidates, dropped, pass > 0);
+        if (!overlap)
+        {
+          // Evict the lower-priority locations whose markers the label covers
+          if (pass > 0)
+          {
+            for (size_t j = i + 1; j < n; j++)
+              if (candidates[j].obstacle.valid() && test.overlaps(candidates[j].obstacle))
+                dropped[j] = true;
+          }
+          result.push_back(makePlaced(cand, bbox));
+          placed_bboxes.push_back(test);
+          if (fs_on)
+            placed_centroids.emplace_back((bbox.x1 + bbox.x2) / 2.0, (bbox.y1 + bbox.y2) / 2.0);
+          placed = true;
+          break;
+        }
       }
     }
     if (!placed)

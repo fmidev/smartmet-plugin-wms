@@ -1,0 +1,47 @@
+// Reference for the osm_vantaa_* label tests: the OSM style labels small villages
+// such as Hanaböle, Myyras and Viirilä but not Tikkurila, Koivukylä or Korso.
+{
+    "title": "Vantaa with the place names of OpenStreetMap",
+    "projection": {
+        "crs": "EPSG:3067",
+        "bboxcrs": "EPSG:3067",
+        "bbox": "377000,6678000,404000,6696900",
+        "xsize": 800,
+        "ysize": 560
+    },
+    "defs": {
+        "layers": [
+            {
+                "tag": "symbol",
+                "attributes": {
+                    "id": "dot",
+                    "overflow": "visible"
+                },
+                "layers": [
+                    {
+                        "tag": "circle",
+                        "attributes": {
+                            "r": "2.5",
+                            "cx": "0",
+                            "cy": "0"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "osm",
+                    "layer_type": "osm",
+                    "font_family": "Roboto",
+                    "dataset": "extract",
+                    "style": "meteo-light"
+                }
+            ]
+        }
+    ]
+}

@@ -715,6 +715,54 @@ BOOST_AUTO_TEST_CASE(greedy_avoids_other_marker_obstacle)
     BOOST_CHECK(!result[1].bbox.overlaps(a.obstacle));
 }
 
+// A high-priority location surrounded by a grid of minor locations whose
+// markers block every candidate position of its label
+static std::vector<LabelCandidate> markerCluster()
+{
+  auto withMarker = [](LabelCandidate c)
+  {
+    c.obstacle = {c.anchor_x - 3.0, c.anchor_y - 3.0, c.anchor_x + 3.0, c.anchor_y + 3.0};
+    return c;
+  };
+
+  std::vector<LabelCandidate> cands = {withMarker(makeCandidate(200, 200, "Capital", 1, 40, 12))};
+  for (int row = -6; row <= 6; row++)
+    for (int col = -6; col <= 6; col++)
+      if (row != 0 || col != 0)
+        cands.push_back(withMarker(makeCandidate(
+            200.0 + col * 12, 200.0 + row * 12, "V" + std::to_string(cands.size()), 1, 40, 12)));
+  return cands;
+}
+
+BOOST_AUTO_TEST_CASE(greedy_minor_markers_block_top_label_without_eviction)
+{
+  auto cfg = makeConfig(PlacementAlgorithm::Greedy, 8, 0.0);
+  auto result = placeLabels(cfg, markerCluster(), 500, 500);
+  BOOST_REQUIRE(!result.empty());
+  BOOST_CHECK(!result[0].placed);
+}
+
+BOOST_AUTO_TEST_CASE(greedy_marker_eviction_places_top_label)
+{
+  auto cfg = makeConfig(PlacementAlgorithm::Greedy, 8, 0.0);
+  cfg.marker_eviction = true;
+  const auto cands = markerCluster();
+  auto result = placeLabels(cfg, cands, 500, 500);
+  BOOST_REQUIRE_EQUAL(result.size(), cands.size());
+  BOOST_REQUIRE(result[0].placed);
+  BOOST_CHECK(!anyOverlap(result));
+
+  // The locations whose markers the label covers are dropped, and no
+  // placed label covers the marker of another placed location
+  for (size_t j = 1; j < cands.size(); j++)
+    if (result[0].bbox.overlaps(cands[j].obstacle))
+      BOOST_CHECK(!result[j].placed);
+  for (size_t i = 0; i < cands.size(); i++)
+    for (size_t j = 0; j < cands.size(); j++)
+      if (i != j && result[i].placed && result[j].placed)
+        BOOST_CHECK(!result[i].bbox.overlaps(cands[j].obstacle));
+}
+
 BOOST_AUTO_TEST_CASE(inflated_bbox_helper_extends_each_edge)
 {
   LabelBBox a{10.0, 20.0, 30.0, 40.0};

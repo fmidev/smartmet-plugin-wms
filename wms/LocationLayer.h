@@ -39,6 +39,9 @@ class LocationLayer : public Layer
 
   std::set<std::string> countries;
 
+  // Optional geonames feature codes (e.g. PPL, PPLX) to accept, empty means all
+  std::set<std::string> features;
+
   // the name of the default symbol
   std::optional<std::string> symbol;
 

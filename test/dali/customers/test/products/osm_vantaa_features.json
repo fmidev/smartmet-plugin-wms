@@ -1,0 +1,97 @@
+// The features filter keeps populated places (PPL*), dropping Hanaböle (LCTY),
+// industrial areas, golf courses and islands. Tikkurila, Koivukylä and Korso appear.
+{
+    "title": "Vantaa with populated places only",
+    "projection": {
+        "crs": "EPSG:3067",
+        "bboxcrs": "EPSG:3067",
+        "bbox": "377000,6678000,404000,6696900",
+        "xsize": 800,
+        "ysize": 560
+    },
+    "defs": {
+        "layers": [
+            {
+                "tag": "symbol",
+                "attributes": {
+                    "id": "dot",
+                    "overflow": "visible"
+                },
+                "layers": [
+                    {
+                        "tag": "circle",
+                        "attributes": {
+                            "r": "2.5",
+                            "cx": "0",
+                            "cy": "0"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "osm",
+                    "layer_type": "osm",
+                    "font_family": "Roboto",
+                    "dataset": "extract",
+                    "style": "meteo-light",
+                    "exclude": [
+                        "places_*"
+                    ]
+                },
+                {
+                    "qid": "places",
+                    "layer_type": "location",
+                    "keyword": "ajax_fi_all",
+                    "countries": "fi",
+                    "mindistance": 30,
+                    "features": [
+                        "PPLC",
+                        "PPLA",
+                        "PPLA2",
+                        "PPLA3",
+                        "PPL",
+                        "PPLX"
+                    ],
+                    "symbol": "dot",
+                    "attributes": {
+                        "fill": "#555555",
+                        "stroke": "none"
+                    },
+                    "label": {
+                        "algorithm": "greedy",
+                        "candidates": 8,
+                        "offset": 0,
+                        "symbol_size": 5,
+                        "font_family": "Roboto",
+                        "font_size": 11,
+                        "fill": "#444444",
+                        "stroke": "white",
+                        "stroke_width": 2,
+                        "stroke_opacity": 0.8,
+                        "bbox_quantum": 2,
+                        "classes": [
+                            {
+                                "lolimit": 100000,
+                                "font_size": 13,
+                                "font_weight": "bold",
+                                "fill": "#222222"
+                            },
+                            {
+                                "lolimit": 20000,
+                                "hilimit": 100000,
+                                "font_size": 12,
+                                "fill": "#333333"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

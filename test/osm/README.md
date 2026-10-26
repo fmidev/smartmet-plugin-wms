@@ -32,6 +32,14 @@ not change when the installed styles do. Their fonts are changed from Noto Sans
 to Roboto, the font of all the tests: Noto Sans is installed on RHEL 10 but
 not on RHEL 8, so the labels would differ between the platforms.
 
+The `osm_vantaa_*` tests compare the place names of the OSM styles with
+geonames based labels of the `location` layer drawn over an OSM map without
+its own place names (`"exclude": ["places_*"]`). Vantaa is a known problem
+area: the OSM styles label villages such as Hanaböle but not the large
+districts Tikkurila, Koivukylä or Korso. Geonames has no populations for the
+districts, so the tests show what feature filtering (`features`) and label
+placement options (`marker_eviction`) achieve without them.
+
 ## Real OpenStreetMap data (optional, local only)
 
 The `full_global_osm_*` tests are the only tests using the full data, and they never run in CI.

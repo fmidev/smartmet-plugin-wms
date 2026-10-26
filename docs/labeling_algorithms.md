@@ -113,6 +113,8 @@ For each candidate in geonames priority order, try positions in priority order; 
 
 If no position works, drop the label. The marker is dropped with it, and removed from the obstacle set used by *subsequent* candidates so an invisible marker can't push another label out of its preferred position.
 
+The markers of *lower*-priority candidates are obstacles too, even though many of them will be dropped later. In a dense cluster (e.g. all districts of the Helsinki region with `mindistance` 0) they can block every position of the most important label, which is then dropped while the minor places around it are labelled. With `marker_eviction` enabled a label that fits nowhere gets a second pass which tests only the markers of higher-priority candidates; if a position is found, the lower-priority candidates whose markers the label covers are dropped in advance. The tests `osm_vantaa_region_features` and `osm_vantaa_region_eviction` show the difference.
+
 Recommended for most weather-map use cases. `O(n · k · m)` where `n` = candidates, `k` = positions per candidate, `m` = neighbours-per-collision-test ≈ small constant.
 
 ### `priority-greedy`

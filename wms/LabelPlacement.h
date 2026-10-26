@@ -199,6 +199,12 @@ struct LabelConfig
   double stroke_opacity = 0.75;
   int max_labels = 200;            // cap on input candidates (after mindistance)
 
+  // Greedy algorithms: when a label fits nowhere, retry ignoring the markers of
+  // lower-priority locations and drop the locations whose markers the label then
+  // covers.  Otherwise a dense cluster of minor places can prevent the most
+  // important label in it from being placed at all.  Default false.
+  bool marker_eviction = false;
+
   // fixed algorithm: one of n|ne|e|se|s|sw|w|nw
   std::string fixed_position = "ne";
 
