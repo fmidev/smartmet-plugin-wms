@@ -47,7 +47,7 @@ Each request URL is decomposed into a table showing every query parameter and it
     - [Grid smoother comparison](#grid-smoother-comparison)
     - [Grid smoother comparison — low cost](#grid-smoother-comparison--low-cost)
   - [Gridded Observations](#gridded-observations)
-    - <sub>[obsgrid_temperature](#obsgrid_temperature--temperature-gridded-with-the-terrain) · [obsgrid_pressure](#obsgrid_pressure--pressure-with-the-plain-barnes-method) · [obsgrid_opendata_temperature](#obsgrid_opendata_temperature--observation-engine-source) · [obsgrid_bg_\*](#obsgrid_bg_--observations-correcting-a-forecast)</sub>
+    - <sub>[obsgrid_temperature](#obsgrid_temperature--temperature-gridded-with-the-terrain) · [obsgrid_pressure](#obsgrid_pressure--pressure-with-the-plain-barnes-method) · [obsgrid_humidity](#obsgrid_humidity--humidity-limited-to-0100-) · [obsgrid_windspeed](#obsgrid_windspeed--wind-speed-without-negative-values) · [obsgrid_opendata_temperature](#obsgrid_opendata_temperature--observation-engine-source) · [obsgrid_bg_\*](#obsgrid_bg_--observations-correcting-a-forecast)</sub>
 - [Maps and Geometry Layers](#maps-and-geometry-layers)
   - [Map Simplification](#map-simplification)
     - <sub>[map_baseline](#map_baseline--no-simplification-reference-image) · [map_simplifier_vw](#map_simplifier_vw--visvalingam-whyatt-simplification) · [map_amalgamate](#map_amalgamate--polygon-amalgamation) · [map_amalgamate_wide](#map_amalgamate_wide--doubled-gap-distance) · [map_amalgamate_extreme](#map_amalgamate_extreme--excessive-gap-distance-do-not-exceed) · [map_amalgamate_pathological](#map_amalgamate_pathological--algorithm-breakdown-at-10-the-recommended-distance) · [map_amalgamate_simplified](#map_amalgamate_simplified--amalgamation-followed-by-visvalingam-whyatt)</sub>
@@ -1369,6 +1369,56 @@ Scotland and in the North Sea observe 970-980 hPa outside it.
 **Output:**
 
 ![obsgrid_pressure](../images/dali/obsgrid_pressure.png)
+
+---
+
+#### obsgrid_humidity — Humidity limited to 0...100 %
+
+**Input:** [`test/input/obsgrid_humidity.get`](../../test/input/obsgrid_humidity.get)
+
+```
+GET /dali?customer=test&product=obsgrid_humidity&time=200812050600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `obsgrid_humidity` | Product JSON: [`test/dali/customers/test/products/obsgrid_humidity.json`](../../test/dali/customers/test/products/obsgrid_humidity.json) |
+
+The `Humidity` parameter of `synop_europe` is gridded with the terrain method with
+`prior_lapse_rate = 0`, `lolimit = 0` and `hilimit = 100` (see
+[Limited values](../gridding.md#limited-values)). The isobands have a red class above 100 % and
+below 0 %, and none is drawn. Without the limits the same field reaches 104 % in the tile of
+`tiles_gettile_geotiff_obsgrid_humidity`, which delivers the values as GeoTIFF; with them its
+maximum is 99.997 %. Most of central and eastern Europe is saturated (95...100 %) on this
+December morning.
+
+**Output:**
+
+![obsgrid_humidity](../images/dali/obsgrid_humidity.png)
+
+---
+
+#### obsgrid_windspeed — Wind speed without negative values
+
+**Input:** [`test/input/obsgrid_windspeed.get`](../../test/input/obsgrid_windspeed.get)
+
+```
+GET /dali?customer=test&product=obsgrid_windspeed&time=200812050600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `obsgrid_windspeed` | Product JSON: [`test/dali/customers/test/products/obsgrid_windspeed.json`](../../test/dali/customers/test/products/obsgrid_windspeed.json) |
+
+`WindSpeedMS`, read from the combined wind parameter of the SYNOP querydata, gridded with the
+terrain method, `prior_lapse_rate = 0` and `lolimit = 0`. A second isoband layer draws negative
+values in red. Without the limit the height trend goes negative in calm areas such as Iceland,
+the Balkans and the eastern edge of the grid; with it there are none, and the rest of the field
+is the same.
+
+| Without `lolimit` | With `lolimit = 0` (the test) |
+|-------------------|-------------------------------|
+| ![obsgrid_windspeed without the limit](../images/dali/obsgrid_windspeed_unlimited.png) | ![obsgrid_windspeed](../images/dali/obsgrid_windspeed.png) |
 
 ---
 

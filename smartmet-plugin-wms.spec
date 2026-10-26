@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.25
-Release: 2%{?dist}.fmi
+Version: 26.10.26
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -49,7 +49,7 @@ BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-engine-osm-devel >= 26.10.23
 BuildRequires: smartmet-engine-contour-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
-BuildRequires: smartmet-library-gis-devel >= 26.10.24
+BuildRequires: smartmet-library-gis-devel >= 26.10.26
 BuildRequires: smartmet-library-trax-devel >= 26.10.16
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -83,7 +83,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
 Requires: smartmet-library-grid-content >= 26.10.20
 Requires: smartmet-library-grid-files >= 26.10.20
-Requires: smartmet-library-gis >= 26.10.24
+Requires: smartmet-library-gis >= 26.10.26
 Requires: smartmet-library-trax >= 26.10.17
 Requires: smartmet-library-macgyver >= 26.10.17
 Requires: smartmet-library-spine >= 26.10.17-1
@@ -187,6 +187,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Oct 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.26-1.fmi
+- Gridded observations: lolimit and hilimit settings limit the values of a parameter to its physical range, for example 0...100 for relative humidity or 0 upwards for wind speed
+- Gridded observations: prior_lapse_rate setting of the terrain method, whose default -6.5 K/km is meant for temperatures
+- Gridded observations: decimal settings such as qc_threshold may also be written as integers; integers used to be silently ignored
+
 * Sun Oct 25 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.25-2.fmi
 - Layer and sampling minresolution/maxresolution now work as documented: the layer is used only if minresolution <= resolution < maxresolution (km/pixel). The comparisons were inverted, configurations using them must swap the two settings
 - Layer minresolution/maxresolution work with a rectangular bounding box such as in WMS GetMap requests; previously only a projection given with cx, cy and resolution worked, others failed with an error

@@ -44,7 +44,7 @@ Test inputs are in [`test/input/tiles_*.get`](../../test/input/) and expected ou
   - [Resource Resolution](#resource-resolution)
     - <sub>[tiles_gettile_wms_root_css](#tiles_gettile_wms_root_css)</sub>
   - [Gridded Observations](#gridded-observations)
-    - <sub>[tiles_gettile_obsgrid](#tiles_gettile_obsgrid) · [tiles_gettile_geotiff_obsgrid](#tiles_gettile_geotiff_obsgrid)</sub>
+    - <sub>[tiles_gettile_obsgrid](#tiles_gettile_obsgrid) · [tiles_gettile_geotiff_obsgrid](#tiles_gettile_geotiff_obsgrid) · [tiles_gettile_geotiff_obsgrid_humidity](#tiles_gettile_geotiff_obsgrid_humidity)</sub>
 - [OpenStreetMap Tiles and Styles](#openstreetmap-tiles-and-styles)
   - [OSM Raster Tiles](#osm-raster-tiles)
     - <sub>[tiles_osm_png / tiles_osm_png_etrs_tm35fin](#tiles_osm_png--tiles_osm_png_etrs_tm35fin)</sub>
@@ -504,6 +504,20 @@ The same tile as raw values: a single Float32 band of the gridded temperatures, 
 −8.4 and 14.7 °C.
 
 **Output:** [`test/output/tiles_gettile_geotiff_obsgrid.get`](../../test/output/tiles_gettile_geotiff_obsgrid.get) — `gdalinfo -stats` of the GeoTIFF
+
+#### tiles_gettile_geotiff_obsgrid_humidity
+
+**Input:** [`test/input/tiles_gettile_geotiff_obsgrid_humidity.get`](../../test/input/tiles_gettile_geotiff_obsgrid_humidity.get)
+
+```
+GET /tiles/collections/test:obsgrid_humidity/tiles/EPSG:4326/3/1/9?f=tiff&TIME=20081205T060000 HTTP/1.0
+```
+
+The same tile of the gridded relative humidity, which is limited to 0...100 % (see
+[Limited values](../gridding.md#limited-values)): the values are between 54.8 and
+99.997 %. Without the limits the maximum would be 104.2 %.
+
+**Output:** [`test/output/tiles_gettile_geotiff_obsgrid_humidity.get`](../../test/output/tiles_gettile_geotiff_obsgrid_humidity.get) — `gdalinfo -stats` of the GeoTIFF
 
 ---
 

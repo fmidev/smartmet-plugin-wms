@@ -3221,6 +3221,29 @@
         {
           "image" : 
           {
+            "height" : 901,
+            "width" : 1024
+          },
+          "name" : "obsgrid_humidity",
+          "path" : 
+          [
+            "test",
+            "obsgrid_humidity"
+          ],
+          "producer" : "synop_europe",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
+          },
+          "title" : "Relative humidity observations gridded within 0...100 %",
+          "url_template" : "/dali?customer=test&product=obsgrid_humidity&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 1024,
             "width" : 614
           },
@@ -3290,6 +3313,29 @@
           },
           "title" : "Temperature observations gridded with the terrain",
           "url_template" : "/dali?customer=test&product=obsgrid_temperature&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 901,
+            "width" : 1024
+          },
+          "name" : "obsgrid_windspeed",
+          "path" : 
+          [
+            "test",
+            "obsgrid_windspeed"
+          ],
+          "producer" : "synop_europe",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
+          },
+          "title" : "Wind speed observations gridded without negative values",
+          "url_template" : "/dali?customer=test&product=obsgrid_windspeed&time={time}"
         },
         {
           "image" : 

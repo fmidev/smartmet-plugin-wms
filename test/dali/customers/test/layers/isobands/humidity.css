@@ -1,0 +1,10 @@
+/* Relative humidity, red outside the physical range 0...100 % */
+.Humidity_over_100	{ stroke:none; fill: rgb(230,0,0) }
+.Humidity_95_100	{ stroke:none; fill: rgb(20,40,140) }
+.Humidity_90_95	{ stroke:none; fill: rgb(40,90,190) }
+.Humidity_80_90	{ stroke:none; fill: rgb(90,150,220) }
+.Humidity_70_80	{ stroke:none; fill: rgb(150,200,235) }
+.Humidity_60_70	{ stroke:none; fill: rgb(210,230,240) }
+.Humidity_50_60	{ stroke:none; fill: rgb(240,230,200) }
+.Humidity_0_50	{ stroke:none; fill: rgb(220,190,140) }
+.Humidity_below_0	{ stroke:none; fill: rgb(230,0,0) }

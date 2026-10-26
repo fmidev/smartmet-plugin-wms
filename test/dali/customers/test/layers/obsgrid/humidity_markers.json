@@ -1,0 +1,81 @@
+[
+  {
+    "qid": "humidity_over_100",
+    "lolimit": 100.01,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_over_100"
+    }
+  },
+  {
+    "qid": "humidity_95_100",
+    "lolimit": 95,
+    "hilimit": 100.01,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_95_100"
+    }
+  },
+  {
+    "qid": "humidity_90_95",
+    "lolimit": 90,
+    "hilimit": 95,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_90_95"
+    }
+  },
+  {
+    "qid": "humidity_80_90",
+    "lolimit": 80,
+    "hilimit": 90,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_80_90"
+    }
+  },
+  {
+    "qid": "humidity_70_80",
+    "lolimit": 70,
+    "hilimit": 80,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_70_80"
+    }
+  },
+  {
+    "qid": "humidity_60_70",
+    "lolimit": 60,
+    "hilimit": 70,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_60_70"
+    }
+  },
+  {
+    "qid": "humidity_50_60",
+    "lolimit": 50,
+    "hilimit": 60,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_50_60"
+    }
+  },
+  {
+    "qid": "humidity_0_50",
+    "lolimit": 0,
+    "hilimit": 50,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_0_50"
+    }
+  },
+  {
+    "qid": "humidity_below_0",
+    "hilimit": 0,
+    "symbol": "obsdot",
+    "attributes": {
+      "class": "Humidity_below_0"
+    }
+  }
+]

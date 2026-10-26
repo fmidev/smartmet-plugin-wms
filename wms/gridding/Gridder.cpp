@@ -122,10 +122,12 @@ std::shared_ptr<NFmiQueryData> create_querydata(const Area& theArea,
   NFmiParamBag pbag;
   for (const auto& p : theProducer.parameters)
   {
+    // The limits of the values, if any, are the range of the parameter
+    const auto& options = p.options;
     NFmiParam param(p.id,
                     p.name,
-                    kFloatMissing,
-                    kFloatMissing,
+                    options.lowerLimit ? *options.lowerLimit : kFloatMissing,
+                    options.upperLimit ? *options.upperLimit : kFloatMissing,
                     kFloatMissing,
                     kFloatMissing,
                     "%.1f",

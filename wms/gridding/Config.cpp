@@ -33,11 +33,45 @@ FmiParameterName parameter_id(const std::string& theName)
   return id;
 }
 
+// A number written as an integer or a decimal. The libconfig lookups of doubles would silently
+// ignore integer settings such as "lolimit = 0;".
+double number(const libconfig::Setting& theSetting)
+{
+  switch (theSetting.getType())
+  {
+    case libconfig::Setting::TypeInt:
+      return static_cast<int>(theSetting);
+    case libconfig::Setting::TypeInt64:
+      return static_cast<double>(static_cast<long long>(theSetting));
+    case libconfig::Setting::TypeFloat:
+      return static_cast<double>(theSetting);
+    default:
+      throw Fmi::Exception(BCP, fmt::format("Setting '{}' must be a number", theSetting.getPath()));
+  }
+}
+
+// Optional number, the value is unchanged if the setting is absent
+bool lookup_number(const libconfig::Setting& theSetting, const char* theName, double& theValue)
+{
+  if (!theSetting.exists(theName))
+    return false;
+  theValue = number(theSetting[theName]);
+  return true;
+}
+
+std::optional<double> lookup_optional(const libconfig::Setting& theSetting, const char* theName)
+{
+  double value = 0;
+  if (!lookup_number(theSetting, theName, value))
+    return {};
+  return value;
+}
+
 // Optional number in kilometres to metres
 void lookup_km(const libconfig::Setting& theSetting, const char* theName, double& theValue)
 {
   double km = 0;
-  if (theSetting.lookupValue(theName, km))
+  if (lookup_number(theSetting, theName, km))
   {
     if (km <= 0)
       throw Fmi::Exception(BCP, fmt::format("Setting '{}' must be positive", theName));
@@ -71,13 +105,19 @@ Fmi::PointGridding::Options parse_options(const libconfig::Setting& theSetting)
         .addDetail("Known methods are 'terrain' and 'barnes'");
 
   theSetting.lookupValue("qc", options.qc);
-  theSetting.lookupValue("qc_threshold", options.qcMinThreshold);
-  theSetting.lookupValue("damping", options.damping);
+  lookup_number(theSetting, "qc_threshold", options.qcMinThreshold);
+  lookup_number(theSetting, "damping", options.damping);
+  lookup_number(theSetting, "prior_lapse_rate", options.priorLapseRate);
   lookup_km(theSetting, "local_sigma", options.localSigma);
   lookup_km(theSetting, "regional_sigma", options.regionalSigma);
 
+  options.lowerLimit = lookup_optional(theSetting, "lolimit");
+  options.upperLimit = lookup_optional(theSetting, "hilimit");
+  if (options.lowerLimit && options.upperLimit && *options.lowerLimit >= *options.upperLimit)
+    throw Fmi::Exception(BCP, "Setting 'lolimit' must be below 'hilimit'");
+
   double sigma_h = 0;
-  if (theSetting.lookupValue("bilateral_sigma_h", sigma_h))
+  if (lookup_number(theSetting, "bilateral_sigma_h", sigma_h))
   {
     if (sigma_h > 0)
       options.bilateralSigmaH = sigma_h;
@@ -92,7 +132,7 @@ Fmi::PointGridding::Options parse_options(const libconfig::Setting& theSetting)
       throw Fmi::Exception(BCP, "Setting 'residual_sigmas' must be a nonempty array of km");
     options.residualSigmas.clear();
     for (int i = 0; i < sigmas.getLength(); i++)
-      options.residualSigmas.push_back(1000 * static_cast<double>(sigmas[i]));
+      options.residualSigmas.push_back(1000 * number(sigmas[i]));
   }
   return options;
 }
@@ -126,8 +166,8 @@ BackgroundConfig parse_background(const libconfig::Setting& theSetting,
     background.orography = parameter_id(name);
 
   theOptions.backgroundLapseRate = (theOptions.predictors.empty() ? 0.0 : -6.5);
-  theSetting.lookupValue("lapse_rate", theOptions.backgroundLapseRate);
-  theSetting.lookupValue("weight", theOptions.backgroundWeight);
+  lookup_number(theSetting, "lapse_rate", theOptions.backgroundLapseRate);
+  lookup_number(theSetting, "weight", theOptions.backgroundWeight);
   lookup_km(theSetting, "taper", theOptions.backgroundTaper);
   if (theOptions.backgroundWeight <= 0 || theOptions.backgroundWeight > 1)
     throw Fmi::Exception(BCP, "Setting 'background.weight' must be in the range (0,1]");

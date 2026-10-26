@@ -1,0 +1,29 @@
+{
+    "title": "Gridded relative humidity observations",
+    "abstract": "SYNOP relative humidities gridded with the terrain within 0...100 %",
+    "producer": "synop_europe",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 440
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/humidity.json",
+		    "css": "isobands/humidity.css",
+                    "parameter": "Humidity",
+		    "attributes":
+		    {
+			"id": "humidity_isobands"
+		    }
+                }
+            ]
+        }
+    ]
+}

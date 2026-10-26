@@ -96,7 +96,9 @@ gridding:
 				{ name = "Temperature"; source = "TA_PT1H_AVG"; },
 				{ name = "DewPoint"; source = "TD_PT1H_AVG"; },
 				{ name = "Pressure"; source = "PSEA"; method = "barnes";
-				  residual_sigmas = [80.0]; qc_threshold = 8.0; }
+				  residual_sigmas = [80.0]; qc_threshold = 8.0; },
+				{ name = "Humidity"; source = "RH_PT1H_AVG"; prior_lapse_rate = 0;
+				  qc_threshold = 15; lolimit = 0; hilimit = 100; }
 			);
 		};
 	};
@@ -110,11 +112,42 @@ Parameter options:
 | `method` | `terrain` | `terrain`: height and TPI regression with height-aware residuals, for temperatures. `barnes`: damped Barnes without terrain, for reduced pressure and other smooth fields. |
 | `qc` | true | Gross error check |
 | `qc_threshold` | 6 | Minimum rejection threshold in the units of the parameter |
+| `lolimit`, `hilimit` | none | Physical range of the values, see below |
+| `prior_lapse_rate` | −6.5 | Prior of the height coefficient of the `terrain` method in units per km, meant for temperatures; 0 for other parameters |
 | `residual_sigmas` | [60, 25] | km, the residual Barnes passes |
 | `damping` | 0.25 | Station equivalents in the Barnes denominator |
 | `local_sigma`, `regional_sigma` | 150, 600 | km, the regression scales |
 | `bilateral_sigma_h` | 300 | m, height scale of the residuals, 0 for horizontal only |
 | `background` | none | A forecast or other gridded field which the observations correct, see below |
+
+Numbers may be written as integers or decimals.
+
+### Limited values
+
+Parameters with a physical range, such as relative humidity (0...100 %), wind speed (0
+upwards) or friction (0...1), set `lolimit` and/or `hilimit`. The regression, the residual
+passes and the correction of a background can all go out of range even when every
+observation is valid: a height trend fitted through saturated stations extrapolates beyond
+100 % up the slopes, and a negative trend in calm valleys turns the calm stations into
+positive residuals which spread as wind to their neighbours. The limits are therefore applied
+inside the analysis, after the trend and after every residual pass, and not only to the
+result; with a background they apply to the values, not to the corrections. The gross error
+check compares the stations with the limited predictions, so that a station at a limit is not
+rejected for disagreeing with a trend beyond it.
+
+In cross-validation of 85 European cases the terrain method with `prior_lapse_rate = 0` was
+better than the `barnes` method for both relative humidity (8.74 against 9.41 % RMS) and wind
+speed (1.74 against 1.81 m/s), and the limits removed the 0.4–0.5 % of the predictions out of
+range. The gain at the stations is small, since the field goes out of range mostly away from
+them; see `gis/docs/gis-pointgridding.md` for the numbers.
+
+Observations slightly out of range, such as 101 % from a humidity sensor, are clamped to the
+limits. Values farther out than `qc_threshold` are rejected as gross errors when `qc` is on.
+The limits are also the range of the parameter in the gridded querydata.
+
+The gross error check of a limited parameter needs a threshold in its own units, the default 6
+is meant for temperatures. A linear height trend through a saturating profile undershoots
+near the saturation level, so a too small threshold rejects correct saturated stations.
 
 ### Correcting a background
 
@@ -147,8 +180,8 @@ observations alone are used. The background fades out over about `taper` km from
 its data, so that the two do not meet in a seam. A new model run changes the cache key of the gridded data.
 
 Producers reading observations need the observation engine; a plugin built without it accepts
-only point querydata producers. Wind cannot be gridded yet: it should be gridded as vector
-components.
+only point querydata producers. Wind speed can be gridded as a scalar with `lolimit = 0`, but
+wind direction cannot be gridded yet: it should be gridded as vector components.
 
 ## 3. Terrain rasters
 
@@ -202,7 +235,8 @@ The test configuration grids the European SYNOP point querydata of 2008-12-05 fr
 smartmet-test-data and the Finnish observations of the test database with a 20 km Europe
 terrain (`test/cnf/gridding/europe_3035_20km.tif`). The tests `obsgrid_*`,
 `wms_getmap_obsgrid_t2m`, `tiles_gettile_obsgrid` and `tiles_gettile_geotiff_obsgrid` draw and
-deliver them.
+deliver them. `obsgrid_humidity`, `tiles_gettile_geotiff_obsgrid_humidity` and
+`obsgrid_windspeed` grid limited parameters, and draw values out of range in red.
 
 The `obsgrid_bg_*` tests correct a background and draw the background alone for comparison:
 

@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=obsgrid_humidity&time=200812050600 HTTP/1.0

@@ -1,0 +1,46 @@
+{
+    "title": "Wind speed observations gridded without negative values",
+    "producer": "synop_europe",
+    "projection": {
+        "crs": "EPSG:3035",
+        "bboxcrs": "EPSG:3035",
+        "bbox": "2010000,1210000,6990000,5590000",
+        "xsize": 1024,
+        "ysize": 901
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/wind.json",
+                    "css": "isobands/wind.css",
+                    "parameter": "WindSpeedMS",
+                    "attributes": {
+                        "id": "windspeed_isobands"
+                    }
+                },
+                {
+                    "qid": "l2",
+                    "layer_type": "isoband",
+                    "parameter": "WindSpeedMS",
+                    "isobands": [
+                        {
+                            "qid": "windspeed_negative",
+                            "hilimit": -0.01,
+                            "attributes": {
+                                "class": "WindSpeedNegative",
+                                "fill": "rgb(230,0,0)"
+                            }
+                        }
+                    ],
+                    "attributes": {
+                        "id": "windspeed_negative"
+                    }
+                }
+            ]
+        }
+    ]
+}
