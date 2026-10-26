@@ -63,9 +63,6 @@ std::string getAttribute(const Fmi::Feature& feature, const std::string& key)
       it->second);
 }
 
-// Add an SVG element to a group. Text halos are marked with paint-order="stroke", which older
-// librsvg versions (2.42 in RHEL8) ignore, drawing the halo over the text. Such text is drawn
-// twice instead: first the halo alone, then the text without a stroke on top of it.
 // The attributes of the rendered paths a layer may override. The stroke attributes apply to
 // lines and polygon outlines, the fill attributes to polygon fills.
 const std::set<std::string> overridable_attributes{
@@ -92,21 +89,26 @@ std::vector<std::pair<std::string, std::string>> apply_overrides(
   const bool filled = (value("fill") != "none");
 
   auto ret = theAttributes;
-  for (const auto& [name, val] : theOverrides)
+  for (const auto& override : theOverrides)
   {
+    // Not a structured binding: capturing one in a lambda is a C++20 extension
+    const auto& name = override.first;
     const bool is_stroke = (name.compare(0, 6, "stroke") == 0);
     if ((is_stroke && !stroked) || (!is_stroke && !filled))
       continue;
     auto pos =
         std::find_if(ret.begin(), ret.end(), [&](const auto& attr) { return attr.first == name; });
     if (pos != ret.end())
-      pos->second = val;
+      pos->second = override.second;
     else
-      ret.emplace_back(name, val);
+      ret.push_back(override);
   }
   return ret;
 }
 
+// Add an SVG element to a group. Text halos are marked with paint-order="stroke", which older
+// librsvg versions (2.42 in RHEL8) ignore, drawing the halo over the text. Such text is drawn
+// twice instead: first the halo alone, then the text without a stroke on top of it.
 void addElement(CTPP::CDT& theGroup,
                 const std::string& theTag,
                 const std::vector<std::pair<std::string, std::string>>& theAttributes,
@@ -277,6 +279,57 @@ std::optional<std::pair<double, double>> pointPosition(const OGRGeometry& geom,
   return {{x, y}};
 }
 
+// Return SVG-space label position of a geometry depending on its type
+std::optional<std::pair<double, double>> labelPosition(const OGRGeometry& geom,
+                                                       const Projection& projection)
+{
+  const auto gt = wkbFlatten(geom.getGeometryType());
+  if (gt == wkbPoint || gt == wkbMultiPoint)
+    return pointPosition(geom, projection);
+  if (gt == wkbLineString || gt == wkbMultiLineString)
+    return lineMidpoint(geom, projection);
+  return polygonCentroid(geom, projection);
+}
+
+// Reserve space for a label unless it overlaps an already placed one
+bool reserveLabel(std::vector<LabelBox>& placed, const LabelBox& box)
+{
+  if (std::any_of(placed.begin(), placed.end(), [&](const LabelBox& p) { return box.overlaps(p); }))
+    return false;
+  placed.push_back(box);
+  return true;
+}
+
+// Clip a copy of the geometry to the box, returning null if nothing remains
+OGRGeometryPtr clipGeometry(const OGRGeometry& theGeom, bool theLines, const Fmi::Box& theClipBox)
+{
+  OGRGeometryPtr geom(theGeom.clone());
+  Fmi::OGR::normalizeWindingOrder(geom.get());
+  if (theLines)
+    geom.reset(Fmi::OGR::lineclip(*geom, theClipBox));
+  else
+    geom.reset(Fmi::OGR::polyclip(*geom, theClipBox));
+  if (geom && geom->IsEmpty())
+    geom.reset();
+  return geom;
+}
+
+CTPP::CDT makeGroup()
+{
+  CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+  group_cdt["start"] = "<g";
+  group_cdt["end"] = "</g>";
+  return group_cdt;
+}
+
+std::unique_ptr<boost::timer::auto_cpu_timer> makeTimer(const State& theState)
+{
+  if (!theState.useTimer())
+    return nullptr;
+  std::string report = "OSMLayer::generate finished in %t sec CPU, %w sec real\n";
+  return std::make_unique<boost::timer::auto_cpu_timer>(2, report);
+}
+
 }  // anonymous namespace
 
 // ----------------------------------------------------------------------
@@ -426,97 +479,131 @@ void OSMLayer::init(Json::Value& theJson,
 
     JsonTools::remove_string(itsOptions.dataset, theJson, "dataset");
     if (isDataset())
-    {
-      JsonTools::remove_string(itsOptions.style, theJson, "style");
-      if (itsOptions.style.empty())
-        throw Fmi::Exception(BCP, "OSMLayer with a dataset requires a 'style'");
-      JsonTools::remove_bool(itsOptions.labels, theJson, "labels");
-      JsonTools::remove_bool(itsOptions.icons, theJson, "icons");
-      JsonTools::remove_double(itsOptions.zoomOffset, theJson, "zoom_offset");
-      std::optional<double> zoom;
-      JsonTools::remove_double(zoom, theJson, "zoom");
-      itsOptions.zoom = zoom;
-      JsonTools::remove_string(itsOptions.fontFamily, theJson, "font_family");
-      JsonTools::remove_bool(itsAttribution, theJson, "attribution");
-      parseOverrides(JsonTools::remove(theJson, "override"));
-
-      for (const auto* name : {"include", "exclude"})
-      {
-        auto json = JsonTools::remove(theJson, name);
-        if (json.isNull())
-          continue;
-        if (!json.isArray())
-          throw Fmi::Exception(BCP, fmt::format("OSMLayer '{}' must be an array", name));
-        auto& list = (std::string(name) == "include" ? itsOptions.include : itsOptions.exclude);
-        for (const auto& id : json)
-          list.push_back(id.asString());
-      }
-
-      // The precision of the pixel coordinates
-      itsOptions.precision = static_cast<int>(precision);
-      return;
-    }
-
-    // PostGIS backend
-    std::string tsfile;
-    JsonTools::remove_string(tsfile, theJson, "timestamp_file");
-    if (!tsfile.empty())
-      itsTimestampFile = tsfile;
-
-    auto json = JsonTools::remove(theJson, "feature_sets");
-    if (json.isNull() || !json.isArray())
-      throw Fmi::Exception(BCP, "OSMLayer postgis backend requires a 'feature_sets' array");
-
-    for (Json::ArrayIndex i = 0; i < json.size(); ++i)
-    {
-      Json::Value& fsJson = json[i];
-      if (!fsJson.isObject())
-        throw Fmi::Exception(BCP, "Each OSMLayer feature_set must be a JSON object");
-
-      FeatureSet fs;
-
-      JsonTools::remove_string(fs.mapOptions.pgname, fsJson, "pgname");
-      JsonTools::remove_string(fs.mapOptions.schema, fsJson, "schema");
-      JsonTools::remove_string(fs.mapOptions.table, fsJson, "table");
-      JsonTools::remove_string(fs.mapOptions.where, fsJson, "where");
-      JsonTools::remove_double(fs.mapOptions.minarea, fsJson, "minarea");
-      JsonTools::remove_double(fs.mapOptions.mindistance, fsJson, "mindistance");
-
-      if (fs.mapOptions.pgname.empty())
-        throw Fmi::Exception(BCP, "OSMLayer feature_set requires 'pgname'");
-      if (fs.mapOptions.schema.empty())
-        throw Fmi::Exception(BCP, "OSMLayer feature_set requires 'schema'");
-      if (fs.mapOptions.table.empty())
-        throw Fmi::Exception(BCP, "OSMLayer feature_set requires 'table'");
-
-      JsonTools::remove_bool(fs.lines, fsJson, "lines");
-      JsonTools::remove_bool(fs.labels, fsJson, "labels");
-
-      // Collect fieldnames (always include "name" when labels are enabled)
-      auto fieldJson = JsonTools::remove(fsJson, "fieldnames");
-      if (!fieldJson.isNull() && fieldJson.isArray())
-        for (Json::ArrayIndex j = 0; j < fieldJson.size(); ++j)
-          fs.mapOptions.fieldnames.insert(fieldJson[j].asString());
-      if (fs.labels)
-        fs.mapOptions.fieldnames.insert("name");
-
-      JsonTools::remove_string(fs.css, fsJson, "css");
-      JsonTools::remove_string(fs.mvt_layer_name, fsJson, "mvt_layer_name");
-      if (fs.mvt_layer_name.empty())
-        fs.mvt_layer_name = fs.mapOptions.table;
-
-      // Parse per-feature-set SVG attributes
-      auto attrJson = JsonTools::remove(fsJson, "attributes");
-      if (!attrJson.isNull())
-        fs.attributes.init(attrJson, theConfig);
-
-      itsFeatureSets.push_back(std::move(fs));
-    }
+      initDataset(theJson);
+    else
+      initFeatureSets(theJson, theConfig);
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "OSMLayer::init failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize the vector tile dataset settings
+ */
+// ----------------------------------------------------------------------
+
+void OSMLayer::initDataset(Json::Value& theJson)
+{
+  JsonTools::remove_string(itsOptions.style, theJson, "style");
+  if (itsOptions.style.empty())
+    throw Fmi::Exception(BCP, "OSMLayer with a dataset requires a 'style'");
+  JsonTools::remove_bool(itsOptions.labels, theJson, "labels");
+  JsonTools::remove_bool(itsOptions.icons, theJson, "icons");
+  JsonTools::remove_double(itsOptions.zoomOffset, theJson, "zoom_offset");
+  std::optional<double> zoom;
+  JsonTools::remove_double(zoom, theJson, "zoom");
+  itsOptions.zoom = zoom;
+  JsonTools::remove_string(itsOptions.fontFamily, theJson, "font_family");
+  JsonTools::remove_bool(itsAttribution, theJson, "attribution");
+  parseOverrides(JsonTools::remove(theJson, "override"));
+  parseLayerIds(JsonTools::remove(theJson, "include"), "include", itsOptions.include);
+  parseLayerIds(JsonTools::remove(theJson, "exclude"), "exclude", itsOptions.exclude);
+
+  // The precision of the pixel coordinates
+  itsOptions.precision = static_cast<int>(precision);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Read the style layer ids or prefixes to include or exclude
+ */
+// ----------------------------------------------------------------------
+
+void OSMLayer::parseLayerIds(const Json::Value& theJson,
+                             const char* theName,
+                             std::vector<std::string>& theIds)
+{
+  if (theJson.isNull())
+    return;
+  if (!theJson.isArray())
+    throw Fmi::Exception(BCP, fmt::format("OSMLayer '{}' must be an array", theName));
+  for (const auto& id : theJson)
+    theIds.push_back(id.asString());
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize the PostGIS feature sets
+ */
+// ----------------------------------------------------------------------
+
+void OSMLayer::initFeatureSets(Json::Value& theJson, const Config& theConfig)
+{
+  std::string tsfile;
+  JsonTools::remove_string(tsfile, theJson, "timestamp_file");
+  if (!tsfile.empty())
+    itsTimestampFile = tsfile;
+
+  auto json = JsonTools::remove(theJson, "feature_sets");
+  if (json.isNull() || !json.isArray())
+    throw Fmi::Exception(BCP, "OSMLayer postgis backend requires a 'feature_sets' array");
+
+  for (auto& fsJson : json)
+    itsFeatureSets.push_back(parseFeatureSet(fsJson, theConfig));
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse one PostGIS feature set
+ */
+// ----------------------------------------------------------------------
+
+OSMLayer::FeatureSet OSMLayer::parseFeatureSet(Json::Value& theJson, const Config& theConfig)
+{
+  if (!theJson.isObject())
+    throw Fmi::Exception(BCP, "Each OSMLayer feature_set must be a JSON object");
+
+  FeatureSet fs;
+
+  JsonTools::remove_string(fs.mapOptions.pgname, theJson, "pgname");
+  JsonTools::remove_string(fs.mapOptions.schema, theJson, "schema");
+  JsonTools::remove_string(fs.mapOptions.table, theJson, "table");
+  JsonTools::remove_string(fs.mapOptions.where, theJson, "where");
+  JsonTools::remove_double(fs.mapOptions.minarea, theJson, "minarea");
+  JsonTools::remove_double(fs.mapOptions.mindistance, theJson, "mindistance");
+
+  if (fs.mapOptions.pgname.empty())
+    throw Fmi::Exception(BCP, "OSMLayer feature_set requires 'pgname'");
+  if (fs.mapOptions.schema.empty())
+    throw Fmi::Exception(BCP, "OSMLayer feature_set requires 'schema'");
+  if (fs.mapOptions.table.empty())
+    throw Fmi::Exception(BCP, "OSMLayer feature_set requires 'table'");
+
+  JsonTools::remove_bool(fs.lines, theJson, "lines");
+  JsonTools::remove_bool(fs.labels, theJson, "labels");
+
+  // Collect fieldnames (always include "name" when labels are enabled)
+  auto fieldJson = JsonTools::remove(theJson, "fieldnames");
+  if (fieldJson.isArray())
+    for (const auto& field : fieldJson)
+      fs.mapOptions.fieldnames.insert(field.asString());
+  if (fs.labels)
+    fs.mapOptions.fieldnames.insert("name");
+
+  JsonTools::remove_string(fs.css, theJson, "css");
+  JsonTools::remove_string(fs.mvt_layer_name, theJson, "mvt_layer_name");
+  if (fs.mvt_layer_name.empty())
+    fs.mvt_layer_name = fs.mapOptions.table;
+
+  // Parse per-feature-set SVG attributes
+  auto attrJson = JsonTools::remove(theJson, "attributes");
+  if (!attrJson.isNull())
+    fs.attributes.init(attrJson, theConfig);
+
+  return fs;
 }
 
 // ----------------------------------------------------------------------
@@ -538,168 +625,15 @@ void OSMLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       return;
     }
 
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
-    if (theState.useTimer())
-    {
-      std::string report = "OSMLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
-    }
-
-    const auto& crs = projection.getCRS();
-    const Fmi::Box& box = projection.getBox();
-    const auto clipbox = getClipBox(box);
-    const auto& gis = theState.getGisEngine();
+    auto timer = makeTimer(theState);
 
     // Outer <g> groups all feature sets under the layer's attributes
-    CTPP::CDT outer_cdt(CTPP::CDT::HASH_VAL);
-    outer_cdt["start"] = "<g";
-    outer_cdt["end"] = "</g>";
+    auto outer_cdt = makeGroup();
     theState.addAttributes(theGlobals, outer_cdt, attributes);
 
     int mapid = 1;
-
     for (const auto& fs : itsFeatureSets)
-    {
-      if (fs.css)
-      {
-        std::string name = theState.getCustomer() + "/" + *fs.css;
-        theGlobals["css"][name] = theState.getStyle(*fs.css);
-      }
-
-      // Inner <g> groups features within this feature set
-      CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-      group_cdt["start"] = "<g";
-      group_cdt["end"] = "</g>";
-      theState.addAttributes(theGlobals, group_cdt, fs.attributes);
-
-      if (fs.mapOptions.fieldnames.empty() && !fs.labels)
-      {
-        // Fast path: no per-feature attributes needed — fetch unified geometry
-        OGRGeometryPtr geom = gis.getShape(&crs, fs.mapOptions);
-        if (!geom || geom->IsEmpty())
-        {
-          outer_cdt["tags"].PushBack(group_cdt);
-          continue;
-        }
-        geom.reset(geom->clone());
-        Fmi::OGR::normalizeWindingOrder(geom.get());
-        if (fs.lines)
-          geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-        else
-          geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
-
-        if (!geom || geom->IsEmpty())
-        {
-          outer_cdt["tags"].PushBack(group_cdt);
-          continue;
-        }
-
-        std::string iri = qid + Fmi::to_string(mapid++);
-        CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
-        map_cdt["iri"] = iri;
-        map_cdt["type"] = Geometry::name(*geom, theState.getType());
-        map_cdt["layertype"] = "osm";
-        map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
-        theState.addPresentationAttributes(map_cdt, fs.css, fs.attributes);
-        theGlobals["paths"][iri] = map_cdt;
-
-        CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-        tag_cdt["start"] = "<use";
-        tag_cdt["end"] = "/>";
-        tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-        group_cdt["tags"].PushBack(tag_cdt);
-      }
-      else
-      {
-        // Per-feature path: fetch individual features with attributes
-        Fmi::Features features = gis.getFeatures(crs, fs.mapOptions);
-
-        // Track placed labels for simple collision avoidance
-        std::vector<LabelBox> placed_labels;
-
-        for (const auto& feat : features)
-        {
-          if (!feat->geom || feat->geom->IsEmpty())
-            continue;
-
-          OGRGeometryPtr geom(feat->geom->clone());
-          Fmi::OGR::normalizeWindingOrder(geom.get());
-
-          if (fs.lines)
-            geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-          else
-            geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
-
-          if (!geom || geom->IsEmpty())
-            continue;
-
-          std::string iri = qid + Fmi::to_string(mapid++);
-          CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
-          map_cdt["iri"] = iri;
-          map_cdt["type"] = Geometry::name(*geom, theState.getType());
-          map_cdt["layertype"] = "osm";
-          map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
-          theState.addPresentationAttributes(map_cdt, fs.css, fs.attributes);
-          theGlobals["paths"][iri] = map_cdt;
-
-          CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-          tag_cdt["start"] = "<use";
-          tag_cdt["end"] = "/>";
-          tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-          group_cdt["tags"].PushBack(tag_cdt);
-
-          // Optionally place a label
-          if (!fs.labels)
-            continue;
-
-          std::string name = getAttribute(*feat, "name");
-          if (name.empty())
-            continue;
-
-          // Compute SVG position depending on geometry type
-          std::optional<std::pair<double, double>> pos;
-          const auto gt = wkbFlatten(feat->geom->getGeometryType());
-          if (gt == wkbPoint || gt == wkbMultiPoint)
-            pos = pointPosition(*feat->geom, projection);
-          else if (gt == wkbLineString || gt == wkbMultiLineString)
-            pos = lineMidpoint(*feat->geom, projection);
-          else
-            pos = polygonCentroid(*feat->geom, projection);
-
-          if (!pos)
-            continue;
-
-          auto [cx, cy] = *pos;
-          LabelBox lb = makeLabelBox(cx, cy, name);
-
-          // Skip label if it overlaps an already-placed one
-          bool collision = false;
-          for (const auto& placed : placed_labels)
-          {
-            if (lb.overlaps(placed))
-            {
-              collision = true;
-              break;
-            }
-          }
-          if (collision)
-            continue;
-
-          placed_labels.push_back(lb);
-
-          CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-          text_cdt["start"] = "<text";
-          text_cdt["end"] = "</text>";
-          text_cdt["cdata"] = Fmi::safexmlescape(name);
-          text_cdt["attributes"]["x"] = Fmi::to_string(static_cast<long>(std::round(cx)));
-          text_cdt["attributes"]["y"] = Fmi::to_string(static_cast<long>(std::round(cy)));
-          theState.addAttributes(theGlobals, text_cdt, fs.attributes);
-          group_cdt["tags"].PushBack(text_cdt);
-        }
-      }
-
-      outer_cdt["tags"].PushBack(group_cdt);
-    }
+      outer_cdt["tags"].PushBack(generateFeatureSet(theGlobals, fs, theState, mapid));
 
     theLayersCdt.PushBack(outer_cdt);
   }
@@ -707,6 +641,113 @@ void OSMLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   {
     throw Fmi::Exception::Trace(BCP, "OSMLayer::generate failed!").addParameter("qid", qid);
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate the SVG group of one PostGIS feature set
+ */
+// ----------------------------------------------------------------------
+
+CTPP::CDT OSMLayer::generateFeatureSet(CTPP::CDT& theGlobals,
+                                       const FeatureSet& theFeatureSet,
+                                       State& theState,
+                                       int& theMapId) const
+{
+  const auto& fs = theFeatureSet;
+  if (fs.css)
+  {
+    std::string name = theState.getCustomer() + "/" + *fs.css;
+    theGlobals["css"][name] = theState.getStyle(*fs.css);
+  }
+
+  // Inner <g> groups features within this feature set
+  auto group_cdt = makeGroup();
+  theState.addAttributes(theGlobals, group_cdt, fs.attributes);
+
+  const auto& crs = projection.getCRS();
+  const auto clipbox = getClipBox(projection.getBox());
+  const auto& gis = theState.getGisEngine();
+
+  if (fs.mapOptions.fieldnames.empty() && !fs.labels)
+  {
+    // Fast path: no per-feature attributes needed — fetch unified geometry
+    OGRGeometryPtr geom = gis.getShape(&crs, fs.mapOptions);
+    if (geom && !geom->IsEmpty())
+      geom = clipGeometry(*geom, fs.lines, clipbox);
+    if (geom)
+      addPath(theGlobals, group_cdt, *geom, fs, theState, theMapId);
+    return group_cdt;
+  }
+
+  // Per-feature path: fetch individual features with attributes
+  Fmi::Features features = gis.getFeatures(crs, fs.mapOptions);
+
+  // Track placed labels for simple collision avoidance
+  std::vector<LabelBox> placed_labels;
+
+  for (const auto& feat : features)
+  {
+    if (!feat->geom || feat->geom->IsEmpty())
+      continue;
+
+    auto geom = clipGeometry(*feat->geom, fs.lines, clipbox);
+    if (!geom)
+      continue;
+
+    addPath(theGlobals, group_cdt, *geom, fs, theState, theMapId);
+
+    if (!fs.labels)
+      continue;
+
+    std::string name = getAttribute(*feat, "name");
+    if (name.empty())
+      continue;
+
+    auto pos = labelPosition(*feat->geom, projection);
+    if (!pos || !reserveLabel(placed_labels, makeLabelBox(pos->first, pos->second, name)))
+      continue;
+
+    CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+    text_cdt["start"] = "<text";
+    text_cdt["end"] = "</text>";
+    text_cdt["cdata"] = Fmi::safexmlescape(name);
+    text_cdt["attributes"]["x"] = Fmi::to_string(static_cast<long>(std::round(pos->first)));
+    text_cdt["attributes"]["y"] = Fmi::to_string(static_cast<long>(std::round(pos->second)));
+    theState.addAttributes(theGlobals, text_cdt, fs.attributes);
+    group_cdt["tags"].PushBack(text_cdt);
+  }
+  return group_cdt;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add a geometry as a path definition and a <use> element referring to it
+ */
+// ----------------------------------------------------------------------
+
+void OSMLayer::addPath(CTPP::CDT& theGlobals,
+                       CTPP::CDT& theGroupCdt,
+                       const OGRGeometry& theGeom,
+                       const FeatureSet& theFeatureSet,
+                       const State& theState,
+                       int& theMapId) const
+{
+  std::string iri = qid + Fmi::to_string(theMapId++);
+  CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
+  map_cdt["iri"] = iri;
+  map_cdt["type"] = Geometry::name(theGeom, theState.getType());
+  map_cdt["layertype"] = "osm";
+  map_cdt["data"] = Geometry::toString(
+      theGeom, theState.getType(), projection.getBox(), projection.getCRS(), precision);
+  theState.addPresentationAttributes(map_cdt, theFeatureSet.css, theFeatureSet.attributes);
+  theGlobals["paths"][iri] = map_cdt;
+
+  CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+  tag_cdt["start"] = "<use";
+  tag_cdt["end"] = "/>";
+  tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+  theGroupCdt["tags"].PushBack(tag_cdt);
 }
 
 // ----------------------------------------------------------------------
@@ -726,64 +767,60 @@ void OSMLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     if (isDataset())
       return;
 
-    const auto& crs = projection.getCRS();
-    const Fmi::Box& box = projection.getBox();
-    const auto clipbox = getClipBox(box);
-    const auto& gis = theState.getGisEngine();
-
     for (const auto& fs : itsFeatureSets)
-    {
-      auto& mvtLayer = theBuilder.layer(fs.mvt_layer_name);
-
-      if (fs.mapOptions.fieldnames.empty() && !fs.labels)
-      {
-        // No attributes needed: fetch as unified geometry, no feature properties
-        OGRGeometryPtr geom = gis.getShape(&crs, fs.mapOptions);
-        if (!geom || geom->IsEmpty())
-          continue;
-        geom.reset(geom->clone());
-        Fmi::OGR::normalizeWindingOrder(geom.get());
-        if (fs.lines)
-          geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-        else
-          geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
-        if (!geom || geom->IsEmpty())
-          continue;
-        mvtLayer.addFeature(*geom, {});
-      }
-      else
-      {
-        // Per-feature: include requested OSM tag attributes
-        Fmi::Features features = gis.getFeatures(crs, fs.mapOptions);
-
-        for (const auto& feat : features)
-        {
-          if (!feat->geom || feat->geom->IsEmpty())
-            continue;
-
-          OGRGeometryPtr geom(feat->geom->clone());
-          Fmi::OGR::normalizeWindingOrder(geom.get());
-          if (fs.lines)
-            geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
-          else
-            geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
-          if (!geom || geom->IsEmpty())
-            continue;
-
-          // Build MVT attribute list from feature attributes
-          std::vector<std::pair<std::string, MVTValue>> attrs;
-          attrs.reserve(feat->attributes.size());
-          for (const auto& [key, val] : feat->attributes)
-            attrs.emplace_back(key, toMVTValue(val));
-
-          mvtLayer.addFeature(*geom, attrs);
-        }
-      }
-    }
+      addMVTFeatureSet(theBuilder.layer(fs.mvt_layer_name), fs, theState);
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "OSMLayer::addMVTLayer failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the features of one PostGIS feature set to a MVT layer
+ */
+// ----------------------------------------------------------------------
+
+void OSMLayer::addMVTFeatureSet(MVTLayerBuilder& theLayer,
+                                const FeatureSet& theFeatureSet,
+                                const State& theState) const
+{
+  const auto& fs = theFeatureSet;
+  const auto& crs = projection.getCRS();
+  const auto clipbox = getClipBox(projection.getBox());
+  const auto& gis = theState.getGisEngine();
+
+  if (fs.mapOptions.fieldnames.empty() && !fs.labels)
+  {
+    // No attributes needed: fetch as unified geometry, no feature properties
+    OGRGeometryPtr geom = gis.getShape(&crs, fs.mapOptions);
+    if (geom && !geom->IsEmpty())
+      geom = clipGeometry(*geom, fs.lines, clipbox);
+    if (geom)
+      theLayer.addFeature(*geom, {});
+    return;
+  }
+
+  // Per-feature: include requested OSM tag attributes
+  Fmi::Features features = gis.getFeatures(crs, fs.mapOptions);
+
+  for (const auto& feat : features)
+  {
+    if (!feat->geom || feat->geom->IsEmpty())
+      continue;
+
+    auto geom = clipGeometry(*feat->geom, fs.lines, clipbox);
+    if (!geom)
+      continue;
+
+    // Build MVT attribute list from feature attributes
+    std::vector<std::pair<std::string, MVTValue>> attrs;
+    attrs.reserve(feat->attributes.size());
+    for (const auto& [key, val] : feat->attributes)
+      attrs.emplace_back(key, toMVTValue(val));
+
+    theLayer.addFeature(*geom, attrs);
   }
 }
 
@@ -829,21 +866,14 @@ void OSMLayer::generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
     if (!osm)
       throw Fmi::Exception(BCP, "OSM engine is not available");
 
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
-    if (theState.useTimer())
-    {
-      std::string report = "OSMLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
-    }
+    auto timer = makeTimer(theState);
 
     auto options = itsOptions;
     options.margin = std::max(xmargin, ymargin);
 
     auto scene = osm->renderMap(options, projection.getCRS(), projection.getBox());
 
-    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    group_cdt["start"] = "<g";
-    group_cdt["end"] = "</g>";
+    auto group_cdt = makeGroup();
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
     for (const auto& element : scene->elements)

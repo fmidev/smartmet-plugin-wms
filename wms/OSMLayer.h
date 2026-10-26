@@ -74,10 +74,30 @@ class OSMLayer : public Layer
 
   std::vector<FeatureSet> itsFeatureSets;
 
+  void initFeatureSets(Json::Value& theJson, const Config& theConfig);
+  static FeatureSet parseFeatureSet(Json::Value& theJson, const Config& theConfig);
+  CTPP::CDT generateFeatureSet(CTPP::CDT& theGlobals,
+                               const FeatureSet& theFeatureSet,
+                               State& theState,
+                               int& theMapId) const;
+  void addPath(CTPP::CDT& theGlobals,
+               CTPP::CDT& theGroupCdt,
+               const OGRGeometry& theGeom,
+               const FeatureSet& theFeatureSet,
+               const State& theState,
+               int& theMapId) const;
+  void addMVTFeatureSet(class MVTLayerBuilder& theLayer,
+                        const FeatureSet& theFeatureSet,
+                        const State& theState) const;
+
   // ---- Vector tile datasets (alternative to PostGIS feature_sets) ----
   bool isDataset() const { return !itsOptions.dataset.empty(); }
   void generateDataset(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void initDataset(Json::Value& theJson);
   void parseOverrides(const Json::Value& theJson);
+  static void parseLayerIds(const Json::Value& theJson,
+                            const char* theName,
+                            std::vector<std::string>& theIds);
 
   Engine::OSM::MapOptions itsOptions;  // dataset, style and rendering options
   bool itsAttribution = false;         // draw the data attribution into the image

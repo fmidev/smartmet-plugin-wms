@@ -1163,6 +1163,45 @@ std::vector<Dali::MapboxStyleLayer> Handler::resolveStyleLayers(
 }
 
 #ifndef WITHOUT_OSM
+namespace
+{
+// The first OSM dataset layer of a render tree in document order
+const Json::Value* findOSMLayer(const Json::Value& theJson)
+{
+  if (theJson.isObject())
+  {
+    if (theJson.get("layer_type", "").asString() == "osm" && theJson.isMember("dataset") &&
+        theJson.isMember("style"))
+      return &theJson;
+    for (const auto& name : theJson.getMemberNames())
+      if (const auto* found = findOSMLayer(theJson[name]))
+        return found;
+  }
+  else if (theJson.isArray())
+  {
+    for (const auto& item : theJson)
+      if (const auto* found = findOSMLayer(item))
+        return found;
+  }
+  return nullptr;
+}
+
+// A vector source of a style pointing at the tiles of a collection
+Json::Value collectionSource(const Json::Value& theSource,
+                             const std::string& theTileUrlTemplate,
+                             int theMinZoom,
+                             int theMaxZoom)
+{
+  Json::Value source(Json::objectValue);
+  source["type"] = "vector";
+  source["tiles"].append(theTileUrlTemplate);
+  source["minzoom"] = theMinZoom;
+  source["maxzoom"] = theMaxZoom;
+  source["attribution"] = theSource.get("attribution", "© OpenStreetMap contributors");
+  return source;
+}
+}  // namespace
+
 // -----------------------------------------------------------------------
 /*!
  * \brief The MapLibre style of a collection made of an OSM dataset layer
@@ -1176,29 +1215,7 @@ std::optional<std::string> Handler::osmStyle(const Json::Value& theProduct,
                                              const Dali::State& theState,
                                              const std::string& theTileUrlTemplate) const
 {
-  // Find the first OSM layer of the render tree
-  std::function<const Json::Value*(const Json::Value&)> find =
-      [&find](const Json::Value& json) -> const Json::Value*
-  {
-    if (json.isObject())
-    {
-      if (json.get("layer_type", "").asString() == "osm" && json.isMember("dataset") &&
-          json.isMember("style"))
-        return &json;
-      for (const auto& name : json.getMemberNames())
-        if (const auto* found = find(json[name]))
-          return found;
-    }
-    else if (json.isArray())
-    {
-      for (const auto& item : json)
-        if (const auto* found = find(item))
-          return found;
-    }
-    return nullptr;
-  };
-
-  const auto* layer = find(theProduct.isMember("views") ? theProduct["views"] : theProduct);
+  const auto* layer = findOSMLayer(theProduct.isMember("views") ? theProduct["views"] : theProduct);
   if (layer == nullptr)
     return {};
 
@@ -1218,15 +1235,8 @@ std::optional<std::string> Handler::osmStyle(const Json::Value& theProduct,
   for (const auto& name : sources.getMemberNames())
   {
     auto& source = sources[name];
-    if (source.get("type", "").asString() != "vector")
-      continue;
-    Json::Value replacement(Json::objectValue);
-    replacement["type"] = "vector";
-    replacement["tiles"].append(theTileUrlTemplate);
-    replacement["minzoom"] = info->minzoom;
-    replacement["maxzoom"] = info->maxzoom;
-    replacement["attribution"] = source.get("attribution", "© OpenStreetMap contributors");
-    source = replacement;
+    if (source.get("type", "").asString() == "vector")
+      source = collectionSource(source, theTileUrlTemplate, info->minzoom, info->maxzoom);
   }
 
   Json::StreamWriterBuilder builder;

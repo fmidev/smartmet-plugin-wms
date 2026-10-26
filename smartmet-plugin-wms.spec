@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.10.26
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Oct 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.26-2.fmi
+- OSM layer: no captured structured bindings, which are a C++20 extension
+- OSM layer and the OSM collection styles of OGC API Tiles split into smaller functions
+
 * Mon Oct 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.26-1.fmi
 - Gridded observations: lolimit and hilimit settings limit the values of a parameter to its physical range, for example 0...100 for relative humidity or 0 upwards for wind speed
 - Gridded observations: prior_lapse_rate setting of the terrain method, whose default -6.5 K/km is meant for temperatures
