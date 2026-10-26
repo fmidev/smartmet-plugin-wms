@@ -138,7 +138,8 @@ rejected for disagreeing with a trend beyond it.
 In cross-validation of 85 European cases the terrain method with `prior_lapse_rate = 0` was
 better than the `barnes` method for both relative humidity (8.74 against 9.41 % RMS) and wind
 speed (1.74 against 1.81 m/s), and the limits removed the 0.4–0.5 % of the predictions out of
-range. The gain at the stations is small, since the field goes out of range mostly away from
+range. The default prior −6.5 per km was no better at the stations, and away from them it
+would impose a temperature lapse rate on quantities it does not apply to. The gain at the stations is small, since the field goes out of range mostly away from
 them; see `gis/docs/gis-pointgridding.md` for the numbers.
 
 Observations slightly out of range, such as 101 % from a humidity sensor, are clamped to the
