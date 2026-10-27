@@ -98,6 +98,475 @@
     <Title>Finnish Meteorological Institute Web Map Service</Title>
       
         <Layer queryable="0">
+      <Title>grid</Title>
+
+	
+	  <Layer queryable="1">
+      <Name>grid:ensemble_temperature</Name>
+      <Title>Ensemble temperature</Title>
+      <Abstract>Temperature of the perturbed ensemble members, selected with the member dimension</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-9.1163845586</westBoundLongitude>
+        <eastBoundLongitude>49.0463184173</eastBoundLongitude>
+        <southBoundLatitude>51.3</southBoundLatitude>
+        <northBoundLatitude>70.2053835707</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.116385" miny="51.3" maxx="49.046318" maxy="70.205384"/>
+      <BoundingBox CRS="CRS:83" minx="-9.116385" miny="51.3" maxx="49.046318" maxy="70.205384"/>
+      <BoundingBox CRS="CRS:84" minx="-9.116385" miny="51.3" maxx="49.046318" maxy="70.205384"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1371429.64481" miny="-3956792.75122" maxx="2155029.93712" maxy="-2656845.86119"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2037684.39758" miny="-3658533.91984" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="EPSG:3035" minx="3005298.1555" miny="3305834.79784" maxx="5586808.67082" maxy="5561508.83186"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.789228" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-1014831.28694" miny="6674532.79847" maxx="5459811.1915" maxy="11135894.6697"/>
+      <BoundingBox CRS="EPSG:4326" minx="-9.116385" miny="51.3" maxx="49.046318" maxy="70.205384"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T05:00:00Z/2008-08-05T07:00:00Z/PT1H</Dimension>
+      
+      <Dimension name="reference_time" units="ISO8601" default="2008-08-05T05:00:00Z" multipleValues="0" nearestValue="0" current="1">2008-08-05T05:00:00Z</Dimension>
+      
+      <Dimension name="member" units="" default="1" multipleValues="0" nearestValue="0">1,2</Dimension>
+      
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="150" height="485">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aensemble_temperature&amp;width=150&amp;height=485"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	  
+	  <Layer queryable="0">
+      <Title>grid:animation</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>0</westBoundLongitude>
+        <eastBoundLongitude>0</eastBoundLongitude>
+        <southBoundLatitude>0</southBoundLatitude>
+        <northBoundLatitude>0</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:83" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:84" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/>
+
+	  
+	    <Layer queryable="1">
+      <Name>grid:animation</Name>
+      <Title>Animation demo</Title>
+      <Abstract>Demonstration of some animation features</Abstract>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:animation_1</Name>
+      <Title>Wind animation demo 1</Title>
+      <Abstract>Wind animation with single timestep</Abstract>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:animation_2</Name>
+      <Title>Wind and rain animation demo 1</Title>
+      <Abstract>Wind and rain animation with multiple timesteps (no loopsteps).</Abstract>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:animation_3</Name>
+      <Title>Wind and rain animation demo 1</Title>
+      <Abstract>Wind and rain animation with multiple timesteps (no loopsteps).</Abstract>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:animation_4</Name>
+      <Title>Rain animation demo 4</Title>
+      <Abstract>Rain animation with single timestep</Abstract>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:datatile_temperature</Name>
+      <Title>Temperature datatile</Title>
+      <Abstract>Temperature encoded as RGBA datatile</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="150" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Adatatile_temperature&amp;width=150&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:precipitation_1</Name>
+      <Title>Demo product</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="150" height="133">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_1&amp;width=150&amp;height=133"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:precipitation_kgm2_1</Name>
+      <Title>Demo product</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="150" height="196">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_kgm2_1&amp;width=150&amp;height=196"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:raster_1</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature raster</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_1&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:raster_2</Name>
+      <Title>Clouds</Title>
+      <Abstract>Clouds raster</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_2&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:raster_3</Name>
+      <Title>Precipitation</Title>
+      <Abstract>Precipitation raster</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_3&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:raster_4</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_4&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:raster_5</Name>
+      <Title>Wind</Title>
+      <Abstract>Wind</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_5&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:raster_6</Name>
+      <Title>Land temperature and sea wind</Title>
+      <Abstract>Land temperature and sea wind</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_6&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:temperature_1</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Temperature isobands every two degrees</Title><Abstract>Temperature isoband width is two degrees</Abstract>
+        <LegendURL width="150" height="485">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1&amp;width=150&amp;height=485"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:temperature_2</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="300" height="485">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2&amp;width=300&amp;height=485"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:temperature_3</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="150" height="485">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3&amp;width=150&amp;height=485"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:temperature_4</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="150" height="485">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4&amp;width=150&amp;height=485"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:temperature_5</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="300" height="485">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_5&amp;width=300&amp;height=485"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:temperature_6</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="300" height="485">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_6&amp;width=300&amp;height=485"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_direction_1</Name>
+      <Title>Wind demo</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="116" height="85">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_direction_1&amp;width=116&amp;height=85"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_speed_1</Name>
+      <Title>Wind demo</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="300" height="142">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_1&amp;width=300&amp;height=142"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_speed_2</Name>
+      <Title>Wind demo</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="300" height="142">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_2&amp;width=300&amp;height=142"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_speed_and_direction_1</Name>
+      <Title>Wind demo</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="116" height="85">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_1&amp;width=116&amp;height=85"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_speed_and_direction_2</Name>
+      <Title>Wind demo</Title>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="116" height="85">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_2&amp;width=116&amp;height=85"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_stream_1</Name>
+      <Title>Wind streamlines</Title>
+      <Abstract>Wind streamlines</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_1&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_stream_2</Name>
+      <Title>Wind streamlines</Title>
+      <Abstract>Wind streamlines</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_2&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_stream_3</Name>
+      <Title>Wind streamlines</Title>
+      <Abstract>Wind streamlines</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_3&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    
+	    <Layer queryable="1">
+      <Name>grid:wind_stream_4</Name>
+      <Title>Wind streamlines</Title>
+      <Abstract>Wind streamlines</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_4&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	    </Layer></Layer>
+        <Layer queryable="0">
       <Title>test</Title>
       <CRS>AUTO2:42001</CRS>
       <CRS>AUTO2:42002</CRS>
@@ -1603,7 +2072,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=140&amp;height=1800"/>
         </LegendURL>
@@ -1617,7 +2086,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=140&amp;height=1800"/>
         </LegendURL>
@@ -1631,7 +2100,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=140&amp;height=1800"/>
         </LegendURL>
@@ -1645,7 +2114,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=140&amp;height=1800"/>
         </LegendURL>
@@ -1659,7 +2128,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=140&amp;height=1800"/>
         </LegendURL>
@@ -1673,7 +2142,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=140&amp;height=1800"/>
         </LegendURL>
@@ -1687,7 +2156,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="140" height="1800">
+        <LegendURL width="139" height="1800">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=140&amp;height=1800"/>
         </LegendURL>
@@ -2433,423 +2902,6 @@
         <LegendURL width="150" height="160">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap&amp;width=150&amp;height=160"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    </Layer></Layer>
-        <Layer queryable="0">
-      <Title>grid</Title>
-
-	
-	  <Layer queryable="0">
-      <Title>grid:animation</Title>
-      <CRS>AUTO2:42001</CRS>
-      <CRS>AUTO2:42002</CRS>
-      <CRS>AUTO2:42003</CRS>
-      <CRS>AUTO2:42004</CRS>
-      <CRS>AUTO2:97001</CRS>
-      <CRS>AUTO2:97002</CRS>
-      <CRS>AUTO2:97003</CRS>
-      <CRS>CRS:27</CRS>
-      <CRS>CRS:83</CRS>
-      <CRS>CRS:84</CRS>
-      <CRS>EPSG:4326</CRS>
-      <EX_GeographicBoundingBox>
-        <westBoundLongitude>0</westBoundLongitude>
-        <eastBoundLongitude>0</eastBoundLongitude>
-        <southBoundLatitude>0</southBoundLatitude>
-        <northBoundLatitude>0</northBoundLatitude>
-      </EX_GeographicBoundingBox>
-      <BoundingBox CRS="CRS:27" minx="0" miny="0" maxx="0" maxy="0"/>
-      <BoundingBox CRS="CRS:83" minx="0" miny="0" maxx="0" maxy="0"/>
-      <BoundingBox CRS="CRS:84" minx="0" miny="0" maxx="0" maxy="0"/>
-      <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/>
-
-	  
-	    <Layer queryable="1">
-      <Name>grid:animation</Name>
-      <Title>Animation demo</Title>
-      <Abstract>Demonstration of some animation features</Abstract>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:animation_1</Name>
-      <Title>Wind animation demo 1</Title>
-      <Abstract>Wind animation with single timestep</Abstract>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:animation_2</Name>
-      <Title>Wind and rain animation demo 1</Title>
-      <Abstract>Wind and rain animation with multiple timesteps (no loopsteps).</Abstract>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:animation_3</Name>
-      <Title>Wind and rain animation demo 1</Title>
-      <Abstract>Wind and rain animation with multiple timesteps (no loopsteps).</Abstract>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:animation_4</Name>
-      <Title>Rain animation demo 4</Title>
-      <Abstract>Rain animation with single timestep</Abstract>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:datatile_temperature</Name>
-      <Title>Temperature datatile</Title>
-      <Abstract>Temperature encoded as RGBA datatile</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="150" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Adatatile_temperature&amp;width=150&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:precipitation_1</Name>
-      <Title>Demo product</Title>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="150" height="133">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_1&amp;width=150&amp;height=133"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:precipitation_kgm2_1</Name>
-      <Title>Demo product</Title>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="150" height="196">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_kgm2_1&amp;width=150&amp;height=196"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:raster_1</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature raster</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_1&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:raster_2</Name>
-      <Title>Clouds</Title>
-      <Abstract>Clouds raster</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_2&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:raster_3</Name>
-      <Title>Precipitation</Title>
-      <Abstract>Precipitation raster</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_3&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:raster_4</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_4&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:raster_5</Name>
-      <Title>Wind</Title>
-      <Abstract>Wind</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_5&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:raster_6</Name>
-      <Title>Land temperature and sea wind</Title>
-      <Abstract>Land temperature and sea wind</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_6&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:temperature_1</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Temperature isobands every two degrees</Title><Abstract>Temperature isoband width is two degrees</Abstract>
-        <LegendURL width="150" height="485">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1&amp;width=150&amp;height=485"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:temperature_2</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="300" height="485">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2&amp;width=300&amp;height=485"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:temperature_3</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="150" height="485">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3&amp;width=150&amp;height=485"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:temperature_4</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="150" height="485">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4&amp;width=150&amp;height=485"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:temperature_5</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="300" height="485">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_5&amp;width=300&amp;height=485"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:temperature_6</Name>
-      <Title>Temperature</Title>
-      <Abstract>Temperature</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="300" height="485">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_6&amp;width=300&amp;height=485"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_direction_1</Name>
-      <Title>Wind demo</Title>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="116" height="85">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_direction_1&amp;width=116&amp;height=85"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_speed_1</Name>
-      <Title>Wind demo</Title>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="300" height="142">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_1&amp;width=300&amp;height=142"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_speed_2</Name>
-      <Title>Wind demo</Title>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="300" height="142">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_2&amp;width=300&amp;height=142"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_speed_and_direction_1</Name>
-      <Title>Wind demo</Title>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="116" height="85">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_1&amp;width=116&amp;height=85"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_speed_and_direction_2</Name>
-      <Title>Wind demo</Title>
-      <Style>
-        <Name>default</Name>
-        <Title>Default style</Title>
-        <LegendURL width="116" height="85">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_2&amp;width=116&amp;height=85"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_stream_1</Name>
-      <Title>Wind streamlines</Title>
-      <Abstract>Wind streamlines</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_1&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_stream_2</Name>
-      <Title>Wind streamlines</Title>
-      <Abstract>Wind streamlines</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_2&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_stream_3</Name>
-      <Title>Wind streamlines</Title>
-      <Abstract>Wind streamlines</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_3&amp;width=30&amp;height=10"/>
-        </LegendURL>
-      </Style>
-      </Layer>
-
-	    
-	    <Layer queryable="1">
-      <Name>grid:wind_stream_4</Name>
-      <Title>Wind streamlines</Title>
-      <Abstract>Wind streamlines</Abstract>
-      <Style>
-        <Name>default</Name>
-        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
-        <LegendURL width="30" height="10">
-          <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_4&amp;width=30&amp;height=10"/>
         </LegendURL>
       </Style>
       </Layer>

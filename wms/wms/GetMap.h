@@ -41,6 +41,7 @@ struct tag_get_map_request_options
   std::optional<Fmi::DateTime> reference_time;
   std::vector<Fmi::DateTime> timesteps;
   std::optional<int> elevation;
+  std::optional<std::string> member;  // DIM_MEMBER
   unsigned int width = 0;
   unsigned int height = 0;
   std::optional<int> interval_start;

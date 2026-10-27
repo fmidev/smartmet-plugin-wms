@@ -119,7 +119,7 @@ std::vector<OpenApiLayer> openApiLayers(const WMS::Config& wmsConfig,
         add_all_elevations(layer.At("elevation_dimension"), info.elevations);
 
       // In the order of the WMTS ResourceURL template
-      for (const char* name : {"time_dimension", "elevation_dimension"})
+      for (const char* name : {"time_dimension", "elevation_dimension", "member_dimension"})
         if (layer.Exists(name))
           add_dimensions(layer.At(name), info.dimensions);
 

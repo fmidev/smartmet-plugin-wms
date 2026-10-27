@@ -1009,7 +1009,7 @@ are used. The complexity is in the product, where the domain expert can reach it
 |---|---|---|---|
 | Request | Any `BBOX`, `WIDTH`, `HEIGHT`, `CRS` in a KVP query | A tile from a fixed **TileMatrixSet**: `{layer}/{style}/{dims}/{TMS}/{z}/{row}/{col}.{ext}` | REST: `/tiles/collections/{id}/tiles/{TMS}/{z}/{row}/{col}?f=...&datetime=...` |
 | Discovery | `GetCapabilities` XML | `GetCapabilities` XML with `<ResourceURL>` templates | JSON landing page, `/conformance`, `/collections`, `/tileMatrixSets`, per-collection tileset metadata and styles |
-| Time and level | `TIME`, `ELEVATION`, `DIM_*` parameters | Extra path segments in capabilities order (`.../Time/Reference_time/Elevation/...`) | Query parameters `datetime`, `elevation`, `reference_time` |
+| Time, level and member | `TIME`, `ELEVATION`, `DIM_*` parameters | Extra path segments in capabilities order (`.../Time/Reference_time/Elevation/Member/...`) | Query parameters `datetime`, `elevation`, `reference_time`, `member` |
 | Formats | MIME type in `FORMAT` | file extension | `f=` parameter or `Accept` header negotiation |
 | Handler | `wms/wms/Handler.cpp`, `GetMap.cpp` | `wms/wmts/Handler.cpp`, `TileMatrix.cpp` | `wms/tiles/Handler.cpp` |
 

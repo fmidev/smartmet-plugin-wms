@@ -324,6 +324,26 @@ void pick_content_times(T::ContentInfoList& contentInfoList,
   }
 }
 
+// Picking the perturbed ensemble members. Only a query for perturbed members without a fixed
+// member number has a member dimension.
+void pick_members(T::ContentInfoList& contentInfoList,
+                  uint len,
+                  const GridQuery& query,
+                  const std::set<int>& validGeometries,
+                  std::set<int>& members)
+{
+  if (query.forecastType != PerturbedForecastType || query.forecastNumber >= 0)
+    return;
+
+  for (uint t = 0; t < len; t++)
+  {
+    T::ContentInfo* info = contentInfoList.getContentInfoByIndex(t);
+    if (info->mForecastType == PerturbedForecastType &&
+        validGeometries.find(info->mGeometryId) != validGeometries.end())
+      members.insert(info->mForecastNumber);
+  }
+}
+
 // Picking levels:
 std::set<int> pick_levels(T::ContentInfoList& contentInfoList,
                           uint len,
@@ -485,17 +505,19 @@ void add_time_dimension(std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>>&
 }  // namespace
 
 GridDataLayer::GridDataLayer(const LayerConfig& config,
-                                   std::string producer,
-                                   std::string parameter,
-                                   int forecastType,
-                                   uint geometryId,
-                                   int levelId,
-                                   std::string elevation_unit)
+                             std::string producer,
+                             std::string parameter,
+                             int forecastType,
+                             int forecastNumber,
+                             uint geometryId,
+                             int levelId,
+                             std::string elevation_unit)
     : Layer(config),
       itsGridEngine(config.gridEngine()),
       itsProducer(std::move(producer)),
       itsParameter(std::move(parameter)),
       itsForecastType(forecastType),
+      itsForecastNumber(forecastNumber),
       itsGeometryId(geometryId),
       itsLevelId(levelId),
       itsElevationUnit(std::move(elevation_unit))
@@ -516,7 +538,8 @@ bool GridDataLayer::getContentTimes(ContentServer::ServiceInterface& contentServ
                                     const std::string& producerName,
                                     int tmpGeometryId,
                                     const std::set<int>& validGeometries,
-                                    std::set<std::string>& contentTimeList)
+                                    std::set<std::string>& contentTimeList,
+                                    std::set<int>& members)
 {
   if (!(itsParameter > ""))
     return (contentServer.getContentTimeListByGenerationAndGeometryId(
@@ -540,6 +563,7 @@ bool GridDataLayer::getContentTimes(ContentServer::ServiceInterface& contentServ
   }
 
   pick_content_times(contentInfoList, len, generationInfo, validGeometries, contentTimeList);
+  pick_members(contentInfoList, len, query, validGeometries, members);
 
   const std::set<int> levelList =
       pick_levels(contentInfoList, len, itsElevationUnit, query.parameterLevelId);
@@ -563,6 +587,7 @@ bool GridDataLayer::updateLayerMetaData()
     query.parameterKey = itsParameter;
     query.parameterLevelId = itsLevelId;
     query.forecastType = itsForecastType;
+    query.forecastNumber = itsForecastNumber;
     query.producer = itsProducer;
 
     if (!itsParameter.empty())
@@ -590,6 +615,7 @@ bool GridDataLayer::updateLayerMetaData()
         valid_geometries(producerInfo.mName, query.functionGeometries, itsGeometryId);
 
     std::map<Fmi::DateTime, std::shared_ptr<TimeDimension>> newTimeDimensions;
+    std::set<int> members;
     for (unsigned int i = 0; i < newGenerationInfoList.getLength(); i++)
     {
       T::GenerationInfo* generationInfo = newGenerationInfoList.getGenerationInfoByIndex(i);
@@ -616,7 +642,8 @@ bool GridDataLayer::updateLayerMetaData()
                            producerInfo.mName,
                            tmpGeometryId,
                            validGeometries,
-                           contentTimeList))
+                           contentTimeList,
+                           members))
         return true;
 
       if (!contentTimeList.empty())
@@ -627,6 +654,10 @@ bool GridDataLayer::updateLayerMetaData()
       timeDimensions = std::make_shared<TimeDimensions>(newTimeDimensions);
     else
       timeDimensions = nullptr;
+
+    // A single member is nothing to select from
+    if (members.size() > 1)
+      memberDimension = std::make_shared<MemberDimension>(members);
 
     metadataTimestamp = Fmi::SecondClock::universal_time();
 

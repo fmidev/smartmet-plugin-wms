@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.26
-Release: 2%{?dist}.fmi
+Version: 26.10.27
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -144,8 +144,8 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-spine-devel >= 26.10.17-1
 #TestRequires: smartmet-library-timeseries-devel >= 26.10.16
 #TestRequires: smartmet-engine-grid-devel >= 26.10.16
-#TestRequires: smartmet-library-grid-files-test >= 26.10.20
-#TestRequires: smartmet-test-data
+#TestRequires: smartmet-library-grid-files-test >= 26.10.26
+#TestRequires: smartmet-test-data >= 26.10.26
 #TestRequires: smartmet-utils-devel >= 26.9.3
 #TestRequires: smartmet-test-db >= 26.5.8
 #TestRequires: smartmet-fonts
@@ -187,6 +187,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Oct 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.27-1.fmi
+- Ensemble member dimension: grid layers of perturbed members (forecastType 3) without a fixed forecastNumber list their members as the WMS dimension "member", selected with DIM_MEMBER, the WMTS Member path segment or the member parameter of WMTS and OGC API Tiles
+- JSON GetCapabilities lists all dimensions in a single Dimension array, the time dimension was lost behind a duplicate key and the elevation dimension was missing
+- Grid layer forecastType, forecastNumber and levelId settings are found in any layer of the product, not only the first one
+- Member dimension tests on the pal_ensemble producer of the grid test fixture
+
 * Mon Oct 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.26-2.fmi
 - OSM layer: no captured structured bindings, which are a C++20 extension
 - OSM layer and the OSM collection styles of OGC API Tiles split into smaller functions

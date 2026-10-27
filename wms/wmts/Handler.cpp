@@ -137,6 +137,7 @@ struct PathDimensions
   std::string time;
   std::string origintime;
   std::string elevation;
+  std::string member;
 };
 
 // Map the RESTful path dimension values positionally to the ordered dimension names
@@ -156,6 +157,8 @@ PathDimensions path_dimensions(const std::vector<std::string>& dimensionValues,
       dims.origintime = v;
     else if (nm == "elevation")
       dims.elevation = v;
+    else if (nm == "member")
+      dims.member = v;
   }
   return dims;
 }
@@ -314,7 +317,7 @@ void add_layer_dimensions(CTPP::CDT& layer, CTPP::CDT& wl, const WMS::Config& wm
   std::string dim_path;
   // time_dimension is a list ([time, reference_time]); elevation_dimension may
   // be either a list or a single dimension hash — handle both shapes.
-  for (const char* src : {"time_dimension", "elevation_dimension"})
+  for (const char* src : {"time_dimension", "elevation_dimension", "member_dimension"})
   {
     if (!wl.Exists(src))
       continue;
@@ -626,7 +629,7 @@ QueryStatus Handler::query(const Spine::Reactor& theReactor,
     // GetTile (RESTful):
     //   version/layer/style[/dim…]/TileMatrixSet/TileMatrix/TileRow/TileCol.ext
     // Temporal/elevation layers carry extra dimension segments between the style
-    // and the TileMatrixSet (Time, Reference_time, Elevation — see the
+    // and the TileMatrixSet (Time, Reference_time, Elevation, Member — see the
     // GetCapabilities ResourceURL). The fixed head is layer+style, the fixed tail
     // is the last four segments; anything in between is a dimension value, in the
     // same order the capabilities advertised. With no dimension segments (n == 7)
@@ -746,7 +749,7 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
  * \brief Ordered RESTful dimension identifiers for a layer, cached.
  *
  * Returns the dimension names in the same order GetCapabilities advertises
- * them in the ResourceURL template (time, reference_time, elevation). The set
+ * them in the ResourceURL template (time, reference_time, elevation, member). The set
  * of dimensions a layer exposes is fixed by configuration and does not change
  * between model runs — only their values do — so the list is cached to avoid a
  * per-tile Querydata lookup during animation.
@@ -774,6 +777,9 @@ const std::vector<std::string>& Handler::orderedDimensionNames(const std::string
       auto ei = layer_obj->getElevationDimensionInfo();
       if (ei && ei->Exists("elevation_dimension"))
         append_dimension_names((*ei)["elevation_dimension"], true, names);
+      auto mi = layer_obj->getMemberDimensionInfo();
+      if (mi && mi->Exists("member_dimension"))
+        append_dimension_names((*mi)["member_dimension"], false, names);
     }
   }
   catch (...)
@@ -881,7 +887,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     thisRequest.addParameter("type",             demimetype(format));
     thisRequest.addParameter("customer",         wmsConfig.layerCustomer(layer));
 
-    // Dimensions from the RESTful path (Time, Reference_time, Elevation) take
+    // Dimensions from the RESTful path (Time, Reference_time, Elevation, Member) take
     // precedence over query parameters. They arrive as bare values in
     // capabilities order, so resolve the layer's ordered dimension identifiers
     // from the very same source GetCapabilities used and map them positionally.
@@ -915,6 +921,22 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
       Spine::JSON::expand(json, params, "", false);
     }
     useStyle(json, style);
+
+    // Ensemble member: RESTful path dimension > MEMBER query parameter > default member
+    std::optional<std::string> member;
+    if (!path_dims.member.empty())
+      member = path_dims.member;
+    else
+      member = theRequest.getParameter("member");
+    try
+    {
+      wmsConfig.applyMember(layer, member, json);
+    }
+    catch (...)
+    {
+      sendException("InvalidParameterValue", "Invalid member", theState, theRequest, theResponse);
+      return QueryStatus::OK;
+    }
 
     // Apply margin defaults if not already set in the product JSON
     if (!json.isMember("xmargin"))
@@ -1073,7 +1095,7 @@ QueryStatus Handler::handleGetFeatureInfo(const Spine::Reactor& theReactor,
     thisRequest.addParameter("i", Fmi::to_string(pixel_i));
     thisRequest.addParameter("j", Fmi::to_string(pixel_j));
 
-    // Dimensions from the RESTful path (Time, Reference_time, Elevation) —
+    // Dimensions from the RESTful path (Time, Reference_time, Elevation, Member) —
     // same positional mapping as GetTile.
     if (!dimensionValues.empty())
     {
@@ -1091,8 +1113,14 @@ QueryStatus Handler::handleGetFeatureInfo(const Spine::Reactor& theReactor,
           thisRequest.addParameter("origintime", v);
         else if (nm == "elevation")
           thisRequest.addParameter("elevation", v);
+        else if (nm == "member")
+          thisRequest.addParameter("dim_member", v);
       }
     }
+    // KVP member, unless the RESTful path already gave one
+    auto member_param = theRequest.getParameter("member");
+    if (member_param && !thisRequest.getParameter("dim_member"))
+      thisRequest.addParameter("dim_member", *member_param);
 
     return itsWMSHandler->query(theReactor, theState, thisRequest, theResponse);
   }

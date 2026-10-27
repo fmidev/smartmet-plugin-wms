@@ -140,6 +140,12 @@ class Config
 #endif
 
   bool isValidElevation(const std::string& theLayer, int theElevation) const;
+
+  // Select an ensemble member into the product JSON of a layer with a member dimension,
+  // using the default member if none is requested. Other layers are left unchanged.
+  void applyMember(const std::string& theLayer,
+                   const std::optional<std::string>& theMember,
+                   Json::Value& theJson) const;
   bool isValidTime(const std::string& theLayer,
                    const Fmi::DateTime& theTime,
                    const std::optional<Fmi::DateTime>& theReferenceTime) const;

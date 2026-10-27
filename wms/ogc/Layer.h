@@ -13,6 +13,7 @@
 #include "LayerStyle.h"
 #include "LegendGraphicInfo.h"
 #include "LegendGraphicSettings.h"
+#include "MemberDimension.h"
 #include "SupportedReference.h"
 #include "TimeDimension.h"
 #include <ctpp2/CDT.hpp>
@@ -97,6 +98,7 @@ class Layer
       timeDimensions;  // Optional, may be empty for non-temporal postgis layers
   std::shared_ptr<ElevationDimension> elevationDimension;  // Optional
   std::shared_ptr<IntervalDimension> intervalDimension;    // Optional
+  std::shared_ptr<MemberDimension> memberDimension;        // Optional, ensemble members
 
   std::string customer;
   std::string productFile;  // dali product
@@ -146,6 +148,9 @@ class Layer
                    const std::optional<Fmi::DateTime>& theReferenceTime) const;
   bool isValidReferenceTime(const Fmi::DateTime& theReferenceTime) const;
   bool isValidElevation(int theElevation) const;
+  // Ensemble member dimension: the default member if the layer has one
+  std::optional<int> getDefaultMember() const;
+  bool isValidMember(int theMember) const;
   bool isTemporal() const { return timeDimensions != nullptr; }
   bool currentValue() const;  // returns true if current value can be queried from layer
                               // (time=current)
@@ -182,6 +187,7 @@ class Layer
   std::optional<CTPP::CDT> getIntervalDimensionInfo() const;
   std::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   std::optional<CTPP::CDT> getElevationDimensionInfo() const;
+  std::optional<CTPP::CDT> getMemberDimensionInfo() const;
   std::optional<CTPP::CDT> getStyleInfo(const std::string& language,
                                         const std::string& defaultLanguage) const;
   const std::shared_ptr<TimeDimensions>& getTimeDimensions() const;

@@ -1,0 +1,1 @@
+GET /tiles/collections/grid:ensemble_temperature/tiles/EPSG:4326/5/4/36?f=png&datetime=2008-08-05T06:00:00Z&member=2 HTTP/1.0

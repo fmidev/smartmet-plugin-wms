@@ -128,6 +128,13 @@ void add_components(OA::Document& doc,
                                            "or 'current'",
                                            stringSchema())));
   doc.addComponent("parameters",
+                   "member",
+                   fmi_extension(parameter("member",
+                                           "query",
+                                           "Perturbed ensemble member when the URL has no "
+                                           "Member segment, the lowest member by default",
+                                           stringSchema())));
+  doc.addComponent("parameters",
                    "WIDTH",
                    fmi_extension(parameter("WIDTH",
                                            "query",
@@ -228,7 +235,7 @@ void add_tile_operations(OA::Document& doc,
   auto tile_params = params;
   for (const char* name : {"TileMatrixSet", "TileMatrix", "TileRow", "TileCol", "format"})
     tile_params.append(OA::ref("parameters", name));
-  for (const char* name : {"TIME", "WIDTH", "HEIGHT"})
+  for (const char* name : {"TIME", "member", "WIDTH", "HEIGHT"})
     tile_params.append(OA::ref("parameters", name));
 
   auto& tile = doc.operation(base + "/{TileCol}.{format}", "get");
@@ -244,6 +251,7 @@ void add_tile_operations(OA::Document& doc,
        {"TileMatrixSet", "TileMatrix", "TileRow", "TileCol", "J", "I", "infoFormat"})
     info_params.append(OA::ref("parameters", name));
   info_params.append(OA::ref("parameters", "TIME"));
+  info_params.append(OA::ref("parameters", "member"));
 
   auto& info = doc.operation(base + "/{TileCol}/{J}/{I}.{infoFormat}", "get");
   info["tags"].append(TAG_TILES);

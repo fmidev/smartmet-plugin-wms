@@ -806,6 +806,9 @@ void GetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       itsParameters.elevation = Spine::optional_int(theRequest.getParameter("ELEVATION"), 0);
     }
 
+    if (theRequest.getParameter("DIM_MEMBER"))
+      itsParameters.member = *theRequest.getParameter("DIM_MEMBER");
+
     parseReferenceTime(theRequest, layer_origintime);
 
     parseTimes(theRequest);
@@ -866,6 +869,7 @@ std::vector<Json::Value> GetMap::jsons() const
     for (const auto& map_info : itsParameters.map_info_vector)
     {
       Json::Value json = itsConfig.json(map_info.name);
+      itsConfig.applyMember(map_info.name, itsParameters.member, json);
       jsonlayers.push_back(json);
     }
     return jsonlayers;

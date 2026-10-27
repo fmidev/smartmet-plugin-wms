@@ -222,17 +222,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -241,9 +240,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -344,17 +341,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -363,9 +359,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -679,6 +673,135 @@
 								},
 								"width":150,
 								"height":10
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Ensemble temperature",
+				"queryable": 1,
+				"Name": "grid:ensemble_temperature",
+				"Abstract": "Temperature of the perturbed ensemble members, selected with the member dimension",
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": -9.1163845586,
+					"eastBoundLongitude": 49.0463184173,
+					"southBoundLatitude": 51.3,
+					"northBoundLatitude": 70.2053835707
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": -9.1163845586,
+						"miny": 51.3,
+						"maxx": 49.0463184173,
+						"maxy": 70.2053835707
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": -9.1163845586,
+						"miny": 51.3,
+						"maxx": 49.0463184173,
+						"maxy": 70.2053835707
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": -9.1163845586,
+						"miny": 51.3,
+						"maxx": 49.0463184173,
+						"maxy": 70.2053835707
+					},
+					{
+						"CRS": "CRS:SmartMetEurope",
+						"minx": -1371429.64481,
+						"miny": -3956792.75122,
+						"maxx": 2155029.93712,
+						"maxy": -2656845.86119
+					},
+					{
+						"CRS": "CRS:SmartMetScandinavia",
+						"minx": -2037684.39758,
+						"miny": -3658533.91985,
+						"maxx": 1010088.45179,
+						"maxy": -1822247.80407
+					},
+					{
+						"CRS": "EPSG:3035",
+						"minx": 3005298.1555,
+						"miny": 3305834.79784,
+						"maxx": 5586808.67082,
+						"maxy": 5561508.83186
+					},
+					{
+						"CRS": "EPSG:3067",
+						"minx": 43547.7892277,
+						"miny": 6549298.62199,
+						"maxx": 674306.988933,
+						"maxy": 7782478.68382
+					},
+					{
+						"CRS": "EPSG:3857",
+						"minx": -1014831.28694,
+						"miny": 6674532.79847,
+						"maxx": 5459811.1915,
+						"maxy": 11135894.6697
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": -9.1163845586,
+						"miny": 51.3,
+						"maxx": 49.0463184173,
+						"maxy": 70.2053835707
+					}
+				],"Dimension":[
+					
+					{
+						"name": "time",
+						"units": "ISO8601",
+						"value": "2008-08-05T05:00:00Z/2008-08-05T07:00:00Z/PT1H",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1}
+				
+					,
+					{
+						"name": "reference_time",
+						"units": "ISO8601",
+						"value": "2008-08-05T05:00:00Z",
+						"default": "2008-08-05T05:00:00Z",
+						"multipleValues": 0,
+						"nearestValue": 0,
+						"current": 1}
+				
+					,
+					{
+						"name": "member",
+						"units": "",
+						"value": "1,2",
+						"default": "1",
+						"multipleValues": 0,
+						"nearestValue": 0}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aensemble_temperature&amp;width=150&amp;height=485"
+								},
+								"width":150,
+								"height":485
 							}
 						]
 					}
@@ -2378,17 +2501,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -2397,9 +2519,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -2574,29 +2694,25 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1921-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT15M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
-				"Dimension":
-				[
+						"current": 1}
+				
+					,
 					{
 						"name": "interval_start",
 						"units": "minute",
 						"value": "15,30,0,60",
 						"default": "15",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
+						"nearestValue": 0}
+				
 					,
 					{
 						"name": "interval_end",
@@ -2604,9 +2720,7 @@
 						"value": "0,30",
 						"default": "0",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
-					
+						"nearestValue": 0}
 				],
 				"Style":
 				[
@@ -2708,17 +2822,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -2727,9 +2840,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				]
 
 			},
@@ -2891,18 +3002,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3004,18 +3112,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				]
 
 			},
@@ -3097,18 +3202,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3210,18 +3312,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3323,18 +3422,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3436,18 +3532,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3549,18 +3642,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3662,18 +3752,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3775,18 +3862,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -3888,18 +3972,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -4082,18 +4163,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -4195,18 +4273,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -4308,18 +4383,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -4421,18 +4493,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -4534,18 +4603,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -4647,18 +4713,15 @@
 						"maxx": 30.2868724102,
 						"maxy": 65.9024709481
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -4759,17 +4822,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -4778,9 +4840,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -5160,29 +5220,25 @@
 						"maxx": 34,
 						"maxy": 74
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
-				"Dimension":
-				[
+						"current": 1}
+				
+					,
 					{
 						"name": "interval_start",
 						"units": "minute",
 						"value": "5",
 						"default": "5",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
+						"nearestValue": 0}
+				
 					,
 					{
 						"name": "interval_end",
@@ -5190,9 +5246,7 @@
 						"value": "0",
 						"default": "0",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
-					
+						"nearestValue": 0}
 				],
 				"Style":
 				[
@@ -5294,17 +5348,16 @@
 						"maxx": 49,
 						"maxy": 72.6420874231
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2016-04-14T00:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -5313,9 +5366,7 @@
 						"default": "2016-04-13T06:23:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -5417,17 +5468,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -5436,9 +5486,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -5540,17 +5588,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -5559,9 +5606,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -5663,18 +5708,15 @@
 						"maxx": 69.6555417577,
 						"maxy": 73.5753748776
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-11-28T13:00:00Z,2008-11-28T14:00:00Z,2008-11-28T15:00:00Z,2008-11-28T16:00:00Z,2008-11-28T17:00:00Z,2008-11-28T18:00:00Z,2008-11-28T19:00:00Z,2008-11-28T20:00:00Z,2008-11-28T21:00:00Z,2008-11-28T22:00:00Z,2008-11-28T23:00:00Z,2008-11-29T00:00:00Z,2008-11-29T01:00:00Z,2008-11-29T02:00:00Z,2008-11-29T03:00:00Z,2008-11-29T04:00:00Z,2008-11-29T05:00:00Z,2008-11-29T06:00:00Z,2008-11-29T07:00:00Z,2008-11-29T08:00:00Z,2008-11-29T09:00:00Z,2008-11-29T10:00:00Z,2008-11-29T11:00:00Z,2008-11-29T12:00:00Z,2008-11-29T13:00:00Z,2008-11-29T14:00:00Z,2008-11-29T15:00:00Z,2008-11-29T16:00:00Z,2008-11-29T17:00:00Z,2008-11-29T18:00:00Z,2008-11-29T19:00:00Z,2008-11-29T20:00:00Z,2008-11-29T21:00:00Z,2008-11-29T22:00:00Z,2008-11-29T23:00:00Z,2008-11-30T00:00:00Z,2008-11-30T01:00:00Z,2008-11-30T02:00:00Z,2008-11-30T03:00:00Z,2008-11-30T04:00:00Z,2008-11-30T05:00:00Z,2008-11-30T06:00:00Z,2008-11-30T07:00:00Z,2008-11-30T08:00:00Z,2008-11-30T09:00:00Z,2008-11-30T10:00:00Z,2008-11-30T11:00:00Z,2008-11-30T12:00:00Z,2008-11-30T13:00:00Z,2008-11-30T14:00:00Z,2008-11-30T15:00:00Z,2008-11-30T16:00:00Z,2008-11-30T17:00:00Z,2008-11-30T18:00:00Z,2008-11-30T19:00:00Z,2008-11-30T20:00:00Z,2008-11-30T21:00:00Z,2008-11-30T22:00:00Z,2008-11-30T23:00:00Z,2008-12-01T00:00:00Z,2008-12-01T01:00:00Z,2008-12-01T02:00:00Z,2008-12-01T03:00:00Z,2008-12-01T04:00:00Z,2008-12-01T05:00:00Z,2008-12-01T06:00:00Z,2008-12-01T07:00:00Z,2008-12-01T08:00:00Z,2008-12-01T09:00:00Z,2008-12-01T10:00:00Z,2008-12-01T11:00:00Z,2008-12-01T12:00:00Z,2008-12-01T13:00:00Z,2008-12-01T14:00:00Z,2008-12-01T15:00:00Z,2008-12-01T16:00:00Z,2008-12-01T17:00:00Z,2008-12-01T18:00:00Z,2008-12-01T19:00:00Z,2008-12-01T20:00:00Z,2008-12-01T21:00:00Z,2008-12-01T22:00:00Z,2008-12-01T23:00:00Z,2008-12-02T00:00:00Z,2008-12-02T01:00:00Z,2008-12-02T02:00:00Z,2008-12-02T03:00:00Z,2008-12-02T04:00:00Z,2008-12-02T05:00:00Z,2008-12-02T06:00:00Z,2008-12-02T07:00:00Z,2008-12-02T08:00:00Z,2008-12-02T09:00:00Z,2008-12-02T10:00:00Z,2008-12-02T11:00:00Z,2008-12-02T12:00:00Z,2008-12-02T13:00:00Z,2008-12-02T14:00:00Z,2008-12-02T15:00:00Z,2008-12-02T16:00:00Z,2008-12-02T17:00:00Z,2008-12-02T18:00:00Z,2008-12-02T19:00:00Z,2008-12-02T20:00:00Z,2008-12-02T21:00:00Z,2008-12-02T22:00:00Z,2008-12-02T23:00:00Z,2008-12-03T00:00:00Z,2008-12-03T01:00:00Z,2008-12-03T02:00:00Z,2008-12-03T03:00:00Z,2008-12-03T04:00:00Z,2008-12-03T05:00:00Z,2008-12-03T06:00:00Z,2008-12-03T07:00:00Z,2008-12-03T08:00:00Z,2008-12-03T09:00:00Z,2008-12-03T10:00:00Z,2008-12-03T11:00:00Z,2008-12-03T12:00:00Z,2008-12-03T13:00:00Z,2008-12-03T14:00:00Z,2008-12-03T15:00:00Z,2008-12-03T16:00:00Z,2008-12-03T17:00:00Z,2008-12-03T18:00:00Z,2008-12-03T19:00:00Z,2008-12-03T20:00:00Z,2008-12-03T21:00:00Z,2008-12-03T22:00:00Z,2008-12-03T23:00:00Z,2008-12-04T00:00:00Z,2008-12-04T01:00:00Z,2008-12-04T02:00:00Z,2008-12-04T03:00:00Z,2008-12-04T04:00:00Z,2008-12-04T05:00:00Z,2008-12-04T06:00:00Z,2008-12-04T07:00:00Z,2008-12-04T08:00:00Z,2008-12-04T09:00:00Z,2008-12-04T10:00:00Z,2008-12-04T11:00:00Z,2008-12-04T12:00:00Z,2008-12-04T13:00:00Z,2008-12-04T14:00:00Z,2008-12-04T15:00:00Z,2008-12-04T16:00:00Z,2008-12-04T17:00:00Z,2008-12-04T18:00:00Z,2008-12-04T19:00:00Z,2008-12-04T20:00:00Z,2008-12-04T21:00:00Z,2008-12-04T22:00:00Z,2008-12-04T23:00:00Z,2008-12-05T00:00:00Z,2008-12-05T01:00:00Z,2008-12-05T02:00:00Z,2008-12-05T03:00:00Z,2008-12-05T04:00:00Z,2008-12-05T05:00:00Z,2008-12-05T06:00:00Z,2008-12-05T07:00:00Z,2008-12-05T08:00:00Z,2008-12-05T09:00:00Z,2008-12-05T10:00:00Z,2008-12-05T11:00:00Z,2008-12-05T12:00:00Z,2008-12-05T13:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -5776,18 +5818,15 @@
 						"maxx": 69.6555417577,
 						"maxy": 73.5753748776
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-11-28T13:00:00Z,2008-11-28T14:00:00Z,2008-11-28T15:00:00Z,2008-11-28T16:00:00Z,2008-11-28T17:00:00Z,2008-11-28T18:00:00Z,2008-11-28T19:00:00Z,2008-11-28T20:00:00Z,2008-11-28T21:00:00Z,2008-11-28T22:00:00Z,2008-11-28T23:00:00Z,2008-11-29T00:00:00Z,2008-11-29T01:00:00Z,2008-11-29T02:00:00Z,2008-11-29T03:00:00Z,2008-11-29T04:00:00Z,2008-11-29T05:00:00Z,2008-11-29T06:00:00Z,2008-11-29T07:00:00Z,2008-11-29T08:00:00Z,2008-11-29T09:00:00Z,2008-11-29T10:00:00Z,2008-11-29T11:00:00Z,2008-11-29T12:00:00Z,2008-11-29T13:00:00Z,2008-11-29T14:00:00Z,2008-11-29T15:00:00Z,2008-11-29T16:00:00Z,2008-11-29T17:00:00Z,2008-11-29T18:00:00Z,2008-11-29T19:00:00Z,2008-11-29T20:00:00Z,2008-11-29T21:00:00Z,2008-11-29T22:00:00Z,2008-11-29T23:00:00Z,2008-11-30T00:00:00Z,2008-11-30T01:00:00Z,2008-11-30T02:00:00Z,2008-11-30T03:00:00Z,2008-11-30T04:00:00Z,2008-11-30T05:00:00Z,2008-11-30T06:00:00Z,2008-11-30T07:00:00Z,2008-11-30T08:00:00Z,2008-11-30T09:00:00Z,2008-11-30T10:00:00Z,2008-11-30T11:00:00Z,2008-11-30T12:00:00Z,2008-11-30T13:00:00Z,2008-11-30T14:00:00Z,2008-11-30T15:00:00Z,2008-11-30T16:00:00Z,2008-11-30T17:00:00Z,2008-11-30T18:00:00Z,2008-11-30T19:00:00Z,2008-11-30T20:00:00Z,2008-11-30T21:00:00Z,2008-11-30T22:00:00Z,2008-11-30T23:00:00Z,2008-12-01T00:00:00Z,2008-12-01T01:00:00Z,2008-12-01T02:00:00Z,2008-12-01T03:00:00Z,2008-12-01T04:00:00Z,2008-12-01T05:00:00Z,2008-12-01T06:00:00Z,2008-12-01T07:00:00Z,2008-12-01T08:00:00Z,2008-12-01T09:00:00Z,2008-12-01T10:00:00Z,2008-12-01T11:00:00Z,2008-12-01T12:00:00Z,2008-12-01T13:00:00Z,2008-12-01T14:00:00Z,2008-12-01T15:00:00Z,2008-12-01T16:00:00Z,2008-12-01T17:00:00Z,2008-12-01T18:00:00Z,2008-12-01T19:00:00Z,2008-12-01T20:00:00Z,2008-12-01T21:00:00Z,2008-12-01T22:00:00Z,2008-12-01T23:00:00Z,2008-12-02T00:00:00Z,2008-12-02T01:00:00Z,2008-12-02T02:00:00Z,2008-12-02T03:00:00Z,2008-12-02T04:00:00Z,2008-12-02T05:00:00Z,2008-12-02T06:00:00Z,2008-12-02T07:00:00Z,2008-12-02T08:00:00Z,2008-12-02T09:00:00Z,2008-12-02T10:00:00Z,2008-12-02T11:00:00Z,2008-12-02T12:00:00Z,2008-12-02T13:00:00Z,2008-12-02T14:00:00Z,2008-12-02T15:00:00Z,2008-12-02T16:00:00Z,2008-12-02T17:00:00Z,2008-12-02T18:00:00Z,2008-12-02T19:00:00Z,2008-12-02T20:00:00Z,2008-12-02T21:00:00Z,2008-12-02T22:00:00Z,2008-12-02T23:00:00Z,2008-12-03T00:00:00Z,2008-12-03T01:00:00Z,2008-12-03T02:00:00Z,2008-12-03T03:00:00Z,2008-12-03T04:00:00Z,2008-12-03T05:00:00Z,2008-12-03T06:00:00Z,2008-12-03T07:00:00Z,2008-12-03T08:00:00Z,2008-12-03T09:00:00Z,2008-12-03T10:00:00Z,2008-12-03T11:00:00Z,2008-12-03T12:00:00Z,2008-12-03T13:00:00Z,2008-12-03T14:00:00Z,2008-12-03T15:00:00Z,2008-12-03T16:00:00Z,2008-12-03T17:00:00Z,2008-12-03T18:00:00Z,2008-12-03T19:00:00Z,2008-12-03T20:00:00Z,2008-12-03T21:00:00Z,2008-12-03T22:00:00Z,2008-12-03T23:00:00Z,2008-12-04T00:00:00Z,2008-12-04T01:00:00Z,2008-12-04T02:00:00Z,2008-12-04T03:00:00Z,2008-12-04T04:00:00Z,2008-12-04T05:00:00Z,2008-12-04T06:00:00Z,2008-12-04T07:00:00Z,2008-12-04T08:00:00Z,2008-12-04T09:00:00Z,2008-12-04T10:00:00Z,2008-12-04T11:00:00Z,2008-12-04T12:00:00Z,2008-12-04T13:00:00Z,2008-12-04T14:00:00Z,2008-12-04T15:00:00Z,2008-12-04T16:00:00Z,2008-12-04T17:00:00Z,2008-12-04T18:00:00Z,2008-12-04T19:00:00Z,2008-12-04T20:00:00Z,2008-12-04T21:00:00Z,2008-12-04T22:00:00Z,2008-12-04T23:00:00Z,2008-12-05T00:00:00Z,2008-12-05T01:00:00Z,2008-12-05T02:00:00Z,2008-12-05T03:00:00Z,2008-12-05T04:00:00Z,2008-12-05T05:00:00Z,2008-12-05T06:00:00Z,2008-12-05T07:00:00Z,2008-12-05T08:00:00Z,2008-12-05T09:00:00Z,2008-12-05T10:00:00Z,2008-12-05T11:00:00Z,2008-12-05T12:00:00Z,2008-12-05T13:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -5881,18 +5920,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -5986,18 +6022,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6091,18 +6124,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6196,18 +6226,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6301,18 +6328,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6406,18 +6430,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6511,18 +6532,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6616,18 +6634,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6721,18 +6736,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6826,18 +6838,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -6931,18 +6940,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7036,18 +7042,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7141,18 +7144,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7246,18 +7246,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7351,18 +7348,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7456,18 +7450,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7561,18 +7552,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7666,18 +7654,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7771,18 +7756,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7876,18 +7858,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -7981,18 +7960,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -8086,18 +8062,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -8191,18 +8164,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -8296,18 +8266,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -8401,18 +8368,15 @@
 						"maxx": 33,
 						"maxy": 70
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "1900-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT10M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -8837,17 +8801,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -8856,9 +8819,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9013,17 +8974,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -9032,9 +8992,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9171,17 +9129,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -9190,9 +9147,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9293,17 +9248,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -9312,9 +9266,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9415,17 +9367,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -9434,9 +9385,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9537,17 +9486,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -9556,9 +9504,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9659,17 +9605,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -9678,9 +9623,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9781,17 +9724,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -9800,9 +9742,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -9903,29 +9843,25 @@
 						"maxx": 34,
 						"maxy": 74
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
-				"Dimension":
-				[
+						"current": 1}
+				
+					,
 					{
 						"name": "interval_start",
 						"units": "minute",
 						"value": "5",
 						"default": "5",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
+						"nearestValue": 0}
+				
 					,
 					{
 						"name": "interval_end",
@@ -9933,9 +9869,7 @@
 						"value": "0",
 						"default": "0",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
-					
+						"nearestValue": 0}
 				],
 				"Style":
 				[
@@ -10029,17 +9963,16 @@
 						"maxx": 31.9,
 						"maxy": 70.1
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2026-03-31T18:00:00Z/2026-03-31T18:45:00Z/PT15M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -10048,9 +9981,7 @@
 						"default": "2026-03-31T17:58:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -10152,18 +10083,15 @@
 						"maxx": 63.2346333934,
 						"maxy": 75.5867086753
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2026-08-26T14:00:00Z,2026-08-26T14:15:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -10265,18 +10193,15 @@
 						"maxx": 137.456627037,
 						"maxy": 81.5
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2026-08-26T14:15:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -10378,18 +10303,15 @@
 						"maxx": 56.9508878748,
 						"maxy": 72.1763236276
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2023-09-29T15:30:00Z/2023-09-29T16:30:00Z/PT15M",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				]
 
 			},
@@ -10471,18 +10393,15 @@
 						"maxx": 76.9328334224,
 						"maxy": 77.5731828406
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2026-08-26T14:15:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -10584,18 +10503,15 @@
 						"maxx": 63.2346333934,
 						"maxy": 75.5867086753
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2026-08-26T14:15:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -10697,17 +10613,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -10716,9 +10631,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -10819,17 +10732,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -10838,9 +10750,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -11095,17 +11005,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -11114,9 +11023,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -11217,17 +11124,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -11236,9 +11142,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -11339,17 +11243,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -11358,9 +11261,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -11462,17 +11363,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-09-09T00:00:00Z,2008-09-09T03:00:00Z,2008-09-09T06:00:00Z,2008-09-09T09:00:00Z,2008-09-09T12:00:00Z,2008-09-09T15:00:00Z,2008-09-09T18:00:00Z,2008-09-09T21:00:00Z,2008-09-10T00:00:00Z,2008-09-10T03:00:00Z,2008-09-10T06:00:00Z,2008-09-10T09:00:00Z,2008-09-10T12:00:00Z,2008-09-10T15:00:00Z,2008-09-10T18:00:00Z,2008-09-10T21:00:00Z,2008-09-11T00:00:00Z,2008-09-11T03:00:00Z,2008-09-11T06:00:00Z,2008-09-11T09:00:00Z,2008-09-11T12:00:00Z,2008-09-11T15:00:00Z,2008-09-11T18:00:00Z,2008-09-11T21:00:00Z,2008-09-12T00:00:00Z,2008-09-12T03:00:00Z,2008-09-12T06:00:00Z,2008-09-12T09:00:00Z,2008-09-12T12:00:00Z,2008-09-12T15:00:00Z,2008-09-12T18:00:00Z,2008-09-12T21:00:00Z,2008-09-13T00:00:00Z,2008-09-13T03:00:00Z,2008-09-13T06:00:00Z,2008-09-13T09:00:00Z,2008-09-13T12:00:00Z,2008-09-13T15:00:00Z,2008-09-13T18:00:00Z,2008-09-13T21:00:00Z,2008-09-14T00:00:00Z,2008-09-14T06:00:00Z,2008-09-14T12:00:00Z,2008-09-14T18:00:00Z,2008-09-15T00:00:00Z,2008-09-15T06:00:00Z,2008-09-15T12:00:00Z,2008-09-15T18:00:00Z,2008-09-16T00:00:00Z,2008-09-16T06:00:00Z,2008-09-16T12:00:00Z,2008-09-16T18:00:00Z,2008-09-17T00:00:00Z,2008-09-17T06:00:00Z,2008-09-17T12:00:00Z,2008-09-17T18:00:00Z,2008-09-18T00:00:00Z,2008-09-18T06:00:00Z,2008-09-18T12:00:00Z,2008-09-18T18:00:00Z,2008-09-19T00:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -11481,10 +11381,15 @@
 						"default": "2008-09-09T00:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
+						"current": 1}
+				
+					,
+					{
+						"name": "elevation",
+						"units": "hPa",
+						"value": "1000,925,850,700,500,300",
+						"multipleValues": 0,
+						"nearestValue": 0}],
 				"Style":
 				[
 					{
@@ -11585,18 +11490,15 @@
 						"maxx": 22.4499560953,
 						"maxy": 62.9455216043
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				]
 
 			},
@@ -11683,17 +11585,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -11702,9 +11603,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -11865,17 +11764,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -11884,9 +11782,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -11993,17 +11889,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -12012,9 +11907,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -12139,17 +12032,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -12158,9 +12050,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -12285,17 +12175,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -12304,9 +12193,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -12425,17 +12312,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -12444,9 +12330,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -12565,17 +12449,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -12584,9 +12467,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -12705,17 +12586,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -12724,9 +12604,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -12845,17 +12723,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -12864,20 +12741,17 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
-				],
-				"Dimension":
-				[
+						"current": 1}
+				
+					,
 					{
 						"name": "interval_start",
 						"units": "minute",
 						"value": "15,60",
 						"default": "15",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
+						"nearestValue": 0}
+				
 					,
 					{
 						"name": "interval_end",
@@ -12885,9 +12759,7 @@
 						"value": "0",
 						"default": "0",
 						"multipleValues": 0,
-						"nearestValue": 0					
-					}
-					
+						"nearestValue": 0}
 				],
 				"Style":
 				[
@@ -12988,17 +12860,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13007,9 +12878,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -13110,17 +12979,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13129,9 +12997,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -13232,17 +13098,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13251,9 +13116,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -13354,17 +13217,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13373,9 +13235,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -13477,17 +13337,16 @@
 						"maxx": 180,
 						"maxy": 90
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2015-03-13T12:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13496,9 +13355,7 @@
 						"default": "2015-03-13T00:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -13600,17 +13457,16 @@
 						"maxx": 49,
 						"maxy": 72.6420874231
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2016-04-14T00:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13619,9 +13475,7 @@
 						"default": "2016-04-13T06:23:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -13723,17 +13577,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13742,9 +13595,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[
@@ -13846,17 +13697,16 @@
 						"maxx": 49,
 						"maxy": 72.6420840803
 					}
-				],
-				"Dimension":
-				[
+				],"Dimension":[
+					
 					{
 						"name": "time",
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
+						"current": 1}
+				
 					,
 					{
 						"name": "reference_time",
@@ -13865,9 +13715,7 @@
 						"default": "2008-08-05T06:31:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
-						"current": 1
-					}
-					
+						"current": 1}
 				],
 				"Style":
 				[

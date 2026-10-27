@@ -1590,6 +1590,43 @@ bool Config::isValidElevation(const std::string& theLayer, int theElevation) con
   }
 }
 
+void Config::applyMember(const std::string& theLayer,
+                         const std::optional<std::string>& theMember,
+                         Json::Value& theJson) const
+{
+  try
+  {
+    if (!isValidLayerImpl(theLayer))
+      return;
+
+    auto my_layers = itsLayers.load();
+    SharedLayer layer = my_layers->at(theLayer).getLayer();
+
+    auto member = layer->getDefaultMember();
+    if (!member)
+      return;  // no member dimension
+
+    if (theMember && !theMember->empty())
+    {
+      auto requested = Fmi::stoi_opt(*theMember);
+      if (!requested || !layer->isValidMember(*requested))
+        throw Fmi::Exception(BCP, "Invalid member requested!")
+            .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+            .addParameter("Requested member", *theMember)
+            .addParameter("Requested layer", theLayer)
+            .disableLogging();
+      member = requested;
+    }
+
+    theJson["forecastType"] = OGC::PerturbedForecastType;
+    theJson["forecastNumber"] = *member;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Applying ensemble member failed!");
+  }
+}
+
 bool Config::isValidReferenceTime(const std::string& theLayer,
                                      const Fmi::DateTime& theReferenceTime) const
 {

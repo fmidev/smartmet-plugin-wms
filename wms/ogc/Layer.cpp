@@ -1717,6 +1717,18 @@ bool Layer::isValidStyle(const std::string& theStyle) const
   }
 }
 
+std::optional<int> Layer::getDefaultMember() const
+{
+  if (memberDimension)
+    return memberDimension->getDefaultMember();
+  return {};
+}
+
+bool Layer::isValidMember(int theMember) const
+{
+  return memberDimension && memberDimension->isValidMember(theMember);
+}
+
 bool Layer::isValidElevation(int theElevation) const
 {
   try
@@ -1954,6 +1966,21 @@ CTPP::CDT interval_dimension_cdt(const IntervalDimension& intervalDimension)
   interval_dimension_list.PushBack(interval_dimension_start);
   interval_dimension_list.PushBack(interval_dimension_end);
   return interval_dimension_list;
+}
+
+// The ensemble member dimension of a layer in capabilities
+CTPP::CDT member_dimension_cdt(const MemberDimension& memberDimension)
+{
+  CTPP::CDT member_dimension_list(CTPP::CDT::ARRAY_VAL);
+  CTPP::CDT member_dimension(CTPP::CDT::HASH_VAL);
+  member_dimension["name"] = "member";
+  member_dimension["units"] = "";
+  member_dimension["multiple_values"] = 0;
+  member_dimension["nearest_value"] = 0;
+  member_dimension["default"] = memberDimension.getDefaultMember();
+  member_dimension["value"] = memberDimension.getCapabilities();
+  member_dimension_list.PushBack(member_dimension);
+  return member_dimension_list;
 }
 }  // namespace
 
@@ -2360,6 +2387,24 @@ std::optional<CTPP::CDT> Layer::getReferenceDimensionInfo() const
   }
 }
 
+std::optional<CTPP::CDT> Layer::getMemberDimensionInfo() const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+    if (memberDimension)
+      layer["member_dimension"] = member_dimension_cdt(*memberDimension);
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate member dimension capabilities!");
+  }
+}
+
 std::optional<CTPP::CDT> Layer::getElevationDimensionInfo() const
 {
   try
@@ -2491,6 +2536,9 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
 
       layer["elevation_dimension"] = layer_dimension;
     }
+
+    if (memberDimension)
+      layer["member_dimension"] = member_dimension_cdt(*memberDimension);
 
     // Layer name, title and abstract
     addBaseInfo(layer, language, defaultLanguage);

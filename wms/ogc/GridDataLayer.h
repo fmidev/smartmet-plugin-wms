@@ -26,12 +26,13 @@ class GridDataLayer : public Layer
 {
  public:
   GridDataLayer(const LayerConfig& config,
-                   std::string producer,
-                   std::string parameter,
-                   int forecastType,
-                   uint geometryId,
-                   int levelId,
-                   std::string elevation_unit);
+                std::string producer,
+                std::string parameter,
+                int forecastType,
+                int forecastNumber,
+                uint geometryId,
+                int levelId,
+                std::string elevation_unit);
 
  protected:
   bool updateLayerMetaData() override;
@@ -41,6 +42,7 @@ class GridDataLayer : public Layer
   const std::string itsProducer;
   const std::string itsParameter;
   int itsForecastType = 0;
+  int itsForecastNumber = -1;
   int itsGeometryId = 0;
   int itsLevelId = 0;
   std::string itsElevationUnit;
@@ -51,7 +53,8 @@ class GridDataLayer : public Layer
                        const std::string& producerName,
                        int tmpGeometryId,
                        const std::set<int>& validGeometries,
-                       std::set<std::string>& contentTimeList);
+                       std::set<std::string>& contentTimeList,
+                       std::set<int>& members);
 };
 
 }  // namespace OGC

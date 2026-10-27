@@ -353,36 +353,39 @@ int determine_int(Json::Value& root, const std::string& name)
 {
   try
   {
-    int value = -1;  // allow all levels, types etc, zero would be a requirement
+    // The first layer defining the setting wins, then the view, then the product.
+    // -1 allows all levels, types etc, zero would be a requirement.
+    std::optional<int> product_value;
+    remove_int(product_value, root, name);
 
-    // From product
-    remove_int(value, root, name);
+    std::optional<int> view_value;
 
-    // Iterate views and layers
     Json::Value nulljson;
     auto views = root.get("views", nulljson);
     if (!views.isNull())
     {
-      // Iterate views
       for (auto view : views)
       {
-        remove_int(value, view, name);
+        if (!view_value)
+          remove_int(view_value, view, name);
 
         auto layers = view.get("layers", nulljson);
         if (!layers.isNull())
         {
-          // Iterate layers
           for (auto layer : layers)
           {
-            remove_int(value, layer, name);
-            if (value != 0)
-              return value;
+            std::optional<int> layer_value;
+            remove_int(layer_value, layer, name);
+            if (layer_value)
+              return *layer_value;
           }
         }
       }
     }
 
-    return value;
+    if (view_value)
+      return *view_value;
+    return product_value.value_or(-1);
   }
   catch (...)
   {
@@ -532,8 +535,15 @@ SharedLayer create_wms_layer(const LayerConfig& theConfig, Json::Value& root)
         auto elevation_unit = determine_string(root, "elevation_unit");
         int levelId = determine_int(root, "levelId");
         int forecastType = determine_int(root, "forecastType");
-        layer = std::make_shared<GridDataLayer>(
-            theConfig, producer, parameter, forecastType, geometryId, levelId, elevation_unit);
+        int forecastNumber = determine_int(root, "forecastNumber");
+        layer = std::make_shared<GridDataLayer>(theConfig,
+                                                producer,
+                                                parameter,
+                                                forecastType,
+                                                forecastNumber,
+                                                geometryId,
+                                                levelId,
+                                                elevation_unit);
         break;
       }
       case LayerType::SatelliteLayer:

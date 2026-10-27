@@ -1,0 +1,36 @@
+{
+  "title": "Ensemble temperature",
+  "abstract": "Temperature of the perturbed ensemble members, selected with the member dimension",
+  "source": "grid",
+  "producer": "pal_ensemble",
+  "forecastType": 3,
+  "queryable": 1,
+  "projection": {},
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "Temperature",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css"
+        },
+        {
+          "qid": "l2",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country_lines",
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3"
+          }
+        }
+      ]
+    }
+  ]
+}

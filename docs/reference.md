@@ -5545,6 +5545,7 @@ Optional parameters:
 | `DIM_REFERENCE_TIME` / `ORIGINTIME` | Select the model run (origin time). `DIM_REFERENCE_TIME` is the standard WMS dimension name; `ORIGINTIME` is an equivalent alias. Both are forwarded to Dali as `origintime`. An invalid reference time for a grid producer is rejected. |
 | `DIM_INTERVAL_START` | Extension: start of observation time interval in minutes before `TIME` (integer). |
 | `DIM_INTERVAL_END` | Extension: end of observation time interval in minutes after `TIME` (integer). |
+| `DIM_MEMBER` | Perturbed ensemble member of a grid layer with a `member` dimension (integer). The lowest member is drawn by default. Layers without the dimension ignore the parameter. |
 
 ### GetFeatureInfo
 
@@ -5615,6 +5616,23 @@ A product definition may at the top level include the following settings which d
 | interval_start, interval_end | (int) | -        | An interval dimension for the layer in minutes.                                                    |
 | intervals    | array             | -             | Several interval dimensions, each an interval_start integer or an object with interval_start, interval_end and default. |
 | interval     | (int)             | -             | The interval_start of the default interval in the intervals array. By default the first one is the default. |
+
+### Ensemble member dimension
+
+A grid layer which selects perturbed ensemble members (`"forecastType": 3`, or the 6th field
+of the parameter name) without fixing the member (`forecastNumber`, or the 7th field of the
+parameter name) gets a `member` dimension listing the perturbed members available in the grid
+content:
+
+```xml
+<Dimension name="member" units="" default="1" multipleValues="0" nearestValue="0">1,2,3,4,5</Dimension>
+```
+
+The member is selected with `DIM_MEMBER` in WMS GetMap and GetFeatureInfo, with a `Member`
+path segment or the `member` query parameter in WMTS, and with the `member` query parameter
+in OGC API Tiles, whose collection extent lists the members under `member`. The lowest member
+is used by default. The control member is not part of the dimension: a layer for it is
+configured with `"forecastType": 4` as before.
 
 The GetCapabilities list of available times occasionally needs to be limited. For example, one might have weather observations for more than one hunder years, and one would not want to generate a full many or time slider for all available times. Typically the observation engine provides metadata for observation producers which are more useful for example for time series requests than WMS requests.
 

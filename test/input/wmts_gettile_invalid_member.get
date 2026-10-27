@@ -1,0 +1,1 @@
+GET /wmts/1.0.0/grid:ensemble_temperature/default/20080805T0600/20080805T0500/3/EPSG:4326/5/4/36.png HTTP/1.0

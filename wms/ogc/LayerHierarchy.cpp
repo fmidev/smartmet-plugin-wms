@@ -835,6 +835,14 @@ void add_layer_info(bool multiple_intervals,
   if (lh.elevationDimension)
     emit_elev(capa, lh, inh);
 
+  // ---- ensemble member dimension (declared by each leaf, never shared) ----
+  if (lh.sublayers.empty() && lh.baseInfoLayer)
+  {
+    auto info = lh.baseInfoLayer->getLayer()->getMemberDimensionInfo();
+    if (info)
+      capa.MergeCDT(*info);
+  }
+
   // ---- projected bbox ----
   if (lh.projectedBoundingBox)
   {

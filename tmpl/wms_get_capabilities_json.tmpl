@@ -313,17 +313,17 @@
 				]
 				<-/TMPL_if->
 
-				<-TMPL_if defined(layer.time_dimension)>,
-				"Dimension":
-				[
-					<-TMPL_foreach layer.time_dimension as dimension>
-					<-TMPL_if dimension.__first__><TMPL_else>,</TMPL_if>
+				<-TMPL_comment> All dimensions in one array, a JSON object cannot repeat a key </TMPL_comment>
+				<-TMPL_if defined(layer.time_dimension)>,"Dimension":[<TMPL_else><TMPL_if defined(layer.interval_dimension)>,"Dimension":[<TMPL_else><TMPL_if defined(layer.elevation_dimension)>,"Dimension":[<TMPL_else><TMPL_if defined(layer.member_dimension)>,"Dimension":[</TMPL_if></TMPL_if></TMPL_if></TMPL_if>
+				<-TMPL_if defined(layer.time_dimension)>
+				<-TMPL_foreach layer.time_dimension as dimension>
+					<TMPL_if dimension.__first__><TMPL_else>,</TMPL_if>
 					{
 						"name": "<TMPL_var JSONESCAPE(dimension.name)>",
 						"units": "<TMPL_var JSONESCAPE(dimension.units)>",
 						"value": "<TMPL_var JSONESCAPE(dimension.value)>"
 
-						<-TMPL_if defined(dimension.unit_symbol)	>,
+						<-TMPL_if defined(dimension.unit_symbol)>,
 						"unitSymbol": "<TMPL_var JSONESCAPE(dimension.unit_symbol)>"
 						<-/TMPL_if->
 
@@ -335,47 +335,105 @@
 						"multipleValues": <TMPL_var dimension.multiple_values>
 						<-/TMPL_if->
 
-						<-TMPL_if defined(dimension.nearest_value) >,
+						<-TMPL_if defined(dimension.nearest_value)>,
 						"nearestValue": <TMPL_var dimension.nearest_value>
 						<-/TMPL_if->
 
 						<-TMPL_if defined(dimension.current)>,
 						"current": <TMPL_var JSONESCAPE(dimension.current)>
-						<-/TMPL_if>
+						<-/TMPL_if->
 					}
-					</TMPL_foreach>
-				]
+				</TMPL_foreach>
 				<-/TMPL_if->
-
-				<-TMPL_if defined(layer.interval_dimension)>,
-				"Dimension":
-				[
-					<-TMPL_foreach layer.interval_dimension as dimension>
-					<-TMPL_if dimension.__first__><TMPL_else>,</TMPL_if>
+				<-TMPL_if defined(layer.interval_dimension)>
+				<-TMPL_foreach layer.interval_dimension as dimension>
+					<TMPL_if dimension.__first__><TMPL_if defined(layer.time_dimension)>,<TMPL_else></TMPL_if><TMPL_else>,</TMPL_if>
 					{
 						"name": "<TMPL_var JSONESCAPE(dimension.name)>",
 						"units": "<TMPL_var JSONESCAPE(dimension.units)>",
 						"value": "<TMPL_var JSONESCAPE(dimension.value)>"
 
-						<-TMPL_if defined(dimension.unit_symbol)	>,
+						<-TMPL_if defined(dimension.unit_symbol)>,
 						"unitSymbol": "<TMPL_var JSONESCAPE(dimension.unit_symbol)>"
 						<-/TMPL_if->
 
 						<-TMPL_if defined(dimension.default)>,
 						"default": "<TMPL_var JSONESCAPE(dimension.default)>"
 						<-/TMPL_if->
-						
+
 						<-TMPL_if defined(dimension.multiple_values)>,
 						"multipleValues": <TMPL_var dimension.multiple_values>
 						<-/TMPL_if->
-						
-						<-TMPL_if defined(dimension.nearest_value) >,
+
+						<-TMPL_if defined(dimension.nearest_value)>,
 						"nearestValue": <TMPL_var dimension.nearest_value>
-						<-/TMPL_if>					
+						<-/TMPL_if->
+
+						<-TMPL_if defined(dimension.current)>,
+						"current": <TMPL_var JSONESCAPE(dimension.current)>
+						<-/TMPL_if->
 					}
-					</TMPL_foreach>
-				]
+				</TMPL_foreach>
 				<-/TMPL_if->
+				<-TMPL_if defined(layer.elevation_dimension)>
+					<TMPL_if defined(layer.time_dimension)>,<TMPL_else><TMPL_if defined(layer.interval_dimension)>,<TMPL_else></TMPL_if></TMPL_if>
+					{
+						"name": "<TMPL_var JSONESCAPE(layer.elevation_dimension.name)>",
+						"units": "<TMPL_var JSONESCAPE(layer.elevation_dimension.units)>",
+						"value": "<TMPL_var JSONESCAPE(layer.elevation_dimension.value)>"
+
+						<-TMPL_if defined(layer.elevation_dimension.unit_symbol)>,
+						"unitSymbol": "<TMPL_var JSONESCAPE(layer.elevation_dimension.unit_symbol)>"
+						<-/TMPL_if->
+
+						<-TMPL_if defined(layer.elevation_dimension.default)>,
+						"default": "<TMPL_var JSONESCAPE(layer.elevation_dimension.default)>"
+						<-/TMPL_if->
+
+						<-TMPL_if defined(layer.elevation_dimension.multiple_values)>,
+						"multipleValues": <TMPL_var layer.elevation_dimension.multiple_values>
+						<-/TMPL_if->
+
+						<-TMPL_if defined(layer.elevation_dimension.nearest_value)>,
+						"nearestValue": <TMPL_var layer.elevation_dimension.nearest_value>
+						<-/TMPL_if->
+
+						<-TMPL_if defined(layer.elevation_dimension.current)>,
+						"current": <TMPL_var JSONESCAPE(layer.elevation_dimension.current)>
+						<-/TMPL_if->
+					}
+				<-/TMPL_if->
+				<-TMPL_if defined(layer.member_dimension)>
+				<-TMPL_foreach layer.member_dimension as dimension>
+					<TMPL_if dimension.__first__><TMPL_if defined(layer.time_dimension)>,<TMPL_else><TMPL_if defined(layer.interval_dimension)>,<TMPL_else><TMPL_if defined(layer.elevation_dimension)>,<TMPL_else></TMPL_if></TMPL_if></TMPL_if><TMPL_else>,</TMPL_if>
+					{
+						"name": "<TMPL_var JSONESCAPE(dimension.name)>",
+						"units": "<TMPL_var JSONESCAPE(dimension.units)>",
+						"value": "<TMPL_var JSONESCAPE(dimension.value)>"
+
+						<-TMPL_if defined(dimension.unit_symbol)>,
+						"unitSymbol": "<TMPL_var JSONESCAPE(dimension.unit_symbol)>"
+						<-/TMPL_if->
+
+						<-TMPL_if defined(dimension.default)>,
+						"default": "<TMPL_var JSONESCAPE(dimension.default)>"
+						<-/TMPL_if->
+
+						<-TMPL_if defined(dimension.multiple_values)>,
+						"multipleValues": <TMPL_var dimension.multiple_values>
+						<-/TMPL_if->
+
+						<-TMPL_if defined(dimension.nearest_value)>,
+						"nearestValue": <TMPL_var dimension.nearest_value>
+						<-/TMPL_if->
+
+						<-TMPL_if defined(dimension.current)>,
+						"current": <TMPL_var JSONESCAPE(dimension.current)>
+						<-/TMPL_if->
+					}
+				</TMPL_foreach>
+				<-/TMPL_if->
+				<-TMPL_if defined(layer.time_dimension)>]<TMPL_else><TMPL_if defined(layer.interval_dimension)>]<TMPL_else><TMPL_if defined(layer.elevation_dimension)>]<TMPL_else><TMPL_if defined(layer.member_dimension)>]</TMPL_if></TMPL_if></TMPL_if></TMPL_if>
 
 				<-TMPL_if defined(layer.attribution)>,
 				"Attribution":

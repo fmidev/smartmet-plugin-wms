@@ -279,6 +279,30 @@ void add_vertical_extent(Json::Value& doc, CTPP::CDT& e)
     doc["extent"]["vertical"]["vrs"] = vrs;
 }
 
+// Ensemble member extent of a member dimension entry
+void add_member_extent(Json::Value& doc, CTPP::CDT& e)
+{
+  if (!e.Exists("value"))
+    return;
+  auto vals = split_csv(e.At("value").GetString());
+  if (vals.empty())
+    return;
+  Json::Value values(Json::arrayValue);
+  for (const auto& v : vals)
+    values.append(Fmi::stoi(v));
+  Json::Value pair(Json::arrayValue);
+  pair.append(values[0]);
+  pair.append(values[values.size() - 1]);
+  Json::Value interval(Json::arrayValue);
+  interval.append(pair);
+  auto& member = doc["extent"]["member"];
+  member["interval"] = interval;
+  member["values"] = values;
+  // GRIB2 product definition template 4.1: individual ensemble forecast
+  member["definition"] = "http://codes.wmo.int/grib2/codeflag/4.0/1";
+  member["variableType"] = "numericalNominal";
+}
+
 // Apply the function to each element of an array, or to a hash
 void for_each_entry(CTPP::CDT& node, const std::function<void(CTPP::CDT&)>& fun)
 {
@@ -324,6 +348,10 @@ void addCollectionExtent(Json::Value& doc, CTPP::CDT& wl)
   if (wl.Exists("elevation_dimension"))
     for_each_entry(wl.At("elevation_dimension"),
                    [&](CTPP::CDT& e) { add_vertical_extent(doc, e); });
+
+  // Perturbed ensemble members (Uniform Additional Dimensions)
+  if (wl.Exists("member_dimension"))
+    for_each_entry(wl.At("member_dimension"), [&](CTPP::CDT& e) { add_member_extent(doc, e); });
 }
 
 }  // namespace
@@ -1632,6 +1660,16 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     }
     useStyle(json, style);
 
+    try
+    {
+      wmsConfig.applyMember(collId, theRequest.getParameter("member"), json);
+    }
+    catch (...)
+    {
+      sendError(400, "Bad Request", "Invalid member", theResponse);
+      return QueryStatus::OK;
+    }
+
     if (!json.isMember("xmargin"))
       json["xmargin"] = wmsConfig.getMargin();
     if (!json.isMember("ymargin"))
@@ -1817,6 +1855,9 @@ QueryStatus Handler::handleGetFeatureInfo(const Spine::Reactor& theReactor,
     auto reftime_param = theRequest.getParameter("reference_time");
     if (reftime_param && !reftime_param->empty())
       thisRequest.addParameter("origintime", *reftime_param);
+    auto member_param = theRequest.getParameter("member");
+    if (member_param)
+      thisRequest.addParameter("dim_member", *member_param);
 
     return itsWMSHandler->query(theReactor, theState, thisRequest, theResponse);
   }

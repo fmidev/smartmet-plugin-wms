@@ -326,6 +326,13 @@ void add_parameters(OA::Document& doc,
                              "Vertical level, see the vertical extent of the collection",
                              stringSchema()));
   doc.addComponent("parameters",
+                   "member",
+                   fmi_extension(parameter("member",
+                                           "query",
+                                           "Perturbed ensemble member, see the member extent "
+                                           "of the collection. The lowest member by default.",
+                                           stringSchema())));
+  doc.addComponent("parameters",
                    "reference_time",
                    parameter("reference_time",
                              "query",
@@ -438,6 +445,7 @@ void add_collection_operations(OA::Document& doc,
   dimensions.append(OA::ref("parameters", "TIME"));
   dimensions.append(elevationParameter);
   dimensions.append(OA::ref("parameters", "reference_time"));
+  dimensions.append(OA::ref("parameters", "member"));
   dimensions.append(styleParameter);
 
   auto tile_params = tms;
