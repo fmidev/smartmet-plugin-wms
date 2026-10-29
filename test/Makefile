@@ -2,7 +2,7 @@ PROG = PluginTest
 
 REQUIRES = gdal jsoncpp configpp ctpp2 fmt librsvg libpqxx
 
-include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
+include $(or $(PREFIX),$(shell smartbuildcfg --prefix))/share/smartmet/devel/makefile.inc
 
 CFLAGS = -DUNIX -O0 -g $(FLAGS) -Wno-unknown-pragmas
 

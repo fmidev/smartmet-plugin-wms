@@ -4,7 +4,8 @@ INCDIR = smartmet/plugins/$(SUBNAME)
 
 REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2 configpp webp
 
-include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
+include $(or $(PREFIX),$(shell smartbuildcfg --prefix))/share/smartmet/devel/makefile.inc
+
 sysconfdir ?= /etc
 
 # Compiler options
