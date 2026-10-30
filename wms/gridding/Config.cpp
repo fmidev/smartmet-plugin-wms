@@ -79,13 +79,35 @@ void lookup_km(const libconfig::Setting& theSetting, const char* theName, double
   }
 }
 
+// Optional nonempty array of kilometres to metres
+void lookup_km_array(const libconfig::Setting& theSetting,
+                     const char* theName,
+                     std::vector<double>& theValues)
+{
+  if (!theSetting.exists(theName))
+    return;
+  const auto& values = theSetting.lookup(theName);
+  if (!values.isArray() || values.getLength() == 0)
+    throw Fmi::Exception(BCP, fmt::format("Setting '{}' must be a nonempty array of km", theName));
+  theValues.clear();
+  for (int i = 0; i < values.getLength(); i++)
+  {
+    const double km = number(values[i]);
+    if (km <= 0)
+      throw Fmi::Exception(BCP, fmt::format("Setting '{}' must contain positive values", theName));
+    theValues.push_back(1000 * km);
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Gridding options of a parameter
  *
- * method "terrain" (the default) uses the height and topographic position regression,
- * suitable for temperatures. Method "barnes" is a damped multi-scale Barnes interpolation
- * without any terrain dependency, suitable for reduced pressure and other smooth fields.
+ * method "terrain" (the default) uses the height and topographic position regression with
+ * optimal interpolation of the residuals, suitable for temperatures. Method "barnes" is a
+ * damped multi-scale Barnes interpolation without any terrain dependency, suitable for reduced
+ * pressure and other smooth fields. Setting "residuals" overrides the residual analysis of
+ * either method.
  */
 // ----------------------------------------------------------------------
 
@@ -99,6 +121,8 @@ Fmi::PointGridding::Options parse_options(const libconfig::Setting& theSetting)
   {
     options.predictors.clear();
     options.bilateralSigmaH.reset();
+    options.oiSigmaH.reset();
+    options.residuals = Fmi::PointGridding::Residuals::Barnes;
   }
   else if (method != "terrain")
     throw Fmi::Exception(BCP, "Unknown gridding method '" + method + "'")
@@ -124,16 +148,30 @@ Fmi::PointGridding::Options parse_options(const libconfig::Setting& theSetting)
     else
       options.bilateralSigmaH.reset();
   }
-
-  if (theSetting.exists("residual_sigmas"))
+  if (lookup_number(theSetting, "oi_sigma_h", sigma_h))
   {
-    const auto& sigmas = theSetting.lookup("residual_sigmas");
-    if (!sigmas.isArray() || sigmas.getLength() == 0)
-      throw Fmi::Exception(BCP, "Setting 'residual_sigmas' must be a nonempty array of km");
-    options.residualSigmas.clear();
-    for (int i = 0; i < sigmas.getLength(); i++)
-      options.residualSigmas.push_back(1000 * number(sigmas[i]));
+    if (sigma_h > 0)
+      options.oiSigmaH = sigma_h;
+    else
+      options.oiSigmaH.reset();
   }
+
+  std::string residuals;
+  if (theSetting.lookupValue("residuals", residuals))
+  {
+    if (residuals == "oi")
+      options.residuals = Fmi::PointGridding::Residuals::OI;
+    else if (residuals == "barnes")
+      options.residuals = Fmi::PointGridding::Residuals::Barnes;
+    else
+      throw Fmi::Exception(BCP, "Unknown residual analysis '" + residuals + "'")
+          .addDetail("Known residual analyses are 'oi' and 'barnes'");
+  }
+  lookup_km_array(theSetting, "residual_sigmas", options.residualSigmas);
+  lookup_km_array(theSetting, "oi_scales", options.oiScales);
+  if (lookup_number(theSetting, "oi_error_ratio", options.oiErrorRatio) &&
+      options.oiErrorRatio <= 0)
+    throw Fmi::Exception(BCP, "Setting 'oi_error_ratio' must be positive");
   return options;
 }
 

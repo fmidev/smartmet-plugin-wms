@@ -98,7 +98,9 @@ gridding:
 				{ name = "Pressure"; source = "PSEA"; method = "barnes";
 				  residual_sigmas = [80.0]; qc_threshold = 8.0; },
 				{ name = "Humidity"; source = "RH_PT1H_AVG"; prior_lapse_rate = 0;
-				  qc_threshold = 15; lolimit = 0; hilimit = 100; }
+				  qc_threshold = 15; lolimit = 0; hilimit = 100; },
+				{ name = "WindSpeedMS"; source = "WS_PT10M_AVG"; prior_lapse_rate = 0;
+				  qc_threshold = 5; lolimit = 0; oi_sigma_h = 300; oi_error_ratio = 0.7; }
 			);
 		};
 	};
@@ -109,18 +111,41 @@ Parameter options:
 
 | Setting | Default | Meaning |
 |---------|---------|---------|
-| `method` | `terrain` | `terrain`: height and TPI regression with height-aware residuals, for temperatures. `barnes`: damped Barnes without terrain, for reduced pressure and other smooth fields. |
+| `method` | `terrain` | `terrain`: height and TPI regression with height-aware optimal interpolation of the residuals, for temperatures. `barnes`: damped Barnes without terrain, for reduced pressure and other smooth fields. |
+| `residuals` | per method | `oi` (the `terrain` method) or `barnes` (the `barnes` method): overrides the residual analysis, see below |
+| `oi_scales` | [120, 50] | km, `oi` only: the covariance of the residuals is the mean of Gaussians of these scales |
+| `oi_sigma_h` | 500 | m, `oi` only: height scale of the covariance, 0 for horizontal only (the `barnes` method sets 0) |
+| `oi_error_ratio` | 0.5 | `oi` only: observation error variance relative to the residual variance; larger values smooth more |
 | `qc` | true | Gross error check |
 | `qc_threshold` | 6 | Minimum rejection threshold in the units of the parameter |
 | `lolimit`, `hilimit` | none | Physical range of the values, see below |
 | `prior_lapse_rate` | −6.5 | Prior of the height coefficient of the `terrain` method in units per km, meant for temperatures; 0 for other parameters |
-| `residual_sigmas` | [60, 25] | km, the residual Barnes passes |
-| `damping` | 0.25 | Station equivalents in the Barnes denominator |
+| `residual_sigmas` | [60, 25] | km, `barnes` only: the residual passes |
+| `damping` | 0.25 | `barnes` only: station equivalents in the denominator |
 | `local_sigma`, `regional_sigma` | 150, 600 | km, the regression scales |
-| `bilateral_sigma_h` | 300 | m, height scale of the residuals, 0 for horizontal only |
+| `bilateral_sigma_h` | 300 | m, `barnes` only: height scale of the residual passes, 0 for horizontal only |
 | `background` | none | A forecast or other gridded field which the observations correct, see below |
 
 Numbers may be written as integers or decimals.
+
+### Residual analysis
+
+The station residuals from the terrain trend are interpolated with optimal interpolation
+(simple kriging with a fixed covariance) by default. Unlike Barnes passes it weights clustered
+stations by their redundancy, and far from the stations the correction relaxes to the trend.
+In cross-validation of 85 European cases it was better than the earlier two Barnes passes in
+81–84 cases per quantity, at about the same cost:
+
+| Quantity | Barnes passes | Optimal interpolation |
+|----------|---------------|-----------------------|
+| Temperature | 1.602 K | 1.572 K |
+| Relative humidity | 8.735 % | 8.599 % |
+| Wind speed | 1.743 m/s | 1.699 m/s (`oi_sigma_h = 300; oi_error_ratio = 0.7;`) |
+
+The gain is small compared with what the terrain trend itself gives over simpler methods
+(2.44 K for plain Barnes, 1.98 K for a fixed lapse rate). `residuals = "barnes"` restores the
+earlier Barnes passes, which use `residual_sigmas`, `damping` and `bilateral_sigma_h`. The
+`barnes` method keeps the Barnes passes.
 
 ### Limited values
 

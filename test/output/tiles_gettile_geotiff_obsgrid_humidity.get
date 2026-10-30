@@ -38,5 +38,5 @@ Upper Right (  45.0000000,  67.5000000) ( 45d 0' 0.00"E, 67d30' 0.00"N)
 Lower Right (  45.0000000,  45.0000000) ( 45d 0' 0.00"E, 45d 0' 0.00"N)
 Center      (  33.7500000,  56.2500000) ( 33d45' 0.00"E, 56d15' 0.00"N)
 Band 1 Block=1024x2 Type=Float32, ColorInterp=Gray
-  Minimum=54.773, Maximum=99.997, Mean=89.851, StdDev=7.458
+  Minimum=58.984, Maximum=99.496, Mean=89.839, StdDev=6.971
   NoData Value=-16777216

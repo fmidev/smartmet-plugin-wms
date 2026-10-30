@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.10.27
+Version: 26.10.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -49,7 +49,7 @@ BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-engine-osm-devel >= 26.10.23
 BuildRequires: smartmet-engine-contour-devel >= 26.10.16
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
-BuildRequires: smartmet-library-gis-devel >= 26.10.26
+BuildRequires: smartmet-library-gis-devel >= 26.10.30
 BuildRequires: smartmet-library-trax-devel >= 26.10.16
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -83,7 +83,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
 Requires: smartmet-library-grid-content >= 26.10.20
 Requires: smartmet-library-grid-files >= 26.10.20
-Requires: smartmet-library-gis >= 26.10.26
+Requires: smartmet-library-gis >= 26.10.30
 Requires: smartmet-library-trax >= 26.10.17
 Requires: smartmet-library-macgyver >= 26.10.17
 Requires: smartmet-library-spine >= 26.10.17-1
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 30 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.30-1.fmi
+- Gridded observations: the terrain method interpolates the residuals with optimal interpolation (gis 26.10.30), slightly more accurate than the Barnes passes at about the same cost; new parameter settings residuals ("oi" or "barnes"), oi_scales, oi_sigma_h and oi_error_ratio. The barnes method keeps the Barnes passes
+- Gridding settings residual_sigmas and oi_scales must be positive
+
 * Tue Oct 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.27-1.fmi
 - Ensemble member dimension: grid layers of perturbed members (forecastType 3) without a fixed forecastNumber list their members as the WMS dimension "member", selected with DIM_MEMBER, the WMTS Member path segment or the member parameter of WMTS and OGC API Tiles
 - JSON GetCapabilities lists all dimensions in a single Dimension array, the time dimension was lost behind a duplicate key and the elevation dimension was missing
