@@ -1334,9 +1334,11 @@ GET /dali?customer=test&product=obsgrid_temperature&time=200812050600 HTTP/1.0
 | `product` | `obsgrid_temperature` | Product JSON: [`test/dali/customers/test/products/obsgrid_temperature.json`](../../test/dali/customers/test/products/obsgrid_temperature.json) |
 
 Isobands and isolines of the SYNOP temperatures of 2008-12-05 06 UTC. The default method fits a
-local height and terrain position regression and spreads the residuals with height-aware Barnes
-passes, so the Alps, the Scandinavian mountains and the other ranges come out colder than the
-valleys and the sea, although no station lies on most of the summits. The image is 1024x901
+local regression on the height, the terrain position and the fraction of sea (the producer has a
+`sea_fraction` raster), and spreads the residuals with height-aware optimal interpolation, so the
+Alps, the Scandinavian mountains and the other ranges come out colder than the valleys and the
+sea, although no station lies on most of the summits. Over the open sea the trend keeps the sea
+effect seen at the coastal stations instead of extrapolating it. The image is 1024x901
 pixels so that the individual stations can be told apart. The same product as PNG is tested by
 `obsgrid_temperature_png`.
 
@@ -1387,9 +1389,9 @@ GET /dali?customer=test&product=obsgrid_humidity&time=200812050600 HTTP/1.0
 The `Humidity` parameter of `synop_europe` is gridded with the terrain method with
 `prior_lapse_rate = 0`, `lolimit = 0` and `hilimit = 100` (see
 [Limited values](../gridding.md#limited-values)). The isobands have a red class above 100 % and
-below 0 %, and none is drawn. Without the limits the same field reaches 104 % in the tile of
+below 0 %, and none is drawn. Without the limits the same field reaches 101.3 % in the tile of
 `tiles_gettile_geotiff_obsgrid_humidity`, which delivers the values as GeoTIFF; with them its
-maximum is 99.997 %. Most of central and eastern Europe is saturated (95...100 %) on this
+maximum is 100 %. Most of central and eastern Europe is saturated (95...100 %) on this
 December morning.
 
 **Output:**
@@ -1412,9 +1414,9 @@ GET /dali?customer=test&product=obsgrid_windspeed&time=200812050600 HTTP/1.0
 
 `WindSpeedMS`, read from the combined wind parameter of the SYNOP querydata, gridded with the
 terrain method, `prior_lapse_rate = 0` and `lolimit = 0`. A second isoband layer draws negative
-values in red. Without the limit the height trend goes negative in calm areas such as Iceland,
-the Balkans and the eastern edge of the grid; with it there are none, and the rest of the field
-is the same.
+values in red. Without the limit the trend goes negative at the calm eastern edge of the grid
+and in a few spots in the Balkans; with it there are none, and the rest of the field is the
+same.
 
 | Without `lolimit` | With `lolimit = 0` (the test) |
 |-------------------|-------------------------------|

@@ -501,7 +501,7 @@ GET /tiles/collections/test:obsgrid_t2m/tiles/EPSG:4326/3/1/9?f=tiff&TIME=200812
 ```
 
 The same tile as raw values: a single Float32 band of the gridded temperatures, here between
-−8.4 and 14.7 °C.
+−7.3 and 16.5 °C.
 
 **Output:** [`test/output/tiles_gettile_geotiff_obsgrid.get`](../../test/output/tiles_gettile_geotiff_obsgrid.get) — `gdalinfo -stats` of the GeoTIFF
 
@@ -514,8 +514,8 @@ GET /tiles/collections/test:obsgrid_humidity/tiles/EPSG:4326/3/1/9?f=tiff&TIME=2
 ```
 
 The same tile of the gridded relative humidity, which is limited to 0...100 % (see
-[Limited values](../gridding.md#limited-values)): the values are between 54.8 and
-99.997 %. Without the limits the maximum would be 104.2 %.
+[Limited values](../gridding.md#limited-values)): the values are between 62.0 and
+100 %. Without the limits the maximum would be 101.3 %.
 
 **Output:** [`test/output/tiles_gettile_geotiff_obsgrid_humidity.get`](../../test/output/tiles_gettile_geotiff_obsgrid_humidity.get) — `gdalinfo -stats` of the GeoTIFF
 
