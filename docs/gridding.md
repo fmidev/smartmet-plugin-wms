@@ -232,10 +232,12 @@ when the plugin starts; the terrain smoothing takes about 0.1 s for the grid abo
 The optional `sea_fraction` raster gives the fraction of sea, 0–1, in any coordinate system and
 resolution. It is averaged onto the grid of the terrain when the plugin starts, smoothed with a
 Gaussian of `sea_sigma` (10 km), and the parameters of the `terrain` method use it as an
-additional trend predictor, fitted locally like the TPI. Cells the raster does not cover are
-taken to be land. In cross-validation over 85 European cases it reduced the RMSE by 1.1 % for
-temperature, 1.4 % for humidity and 3.2 % for wind speed, and by 5–10 % at coastal stations
-(see the gis documentation of `PointGridding`). Lakes are not sea: their fraction made the
+additional trend predictor, fitted locally like the TPI. The fraction used is limited to its
+range at the nearby stations, so that the sea effect seen at coastal stations is not
+extrapolated to the open sea. Cells the raster does not cover are taken to be land. In
+cross-validation over 85 European cases it reduced the RMSE by 1.3 % for temperature, 1.5 % for
+humidity and 3.1 % for wind speed, and by 5–9 % at coastal stations (see the gis documentation
+of `PointGridding`). Lakes are not sea: their fraction made the
 analysis worse.
 
 For example from the GlobCover water classes (240–242 sea, 210 lakes, 0 no data), mapping the
