@@ -5,12 +5,14 @@
 // ======================================================================
 
 #include "Area.h"
+#include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <algorithm>
 #include <cmath>
 #include <gdal_priv.h>
+#include <gdal_utils.h>
 #include <limits>
 
 namespace SmartMet
@@ -27,6 +29,92 @@ struct DatasetCloser
 {
   void operator()(GDALDataset* ds) const { GDALClose(ds); }
 };
+
+using Dataset = std::unique_ptr<GDALDataset, DatasetCloser>;
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Average a raster of sea fractions onto the grid
+ *
+ * Cells not covered by the raster are taken to be land.
+ */
+// ----------------------------------------------------------------------
+
+Fmi::PointGridding::Field read_sea_fraction(const std::string& theFile,
+                                            const Fmi::PointGridding::Grid& theGrid,
+                                            const std::string& theWkt)
+{
+  Dataset src(static_cast<GDALDataset*>(GDALOpen(theFile.c_str(), GA_ReadOnly)));
+  if (!src)
+    throw Fmi::Exception(BCP, "Failed to open the sea fraction raster");
+
+  const double x1 = theGrid.x0 + theGrid.dx * static_cast<double>(theGrid.nx);
+  const double y1 = theGrid.y0 + theGrid.dx * static_cast<double>(theGrid.ny);
+  std::vector<std::string> args{"-of",
+                                "MEM",
+                                "-t_srs",
+                                theWkt,
+                                "-te",
+                                fmt::format("{:.17g}", theGrid.x0),
+                                fmt::format("{:.17g}", theGrid.y0),
+                                fmt::format("{:.17g}", x1),
+                                fmt::format("{:.17g}", y1),
+                                "-ts",
+                                std::to_string(theGrid.nx),
+                                std::to_string(theGrid.ny),
+                                "-r",
+                                "average",
+                                "-ot",
+                                "Float64",
+                                "-dstnodata",
+                                "nan"};
+  std::vector<char*> argv;
+  for (auto& arg : args)
+    argv.push_back(arg.data());
+  argv.push_back(nullptr);
+
+  std::unique_ptr<GDALWarpAppOptions, decltype(&GDALWarpAppOptionsFree)> options(
+      GDALWarpAppOptionsNew(argv.data(), nullptr), &GDALWarpAppOptionsFree);
+  if (!options)
+    throw Fmi::Exception(BCP, "Failed to set up the sea fraction warp");
+
+  GDALDatasetH source = src.get();
+  int error = 0;
+  Dataset dst(static_cast<GDALDataset*>(GDALWarp("", nullptr, 1, &source, options.get(), &error)));
+  if (!dst || error != 0)
+    throw Fmi::Exception(BCP, "Failed to warp the sea fraction raster onto the grid");
+
+  const auto nx = theGrid.nx;
+  const auto ny = theGrid.ny;
+  std::vector<double> rows(nx * ny);
+  if (dst->GetRasterBand(1)->RasterIO(GF_Read,
+                                      0,
+                                      0,
+                                      static_cast<int>(nx),
+                                      static_cast<int>(ny),
+                                      rows.data(),
+                                      static_cast<int>(nx),
+                                      static_cast<int>(ny),
+                                      GDT_Float64,
+                                      0,
+                                      0) != CE_None)
+    throw Fmi::Exception(BCP, "Failed to read the warped sea fraction");
+
+  Fmi::PointGridding::Field field(theGrid, 0.0);
+  for (std::size_t j = 0; j < ny; j++)
+    for (std::size_t i = 0; i < nx; i++)
+    {
+      const double f = rows[(ny - 1 - j) * nx + i];
+      if (std::isnan(f))
+        continue;  // not covered: land
+      if (f < -1e-6 || f > 1 + 1e-6)
+        throw Fmi::Exception(BCP, "Sea fractions must be in the range 0-1")
+            .addParameter("Value", fmt::format("{}", f));
+      field(i, j) = std::clamp(f, 0.0, 1.0);
+    }
+  return field;
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -35,13 +123,15 @@ struct DatasetCloser
  */
 // ----------------------------------------------------------------------
 
-Area::Area(const std::string& theDemFile, double theTpiSigma)
+Area::Area(const std::string& theDemFile,
+           double theTpiSigma,
+           const std::string& theSeaFractionFile,
+           double theSeaSigma)
 {
   try
   {
     GDALAllRegister();
-    std::unique_ptr<GDALDataset, DatasetCloser> ds(
-        static_cast<GDALDataset*>(GDALOpen(theDemFile.c_str(), GA_ReadOnly)));
+    Dataset ds(static_cast<GDALDataset*>(GDALOpen(theDemFile.c_str(), GA_ReadOnly)));
     if (!ds)
       throw Fmi::Exception(BCP, "Failed to open the terrain raster");
 
@@ -99,6 +189,19 @@ Area::Area(const std::string& theDemFile, double theTpiSigma)
     itsTerrain =
         std::make_unique<Fmi::PointGridding::Terrain>(grid, std::move(heights), theTpiSigma);
 
+    if (!theSeaFractionFile.empty())
+    {
+      try
+      {
+        itsTerrain->addCovariate(read_sea_fraction(theSeaFractionFile, grid, itsWkt), theSeaSigma);
+      }
+      catch (...)
+      {
+        throw Fmi::Exception::Trace(BCP, "Failed to read the sea fraction")
+            .addParameter("Sea fraction", theSeaFractionFile);
+      }
+    }
+
     // WGS84 bounding box from points along the edges
     const int samples = 50;
     std::vector<double> x;
@@ -132,6 +235,11 @@ Area::Area(const std::string& theDemFile, double theTpiSigma)
 
     itsHash = Fmi::hash_value(theDemFile);
     Fmi::hash_combine(itsHash, Fmi::hash_value(theTpiSigma));
+    if (!theSeaFractionFile.empty())
+    {
+      Fmi::hash_combine(itsHash, Fmi::hash_value(theSeaFractionFile));
+      Fmi::hash_combine(itsHash, Fmi::hash_value(theSeaSigma));
+    }
   }
   catch (...)
   {

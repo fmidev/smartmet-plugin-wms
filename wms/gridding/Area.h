@@ -27,8 +27,12 @@ class Area
 {
  public:
   // Read the terrain from a north-up raster with square cells. The raster defines the grid
-  // and its coordinate system.
-  Area(const std::string& theDemFile, double theTpiSigma);
+  // and its coordinate system. The optional sea fraction raster becomes the first terrain
+  // covariate, averaged onto the grid and smoothed with theSeaSigma.
+  Area(const std::string& theDemFile,
+       double theTpiSigma,
+       const std::string& theSeaFractionFile = "",
+       double theSeaSigma = 10e3);
 
   const Fmi::PointGridding::Terrain& terrain() const { return *itsTerrain; }
   const Fmi::PointGridding::Grid& grid() const { return itsTerrain->grid(); }

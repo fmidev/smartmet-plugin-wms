@@ -75,6 +75,8 @@ gridding:
 			producer = "opendata";           # station type, or the point querydata producer
 			dem      = "/smartmet/share/gridding/europe_3035_2500.tif";
 			tpi_sigma = 10.0;                # km, terrain smoothing for the TPI predictor
+			sea_fraction = "/smartmet/share/gridding/europe_3035_2500_sea.tif";
+			sea_sigma = 10.0;                # km, smoothing of the sea fraction
 
 			# Observation times offered in capabilities: every timestep minutes, up to now
 			# minus delay, history minutes back. Any observation time can be requested.
@@ -124,6 +126,7 @@ Parameter options:
 | `damping` | 0.25 | `barnes` only: station equivalents in the denominator |
 | `local_sigma`, `regional_sigma` | 150, 600 | km, the regression scales |
 | `bilateral_sigma_h` | 300 | m, `barnes` only: height scale of the residual passes, 0 for horizontal only |
+| `use_sea_fraction` | per method | Use the sea fraction of the producer as a trend predictor: true for `terrain`, false for `barnes` |
 | `background` | none | A forecast or other gridded field which the observations correct, see below |
 
 Numbers may be written as integers or decimals.
@@ -223,6 +226,31 @@ gdalwarp -t_srs EPSG:3035 -te 2000000 1200000 7000000 5600000 -tr 2500 2500 \
 
 Averaging gives the cell mean heights, which is what a grid cell represents. The raster is read
 when the plugin starts; the terrain smoothing takes about 0.1 s for the grid above.
+
+### Sea fraction
+
+The optional `sea_fraction` raster gives the fraction of sea, 0–1, in any coordinate system and
+resolution. It is averaged onto the grid of the terrain when the plugin starts, smoothed with a
+Gaussian of `sea_sigma` (10 km), and the parameters of the `terrain` method use it as an
+additional trend predictor, fitted locally like the TPI. Cells the raster does not cover are
+taken to be land. In cross-validation over 85 European cases it reduced the RMSE by 1.1 % for
+temperature, 1.4 % for humidity and 3.2 % for wind speed, and by 5–10 % at coastal stations
+(see the gis documentation of `PointGridding`). Lakes are not sea: their fraction made the
+analysis worse.
+
+For example from the GlobCover water classes (240–242 sea, 210 lakes, 0 no data), mapping the
+sea classes to 1 with a lookup table and averaging onto the grid of the terrain:
+
+```
+gdal_translate -of VRT globcover_water.tif sea.vrt
+sed -i 's|<SimpleSource>|<ComplexSource><LUT>0:0,239:0,240:1,242:1,243:0</LUT>|;
+        s|</SimpleSource>|</ComplexSource>|; s|<NoDataValue>0</NoDataValue>||' sea.vrt
+gdalwarp -t_srs EPSG:3035 -te 2000000 1200000 7000000 5600000 -tr 2500 2500 \
+    -r average -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=3 sea.vrt europe_3035_2500_sea.tif
+```
+
+A raster already on the grid of the terrain is the fastest to read; a global 300 m raster
+works too but takes longer at startup.
 
 ## 4. Sources of observations
 

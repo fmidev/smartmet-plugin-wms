@@ -245,7 +245,7 @@ Gridder::Gridder(const libconfig::Setting& theSetting,
     for (const auto& item : itsConfig.producers())
     {
       const auto& p = item.second;
-      itsAreas[p.name] = std::make_unique<Area>(p.dem, p.tpiSigma);
+      itsAreas[p.name] = std::make_unique<Area>(p.dem, p.tpiSigma, p.seaFraction, p.seaSigma);
       if ((p.source == SourceType::Observations || !p.elevationStationType.empty()) &&
           itsObsEngine == nullptr)
         throw Fmi::Exception(BCP, "Gridded producer needs the observation engine")

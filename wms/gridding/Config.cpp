@@ -307,6 +307,8 @@ void Config::parseProducer(const libconfig::Setting& theSetting)
       throw Fmi::Exception(BCP, "Setting 'dem' is required");
 
     lookup_km(theSetting, "tpi_sigma", producer.tpiSigma);
+    theSetting.lookupValue("sea_fraction", producer.seaFraction);
+    lookup_km(theSetting, "sea_sigma", producer.seaSigma);
     theSetting.lookupValue("station_elevations", producer.stationElevations);
     theSetting.lookupValue("elevation_stationtype", producer.elevationStationType);
 
@@ -336,6 +338,12 @@ void Config::parseProducer(const libconfig::Setting& theSetting)
       param.source = param.name;
       setting.lookupValue("source", param.source);
       param.options = parse_options(setting);
+
+      // The sea fraction is used by default with the terrain method only
+      bool use_sea_fraction = !param.options.predictors.empty();
+      setting.lookupValue("use_sea_fraction", use_sea_fraction);
+      if (use_sea_fraction && !producer.seaFraction.empty())
+        param.options.covariates = {kSeaFraction};
       if (setting.exists("background"))
         param.background = parse_background(setting.lookup("background"), param.name, param.options);
       producer.parameters.push_back(param);

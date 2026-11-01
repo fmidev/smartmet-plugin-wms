@@ -33,6 +33,9 @@ struct BackgroundConfig
   FmiParameterName orography = kFmiBadParameter;
 };
 
+// The index of the sea fraction among the terrain covariates of an area
+constexpr std::size_t kSeaFraction = 0;
+
 // One gridded parameter of a producer
 struct ParameterConfig
 {
@@ -60,6 +63,12 @@ struct ProducerConfig
   // and its coordinate system, which should be equal-area.
   std::string dem;
   double tpiSigma = 10e3;  // m
+
+  // Optional raster of the fraction of sea (0-1) in any coordinate system and resolution. It
+  // is averaged onto the grid, smoothed with a Gaussian of seaSigma and used as an additional
+  // trend predictor: the terrain covariate kSeaFraction of the area.
+  std::string seaFraction;
+  double seaSigma = 10e3;  // m
 
   // Optional CSV file of station elevations for point querydata, which has none: lines of
   // "id,elevation" where id is the station number of the querydata. Stations without an
