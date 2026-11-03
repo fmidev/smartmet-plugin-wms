@@ -1,5 +1,7 @@
 #include "AggregationUtility.h"
 #include <timeseries/ParameterTools.h>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {
@@ -152,7 +154,8 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
     // an empty one included. Compacting the vector - skipping empty columns while a
     // separate counter did not advance - shifted every later column and handed the caller
     // a different parameter's data, and the source column was not range checked at all.
-    const auto& result = *observation_result;
+    // The columns are moved from the result, which the caller no longer needs
+    auto& result = *observation_result;
 
     auto ret = std::make_shared<TS::TimeSeriesVector>(parameters.size(), TS::TimeSeries());
 
@@ -166,14 +169,13 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
       if (i >= result.size() || result[i].empty())
         continue;
 
-      auto result_at_index = result[i];
+      auto& result_at_index = (*ret)[i];
+      result_at_index = std::move(result[i]);
 
       // If time location parameter contains missing values in some timesteps,
       // replace them with existing values to keep aggregation working
       if (is_location_parameter(parameter.name()))
         fill_missing_location_params(result_at_index);
-
-      (*ret)[i] = result_at_index;
     }
 
     return ret;
@@ -195,9 +197,11 @@ TS::TimeSeriesVectorPtr do_aggregation(
     // reordered the columns whenever a parameter was missing from the index map or its
     // aggregation produced nothing, and with more parameter functions than result columns
     // it produced a longer vector than the caller had allocated. Columns nobody aggregates
-    // pass through unchanged, so the result always has one column per input column.
-    auto aggregated_observation_result = std::make_shared<TS::TimeSeriesVector>(
-        *observation_result);
+    // pass through unchanged, so the result always has one column per input column. They
+    // are moved from the input, which the caller no longer needs.
+    auto aggregated_observation_result =
+        std::make_shared<TS::TimeSeriesVector>(observation_result->size(), TS::TimeSeries());
+    std::vector<bool> aggregated(observation_result->size(), false);
 
     // iterate parameters and do aggregation
     for (const auto& item : paramFuncs)
@@ -219,14 +223,19 @@ TS::TimeSeriesVectorPtr do_aggregation(
       if (!pfunc.innerFunction.exists())
         continue;
 
-      TS::TimeSeries ts = (*observation_result)[resultIndex];
+      const TS::TimeSeries& ts = (*observation_result)[resultIndex];
       auto tsptr = TS::Aggregator::aggregate(ts, pfunc, ts.getTimes());
 
       // An aggregation that produced nothing must not leave the raw values in place, or
       // they would be reported as if they had been aggregated
-      (*aggregated_observation_result)[resultIndex] =
-          (tsptr->empty() ? TS::TimeSeries() : *tsptr);
+      (*aggregated_observation_result)[resultIndex] = std::move(*tsptr);
+      aggregated[resultIndex] = true;
     }
+
+    for (std::size_t i = 0; i < aggregated.size(); i++)
+      if (!aggregated[i])
+        (*aggregated_observation_result)[i] = std::move((*observation_result)[i]);
+
     return aggregated_observation_result;
   }
   catch (...)
