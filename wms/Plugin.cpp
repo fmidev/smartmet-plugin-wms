@@ -137,6 +137,44 @@ bool is_database_key(const std::string &theName)
   return database_keys.find(key) != database_keys.end();
 }
 
+// Recursively test whether a parsed JSON value contains any database-selection key
+// as an object member name, at any depth.
+bool json_has_database_key(const Json::Value &json)
+{
+  if (json.isArray())
+  {
+    for (const auto &item : json)
+      if (json_has_database_key(item))
+        return true;
+  }
+  else if (json.isObject())
+  {
+    for (const auto &name : json.getMemberNames())
+    {
+      if (database_keys.find(Fmi::ascii_tolower_copy(name)) != database_keys.end())
+        return true;
+      if (json_has_database_key(json[name]))
+        return true;
+    }
+  }
+  return false;
+}
+
+// A query-string value that parses as a JSON object or array can replace a whole
+// product member and so smuggle database-selection keys (where/schema/table/...)
+// past the name-only is_database_key() check. Reject such values; the product
+// files, not the query string, define database selection.
+bool value_smuggles_database_key(const std::string &value)
+{
+  if (!boost::algorithm::starts_with(value, "{") && !boost::algorithm::starts_with(value, "["))
+    return false;
+  Json::Value json;
+  Json::Reader reader;
+  if (!reader.parse(value, json, false))
+    return false;
+  return json_has_database_key(json);
+}
+
 void check_remaining_dali_json(Json::Value &json, const std::string &name)
 {
   std::vector<std::string> deletions{"abstract", "refs", "styles"};
@@ -288,7 +326,8 @@ Spine::HTTP::ParamMap Dali::Plugin::extractValidParameters(const Spine::HTTP::Pa
   {
     const auto &name = name_value.first;
     bool has_dot = (name.find('.') != std::string::npos);
-    if ((has_dot || allowed_keys.find(name) != allowed_keys.end()) && !is_database_key(name))
+    if ((has_dot || allowed_keys.find(name) != allowed_keys.end()) && !is_database_key(name) &&
+        !value_smuggles_database_key(name_value.second))
       ret.insert(name_value);
   }
 
@@ -1306,14 +1345,24 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
 
     for (const auto &name_value : params)
     {
-      const auto &value = name_value.second;
+      // The traversal check must inspect the value that replaceReferences will
+      // actually use. A value written as a JSON string ("json:../..") is decoded by
+      // parse_substitutions before the include is resolved, so a raw-prefix-only
+      // check was bypassable; decode a quoted value first.
+      std::string value = name_value.second;
+      if (boost::algorithm::starts_with(value, "\""))
+      {
+        Json::Value decoded;
+        Json::Reader reader;
+        if (reader.parse(value, decoded, false) && decoded.isString())
+          value = decoded.asString();
+      }
       if (boost::algorithm::starts_with(value, "json:") ||
           boost::algorithm::starts_with(value, "ref:"))
       {
         if (value.find("..") != std::string::npos)
           throw Fmi::Exception(BCP, "Relative upward paths are not allowed in includes")
-              .addParameter("Parameter", name_value.first)
-              .addParameter("Value", value);
+              .addParameter("Parameter", name_value.first);
       }
     }
 

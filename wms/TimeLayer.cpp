@@ -79,6 +79,7 @@ void format_timestamp(std::ostream& msg,
     try
     {
       auto timeinfo = to_tm(loctime->local_time());
+      JsonTools::check_format_pattern(fmt);
       msg << fmt::format(fmt::runtime(fmt), timeinfo);
     }
     catch (...)

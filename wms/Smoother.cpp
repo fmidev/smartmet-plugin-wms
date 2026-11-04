@@ -49,9 +49,19 @@ void Smoother::init(Json::Value& theJson, const Config& /* theConfig */)
         has_method = true;
       }
       else if (name == "radius")
+      {
+        // Bound radius: run time/memory grow with it (median is O(radius^2) per
+        // cell per pass). (DoS hardening.)
         trax.radius = boost::numeric_cast<int>(json.asInt());
+        if (trax.radius < 0 || trax.radius > 50)
+          throw Fmi::Exception(BCP, "smoother radius must be between 0 and 50");
+      }
       else if (name == "passes")
+      {
         trax.passes = boost::numeric_cast<int>(json.asInt());
+        if (trax.passes < 0 || trax.passes > 10)
+          throw Fmi::Exception(BCP, "smoother passes must be between 0 and 10");
+      }
       else if (name == "boundary")
         trax.boundary = Trax::to_smooth_boundary(json.asString());
       else if (name == "morphology")

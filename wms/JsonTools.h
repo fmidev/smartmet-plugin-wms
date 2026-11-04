@@ -18,6 +18,10 @@ namespace JsonTools
 {
 Json::Value remove(Json::Value& theJson, const std::string& theName);
 
+// Reject a user-supplied fmt pattern whose width/precision would allocate huge
+// output (e.g. "{:>2000000000}"); throws Fmi::Exception. (DoS hardening.)
+void check_format_pattern(const std::string& thePattern);
+
 // Variants are applied in two phases, like query string options:
 //
 // apply_variant_references: before include expansion, substitute the

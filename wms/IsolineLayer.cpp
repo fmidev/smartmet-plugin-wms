@@ -1,6 +1,7 @@
 //======================================================================
 
 #include "IsolineLayer.h"
+#include <cmath>
 #include "Config.h"
 #include "DataTile.h"
 #include "Geometry.h"
@@ -59,6 +60,7 @@ void generate_isolines(std::vector<Isoline>& isolines,
                        const std::vector<double>& except_vector)
 {
   // endvalue >= startvalue and interval>0 has already been checked
+  JsonTools::check_format_pattern(pattern);
   for (auto i = 0UL;; ++i)
   {
     double isovalue = startvalue + i * interval;
@@ -80,6 +82,7 @@ void generate_isolines(std::vector<Isoline>& isolines,
 // Make sure all isolines have a qid if an autoqid has been defines
 void apply_autoqid(std::vector<Isoline>& isolines, const std::string& pattern)
 {
+  JsonTools::check_format_pattern(pattern);
   for (auto& isoline : isolines)
   {
     if (!pattern.empty() && isoline.qid.empty())
@@ -93,6 +96,7 @@ void apply_autoclass(std::vector<Isoline>& isolines, const std::string& pattern)
 {
   if (pattern.empty())
     return;
+  JsonTools::check_format_pattern(pattern);
 
   for (auto& isoline : isolines)
   {
@@ -144,6 +148,14 @@ void generate_isoline_range(Json::Value& json, std::string& autoqid, std::vector
     throw Fmi::Exception(BCP, "isolines startvalue > endvalue");
   if (*interval <= 0)
     throw Fmi::Exception(BCP, "isolines interval must be positive");
+
+  // Bound the number of iterations, not just the number of emitted isolines: an
+  // 'except' that matches every step makes generate_isolines loop over the whole
+  // range while emitting nothing, pinning a worker thread. (DoS hardening.)
+  if (!std::isfinite(*startvalue) || !std::isfinite(*endvalue) || !std::isfinite(*interval))
+    throw Fmi::Exception(BCP, "isolines startvalue/endvalue/interval must be finite");
+  if ((*endvalue - *startvalue) / *interval > 10000.0)
+    throw Fmi::Exception(BCP, "isolines range has too many steps (max 10000)");
 
   auto json_except = JsonTools::remove(json, "except");
   std::vector<double> except_vector = except_values(json_except);

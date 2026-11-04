@@ -55,6 +55,7 @@ namespace
 
 std::string format_auto(const Isoband& isoband, const std::string& pattern)
 {
+  JsonTools::check_format_pattern(pattern);
   if (isoband.lolimit)
   {
     if (isoband.hilimit)

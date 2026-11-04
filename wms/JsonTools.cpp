@@ -1,4 +1,5 @@
 #include "JsonTools.h"
+#include <cctype>
 #include "CaseInsensitiveComparator.h"
 #include "Time.h"
 #include <json/json.h>
@@ -23,6 +24,33 @@ Json::Value remove(Json::Value& theJson, const std::string& theName)
   Json::Value value;
   static_cast<void>(theJson.removeMember(theName, &value));
   return value;
+}
+
+void check_format_pattern(const std::string& thePattern)
+{
+  // A fmt width/precision is a plain integer in the pattern. Any value this large
+  // would make one formatted token allocate hundreds of megabytes, so reject it.
+  const long max_field = 1000;
+  std::size_t i = 0;
+  while (i < thePattern.size())
+  {
+    if (std::isdigit(static_cast<unsigned char>(thePattern[i])) != 0)
+    {
+      std::size_t j = i;
+      long v = 0;
+      while (j < thePattern.size() && std::isdigit(static_cast<unsigned char>(thePattern[j])) != 0)
+      {
+        v = v * 10 + (thePattern[j] - '0');
+        if (v > max_field)
+          throw Fmi::Exception(BCP, "Format pattern width/precision is too large")
+              .addParameter("Pattern", thePattern);
+        ++j;
+      }
+      i = j;
+    }
+    else
+      ++i;
+  }
 }
 
 void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName)
