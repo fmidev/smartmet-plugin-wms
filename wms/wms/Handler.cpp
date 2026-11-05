@@ -1070,7 +1070,8 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
 
     // Attach the standard cache headers regardless of hit/miss.
     theResponse.setHeader("ETag", etag);
-    theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
+    theState.updateExpirationTime(
+        itsWMSConfig->getCapabilitiesExpirationTime(theRequest.getParameter("namespace")));
     theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
 
     // X-Request-ETag is the internal "just give me the hash, no body"

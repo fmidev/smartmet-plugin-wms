@@ -168,6 +168,10 @@ class Handler
                                                          Dali::State& theState,
                                                          const Spine::HTTP::Request& theRequest);
 
+  // Expiration and modification times of the metadata responses
+  void setMetadataCacheTimes(const Dali::State& theState,
+                             const std::optional<std::string>& theCollection) const;
+
   // Tile rendering endpoint
   std::optional<QueryStatus> routeCollections(const Spine::Reactor& theReactor,
                                               const std::string& base,

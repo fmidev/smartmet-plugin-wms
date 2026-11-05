@@ -1279,6 +1279,24 @@ void State::updateModificationTime(const Fmi::DateTime& theTime) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Merge the expiration and modification times of another State
+ *
+ * Used when a product is rendered with a separate State, for example one
+ * bound to a request augmented with dimension parameters, while the response
+ * headers are set from the original State.
+ */
+// ----------------------------------------------------------------------
+
+void State::mergeCacheTimes(const State& theOther) const
+{
+  if (const auto& expires = theOther.getExpirationTime())
+    updateExpirationTime(*expires);
+  if (const auto& modified = theOther.getModificationTime())
+    updateModificationTime(*modified);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Return a generated QID for the given prefix
  *
  * We simply count the number of times each prefix has been used and

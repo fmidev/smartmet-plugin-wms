@@ -24,6 +24,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 
 namespace SmartMet
@@ -216,6 +217,8 @@ class Layer
   // by default interval is 5 seconds, but for some layers it could be longer
   unsigned int metaDataUpdateInterval() const { return metadataUpdateInterval; }
   virtual const Fmi::DateTime& modificationTime() const;
+  // Estimated time when the capabilities of the layer change, if the layer can tell
+  virtual std::optional<Fmi::DateTime> capabilitiesExpirationTime() const { return std::nullopt; }
   // Add interval dimension
   void addIntervalDimension(int interval_start, int interval_end, bool interval_default);
 

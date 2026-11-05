@@ -729,6 +729,10 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
     boost::replace_all(output, "__hostname__", protocol + host);
     boost::replace_all(output, "__apikey__", apikey_path);
 
+    // The layers and their time dimensions change with the data, expire like WMS GetCapabilities
+    theState.updateExpirationTime(wmsConfig.getCapabilitiesExpirationTime());
+    theState.updateModificationTime(wmsConfig.getCapabilitiesModificationTime());
+
     theResponse.setHeader("Content-Type", "application/xml; charset=UTF-8");
     theResponse.setContent(std::move(output));
     return QueryStatus::OK;
@@ -979,7 +983,14 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     if (product.type.empty())
       product.type = renderState.getType();
 
-    return generateTile(renderState, thisRequest, theResponse, product);
+    auto status = generateTile(renderState, thisRequest, theResponse, product);
+
+    // The plugin sets the cache headers from the State it passed in, not from
+    // the one bound to the dimension parameters
+    if (dimState)
+      theState.mergeCacheTimes(*dimState);
+
+    return status;
   }
   catch (...)
   {

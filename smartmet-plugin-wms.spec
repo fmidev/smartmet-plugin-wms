@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.11.5
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Nov  5 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.5-3.fmi
+- Capabilities type responses (WMS and WMTS GetCapabilities, OGC API Tiles collection and style metadata) expire when the next data is expected, i.e. newest data + update_interval of the querydata producers they list, ignoring minimum_expires. Overdue producers and non-querydata layers use wms.get_capabilities.expiration_time. Tiles and WMTS metadata used to expire after the default one hour
+- Tiles and WMTS GetTile requests with dimension parameters (datetime etc) no longer lose the expiration and modification times estimated from the data
+
 * Thu Nov  5 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.11.5-1.fmi
 - Memory use optimization (avoid unnecessarily copying TimeSeries objects)
 

@@ -1900,9 +1900,74 @@ const LegendGraphicSettings& Config::getLegendGraphicSettings() const
   return itsLegendGraphicSettings;
 }
 
-Fmi::DateTime Config::getCapabilitiesExpirationTime() const
+// ----------------------------------------------------------------------
+/*!
+ * \brief Expiration time of capabilities listing the layers in the namespace
+ *
+ * The capabilities change when the time dimension of any of the layers
+ * changes, hence the earliest estimate of the layers is used. Layers which
+ * cannot estimate when their capabilities change (non-querydata layers)
+ * expire after the configured wms.get_capabilities.expiration_time.
+ */
+// ----------------------------------------------------------------------
+
+Fmi::DateTime Config::getCapabilitiesExpirationTime(
+    const std::optional<std::string>& wms_namespace) const
 {
-  return (Fmi::SecondClock::universal_time() + Fmi::Seconds(itsCapabilityExpirationTime));
+  try
+  {
+    const auto fallback =
+        Fmi::SecondClock::universal_time() + Fmi::Seconds(itsCapabilityExpirationTime);
+
+    std::optional<Fmi::DateTime> ret;
+
+    auto my_layers = itsLayers.load();
+    for (const auto& name_proxy : *my_layers)
+    {
+      if (wms_namespace && !OGC::match_namespace_pattern(name_proxy.first, *wms_namespace))
+        continue;
+
+      const auto& layer = name_proxy.second.getLayer();
+      std::optional<Fmi::DateTime> estimate;
+      if (layer)
+        estimate = layer->capabilitiesExpirationTime();
+      const auto t = estimate.value_or(fallback);
+      ret = (ret ? std::min(*ret, t) : t);
+    }
+
+    return ret.value_or(fallback);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to estimate capabilities expiration time!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Expiration time of capabilities describing a single layer
+ */
+// ----------------------------------------------------------------------
+
+Fmi::DateTime Config::getLayerCapabilitiesExpirationTime(const std::string& theLayerName) const
+{
+  try
+  {
+    auto my_layers = itsLayers.load();
+    auto it = my_layers->find(theLayerName);
+    if (it != my_layers->end())
+    {
+      const auto& layer = it->second.getLayer();
+      if (layer)
+        if (auto t = layer->capabilitiesExpirationTime())
+          return *t;
+    }
+    return Fmi::SecondClock::universal_time() + Fmi::Seconds(itsCapabilityExpirationTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to estimate layer capabilities expiration time!");
+  }
 }
 
 OGC::LayerConfig Config::layerConfig() const

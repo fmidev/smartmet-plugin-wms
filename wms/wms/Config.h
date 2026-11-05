@@ -192,7 +192,11 @@ class Config
   int getMargin() const { return itsMargin; }
   LayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
   bool multipleIntervals() const { return itsMultipleIntervals; }
-  Fmi::DateTime getCapabilitiesExpirationTime() const;
+  // Expiration time of capabilities listing the layers in the namespace (all if not given)
+  Fmi::DateTime getCapabilitiesExpirationTime(
+      const std::optional<std::string>& wms_namespace = std::nullopt) const;
+  // Expiration time of capabilities describing a single layer
+  Fmi::DateTime getLayerCapabilitiesExpirationTime(const std::string& theLayerName) const;
   Fmi::DateTime getCapabilitiesModificationTime() const { return itsCapabilitiesModificationTime; }
 
 #ifndef WITHOUT_OBSERVATION

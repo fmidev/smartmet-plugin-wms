@@ -243,6 +243,9 @@ class State
   const std::optional<Fmi::DateTime>& getModificationTime() const;
   void updateModificationTime(const Fmi::DateTime& theTime) const;
 
+  // Merge the expiration and modification times of another State
+  void mergeCacheTimes(const State& theOther) const;
+
   // Test if producer is for observations
   bool isObservation(const std::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;

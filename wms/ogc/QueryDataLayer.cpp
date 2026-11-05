@@ -47,6 +47,7 @@ bool QueryDataLayer::updateLayerMetaData()
   try
   {
     auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
+    itsUpdateInterval = queryDataConf.update_interval;
 
     // Lazy radar producer: build the time dimension from the engine's catalogue
     // (header-only) without decoding any frame, so GetCapabilities stays complete
@@ -152,6 +153,33 @@ bool QueryDataLayer::updateLayerMetaData()
 const Fmi::DateTime& QueryDataLayer::modificationTime() const
 {
   return std::max(itsModificationTime, itsProductFileModificationTime);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Estimated time when the capabilities of the layer change
+ *
+ * The time dimension changes when the next data arrives, which is expected
+ * update_interval after the newest data. The minimum_expires setting of the
+ * producer is meant for the data itself and is not used here: an image for a
+ * given time does not change, but the list of available times does.
+ *
+ * Nothing is estimated if the next data is overdue, the capabilities then
+ * expire after the configured wms.get_capabilities.expiration_time. This also
+ * covers producers whose data is not updated at all, such as climatologies.
+ */
+// ----------------------------------------------------------------------
+
+std::optional<Fmi::DateTime> QueryDataLayer::capabilitiesExpirationTime() const
+{
+  if (itsUpdateInterval == 0 || itsModificationTime <= Fmi::date_time::from_time_t(0))
+    return std::nullopt;
+
+  const auto expected = itsModificationTime + Fmi::Seconds(itsUpdateInterval);
+  if (expected <= Fmi::SecondClock::universal_time())
+    return std::nullopt;
+
+  return expected;
 }
 
 }  // namespace OGC

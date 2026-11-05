@@ -462,7 +462,10 @@ QueryStatus Handler::query(const Spine::Reactor& theReactor,
 
     // --- /styles (OGC API - Styles style set list) ---
     if (parts[0] == "styles" && parts.size() == 1)
+    {
+      setMetadataCacheTimes(theState, std::nullopt);
       return handleStyles(base, theState, theRequest, theResponse);
+    }
 
     // --- /collections ---
     if (parts[0] == "collections")
@@ -484,6 +487,24 @@ QueryStatus Handler::query(const Spine::Reactor& theReactor,
 
 // -----------------------------------------------------------------------
 /*!
+ * \brief Set the expiration and modification times of a metadata response
+ *
+ * The response describes a single collection if one is given, otherwise all of them.
+ */
+// -----------------------------------------------------------------------
+void Handler::setMetadataCacheTimes(const Dali::State& theState,
+                                    const std::optional<std::string>& theCollection) const
+{
+  const auto& wmsConfig = itsTilesConfig->wmsConfig();
+  if (theCollection)
+    theState.updateExpirationTime(wmsConfig.getLayerCapabilitiesExpirationTime(*theCollection));
+  else
+    theState.updateExpirationTime(wmsConfig.getCapabilitiesExpirationTime());
+  theState.updateModificationTime(wmsConfig.getCapabilitiesModificationTime());
+}
+
+// -----------------------------------------------------------------------
+/*!
  * \brief Route the /collections requests, returns nothing if the path is not recognized
  */
 // -----------------------------------------------------------------------
@@ -494,6 +515,15 @@ std::optional<QueryStatus> Handler::routeCollections(const Spine::Reactor& theRe
                                                      const Spine::HTTP::Request& theRequest,
                                                      Spine::HTTP::Response& theResponse)
 {
+  // The collection metadata contains the temporal extent of the data, so it
+  // expires when new data is expected like the WMS GetCapabilities response
+  // does. Tiles and feature info (7 or more path segments) estimate their
+  // expiration time from the data they use.
+  if (parts.size() == 1)
+    setMetadataCacheTimes(theState, std::nullopt);
+  else if (parts.size() < 7)
+    setMetadataCacheTimes(theState, parts[1]);
+
   if (parts.size() == 1)
     return handleCollections(base, theState, theRequest, theResponse);
 
@@ -1710,7 +1740,14 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     if (product.type.empty())
       product.type = renderState.getType();
 
-    return generateTile(renderState, thisRequest, theResponse, product);
+    auto status = generateTile(renderState, thisRequest, theResponse, product);
+
+    // The plugin sets the cache headers from the State it passed in, not from
+    // the one bound to the dimension parameters
+    if (dimState)
+      theState.mergeCacheTimes(*dimState);
+
+    return status;
   }
   catch (...)
   {
