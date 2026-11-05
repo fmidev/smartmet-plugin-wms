@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.11.1
+Version: 26.11.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -187,6 +187,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Nov  5 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.11.5-1.fmi
+- Repackage
+
 * Sun Nov  1 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.1-1.fmi
 - Gridded observations: optional sea_fraction raster per producer, averaged onto the grid and smoothed with sea_sigma (10 km), used as an additional trend predictor by the terrain method (gis 26.11.1); use_sea_fraction disables it per parameter. Reduces the cross-validation RMSE by 1.3-3.1 % overall and 5-9 % on the coast
 
