@@ -1,4 +1,5 @@
 #include "RequestType.h"
+#include <boost/algorithm/string.hpp>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 
