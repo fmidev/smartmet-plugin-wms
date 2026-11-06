@@ -1064,7 +1064,10 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
         entry.etag = etag;
         entry.config_version = current_version;
         entry.built_at = now;
-        itsCapabilitiesCache->insert(cache_key, entry);
+        // upsert, not insert: insert keeps an existing (stale) entry, and a
+        // frequently requested key is never evicted, so it would be rendered
+        // again for every request once the entry has gone stale
+        itsCapabilitiesCache->upsert(cache_key, std::move(entry));
       }
     }
 
