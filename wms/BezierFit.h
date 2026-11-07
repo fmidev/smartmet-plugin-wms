@@ -96,7 +96,7 @@ enum class PathElType
 
 struct PathEl
 {
-  PathElType type;
+  PathElType type = PathElType::MoveTo;
   Point p1, p2, p3;  // MoveTo uses p1; CubicTo uses all three
 };
 
