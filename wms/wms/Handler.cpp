@@ -40,6 +40,7 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <memory>
@@ -1588,6 +1589,7 @@ void Handler::wmsPrepareGetLegendGraphicQuery(const Dali::State &theState,
     ysize = *(theRequest.getParameter("projection.ysize"));
     product.height = Fmi::stoi(ysize);
   }
+  Dali::Projection::checkSize(*product.width, *product.height, itsDaliConfig.maxImageSize());
   theRequest.setParameter("projection.xsize", xsize);
   theRequest.setParameter("projection.ysize", ysize);
 }
@@ -1695,14 +1697,30 @@ QueryStatus Handler::handleWmsException(Fmi::Exception &exception,
   if (!Dali::Plugin::isQuiet(theRequest))
     exception.printError();
 
-  std::optional<std::string> width = theRequest.getParameter("WIDTH");
-  std::optional<std::string> height = theRequest.getParameter("HEIGHT");
+  // Draw the error image at the requested size only if the size is sane, otherwise
+  // fall back to an image sized to fit the error text
+  unsigned int imageWidth = 0;
+  unsigned int imageHeight = 0;
+  try
+  {
+    std::optional<std::string> width = theRequest.getParameter("WIDTH");
+    std::optional<std::string> height = theRequest.getParameter("HEIGHT");
+    const int w = Fmi::stoi(width ? *width : "0");
+    const int h = Fmi::stoi(height ? *height : "0");
+    if (w > 0 && h > 0)
+    {
+      Dali::Projection::checkSize(w, h, itsDaliConfig.maxImageSize());
+      imageWidth = w;
+      imageHeight = h;
+    }
+  }
+  catch (...)
+  {
+    // Invalid or too large size, use the text size instead
+  }
 
-  Json::Value json = getExceptionJson(exception.what(),
-                                      mapFormat,
-                                      exceptionFormat,
-                                      Fmi::stoi(width ? *width : "0"),
-                                      Fmi::stoi(height ? *height : "0"));
+  Json::Value json =
+      getExceptionJson(exception.what(), mapFormat, exceptionFormat, imageWidth, imageHeight);
 
   try
   {
@@ -1772,8 +1790,10 @@ Json::Value Handler::getExceptionJson(const std::string &description,
   SmartMet::Plugin::Dali::text_dimension_t textDimension =
       SmartMet::Plugin::Dali::getTextDimension(errorString, textStyle);
 
-  unsigned int pictureWidth = (width > 0 ? width : textDimension.width + 20);
-  unsigned int pictureHeight = (height > 0 ? height : textDimension.height + 10);
+  // A long error message must not produce an arbitrarily wide image
+  const unsigned int max_side = Dali::Projection::max_image_side;
+  unsigned int pictureWidth = std::min(width > 0 ? width : textDimension.width + 20, max_side);
+  unsigned int pictureHeight = std::min(height > 0 ? height : textDimension.height + 10, max_side);
 
   jsonStr = "{";
   jsonStr += "\"title\": \"Error\",\n";

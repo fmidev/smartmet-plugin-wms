@@ -121,6 +121,9 @@ void Product::init(Json::Value& theJson, const State& theState, const Config& th
     if (!height && projection.ysize)
       height = projection.ysize;
 
+    if (width && height)
+      Projection::checkSize(*width, *height, theConfig.maxImageSize());
+
 #if 0
     // WMS layers may not define either directly, since the desired size is given in the query string
     if (!width || !height)

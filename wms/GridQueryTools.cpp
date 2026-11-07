@@ -547,6 +547,8 @@ void update_projection_size(Projection& projection, const QueryServer::Query& qu
 
     if (heightStr != nullptr)
       projection.ysize = Fmi::stoi(heightStr);
+
+    projection.checkSize();
   }
 }
 

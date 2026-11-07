@@ -120,6 +120,14 @@ class Projection
   void setBottomLeft(double x, double y) { itsBottomLeft.Set(x, y); }
   void setTopRight(double x, double y) { itsTopRight.Set(x, y); }
 
+  // Validate the final image size against the per-side and total pixel count limits
+  void checkSize() const;
+  static void checkSize(double width, double height, unsigned int maxPixels);
+
+  // Hard limits for image dimensions
+  static constexpr int max_image_side = 10000;
+  static constexpr double max_size_multiplier = 10;
+
  private:
   void initSize(Json::Value& theJson, const Spine::HTTP::Request& request);
   void initCenter(Json::Value& theJson, const State& theState);
@@ -144,6 +152,9 @@ class Projection
   bool latlon_center = false;
 
   const Engine::Gis::Engine* gisengine = nullptr;  // not owned
+
+  // Maximum number of pixels (width*height), taken from the configuration in init()
+  unsigned int maxImageSize = 20 * 1024 * 1024;
 
 };  // class Projection
 

@@ -339,6 +339,21 @@ Fmi::DateTime parse_time(const std::string& time)
   }
 }
 
+// Maximum number of timesteps a TIME option may expand to (all intervals and lists combined)
+const std::size_t max_time_steps = 1000;
+
+void check_time_step_count(const std::vector<Fmi::DateTime>& timesteps, const std::string& time_str)
+{
+  if (timesteps.size() > max_time_steps)
+  {
+    throw Fmi::Exception(BCP, "Too many timesteps in TIME option!")
+        .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+        .addParameter("Time value", time_str)
+        .addParameter("Maximum timesteps", Fmi::to_string(max_time_steps))
+        .disableLogging();
+  }
+}
+
 void parse_interval_with_resolution(const std::string& time_str,
                                     std::vector<Fmi::DateTime>& timesteps)
 {
@@ -379,6 +394,7 @@ void parse_interval_with_resolution(const std::string& time_str,
       while (startTime <= endTime)
       {
         timesteps.push_back(startTime);
+        check_time_step_count(timesteps, time_str);
         startTime += Fmi::Minutes(total_minutes);
       }
     }
@@ -586,6 +602,7 @@ void GetMap::parseTimes(const Spine::HTTP::Request& theRequest)
         itsParameters.timesteps.push_back(cicomp(timestep, "current")
                                               ? Fmi::SecondClock::universal_time()
                                               : parse_time(timestep));
+      check_time_step_count(itsParameters.timesteps, time_str);
     }
     else if (time_str.find(',') == std::string::npos && time_str.find('/') != std::string::npos)
     {

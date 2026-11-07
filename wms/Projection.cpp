@@ -44,6 +44,11 @@ void Projection::initSize(Json::Value& theJson, const Spine::HTTP::Request& requ
     v = request.getParameter("size");
     if (v)
       size = toDouble(*v);
+
+    if (size && !(*size <= max_size_multiplier))
+      throw Fmi::Exception(BCP, "Projection size multiplier is too large")
+          .addParameter("size", Fmi::to_string(*size))
+          .addParameter("limit", Fmi::to_string(max_size_multiplier));
   }
 
   if (!size || *size <= 0)
@@ -159,10 +164,12 @@ void Projection::parseBBox(const std::string& bbox)
  */
 // ----------------------------------------------------------------------
 
-void Projection::init(Json::Value& theJson, const State& theState, const Config& /* theConfig */)
+void Projection::init(Json::Value& theJson, const State& theState, const Config& theConfig)
 {
   try
   {
+    maxImageSize = theConfig.maxImageSize();
+
     if (theJson.isNull())
       return;
 
@@ -190,8 +197,10 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
     // here a request such as projection.xsize=100000&projection.ysize=100000 would
     // force a multi-gigabyte allocation. Use the same 10000-pixel hard limit per
     // dimension that the plugin enforces for width/height.
-    if ((xsize && (*xsize < 2 || *xsize > 10000)) || (ysize && (*ysize < 2 || *ysize > 10000)))
+    if ((xsize && (*xsize < 2 || *xsize > max_image_side)) ||
+        (ysize && (*ysize < 2 || *ysize > max_image_side)))
       throw Fmi::Exception(BCP, "Projection image size must be between 2x2 and 10000x10000");
+    checkSize();
 
     JsonTools::remove_double(x1, theJson, "x1");
     JsonTools::remove_double(y1, theJson, "y1");
@@ -222,6 +231,34 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Validate an image size against the per-side and total pixel limits
+ *
+ * Doubles are used so that sizes computed from multipliers or aspect
+ * ratios can be checked before they are converted to integers.
+ */
+// ----------------------------------------------------------------------
+
+void Projection::checkSize(double width, double height, unsigned int maxPixels)
+{
+  if (!(width <= max_image_side) || !(height <= max_image_side))
+    throw Fmi::Exception(BCP, "Image size must not exceed 10000x10000")
+        .addParameter("width", Fmi::to_string(width))
+        .addParameter("height", Fmi::to_string(height));
+
+  if (width * height > maxPixels)
+    throw Fmi::Exception(BCP, "Too large image requested")
+        .addParameter("width", Fmi::to_string(width))
+        .addParameter("height", Fmi::to_string(height))
+        .addParameter("limit", Fmi::to_string(maxPixels));
+}
+
+void Projection::checkSize() const
+{
+  checkSize(xsize ? *xsize : 0, ysize ? *ysize : 0, maxImageSize);
 }
 
 // ----------------------------------------------------------------------
@@ -285,8 +322,11 @@ void Projection::update(const Engine::Querydata::Q& theQ)
 
       if (size)
       {
-        xsize = C_INT(C_DOUBLE(theQ->info()->GridXNumber()) * (*size));
-        ysize = C_INT(C_DOUBLE(theQ->info()->GridYNumber()) * (*size));
+        const double w = C_DOUBLE(theQ->info()->GridXNumber()) * (*size);
+        const double h = C_DOUBLE(theQ->info()->GridYNumber()) * (*size);
+        checkSize(w, h, maxImageSize);
+        xsize = C_INT(w);
+        ysize = C_INT(h);
       }
 
       ogr_crs.reset();
@@ -445,13 +485,17 @@ std::shared_ptr<Fmi::Box> Projection::rectBox(
   if (!xsize)
   {
     // Preserve aspect by calculating xsize
-    int w = boost::numeric_cast<int>((*ysize) * (XMAX - XMIN) / (YMAX - YMIN));
+    const double dw = (*ysize) * (XMAX - XMIN) / (YMAX - YMIN);
+    checkSize(std::abs(dw), *ysize, maxImageSize);
+    int w = boost::numeric_cast<int>(dw);
     new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
   }
   else if (!ysize)
   {
     // Preserve aspect by calculating ysize
-    int h = boost::numeric_cast<int>((*xsize) * (YMAX - YMIN) / (XMAX - XMIN));
+    const double dh = (*xsize) * (YMAX - YMIN) / (XMAX - XMIN);
+    checkSize(*xsize, std::abs(dh), maxImageSize);
+    int h = boost::numeric_cast<int>(dh);
     new_box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
   }
   else
