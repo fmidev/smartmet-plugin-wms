@@ -8,6 +8,8 @@
 #include "Config.h"
 #include "Plugin.h"
 #include "State.h"
+#include "ogc/TimeDimension.h"
+#include <boost/algorithm/string/join.hpp>
 #include <engines/querydata/Engine.h>
 #include <fmt/format.h>
 #include <json/json.h>
@@ -93,40 +95,113 @@ std::string to_iso(const Fmi::DateTime& t)
   return formatter->format(t);
 }
 
-// Detect a uniform timestep and return "start/end/PTnH" style ISO8601 interval,
-// or an empty string if the list is not uniform. Minimum interval is 1 minute.
+// ISO8601 duration of a timestep, for example PT5M or PT1H
 
-std::string detect_interval(const std::vector<Fmi::DateTime>& times)
+std::string to_iso_duration(const Fmi::TimeDuration& step)
 {
-  if (times.size() < 3)
-    return {};
+  const long secs = step.total_seconds();
+  if (secs % 3600 == 0)
+    return fmt::format("PT{}H", secs / 3600);
+  if (secs % 60 == 0)
+    return fmt::format("PT{}M", secs / 60);
+  return fmt::format("PT{}S", secs);
+}
 
-  const auto step = times[1] - times[0];
-  if (step.total_seconds() <= 0)
-    return {};
+// Format valid times as a comma separated list of ISO8601 start/end/step intervals and lone
+// times, for example "...T112500/...T121000/PT5M,...T122500/...T131000/PT5M" when a radar frame
+// is missing. Times which do not form even timesteps are listed one by one.
 
-  for (std::size_t i = 2; i < times.size(); ++i)
+std::string format_times(const std::vector<Fmi::DateTime>& times)
+{
+  std::vector<std::string> parts;
+
+  const auto intervals = OGC::make_intervals(times);
+  if (intervals.empty())
   {
-    if (times[i] - times[i - 1] != step)
-      return {};
+    parts.reserve(times.size());
+    for (const auto& t : times)
+      parts.push_back(to_iso(t));
+  }
+  else
+  {
+    parts.reserve(intervals.size());
+    for (const auto& interval : intervals)
+    {
+      if (interval.startTime == interval.endTime)
+        parts.push_back(to_iso(interval.startTime));
+      else
+        parts.push_back(fmt::format("{}/{}/{}",
+                                    to_iso(interval.startTime),
+                                    to_iso(interval.endTime),
+                                    to_iso_duration(interval.resolution)));
+    }
+  }
+  return boost::algorithm::join(parts, ",");
+}
+
+// The configuration of a producer given by its name or by one of its aliases. Unlike
+// hasProducer() and get(), getProducerConfig() accepts only the actual name.
+
+const Engine::Querydata::ProducerConfig& producer_config(
+    const Engine::Querydata::Engine& theQEngine, const Engine::Querydata::Producer& theProducer)
+{
+  for (const auto& producer : theQEngine.producers())
+  {
+    const auto& conf = theQEngine.getProducerConfig(producer);
+    if (producer == theProducer || conf.aliases.count(theProducer) > 0)
+      return conf;
+  }
+  throw Fmi::Exception(BCP, "Unknown querydata producer").addParameter("Producer", theProducer);
+}
+
+// The valid times of a producer as the WMS QueryDataLayer establishes them:
+//  - lazy radar producers: from the engine's header-only catalogue, decoding no frames
+//  - multifile producers: all valid times over all the files, no origin time
+//  - other producers: the valid times of the latest origin time
+// A multifile producer has one origin time per file, hence the producer configuration
+// must be consulted instead of the list of origin times.
+
+std::vector<Fmi::DateTime> producer_times(const Engine::Querydata::Engine& theQEngine,
+                                          const Engine::Querydata::Producer& theProducer,
+                                          Fmi::DateTime& theOriginTime)
+{
+  // origintimes() does not accept aliases either, hence the actual name is used throughout
+  const auto& conf = producer_config(theQEngine, theProducer);
+  const auto& producer = conf.producer;
+
+  std::shared_ptr<Engine::Querydata::ValidTimeList> validtimes;
+
+  if (conf.islazy)
+  {
+    auto md = theQEngine.getRadarLayerMetaData(producer);
+    if (md.valid)
+      validtimes = md.validtimes;
   }
 
-  const long secs = step.total_seconds();
-  std::string resolution;
-  if (secs % 3600 == 0)
-    resolution = fmt::format("PT{}H", secs / 3600);
-  else if (secs % 60 == 0)
-    resolution = fmt::format("PT{}M", secs / 60);
-  else
-    resolution = fmt::format("PT{}S", secs);
+  // An empty lazy catalogue (before the first directory scan) falls back to the data itself
+  if (!validtimes || validtimes->empty())
+  {
+    if (conf.ismultifile)
+      validtimes = theQEngine.get(producer)->validTimes();
+    else
+    {
+      auto origintimes = theQEngine.origintimes(producer);
+      if (origintimes.empty())
+        return {};
+      theOriginTime = *origintimes.rbegin();
+      validtimes = theQEngine.get(producer, theOriginTime)->validTimes();
+    }
+  }
 
-  return to_iso(times.front()) + "/" + to_iso(times.back()) + "/" + resolution;
+  if (!validtimes)
+    return {};
+  return {validtimes->begin(), validtimes->end()};
 }
 
 // Produce a time JSON node from a producer, using the QEngine. The node has
-// "default" (latest valid time) and "values" (comma-separated ISO8601 or a
-// start/end/step interval). Returns Json::nullValue if the producer is unknown
-// or has no times.
+// "default" (latest valid time), "origintime" for non-multifile producers and
+// "values" (comma-separated ISO8601 start/end/step intervals and times).
+// Returns Json::nullValue if the producer is unknown or has no times.
 
 Json::Value time_node(const Engine::Querydata::Engine& theQEngine,
                       const Engine::Querydata::Producer& theProducer)
@@ -136,56 +211,17 @@ Json::Value time_node(const Engine::Querydata::Engine& theQEngine,
     if (!theQEngine.hasProducer(theProducer))
       return Json::nullValue;
 
-    std::vector<Fmi::DateTime> times;
-    Fmi::DateTime latest_origin = Fmi::DateTime::NOT_A_DATE_TIME;
-
-    auto origintimes = theQEngine.origintimes(theProducer);
-    if (origintimes.empty())
-    {
-      // Multifile producer: single sorted list of valid times across the whole archive.
-      auto q = theQEngine.get(theProducer);
-      auto vt = q->validTimes();
-      if (vt)
-        times.assign(vt->begin(), vt->end());
-    }
-    else
-    {
-      // Use the most recent origin time's valid times (the usual WMS
-      // convention — one dataset, current forecast).
-      latest_origin = *origintimes.rbegin();
-      auto q = theQEngine.get(theProducer, latest_origin);
-      auto vt = q->validTimes();
-      if (vt)
-        times.assign(vt->begin(), vt->end());
-    }
+    Fmi::DateTime origintime = Fmi::DateTime::NOT_A_DATE_TIME;
+    const auto times = producer_times(theQEngine, theProducer, origintime);
 
     if (times.empty())
       return Json::nullValue;
 
     Json::Value node;
     node["default"] = to_iso(times.back());
-    if (!latest_origin.is_not_a_date_time())
-      node["origintime"] = to_iso(latest_origin);
-
-    const auto interval = detect_interval(times);
-    if (!interval.empty())
-    {
-      node["values"] = interval;
-    }
-    else
-    {
-      std::string joined;
-      joined.reserve(times.size() * 21);
-      bool first = true;
-      for (const auto& t : times)
-      {
-        if (!first)
-          joined.push_back(',');
-        joined += to_iso(t);
-        first = false;
-      }
-      node["values"] = joined;
-    }
+    if (!origintime.is_not_a_date_time())
+      node["origintime"] = to_iso(origintime);
+    node["values"] = format_times(times);
     return node;
   }
   catch (...)

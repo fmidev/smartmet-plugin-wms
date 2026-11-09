@@ -1,0 +1,29 @@
+{
+    "title": "Radar with missing frames",
+    "abstract": "Frames 10:15 and 10:25 are missing, which leaves 10:20 as a lone time",
+    "producer": "radar_gaps",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 200,
+	"ysize": 320
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+		{
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands":
+		    [
+			{ "lolimit": 0.1, "hilimit": 1, "attributes": { "fill": "rgb(180,230,255)" } },
+			{ "lolimit": 1, "hilimit": 5, "attributes": { "fill": "rgb(60,160,255)" } },
+			{ "lolimit": 5, "attributes": { "fill": "rgb(0,60,200)" } }
+		    ],
+		    "parameter": "PrecipitationRate"
+		}
+            ]
+        }
+    ]
+}

@@ -70,12 +70,7 @@ bool SatelliteLayer::updateLayerMetaData()
     {
       apply_timestep(times, timestep);
 
-      std::shared_ptr<TimeDimension> timeDimension;
-      time_intervals intervals = get_intervals(times);
-      if (!intervals.empty())
-        timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
-      else
-        timeDimension = std::make_shared<StepTimeDimension>(times);
+      std::shared_ptr<TimeDimension> timeDimension = make_time_dimension(times);
 
       // Satellite images have no reference time
       newTimeDimensions.insert({Fmi::DateTime::NOT_A_DATE_TIME, timeDimension});

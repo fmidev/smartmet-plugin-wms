@@ -1,0 +1,1 @@
+GET /dali?request=GetCapabilities&customer=gaps HTTP/1.0

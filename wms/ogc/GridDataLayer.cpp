@@ -379,23 +379,13 @@ std::set<int> pick_levels(T::ContentInfoList& contentInfoList,
 std::shared_ptr<TimeDimension> make_time_dimension(const std::set<std::string>& contentTimeList,
                                                    std::optional<int> timestep)
 {
-  std::shared_ptr<TimeDimension> timeDimension;
-
-  // timesteps
   std::list<Fmi::DateTime> timesteps;
   for (const auto& stime : contentTimeList)
     timesteps.push_back(toTimeStamp(stime));
 
   apply_timestep(timesteps, timestep);
 
-  time_intervals intervals = get_intervals(timesteps);
-
-  if (!intervals.empty())
-    timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
-  else
-    timeDimension = std::make_shared<StepTimeDimension>(timesteps);
-
-  return timeDimension;
+  return OGC::make_time_dimension(timesteps);
 }
 
 // Add elevation information if there is more than one level.

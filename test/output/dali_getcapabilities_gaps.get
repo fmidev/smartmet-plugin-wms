@@ -1,0 +1,41 @@
+{
+  "customers" : 
+  [
+    {
+      "name" : "gaps",
+      "products" : 
+      [
+        {
+          "abstract" : "Frames 10:15 and 10:25 are missing, which leaves 10:20 as a lone time",
+          "image" : 
+          {
+            "height" : 320,
+            "width" : 200
+          },
+          "name" : "radar",
+          "path" : 
+          [
+            "gaps",
+            "radar"
+          ],
+          "producer" : "radar_gaps",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 200,
+            "ysize" : 320
+          },
+          "time" : 
+          {
+            "default" : "20130910T103500",
+            "values" : "20130910T100000/20130910T101000/PT5M,20130910T102000,20130910T103000/20130910T103500/PT5M"
+          },
+          "title" : "Radar with missing frames",
+          "url_template" : "/dali?customer=gaps&product=radar&time={time}"
+        }
+      ]
+    }
+  ],
+  "service" : "Dali",
+  "version" : "1.0.0"
+}

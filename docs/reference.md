@@ -5437,7 +5437,7 @@ dimension resolved via the Querydata engine when the product declares a
 | `source`       | Product `source` if present. |
 | `image`        | Output dimensions (`width`, `height`) and `format` (defaults to `svg`). |
 | `projection`   | Selected projection fields: `crs`, `bboxcrs`, `xsize`, `ysize`, `x1`, `y1`, `x2`, `y2`, `cx`, `cy`, `resolution`. |
-| `time`         | `default` (latest valid time), `origintime` (latest origin time if any), and `values` (either `start/end/PTnH`-style interval for uniform steps, or a comma-separated list). |
+| `time`         | `default` (latest valid time), `origintime` (latest origin time, omitted for multifile producers such as radar whose times span all files), and `values`: a comma-separated list of `start/end/PTnM`-style intervals and single times. Missing times (e.g. radar frames) split the intervals, so `20130910T100000/20130910T101000/PT5M,20130910T102000,20130910T103000/20130910T103500/PT5M` lacks 10:15 and 10:25. Times without any even steps are listed one by one. |
 | `url_template` | URL template clients can expand, e.g. `/dali?customer=ely&product=temperatureoverlay&time={time}`. |
 
 Response example (abbreviated):

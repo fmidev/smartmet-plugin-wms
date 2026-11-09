@@ -1,6 +1,6 @@
 PROGS = test_label_placement test_subdivide_gate test_isoline_filter_validation \
         test_smoother_options test_mvt_geometry test_mapboxstyle \
-        test_empty_layer_hash
+        test_empty_layer_hash test_time_intervals
 
 CXX      = g++
 CXXFLAGS = -std=c++17 -O0 -g -Wall -Wextra \
@@ -95,6 +95,15 @@ test_empty_layer_hash: test_empty_layer_hash.cpp
 	  -lsmartmet-spine -lsmartmet-newbase -lsmartmet-gis -lsmartmet-timeseries \
 	  -lsmartmet-macgyver -lpqxx $(GDAL_LIBS) -Wl,-rpath,$(GDAL_PREFIX)/lib $(LIBS)
 
+# Time dimension intervals only need TimeDimension.o, built by the top-level Makefile
+TIMEDIMENSION_OBJS = ../../obj/ogc/TimeDimension.o
+
+$(TIMEDIMENSION_OBJS):
+	$(MAKE) -C ../.. obj/ogc/$(notdir $@)
+
+test_time_intervals: test_time_intervals.cpp $(TIMEDIMENSION_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $< $(TIMEDIMENSION_OBJS) -lsmartmet-macgyver -lfmt $(LIBS)
+
 test: $(PROGS)
 	./test_label_placement --log_level=message
 	./test_subdivide_gate --log_level=message
@@ -103,6 +112,7 @@ test: $(PROGS)
 	./test_mvt_geometry --log_level=message
 	./test_mapboxstyle --log_level=message
 	./test_empty_layer_hash --log_level=message
+	./test_time_intervals --log_level=message
 
 clean:
 	rm -f $(PROGS)

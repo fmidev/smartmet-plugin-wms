@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.11.7
-Release: 2%{?dist}.fmi
+Version: 26.11.9
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -187,6 +187,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Nov 9 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.9-1.fmi
+- Dali GetCapabilities lists all times of multifile producers such as radar, not just the latest file
+- Dali GetCapabilities uses the header-only catalogue for lazy radar producers
+- Missing times split time dimensions into several intervals instead of listing all times
+
 * Sat Nov 7 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.7-2.fmi
 - Limit the number of steps in a TIME interval
 - Apply max_image_size to all image sizes including WMTS, tiles, legends and crs=data

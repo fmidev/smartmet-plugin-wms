@@ -77,7 +77,8 @@ request must match an operation with its enums and declared parameters, so new r
 parameters must be added to the definitions.
 
 Unit tests exist in `test/unit/` (Boost.Test: label placement, isoline filter validation, smoother
-options, subdivide gate, Mapbox styles, MVT geometry and empty layer hashes).
+options, subdivide gate, Mapbox styles, MVT geometry, empty layer hashes and time dimension
+intervals).
 
 ## Source layout
 

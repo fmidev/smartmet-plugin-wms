@@ -202,15 +202,7 @@ bool PostGISLayer::updateLayerMetaData()
       }
       else
       {
-        time_intervals intervals = get_intervals(metadata.timesteps);
-        if (!intervals.empty())
-        {
-          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
-        }
-        else
-        {
-          timeDimension = std::make_shared<StepTimeDimension>(metadata.timesteps);
-        }
+        timeDimension = make_time_dimension(metadata.timesteps);
       }
       Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
       newTimeDimensions.insert(std::make_pair(origintime, timeDimension));

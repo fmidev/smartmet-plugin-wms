@@ -30,16 +30,6 @@ namespace
     }
     return ret;
   }
-
-  // Interval time dimension if the times form intervals, otherwise a step time dimension
-  std::shared_ptr<TimeDimension> make_time_dimension(
-      const Engine::Querydata::ValidTimeList& validtimes)
-  {
-    time_intervals intervals = get_intervals(validtimes);
-    if (!intervals.empty())
-      return std::make_shared<IntervalTimeDimension>(intervals);
-    return std::make_shared<StepTimeDimension>(validtimes);
-  }
 }
   
 bool QueryDataLayer::updateLayerMetaData()

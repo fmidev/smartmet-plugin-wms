@@ -1,5 +1,6 @@
 #include "TimeDimension.h"
 #include <boost/algorithm/string/join.hpp>
+#include <algorithm>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <memory>
@@ -41,7 +42,15 @@ std::string getIntervalCapability(const tag_interval& interval,
   while (endt > requested_endt)
     endt -= resolution;
 
-  ret = Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
+  // No timestep of the interval is within the requested period
+  if (startt > endt)
+    return ret;
+
+  // A lone time (or a single remaining timestep) is listed as such
+  if (startt == endt)
+    return Fmi::to_iso_extended_string(startt) + "Z";
+
+  ret =Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
   if (resolution.hours() == 0 && resolution.minutes() <= 60)
     ret += Fmi::to_string(resolution.minutes()) + "M";
   else
@@ -53,7 +62,115 @@ std::string getIntervalCapability(const tag_interval& interval,
 
   return ret;
 }
+
+// Inclusive overlap test. Fmi::TimePeriod::intersects() is exclusive at both ends, and would
+// never accept a lone time (startTime == endTime) or a requested period touching an interval end.
+bool overlaps(const tag_interval& interval,
+              const Fmi::DateTime& requested_startt,
+              const Fmi::DateTime& requested_endt)
+{
+  return interval.startTime <= requested_endt && requested_startt <= interval.endTime;
+}
+
+std::shared_ptr<TimeDimension> make_time_dimension_impl(const std::vector<Fmi::DateTime>& times)
+{
+  time_intervals intervals = make_intervals(times);
+  if (!intervals.empty())
+    return std::make_shared<IntervalTimeDimension>(intervals);
+  return std::make_shared<StepTimeDimension>(times);
+}
+
 }  // namespace
+
+time_intervals make_intervals(std::vector<Fmi::DateTime> times)
+{
+  time_intervals ret;
+
+  times.erase(std::remove_if(times.begin(),
+                             times.end(),
+                             [](const Fmi::DateTime& t) { return t.is_special(); }),
+              times.end());
+  std::sort(times.begin(), times.end());
+  times.erase(std::unique(times.begin(), times.end()), times.end());
+
+  const std::size_t n = times.size();
+  if (n < 3)
+    return ret;
+
+  auto step = [&times](std::size_t i) { return times[i + 1] - times[i]; };
+
+  // Index of the last time of the run of even timesteps starting from index i < n-1
+  auto run_end = [&](std::size_t i)
+  {
+    std::size_t j = i + 1;
+    while (j + 1 < n && step(j) == step(i))
+      ++j;
+    return j;
+  };
+
+  // A lone time gets the timestep to its neighbour as its resolution so that loops stepping
+  // through the interval always advance
+  auto add_lone_time = [&](std::size_t i)
+  { ret.emplace_back(times[i], times[i], (i > 0 ? times[i] - times[i - 1] : step(i))); };
+
+  // Is the step from index i a gap in a series of even timesteps of the given length: a whole
+  // multiple of it, and followed by it again
+  auto is_gap = [&](std::size_t i, const std::optional<Fmi::TimeDuration>& resolution)
+  {
+    if (!resolution || resolution->total_seconds() <= 0 || i + 2 >= n)
+      return false;
+    return step(i + 1) == *resolution &&
+           step(i).total_seconds() % resolution->total_seconds() == 0;
+  };
+
+  bool long_run_found = false;
+  std::optional<Fmi::TimeDuration> previous_resolution;
+  std::size_t i = 0;
+  while (i < n)
+  {
+    if (i + 1 == n)
+    {
+      add_lone_time(i);
+      break;
+    }
+
+    const std::size_t j = run_end(i);
+
+    // A two-time run is a lone time instead if its second time starts a longer run, or if its
+    // step is just a gap in the even timesteps around it. For example 0,5,10,20,30,35,40 and
+    // 0,5,10,20,30,35 are 0/10/PT5M,20,30/40/PT5M and 0/10/PT5M,20,30/35/PT5M instead of
+    // 0/10/PT5M,20/30/PT10M,35/40/PT5M and 0/10/PT5M,20/30/PT10M,35
+    if (j == i + 1 &&
+        ((j + 2 < n && run_end(j) > j + 1) || is_gap(i, previous_resolution)))
+    {
+      add_lone_time(i);
+      ++i;
+      continue;
+    }
+
+    ret.emplace_back(times[i], times[j], step(i));
+    previous_resolution = step(i);
+    if (j - i >= 2)
+      long_run_found = true;
+    i = j + 1;
+  }
+
+  // Intervals are of no use if there are no even timesteps at all
+  if (!long_run_found)
+    ret.clear();
+
+  return ret;
+}
+
+std::shared_ptr<TimeDimension> make_time_dimension(const std::list<Fmi::DateTime>& times)
+{
+  return make_time_dimension_impl(std::vector<Fmi::DateTime>(times.begin(), times.end()));
+}
+
+std::shared_ptr<TimeDimension> make_time_dimension(const std::vector<Fmi::DateTime>& times)
+{
+  return make_time_dimension_impl(times);
+}
 
 bool TimeDimension::isValidTime(const Fmi::DateTime& theTime,
                                    bool endtime_is_wall_clock_time) const
@@ -240,19 +357,24 @@ Fmi::DateTime IntervalTimeDimension::mostCurrentTime() const
     }
   }
 
-  // If current time is not inside any interval it can be before first or after last
+  // If current time is not inside any interval it can be before first, after last or in a gap
+  // between two intervals, in which case the closer one of the surrounding times is chosen
   if (ret.is_not_a_date_time())
   {
     const auto& first_interval = itsIntervals.front();
     if (current_time < first_interval.startTime)
+      return first_interval.startTime;
+
+    for (std::size_t i = 1; i < itsIntervals.size(); i++)
     {
-      ret = first_interval.startTime;
+      const auto& previous_end = itsIntervals[i - 1].endTime;
+      const auto& next_start = itsIntervals[i].startTime;
+      if (current_time > previous_end && current_time < next_start)
+        return (current_time - previous_end <= next_start - current_time ? previous_end
+                                                                         : next_start);
     }
-    else
-    {
-      const auto& last_interval = itsIntervals.back();
-      ret = last_interval.endTime;
-    }
+
+    ret = itsIntervals.back().endTime;
   }
 
   return ret;
@@ -331,12 +453,10 @@ std::string IntervalTimeDimension::makeCapabilities(
     Fmi::DateTime previous_interval_end_time = Fmi::DateTime::NOT_A_DATE_TIME;
     for (const auto& interval : itsIntervals)
     {
-      Fmi::TimePeriod interval_period(interval.startTime, interval.endTime);
       auto requested_startt = (starttime ? *starttime : interval.startTime);
       auto requested_endt = (endtime ? *endtime : interval.endTime);
-      Fmi::TimePeriod requested_period(requested_startt, requested_endt);
 
-      if (!interval_period.intersects(requested_period))
+      if (!overlaps(interval, requested_startt, requested_endt))
         continue;
 
       // If there are several intervals, they must be separate: the next can not start
@@ -378,18 +498,16 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
     std::string ret;
     for (const auto& interval : itsIntervals)
     {
-      Fmi::TimePeriod interval_period(interval.startTime, interval.endTime);
       auto requested_startt = (starttime ? *starttime : interval.startTime);
       auto requested_endt = (endtime ? *endtime : interval.endTime);
-      Fmi::TimePeriod requested_period(requested_startt, requested_endt);
 
-      if (!interval_period.intersects(requested_period))
+      if (!overlaps(interval, requested_startt, requested_endt))
         continue;
 
       Fmi::DateTime timestep = interval.startTime;
       while (timestep <= interval.endTime)
       {
-        if (requested_period.contains(timestep))
+        if (timestep >= requested_startt && timestep <= requested_endt)
         {
           if (!ret.empty())
             ret += ",";
