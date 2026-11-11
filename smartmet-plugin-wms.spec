@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-giza-devel >= 26.10.16
 BuildRequires: smartmet-library-grid-content-devel >= 26.10.20
 BuildRequires: smartmet-library-grid-files-devel >= 26.10.20
 BuildRequires: smartmet-library-macgyver-devel >= 26.11.3
-BuildRequires: smartmet-library-spine-devel >= 26.11.4
+BuildRequires: smartmet-library-spine-devel >= 26.11.11
 BuildRequires: smartmet-library-timeseries-devel >= 26.11.4
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.10.16
@@ -93,7 +93,7 @@ Requires: smartmet-library-grid-files >= 26.10.20
 Requires: smartmet-library-gis >= 26.11.1
 Requires: smartmet-library-trax >= 26.10.17
 Requires: smartmet-library-macgyver >= 26.11.3
-Requires: smartmet-library-spine >= 26.11.4
+Requires: smartmet-library-spine >= 26.11.11
 Requires: smartmet-swagger-ui
 Requires: smartmet-library-timeseries >= 26.11.4
 Requires: smartmet-library-giza >= 26.10.17
@@ -112,7 +112,7 @@ Requires: smartmet-engine-grid >= 26.10.17
 Requires: smartmet-engine-geonames >= 26.10.17
 Requires: smartmet-engine-satellite >= 26.10.17
 Requires: smartmet-server >= 26.10.17
-Requires: smartmet-library-spine >= 26.11.4
+Requires: smartmet-library-spine >= 26.11.11
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -148,7 +148,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 26.10.16
 #TestRequires: smartmet-library-newbase-devel >= 26.10.16
 #TestRequires: smartmet-library-macgyver-devel >= 26.11.3
-#TestRequires: smartmet-library-spine-devel >= 26.11.4
+#TestRequires: smartmet-library-spine-devel >= 26.11.11
 #TestRequires: smartmet-library-timeseries-devel >= 26.11.4
 #TestRequires: smartmet-engine-grid-devel >= 26.10.16
 #TestRequires: smartmet-library-grid-files-test >= 26.10.26
@@ -185,7 +185,7 @@ make %{_smp_mflags} \
 %makeinstall
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOTgit 
 
 %Files
 %defattr(0775,root,root,0775)

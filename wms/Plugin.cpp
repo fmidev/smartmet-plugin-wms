@@ -1135,7 +1135,7 @@ void Plugin::init()
 
     if (!itsReactor->addContentHandler(
             this,
-            itsConfig.defaultUrl(),
+            Spine::Reactor::HandlerOptions(itsConfig.defaultUrl()),
             [this](Spine::Reactor &theReactor,
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
@@ -1147,7 +1147,7 @@ void Plugin::init()
 
     if (!itsReactor->addContentHandler(
             this,
-            itsConfig.wmsUrl(),
+            Spine::Reactor::HandlerOptions(itsConfig.wmsUrl()),
             [this](Spine::Reactor &theReactor,
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
@@ -1158,26 +1158,22 @@ void Plugin::init()
 
     if (!itsReactor->addContentHandler(
             this,
-            itsConfig.wmtsUrl(),
+            Spine::Reactor::HandlerOptions(itsConfig.wmtsUrl()).IsPrefix(),
             [this](Spine::Reactor &theReactor,
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
-            { callRequestHandler(theReactor, theRequest, theResponse); },
-            {},  // supportedPostContentTypes
-            true /* handlesUriPrefix */))
+            { callRequestHandler(theReactor, theRequest, theResponse); }))
       throw Fmi::Exception(BCP, "Failed to register WMTS content handler");
 
     // Register OGC API - Tiles content handler (prefix match: /tiles/... matches all REST paths)
 
     if (!itsReactor->addContentHandler(
             this,
-            itsConfig.tilesUrl(),
+            Spine::Reactor::HandlerOptions(itsConfig.tilesUrl()).IsPrefix(),
             [this](Spine::Reactor &theReactor,
                    const Spine::HTTP::Request &theRequest,
                    Spine::HTTP::Response &theResponse)
-            { callRequestHandler(theReactor, theRequest, theResponse); },
-            {},  // supportedPostContentTypes
-            true /* handlesUriPrefix */))
+            { callRequestHandler(theReactor, theRequest, theResponse); }))
       throw Fmi::Exception(BCP, "Failed to register OGC API - Tiles content handler");
   }
   catch (...)
