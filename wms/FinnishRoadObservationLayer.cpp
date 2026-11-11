@@ -89,7 +89,7 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
       ssps.push_back(ssp);
     }
 
-    // Sort according to proirity
+    // Sort according to priority
     std::sort(ssps.begin(), ssps.end(), priority_sort);
 
     return ssps;
@@ -123,9 +123,9 @@ int FinnishRoadObservationLayer::get_symbol(int r, int rform) const
       {{2, 11}, 229},  // intermittent fall of snowflakes, moderate
       {{2, 18}, 214},  // drizzle, freezing, moderate or heavy
       {{2, 19}, 224},  // rain, freezing, moderate or heavy
-      {{3, 9}, 212},   // drizzle, not freezing, continous, heavy
-      {{3, 10}, 222},  // rain, not freezing, continous, heavy
-      {{3, 11}, 232},  // continous flall of snowflakes, heavy
+      {{3, 9}, 212},   // drizzle, not freezing, continuous, heavy
+      {{3, 10}, 222},  // rain, not freezing, continuous, heavy
+      {{3, 11}, 232},  // continuous flall of snowflakes, heavy
       {{3, 18}, 214},  // drizzle, freezing, moderate or heavy
       {{3, 19}, 224}   // rain, freezing, moderate or heavy
   };
@@ -151,7 +151,7 @@ int FinnishRoadObservationLayer::get_symbol(int r, int rform) const
   if (r == 5)
     return 229;  // intermittent fall of snowflakes, moderate
   if (r == 6)
-    return 232;  // continous flall of snowflakes, heavy
+    return 232;  // continuous flall of snowflakes, heavy
 
   return missing_symbol;
 }

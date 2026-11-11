@@ -265,10 +265,10 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     attributeList.addAttribute("timelist", forecastTime);
     attributeList.addAttribute("timezone", "UTC");
 
-    // Tranforming information from the attribute list into the query object.
+    // Transforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
-    // Fullfilling information into the query object.
+    // Fulfilling information into the query object.
 
     if (!hilimit)
       hilimit = 1000000000;

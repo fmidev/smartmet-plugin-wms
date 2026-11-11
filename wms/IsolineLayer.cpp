@@ -421,10 +421,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   add_time_attributes(attributeList, getValidTime(), origintime);
 
-  // Tranforming information from the attribute list into the query object.
+  // Transforming information from the attribute list into the query object.
   queryConfigurator.configure(*originalGridQuery, attributeList);
 
-  // Fullfilling information into the query object.
+  // Fulfilling information into the query object.
 
   for (auto& query_param : originalGridQuery->mQueryParameterList)
   {

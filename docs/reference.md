@@ -251,7 +251,7 @@ map tile cuts its isolines from the same full-area field, so tiles join seamless
 
 Normally any point strictly outside the layer rectangle will be omitted. However, if the image will be tiled, this may produce images where symbols or text appear only in one tile, and the rest of the symbol is cut off from the adjacent tile. The layer effective bounding box may be expanded using the setting "margin", which sets both the x-margin and y-margin, or directly by setting "xmargin" and/or "ymargin".
 
-For observations any point inside the expanded area will be included. Typically one would expand the layer by half the size of any symbol needed in the image, be it a symbol, a number or whatever. The marging has an effect also on geometries. For example if one wishes to draw isolines with a line a few pixels wide, the margings should be expanded accordingly.
+For observations any point inside the expanded area will be included. Typically one would expand the layer by half the size of any symbol needed in the image, be it a symbol, a number or whatever. The marging has an effect also on geometries. For example if one wishes to draw isolines with a line a few pixels wide, the margins should be expanded accordingly.
 
 For tiled images expanding the area has no discernible effect, since the clipping will be automatic since the rendered image is still the expected size and does not include the margins. However, if one has multiple views in a single image, one should set "clip" to true to make sure none of the layers leak outside their respective areas. Using a clipPath slows rendering down a little, hence it is not on by default.
 
@@ -869,13 +869,13 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>smoother</td><td><i>Smoother</i></td><td>-</td><td colspan="2">Smoother settings for the 2D grid data.</tr>
 <tr><td>sampling</td><td><i>Sampling<i></td><td>-</td><td colspan="2">Sampling settings for the 2D grid data.</tr>
 <tr><td>extrapolation</td><td><i>int</i></td><td>0</td><td colspan="2">How many grid cells to extrapolate data into regions with unknown values</tr>
-<tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Mimimum area for polygons, including holes</tr>
+<tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Minimum area for polygons, including holes</tr>
 <tr><td>areaunit</td><td><i>(string)</i></td><td>km^2</td><td colspan="2">Units for minarea setting. km^2 or px^2</tr>
 <tr><td>filter</td><td><i>Isofilter</i></td><td>-</td><td>Lowpass filter for isolines/isobands. Preferable to smoother settings when data resolution is high.</td></tr>
 <tr><td>tfp</td><td><i>object</i></td><td>-</td><td colspan="2">Thermal Front Parameter settings, see <a href="#tfp-metaparameter-isoband-and-isoline-layers">TFP metaparameter</a>.</td></tr>
 <tr><td>heatmap</td><td><i>Heatmap</i></td><td>-</td><td colspan="2">Heatmap settings.</tr>
 <tr><td>inside</td><td><i>Map</i></td><td>-</td><td colspan="2">Intersect isoband with the map</tr>
-<tr><td>outside</td><td><i>Map</i></td><td>-</td><td colspan="2">Substract map from isoband.</tr>
+<tr><td>outside</td><td><i>Map</i></td><td>-</td><td colspan="2">Subtract map from isoband.</tr>
 <tr><td>intersect</td><td><i>[Intersection]</i> or <i>Intersection</i></td><td>-</td><td colspan="2">Alternate isoband(s) with which to intersect.</td></tr>
 <tr><td>closed_range</td><td>bool<td>true</td><td>True if the last isoband is a closed interval. For example for percentages one would want range 90 <= x <= 100 instead of 90 <= x < 100.</td></tr>
 <tr><td>validate</td><td>bool</td><td>false</td><td>True if the geometries are to be validated (slow, for debugging purposes)</td></tr>
@@ -966,7 +966,7 @@ The table below contains a list of attributes that can be defined for the isolin
 | minarea         | double                       | -             | Minimum area for closed linestrings in km^2.                                                                                                   |
 | areaunit        | (string)                     | km^2          | Units for minarea setting. km^2 or px^2|
 | inside          | _Map_                        | -             | Intersect isoband with a map                                                                                                                   |
-| outside         | _Map_                        | -             | Substract map from isoband                                                                                                                     |
+| outside         | _Map_                        | -             | Subtract map from isoband                                                                                                                     |
 | intersect       | _[Intersect]_ or _Intersect_ | -             | Alternate isoband(s) with which to intersect.                                                                                                  |
 | filter          | _Isofilter_                  | -             | Lowpass filter for the isolines.                                                                                                               |
 | tfp             | object                       | -             | Thermal Front Parameter settings, see [TFP metaparameter](#tfp-metaparameter-isoband-and-isoline-layers).                                      |
@@ -1877,8 +1877,8 @@ The raster layer can paint topographical shadings above or below the painted par
 | land_shading_light    | (int)    | 128           | Multiplier for light areas (0..1000).                                            |
 | land_shading_shadow   | (int)    | 384           | Multiplier for shadow areas (0..1000).                                           |
 | sea_shading_position  | (string) | none          | Sea shading layer position compared to the painted parameter (none,bottom,top).  |
-| sea_shading_light     | (int)    | 128           | Multiplier for light areas (0..1000). Bigger value inceases the lightness.       |
-| sea_shading_shadow    | (int)    | 384           | Multiplier for shadow areas (0..1000). Bigger value inceases the darkness.       | 
+| sea_shading_light     | (int)    | 128           | Multiplier for light areas (0..1000). Bigger value increases the lightness.       |
+| sea_shading_shadow    | (int)    | 384           | Multiplier for shadow areas (0..1000). Bigger value increases the darkness.       | 
 
 The layers are painted in this order: the sea, land, sea shading, land shading and land border
 layers whose position is "bottom", then the data shadows, the data itself and the data borders,
@@ -1902,7 +1902,7 @@ Attributes for the painter "default".
 | Name          | Type     | Default value | Description                                                                     |
 | ------------- | -------- | ------------- | ------------------------------------------------------------------------------- |
 | colormap      | (string) |               | Name of the colormap for "default" painter. This refers to a colormap file.     |
-| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.         |
+| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linearly interpolate colors.         |
 
 Attributes for the painter "range".
 
@@ -1926,7 +1926,7 @@ Attributes for the painter "stream". All of them except "direction" and "speed" 
 | Name              | Type     | Default value | Description                                                                 |
 | ----------------- | -------- | ------------- | --------------------------------------------------------------------------- |
 | trace_length_min  | (int)    | 10            | Minimum trace length of the stream line.                                    |
-| trace_length_max  | (int)    | 128           | Maximum trace length of the steram line.                                    |
+| trace_length_max  | (int)    | 128           | Maximum trace length of the stream line.                                    |
 | trace_step_x      | (int)    | 10            | Stream line trace start point step size in x-direction.                     |
 | trace_step_y      | (int)    | 10            | Stream line trace start point step size in y-direction.                     |
 | line_length       | (int)    | 16            | Length of the line segment.                     |
@@ -1947,7 +1947,7 @@ Stream lines can use colors for indicating the speed of the stream. In this case
 | direction     | (string) | -             | The parameter name for the direction (a layer level setting).               |
 | speed         | (string) | -             | The parameter name for the speed (a layer level setting).                   |
 | colormap      | (string) |               | Name of the colormap for "default" painter. This refers to a colormap file. |
-| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.     |
+| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linearly interpolate colors.     |
 
 If the data is given as 'parameter' attribute (without speed information) then the painter needs line colors. 
 
@@ -1964,7 +1964,7 @@ Attributes for the painter "rain", which animates falling rain. They are given i
 | step_x        | (int)    | 2             | Step size of the rain lines in x-direction.                                 |
 | speeds        | (array)  |               | Array of "speed" structures, as for the "stream" painter.                   |
 | colormap      | (string) |               | Name of the colormap. This refers to a colormap file.                       |
-| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.     |
+| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linearly interpolate colors.     |
 
 Attributes for the "border" painter.
 
@@ -1979,7 +1979,7 @@ Attributes for the "border" structure.
 | inside_value_min  | (float)  |               | The values bigger than this are inside the given border.                |
 | steps             | (int)    |               | The number of steps (we can paint multiple borders by using steps).     |
 | step_increase     | (float)  |               | After each step the "inside_value_min" is increased with this number.   |
-| inside_color      | (ARGB)   | 00000000      | The border color inside the curren area.                                |
+| inside_color      | (ARGB)   | 00000000      | The border color inside the current area.                                |
 | outside_color     | (ARGB)   | 00000000      | The border color outside the current area.                              |
 
 Attributes for the "shadow" painter.
@@ -3658,7 +3658,7 @@ Step 2) Get symbol for each station by using the following function, where 'r' i
   // r 4,5,6 are redundant but re-check in case there is no match in the the cases above
   if (r == 4) return 53;        // intermittent fall of snowflakes, slight
   if (r == 5) return 229;       // intermittent fall of snowflakes, moderate
-  if (r == 6) return 232;      // continous flall of snowflakes, heavy
+  if (r == 6) return 232;      // continuous flall of snowflakes, heavy
 </pre>
 
 Step 3) Get priority for each station by using the following function, where symbol is the symbol of the station and t2m is mean temperature of the station:
@@ -3876,7 +3876,7 @@ The table below shows a simple example on the usage of PresentWeatherObservation
 			    "qid": "wawa_observations",
 			    "layer_type": "present_weather_observation",
 			    "keyword": "synop_fi",
-			    "paramater": "WW_AWS",
+			    "parameter": "WW_AWS",
 			    "mindistance": 20,
 			    "attributes":
 			    {
@@ -4989,7 +4989,7 @@ The table below contains a list of attributes used in the Filter structure.
 
 A layer usually contains the "parameter" attribute definition, which refers to the grid data that is needed in order to draw the current layer. Typically the value of the "parameter" attribute is a parameter name that points to   fixed grid data, which means that this data is pre-calculated. In this case the biggest drawback is that if we want to get grids that are calculated differently then we need a pre-calculation process that calculates these grids and stores them in such way that they can be accessed. 
 
-Luckily now there is a way to caculate new grids on the fly and use their data as they were fixed grids. The basic idea is that the "parameter" attibute can contain a function that defines how the new grid should be calculated. This feature is available only for producers that use grid-engine. 
+Luckily now there is a way to calculate new grids on the fly and use their data as they were fixed grids. The basic idea is that the "parameter" attribute can contain a function that defines how the new grid should be calculated. This feature is available only for producers that use grid-engine. 
 
 There are two different ways to create new grids:
 
@@ -5017,7 +5017,7 @@ The new grid contains probability percentage that the values in 14 ensemble grid
 	
 ### Grids calculated over multiple timesteps 
 
-The basic idea is that, we can have multiple timesteps before and after the requested time. The timestep size (in minutes) can be used in order to calculate timestamp for the requested data. The requested data is expressed in timestep index range (not actual time lengths). The index number 0 refers to the requested time, the first timestep before the requested time is refered with the index number -1, and the first timestep after the requested time is refered with the index number 1. If functions require additional parameters (like value range), these parameters are added after the timestep range and timestep size defintions.
+The basic idea is that, we can have multiple timesteps before and after the requested time. The timestep size (in minutes) can be used in order to calculate timestamp for the requested data. The requested data is expressed in timestep index range (not actual time lengths). The index number 0 refers to the requested time, the first timestep before the requested time is referred with the index number -1, and the first timestep after the requested time is referred with the index number 1. If functions require additional parameters (like value range), these parameters are added after the timestep range and timestep size definitions.
 
 <b>Here are some examples:</b>
 
@@ -5034,7 +5034,7 @@ The new grid contains probability percentage that the temperature drops below th
 
 ### Functions
 
-Dynamic grid caculation uses C++ or LUA functions for creating new grids. C++ functions are faster than LUA functions and that's why we try to implement most common functions with C++. At least the following functions are currently available for producing new grids:
+Dynamic grid calculation uses C++ or LUA functions for creating new grids. C++ functions are faster than LUA functions and that's why we try to implement most common functions with C++. At least the following functions are currently available for producing new grids:
 <pre>
     AVG		=> Calculate average/mean values.
     MAX		=> Calculate maximum values.

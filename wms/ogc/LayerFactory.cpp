@@ -712,7 +712,7 @@ std::list<SharedLayer> LayerFactory::createLayers(const std::string& theFileName
     }
 
     // Process variants as if the settings were overridden by a query string.
-    // Variants must define atleast name and title, all other settings are optional.
+    // Variants must define at least name and title, all other settings are optional.
 
     if (!variants_j.isArray())
       throw Fmi::Exception(

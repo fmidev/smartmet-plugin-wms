@@ -288,7 +288,7 @@ void validate_options(const tag_get_map_request_options& options,
           .addParameter("yMax", Fmi::to_string(options.bbox.yMax));
     }
 
-    // check interval dimesion
+    // check interval dimension
     if (options.interval_start || options.interval_end)
     {
       int interval_start = abs(options.interval_start ? *options.interval_start : 0);

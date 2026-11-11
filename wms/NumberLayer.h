@@ -49,7 +49,7 @@ class NumberLayer : public Layer
   // Grid coordinate settings
   std::optional<Positions> positions;
 
-  // Require at least this many valid valies
+  // Require at least this many valid values
   int minvalues = 0;
 
   // Minimum distance, priorities of numbers

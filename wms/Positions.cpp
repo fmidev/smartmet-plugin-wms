@@ -586,7 +586,7 @@ void Positions::init(const std::optional<std::string>& theProducer,
     {
       outshape = gisengine->getShape(&theProjection.getCRS(), outsidemap->options);
 
-      // This does not obey layer margings, hence we disable this speed optimization
+      // This does not obey layer margins, hence we disable this speed optimization
       // if (outshape)
       // outshape.reset(Fmi::OGR::polyclip(*outshape, theProjection.getBox()));
     }

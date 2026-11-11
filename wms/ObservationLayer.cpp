@@ -38,9 +38,9 @@ void ObservationLayer::init(Json::Value& theJson,
     Layer::init(theJson, theState, theConfig, theProperties);
 
     if (!paraminfo.producer)
-      throw Fmi::Exception::Trace(BCP, "Producer must be defined for obervation layer!");
+      throw Fmi::Exception::Trace(BCP, "Producer must be defined for observation layer!");
     if (!timestep)
-      throw Fmi::Exception::Trace(BCP, "Timestep must be defined for obervation layer!");
+      throw Fmi::Exception::Trace(BCP, "Timestep must be defined for observation layer!");
 
     auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())

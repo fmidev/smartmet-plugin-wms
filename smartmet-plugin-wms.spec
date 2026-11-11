@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.11.10
+Version: 26.11.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -194,6 +194,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Nov 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.11-1.fmi
+- Fixed typos in messages and comments
+
 * Tue Nov 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.10-1.fmi
 - Use protobuf 3.21 on RHEL 8, the same runtime OpenTelemetry in spine uses, since two protobuf runtimes in one process abort smartmetd at startup
 

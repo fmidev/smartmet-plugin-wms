@@ -692,7 +692,7 @@ void Config::parse_references()
 {
   const libconfig::Config& config = itsDaliConfig.getConfig();
 
-  // Units settings is an array of unit,scale,name typles. The data is used when generating AUTO2
+  // Units settings is an array of unit,scale,name tuples. The data is used when generating AUTO2
   // spatial references
 
   parse_length_units(config);

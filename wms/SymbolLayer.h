@@ -84,7 +84,7 @@ class SymbolLayer : public Layer
 
   std::optional<Positions> positions;
 
-  // Require at least this many valid valies
+  // Require at least this many valid values
   int minvalues = 0;
 
   // the name of the default symbol

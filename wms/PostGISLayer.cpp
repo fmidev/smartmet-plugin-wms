@@ -128,7 +128,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
 void PostGISLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
-  // no info available, atleast not yet
+  // no info available, at least not yet
 }
 
 std::size_t PostGISLayer::hash_value(const State& theState) const

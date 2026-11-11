@@ -505,14 +505,14 @@ std::shared_ptr<Fmi::Box> Projection::rectBox(
 
   if (srs.isGeographic() != 0)
   {
-    // Substract equations 5 and 4, subsititute equation 3 and solve resolution
+    // Subtract equations 5 and 4, substitute equation 3 and solve resolution
     double pi = boost::math::constants::pi<double>();
     double circumference = 2 * pi * 6371.220;
     resolution = (YMAX - YMIN) * circumference / (360 * (*ysize));
   }
   else
   {
-    // Substract equations 1 and 2 to eliminate and solve resolution
+    // Subtract equations 1 and 2 to eliminate and solve resolution
     resolution = (XMAX - XMIN) / ((*xsize) * 1000);
   }
 
@@ -637,7 +637,7 @@ void Projection::prepareCRS() const
       auto epsg_min = -epsg_max;
       auto lon_0 = 0;  // default central longitude
 
-      // No support for multiple wraps atleast yet
+      // No support for multiple wraps at least yet
       if (XMIN < epsg_min)
         lon_0 = -180;
       else if (XMAX > epsg_max)

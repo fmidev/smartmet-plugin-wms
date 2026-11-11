@@ -520,10 +520,10 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     add_time_attributes(attributeList, getValidTime(), origintime);
 
-    // Tranforming information from the attribute list into the query object.
+    // Transforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
-    // Fullfilling information into the query object.
+    // Fulfilling information into the query object.
 
     set_query_locations(*originalGridQuery, positions, projection, paraminfo, theState);
 

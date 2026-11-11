@@ -139,7 +139,7 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
   {
     std::string symbolName = lgi.asString("symbol");
 
-    // Some symbols need not to be shown in legend graphs, for exmaple logos
+    // Some symbols need not to be shown in legend graphs, for example logos
     if (lgs.symbolsToIgnore.find(symbolName) != lgs.symbolsToIgnore.end())
       continue;
 
@@ -1603,7 +1603,7 @@ void Layer::initLegendGraphicInfo(const Json::Value& root)
   std::set<std::string> languages = config.getDaliConfig().languages();
   languages.insert(layerSettings.languages.begin(), layerSettings.languages.end());
 
-  // 4) Read generic and parameter specifig template files and merge them
+  // 4) Read generic and parameter specific template files and merge them
   std::map<std::string, Json::Value> templateFiles = readLegendFiles(
       config.getDaliConfig().rootDirectory(true), config.getJsonCache(), customer);
   std::map<std::string, LegendGraphicSettings> templateSettings;
@@ -2669,7 +2669,7 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
   catch (const Fmi::Exception& wmsException)
   {
     throw Fmi::Exception::Trace(BCP,
-                                "Failed to generate GetCapabilities reponse for layer '" + name +
+                                "Failed to generate GetCapabilities response for layer '" + name +
                                     "' " + wmsException.what());
   }
   catch (...)
@@ -2907,7 +2907,7 @@ void Layer::setLegendDimension(const Layer& legendLayer, const std::string& styl
     }
     else
     {
-      // If width, height are NOT given in separate legend file, use defult 10
+      // If width, height are NOT given in separate legend file, use default 10
       style.second.legend_url.online_resource += ("&amp;width=10&amp;height=10");
       style.second.legend_url.width = "10";
       style.second.legend_url.height = "10";

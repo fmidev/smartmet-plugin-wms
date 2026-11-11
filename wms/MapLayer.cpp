@@ -367,7 +367,7 @@ Attributes feature_use_attributes(const std::string& iri,
       attrs.add(feature_attrs->second);
   }
 
-  // Add data specific attributes. These will overide feature specific settings
+  // Add data specific attributes. These will override feature specific settings
   auto selection = Select::attribute(styles.data_attributes, value);
   if (selection)
     attrs.add(selection->attributes);

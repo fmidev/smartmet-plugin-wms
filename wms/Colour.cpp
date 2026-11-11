@@ -12,7 +12,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
 {
   try
   {
-    // valid fromat is 0xFFFFFF
+    // valid format is 0xFFFFFF
     if (hex_string.size() != 8)
     {
       throw Fmi::Exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!")

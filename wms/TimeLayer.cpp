@@ -37,7 +37,7 @@ Fmi::DateTime required_origintime(const std::function<std::optional<Fmi::DateTim
 {
   auto t = origintime();
   if (!t)
-    throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
+    throw Fmi::Exception(BCP, "Origintime not available for TimeLayer");
   return *t;
 }
 
@@ -425,10 +425,10 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     add_time_attributes(attributeList, getValidTime(), origintime);
 
-    // Tranforming information from the attribute list into the query object.
+    // Transforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
-    // Fullfilling information into the query object.
+    // Fulfilling information into the query object.
 
     for (auto& param : originalGridQuery->mQueryParameterList)
     {
