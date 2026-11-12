@@ -2,9 +2,9 @@
 #include <boost/algorithm/string.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StaticCleanup.h>
-#include <smartmet/spine/HTTP.h>
-#include <smartmet/spine/Options.h>
-#include <smartmet/spine/Reactor.h>
+#include <spine/HTTP.h>
+#include <spine/Options.h>
+#include <spine/Reactor.h>
 #include <algorithm>
 #include <csignal>
 #include <filesystem>
