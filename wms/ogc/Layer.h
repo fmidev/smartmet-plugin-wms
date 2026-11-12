@@ -11,7 +11,6 @@
 #include "LayerStyle.h"
 #include "LegendGraphicInfo.h"
 #include "SupportedReference.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/BBox.h>
 #include <json/value.h>

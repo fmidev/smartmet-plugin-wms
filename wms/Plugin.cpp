@@ -26,7 +26,6 @@
 #include <engines/authentication/Engine.h>
 #endif
 #include <boost/algorithm/string.hpp>
-#include <boost/bimap.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/avi/Engine.h>

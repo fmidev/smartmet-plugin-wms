@@ -5,7 +5,6 @@
 #include "MapboxVectorTile.h"
 #include "Projection.h"
 #include "State.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
 #include <gis/Box.h>

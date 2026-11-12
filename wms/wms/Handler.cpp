@@ -30,7 +30,6 @@
 #include "GetMap.h"
 #include "RequestType.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/bimap.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>

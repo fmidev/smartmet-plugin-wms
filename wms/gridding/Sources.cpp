@@ -6,7 +6,6 @@
 
 #include "Sources.h"
 #include "Config.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
 #include <engines/observation/StationSettings.h>

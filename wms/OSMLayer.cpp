@@ -14,7 +14,6 @@
 #include "Projection.h"
 #include "State.h"
 #include "XYTransformation.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>

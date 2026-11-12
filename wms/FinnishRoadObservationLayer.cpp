@@ -3,7 +3,6 @@
 #include "FinnishRoadObservationLayer.h"
 #include "LonLatToXYTransformation.h"
 #include "PointData.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGlobals.h>

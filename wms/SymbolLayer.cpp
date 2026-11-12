@@ -16,7 +16,6 @@
 #include "Projection.h"
 #include "Select.h"
 #include "State.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/grid/Engine.h>

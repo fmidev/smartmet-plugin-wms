@@ -12,7 +12,6 @@
 #include "../ogc/LayerProxy.h"
 #include "../ogc/LegendGraphicSettings.h"
 #include "../ogc/SupportedReference.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <ctpp2/CDT.hpp>
 #include <json/value.h>
 #include <macgyver/AtomicSharedPtr.h>
