@@ -10,9 +10,12 @@
 
 #pragma once
 
-#include "Layer.h"
 #include <json/json.h>
-#include <string>
+
+namespace SmartMet::Plugin::Dali
+{
+class Layer;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

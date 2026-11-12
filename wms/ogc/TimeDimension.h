@@ -12,12 +12,13 @@
 #pragma once
 
 #include <macgyver/DateTime.h>
-#include <macgyver/Exception.h>
+#include <iosfwd>
 #include <list>
 #include <map>
 #include <memory>
 #include <optional>
 #include <set>
+#include <string>
 #include <vector>
 
 namespace SmartMet

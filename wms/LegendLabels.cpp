@@ -1,11 +1,17 @@
 #include "LegendLabels.h"
-#include "Config.h"
 #include "Hash.h"
-
 #include <fmt/printf.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <stdexcept>
+#include <utility>
+#include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

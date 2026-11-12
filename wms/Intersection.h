@@ -7,13 +7,21 @@
 #pragma once
 
 #include "Smoother.h"
-#include <engines/gis/Engine.h>
-#include <engines/grid/Engine.h>
-#include <engines/querydata/Engine.h>
-#include <grid-content/queryServer/definition/Query.h>
+#include <gis/Types.h>
 #include <json/json.h>
+#include <macgyver/DateTime.h>
+#include <cstddef>
 #include <optional>
 #include <string>
+
+namespace SmartMet::Engine::Grid
+{
+class Engine;
+}  // namespace SmartMet::Engine::Grid
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

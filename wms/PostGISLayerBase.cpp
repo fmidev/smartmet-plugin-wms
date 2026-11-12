@@ -1,11 +1,17 @@
 #include "PostGISLayerBase.h"
-#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
+#include "State.h"
 #include <engines/gis/Engine.h>
+#include <engines/gis/MapOptions.h>
 #include <fmt/format.h>
+#include <gis/GeometrySimplifier.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <spine/Json.h>
+#include <macgyver/Hash.h>
+#include <macgyver/StringConversion.h>
+#include <memory>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {

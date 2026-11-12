@@ -1,8 +1,15 @@
 #pragma once
 
 #include "ColorPainter.h"
-#include "ColorMap.h"
+#include <grid-files/common/Typedefs.h>
+#include <json/forwards.h>
+#include <cstddef>
+#include <vector>
 
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

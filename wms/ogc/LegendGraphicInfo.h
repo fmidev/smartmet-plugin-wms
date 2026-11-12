@@ -6,7 +6,12 @@
 
 #pragma once
 
-#include <spine/Json.h>
+#include <json/value.h>
+#include <iosfwd>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

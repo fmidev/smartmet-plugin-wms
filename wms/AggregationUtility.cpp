@@ -1,7 +1,31 @@
 #include "AggregationUtility.h"
+#include <engines/observation/Engine.h>
+#include <engines/observation/Settings.h>
+#include <macgyver/Exception.h>
+#include <spine/Parameter.h>
+#include <timeseries/DataFunction.h>
+#include <timeseries/LocationParameters.h>
+#include <timeseries/ParameterFactory.h>
 #include <timeseries/ParameterTools.h>
+#include <timeseries/TimeSeriesAggregator.h>
+#include <timeseries/TimeSeriesGenerator.h>
+#include <timeseries/TimeSeriesGeneratorCache.h>
+#include <timeseries/TimeSeriesGeneratorOptions.h>
+#include <timeseries/TimeSeriesTypes.h>
+#include <timeseries/TimeSeriesUtility.h>
+#include <algorithm>
+#include <cstddef>
+#include <list>
+#include <map>
+#include <memory>
+#include <string>
 #include <utility>
 #include <vector>
+
+namespace SmartMet::Engine::Querydata
+{
+struct ParameterOptions;
+}  // namespace SmartMet::Engine::Querydata
 
 namespace SmartMet
 {

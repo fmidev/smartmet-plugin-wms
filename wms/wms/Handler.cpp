@@ -4,48 +4,70 @@
  */
 // ======================================================================
 #include "Handler.h"
+#include "../Animation.h"
 #include "../CaseInsensitiveComparator.h"
-#include "../Hash.h"
+#include "../Config.h"
 #include "../JsonTools.h"
 #include "../Layer.h"
+#include "../Layers.h"
 #include "../Mime.h"
 #include "../ParameterInfo.h"
 #include "../Plugin.h"
 #include "../Product.h"
+#include "../Projection.h"
 #include "../State.h"
 #include "../TextUtility.h"
+#include "../View.h"
+#include "../Views.h"
+#include "../ogc/Layer.h"
+#include "../ogc/LegendGraphicSettings.h"
+#include "../ogc/QueryStatus.h"
 #include "../ogc/StyleSelection.h"
+#include "Config.h"
+#include "Exception.h"
 #include "GetCapabilities.h"
 #include "GetLegendGraphic.h"
 #include "GetMap.h"
 #include "RequestType.h"
-#ifndef WITHOUT_AUTHENTICATION
-#include <engines/authentication/Engine.h>
-#endif
+#include <boost/algorithm/string.hpp>
+#include <boost/bimap.hpp>
 #include <boost/timer/timer.hpp>
-#include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
-#include <fmt/format.h>
+#include <engines/geonames/Engine.h>
 #include <fmt/printf.h>
 #include <giza/Svg.h>
 #include <grid-files/common/ImageFunctions.h>
-#include <grid-files/common/ImagePaint.h>
-#include <json/json.h>
-#include <json/reader.h>
+#include <grid-files/common/Typedefs.h>
 #include <json/writer.h>
-#include <macgyver/AnsiEscapeCodes.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <macgyver/StringConversion.h>
+#include <macgyver/TemplateFormatter.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
+#include <spine/HTTP.h>
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
-#include <spine/SmartMet.h>
+#include <spine/Location.h>
 #include <algorithm>
+#include <array>
+#include <cstdio>
 #include <cstdlib>
 #include <fstream>
+#include <initializer_list>
+#include <iostream>
+#include <iterator>
+#include <list>
 #include <memory>
-#include <stdexcept>
+#include <set>
 #include <unistd.h>
+#include <utility>
+#include <vector>
+
+namespace SmartMet::Spine
+{
+class JsonCache;
+}  // namespace SmartMet::Spine
 
 using namespace boost::placeholders;
 

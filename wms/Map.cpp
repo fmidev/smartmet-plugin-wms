@@ -1,10 +1,12 @@
 #include "Map.h"
-#include "Config.h"
-#include "Hash.h"
-
+#include <gis/GeometryAmalgamator.h>
 #include <gis/GeometrySimplifier.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <stdexcept>
+#include <macgyver/Hash.h>
+#include <optional>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {

@@ -1,6 +1,8 @@
 #include "MapboxStyle.h"
 #include "StyleSheet.h"
 #include <cstdlib>
+#include <map>
+#include <utility>
 
 namespace SmartMet
 {

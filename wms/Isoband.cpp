@@ -1,8 +1,15 @@
 #include "Isoband.h"
-#include "Config.h"
 #include "Hash.h"
+#include "State.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <stdexcept>
+#include <macgyver/Hash.h>
+#include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

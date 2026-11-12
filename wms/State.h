@@ -17,19 +17,31 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "BezierCache.h"
-#include <engines/geonames/Engine.h>
-#include <engines/grid/Engine.h>
-#include "gridding/Gridder.h"
+#include <engines/querydata/Producer.h>
 #include <engines/querydata/Q.h>
-#include <grid-files/common/ImageFunctions.h>
+#include <grid-files/common/Typedefs.h>
+#include <macgyver/DateTime.h>
 #include <spine/HTTP.h>
-#include <timeseries/TimeSeriesInclude.h>
+#include <cstddef>
+#include <cstdint>
 #include <map>
 #include <optional>
 #include <set>
-#include <vector>
+#include <string>
+
+namespace SmartMet::Engine::Geonames
+{
+class Engine;
+}  // namespace SmartMet::Engine::Geonames
+namespace SmartMet::Plugin::Dali::Gridding
+{
+class Gridder;
+}  // namespace SmartMet::Plugin::Dali::Gridding
+namespace SmartMet::Plugin::Dali
+{
+class Attributes;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace CTPP
 {
@@ -85,7 +97,6 @@ namespace Plugin
 namespace Dali
 {
 class Config;
-class Filter;
 class Plugin;
 
 class State

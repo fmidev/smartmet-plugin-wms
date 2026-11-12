@@ -9,16 +9,34 @@
 #include "Locations.h"
 #include "Map.h"
 #include "Stations.h"
-#include <engines/geonames/Engine.h>
-#include <gis/Box.h>
-#include <json/json.h>
+#include <engines/querydata/Q.h>
+#include <gis/Types.h>
+#include <grid-files/common/Typedefs.h>
+#include <json/forwards.h>
+#include <macgyver/DateTime.h>
+#include <newbase/NFmiPoint.h>
+#include <cmath>
 #include <cstddef>
+#include <list>
 #include <optional>
+#include <string>
+#include <vector>
+
+namespace SmartMet::Engine::Geonames
+{
+class Engine;
+}  // namespace SmartMet::Engine::Geonames
+namespace SmartMet::Plugin::Dali
+{
+class Projection;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace Fmi
 {
+class Box;
 class SpatialReference;
-}
+}  // namespace Fmi
 
 namespace SmartMet
 {

@@ -16,11 +16,20 @@
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
-#include <json/json.h>
+#include <engines/querydata/Q.h>
+#include <json/forwards.h>
+#include <cstddef>
+#include <map>
 #include <optional>
 #include <set>
 #include <string>
-#include <vector>
+#include <utility>
+
+namespace SmartMet::Plugin::Dali
+{
+class Projection;
+struct Warnings;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace CTPP
 {
@@ -35,20 +44,13 @@ class SpatialReference;
 
 namespace SmartMet
 {
-namespace Spine
-{
-class Parameter;
-}
 namespace Plugin
 {
 namespace Dali
 {
 class Config;
-class Defs;
-class Plugin;
-class State;
-class View;
 class Positions;
+class State;
 
 class Layer : public Properties
 {

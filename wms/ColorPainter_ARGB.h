@@ -1,8 +1,10 @@
 #pragma once
 
-#include "ColorPainter.h"
 #include "ColorMap.h"
-
+#include "ColorPainter.h"
+#include <grid-files/common/Typedefs.h>
+#include <cstddef>
+#include <string>
 
 namespace SmartMet
 {

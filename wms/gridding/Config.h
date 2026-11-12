@@ -8,6 +8,7 @@
 
 #include <gis/PointGridding.h>
 #include <newbase/NFmiParameterName.h>
+#include <cstddef>
 #include <libconfig.h++>
 #include <map>
 #include <optional>

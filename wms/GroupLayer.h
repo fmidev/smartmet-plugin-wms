@@ -6,10 +6,8 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "Layer.h"
-#include "Projection.h"
-#include <optional>
+#include <cstddef>
 
 namespace SmartMet
 {
@@ -17,8 +15,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class State;
 
 class GroupLayer : public Layer
 {

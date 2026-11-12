@@ -2,15 +2,16 @@
 
 #include "Attributes.h"
 #include "Config.h"
-#include "Hash.h"
 #include "State.h"
-#include "StyleSheet.h"
-#include <boost/algorithm/string/predicate.hpp>
-
 #include <ctpp2/CDT.hpp>
+#include <grid-files/common/GeneralFunctions.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <spine/HTTP.h>
+#include <set>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

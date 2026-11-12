@@ -7,11 +7,18 @@
 #pragma once
 
 #include "ParameterInfo.h"
-#include "View.h"
-#include "Warnings.h"
-#include <json/json.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <list>
 #include <memory>
+
+namespace SmartMet::Plugin::Dali
+{
+class Properties;
+class State;
+class View;
+struct Warnings;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace CTPP
 {

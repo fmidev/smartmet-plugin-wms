@@ -40,18 +40,23 @@
 
 #include "../MapboxStyle.h"
 #include "../ogc/OpenApiLayers.h"
-#include "../ogc/QueryStatus.h"
 #include "Config.h"
 #include <json/json.h>
-#include <macgyver/Exception.h>
-#include <macgyver/DateTime.h>
-#include <spine/HTTP.h>
 #include <spine/OpenApi.h>
 #include <memory>
-#include <mutex>
 #include <optional>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Plugin::OGC
+{
+enum class QueryStatus;
+}  // namespace SmartMet::Plugin::OGC
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+class Response;
+}  // namespace SmartMet::Spine::HTTP
 
 namespace SmartMet
 {
@@ -63,7 +68,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 class Product;
 class State;
 }  // namespace Dali

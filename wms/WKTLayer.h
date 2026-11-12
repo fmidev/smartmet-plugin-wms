@@ -6,16 +6,10 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "Layer.h"
-#include "Text.h"
+#include <cstddef>
 #include <optional>
 #include <string>
-
-namespace CTPP
-{
-class CDT;
-}
 
 namespace SmartMet
 {
@@ -23,8 +17,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class State;
 
 class WKTLayer : public Layer
 {

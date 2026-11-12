@@ -37,7 +37,10 @@
 
 #include <engines/querydata/Q.h>
 #include <gis/SpatialReference.h>
-#include <json/json.h>
+#include <json/forwards.h>
+#include <newbase/NFmiPoint.h>
+#include <cstddef>
+#include <memory>
 #include <optional>
 #include <string>
 

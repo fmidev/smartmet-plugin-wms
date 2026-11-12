@@ -1,7 +1,15 @@
 #include "Intersections.h"
 #include "Hash.h"
-#include <ctpp2/CDT.hpp>
+#include <engines/grid/Engine.h>
 #include <macgyver/Exception.h>
+#include <set>
+#include <utility>
+
+namespace SmartMet::Plugin::Dali
+{
+class Projection;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

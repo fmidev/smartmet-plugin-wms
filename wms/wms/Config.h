@@ -6,31 +6,72 @@
 
 #pragma once
 
-#include "../Config.h"
 #include "../ogc/Layer.h"
 #include "../ogc/LayerConfig.h"
 #include "../ogc/LayerHierarchy.h"
 #include "../ogc/LayerProxy.h"
 #include "../ogc/LegendGraphicSettings.h"
 #include "../ogc/SupportedReference.h"
-#include <boost/utility.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <ctpp2/CDT.hpp>
-#include <engines/gis/Engine.h>
-#include <engines/grid/Engine.h>
-#include <engines/observation/Engine.h>
-#include <engines/querydata/Engine.h>
-#include <engines/satellite/Engine.h>
-#include <macgyver/AsyncTask.h>
+#include <json/value.h>
 #include <macgyver/AtomicSharedPtr.h>
-#include <spine/JsonCache.h>
-#include <spine/Thread.h>
-#include <libconfig.h++>
+#include <macgyver/DateTime.h>
 #include <chrono>
+#include <ctime>
+#include <filesystem>
 #include <map>
+#include <memory>
 #include <optional>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
+
+namespace Fmi
+{
+class AsyncTask;
+}  // namespace Fmi
+namespace SmartMet::Engine::Gis
+{
+class Engine;
+}  // namespace SmartMet::Engine::Gis
+namespace SmartMet::Engine::Grid
+{
+class Engine;
+}  // namespace SmartMet::Engine::Grid
+namespace SmartMet::Engine::Observation
+{
+class Engine;
+}  // namespace SmartMet::Engine::Observation
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Engine::Satellite
+{
+class Engine;
+}  // namespace SmartMet::Engine::Satellite
+namespace SmartMet::Plugin::Dali::Gridding
+{
+class Gridder;
+}  // namespace SmartMet::Plugin::Dali::Gridding
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+}  // namespace SmartMet::Plugin::Dali
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+}  // namespace SmartMet::Spine::HTTP
+namespace SmartMet::Spine
+{
+class JsonCache;
+}  // namespace SmartMet::Spine
+namespace libconfig
+{
+class Config;
+}  // namespace libconfig
 
 namespace SmartMet
 {

@@ -22,9 +22,10 @@
 #pragma once
 
 #include <engines/querydata/Engine.h>
-#include <gis/Types.h>
+#include <engines/querydata/Q.h>
+#include <json/forwards.h>
 #include <newbase/NFmiDataMatrix.h>
-#include <json/json.h>
+#include <cstddef>
 #include <string>
 
 namespace Fmi

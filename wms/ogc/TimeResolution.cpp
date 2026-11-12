@@ -2,6 +2,8 @@
 #include "../wms/Exception.h"
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <cctype>
+#include <exception>
 
 namespace SmartMet
 {

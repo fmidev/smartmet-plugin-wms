@@ -1,14 +1,15 @@
 // ======================================================================
 
 #include "LabelPlacement.h"
-
 #include <algorithm>
 #include <array>
-#include <cassert>
 #include <cmath>
+#include <cstddef>
+#include <iterator>
 #include <limits>
 #include <numeric>
 #include <random>
+#include <utility>
 
 namespace SmartMet
 {

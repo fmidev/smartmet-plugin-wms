@@ -11,18 +11,39 @@
 
 #include "LegendGraphicSettings.h"
 #include "SupportedReference.h"
-#include <engines/gis/Engine.h>
-#include <engines/grid/Engine.h>
-#include <engines/querydata/Engine.h>
-#include "gridding/Gridder.h"
-#include <engines/satellite/Engine.h>
-#ifndef WITHOUT_OBSERVATION
-#include <engines/observation/Engine.h>
-#endif
-#include <spine/JsonCache.h>
 #include <map>
 #include <set>
 #include <string>
+#include <utility>
+
+namespace SmartMet::Engine::Gis
+{
+class Engine;
+}  // namespace SmartMet::Engine::Gis
+namespace SmartMet::Engine::Grid
+{
+class Engine;
+}  // namespace SmartMet::Engine::Grid
+namespace SmartMet::Engine::Observation
+{
+class Engine;
+}  // namespace SmartMet::Engine::Observation
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Engine::Satellite
+{
+class Engine;
+}  // namespace SmartMet::Engine::Satellite
+namespace SmartMet::Plugin::Dali::Gridding
+{
+class Gridder;
+}  // namespace SmartMet::Plugin::Dali::Gridding
+namespace SmartMet::Spine
+{
+class JsonCache;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {

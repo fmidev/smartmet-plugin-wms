@@ -1,19 +1,27 @@
 #include "GetMap.h"
 #include "../CaseInsensitiveComparator.h"
 #include "../Colour.h"
+#include "../Config.h"
 #include "../Mime.h"
 #include "../ogc/TimeResolution.h"
+#include "Config.h"
 #include "Exception.h"
-#include <boost/algorithm/string/erase.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/range/adaptors.hpp>
-#include <boost/range/algorithm.hpp>
+#include <boost/algorithm/string.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <ogr_spatialref.h>
+#include <macgyver/TimeParser.h>
 #include <spine/Convenience.h>
+#include <spine/HTTP.h>
+#include <cctype>
+#include <cmath>
+#include <cstdlib>
+#include <map>
+#include <ogr_spatialref.h>
+
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
 
 namespace SmartMet
 {

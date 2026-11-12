@@ -2,19 +2,21 @@
 #include "BezierCache.h"
 #include "BezierFit.h"
 #include "JsonTools.h"
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/GeometrySmoother.h>
 #include <gis/VertexCounter.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <spine/Convenience.h>
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <ogr_geometry.h>
-#include <fmt/format.h>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace SmartMet

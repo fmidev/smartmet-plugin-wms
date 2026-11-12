@@ -1,10 +1,10 @@
 #include "Symbols.h"
-#include "Config.h"
-#include "Hash.h"
-
+#include "State.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
+#include <vector>
 
 namespace SmartMet
 {

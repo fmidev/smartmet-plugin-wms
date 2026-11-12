@@ -1,14 +1,17 @@
 #pragma once
 
+#include <grid-files/common/Typedefs.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <map>
-#include <vector>
 #include <memory>
-#include <sys/types.h>
-#include <json/json.h>
-#include "JsonTools.h"
-#include "State.h"
-#include "Hash.h"
+#include <string>
+#include <vector>
 
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

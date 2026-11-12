@@ -13,6 +13,14 @@
 
 #include "Layer.h"
 #include "LayerConfig.h"
+#include <macgyver/DateTime.h>
+#include <string>
+#include <utility>
+
+namespace SmartMet::Plugin::Dali::Gridding
+{
+class Gridder;
+}  // namespace SmartMet::Plugin::Dali::Gridding
 
 namespace SmartMet
 {

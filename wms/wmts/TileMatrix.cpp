@@ -5,11 +5,14 @@
 // ======================================================================
 
 #include "TileMatrix.h"
+#include <gis/BBox.h>
 #include <gis/EPSGInfo.h>
 #include <macgyver/Exception.h>
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <optional>
+#include <utility>
 
 namespace SmartMet
 {

@@ -6,10 +6,17 @@
 
 #pragma once
 
-#include <libconfig.h++>
+#include <iosfwd>
 #include <map>
 #include <optional>
 #include <set>
+#include <string>
+#include <utility>
+
+namespace libconfig
+{
+class Config;
+}  // namespace libconfig
 
 namespace SmartMet
 {

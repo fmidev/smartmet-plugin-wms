@@ -2,9 +2,10 @@
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <functional>
-#include <iostream>
+#include <iterator>
 #include <numeric>
+#include <strings.h>
+#include <utility>
 
 namespace SmartMet
 {

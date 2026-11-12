@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <json/json.h>
-#include <optional>
+#include <json/forwards.h>
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -17,8 +17,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class State;
 
 class AnimationEffects
 {

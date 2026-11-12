@@ -5,15 +5,36 @@
 // ======================================================================
 
 #include "Sources.h"
+#include "Config.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <engines/observation/Engine.h>
+#include <engines/observation/Settings.h>
+#include <engines/observation/StationSettings.h>
+#include <engines/querydata/Engine.h>
+#include <engines/querydata/Q.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiEnumConverter.h>
 #include <newbase/NFmiFastQueryInfo.h>
+#include <newbase/NFmiGlobals.h>
+#include <newbase/NFmiLocation.h>
+#include <newbase/NFmiMetTime.h>
+#include <newbase/NFmiParameterName.h>
+#include <spine/Parameter.h>
+#include <spine/Station.h>
 #include <timeseries/ParameterTools.h>
+#include <timeseries/TimeSeries.h>
+#include <timeseries/TimeSeriesInclude.h>
 #include <cmath>
 #include <fstream>
+#include <initializer_list>
 #include <limits>
+#include <list>
+#include <memory>
+#include <optional>
+#include <utility>
+#include <variant>
 
 namespace SmartMet
 {

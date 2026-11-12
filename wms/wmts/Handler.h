@@ -13,18 +13,24 @@
 
 #pragma once
 
-#include "Config.h"
 #include "../ogc/OpenApiLayers.h"
-#include "../ogc/QueryStatus.h"
-#include <spine/HTTP.h>
+#include "Config.h"
 #include <spine/OpenApi.h>
-#include <macgyver/DateTime.h>
-#include <macgyver/Exception.h>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Plugin::OGC
+{
+enum class QueryStatus;
+}  // namespace SmartMet::Plugin::OGC
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+class Response;
+}  // namespace SmartMet::Spine::HTTP
 
 namespace SmartMet
 {
@@ -36,10 +42,9 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 class Product;
 class State;
-}
+}  // namespace Dali
 namespace WMS
 {
 class Handler;

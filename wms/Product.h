@@ -11,16 +11,20 @@
 #include "Defs.h"
 #include "ParameterInfo.h"
 #include "Png.h"
-#include "Projection.h"
 #include "Properties.h"
 #include "Text.h"
 #include "Views.h"
 #include "Webp.h"
-#include <json/json.h>
-#include <macgyver/DateTime.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <optional>
+#include <set>
 #include <string>
-#include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
 
 namespace SmartMet
 {

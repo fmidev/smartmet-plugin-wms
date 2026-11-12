@@ -6,6 +6,8 @@
 
 #include "SyntheticFrontSource.h"
 #include <macgyver/Exception.h>
+#include <string>
+#include <utility>
 
 namespace SmartMet
 {

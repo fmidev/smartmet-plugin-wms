@@ -1,11 +1,17 @@
 #pragma once
 
-#include "Attributes.h"
-#include "Geometry.h"
-#include "Projection.h"
-#include "State.h"
-#include <ctpp2/CDT.hpp>
-#include <macgyver/CacheStats.h>
+#include <string>
+#include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace SmartMet::Plugin::Dali
+{
+class Attributes;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

@@ -1,5 +1,7 @@
 #include "ParameterInfo.h"
-#include "Hash.h"
+#include <macgyver/Hash.h>
+#include <macgyver/StringConversion.h>
+#include <algorithm>
 
 namespace SmartMet
 {

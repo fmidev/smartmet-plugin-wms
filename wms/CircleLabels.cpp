@@ -1,11 +1,16 @@
 
 #include "CircleLabels.h"
-#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <stdexcept>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

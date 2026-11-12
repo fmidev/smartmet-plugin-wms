@@ -6,10 +6,8 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "PostGISLayerBase.h"
-
-#include <gis/Types.h>
+#include <cstddef>
 
 namespace SmartMet
 {
@@ -17,9 +15,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
-class State;
 
 class PostGISLayer : public PostGISLayerBase
 {

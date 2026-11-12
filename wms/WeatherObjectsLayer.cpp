@@ -7,23 +7,30 @@
 #include "WeatherObjectsLayer.h"
 #include "Config.h"
 #include "JsonTools.h"
+#include "Projection.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
 #include <engines/querydata/Engine.h>
+#include <engines/querydata/Q.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/SpatialReference.h>
+#include <json/value.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
+#include <macgyver/Matrix.h>
+#include <newbase/NFmiDataMatrix.h>
 #include <newbase/NFmiGlobals.h>
 #include <timeseries/ParameterFactory.h>
-
+#include <timeseries/TimeSeriesInclude.h>
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <sstream>
+#include <utility>
 
 namespace SmartMet
 {

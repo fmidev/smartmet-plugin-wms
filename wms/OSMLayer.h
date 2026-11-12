@@ -23,13 +23,19 @@
 
 #include "Attributes.h"
 #include "Layer.h"
+#include <ctpp2/CDT.hpp>
 #include <engines/gis/MapOptions.h>
-#include <engines/osm/Engine.h>
-#include <gis/Types.h>
+#include <engines/osm/Scene.h>
+#include <json/value.h>
+#include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
+
+class OGRGeometry;
 
 namespace SmartMet
 {

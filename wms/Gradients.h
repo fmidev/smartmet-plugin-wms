@@ -8,12 +8,9 @@
 
 #pragma once
 
-#include <json/json.h>
-
-namespace CTPP
-{
-class CDT;
-}  // namespace CTPP
+#include <json/forwards.h>
+#include <map>
+#include <string>
 
 namespace SmartMet
 {
@@ -21,7 +18,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 class State;
 
 class Gradients

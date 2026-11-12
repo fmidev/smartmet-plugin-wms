@@ -1,22 +1,33 @@
 #include "LayerFactory.h"
+#include "../Config.h"
 #include "../JsonTools.h"
-#include "StyleSelection.h"
+#include "../Text.h"
+#include "../gridding/Gridder.h"
 #include "GridDataLayer.h"
+#include "IntervalDimension.h"
+#include "Layer.h"
+#include "LayerConfig.h"
 #include "NonTemporalLayer.h"
 #include "ObsGridLayer.h"
 #include "PostGISLayer.h"
 #include "QueryDataLayer.h"
 #include "SatelliteLayer.h"
+#include "SupportedReference.h"
 #ifndef WITHOUT_OBSERVATION
 #include "ObservationLayer.h"
 #endif
-#include <engines/querydata/Engine.h>
-#include <fmt/format.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/Typedefs.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <spine/HTTP.h>
 #include <spine/Json.h>
+#include <spine/JsonCache.h>
+#include <filesystem>
+#include <map>
+#include <memory>
+#include <optional>
 #include <set>
+#include <vector>
 
 using namespace SmartMet::Plugin::Dali::JsonTools;
 

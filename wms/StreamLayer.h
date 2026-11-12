@@ -1,15 +1,24 @@
 #pragma once
 
-#include "Intersections.h"
-#include "Isoline.h"
 #include "Layer.h"
-#include "Map.h"
 #include "ParameterInfo.h"
-#include "Positions.h"
-#include "Sampling.h"
-#include "Smoother.h"
+#include <engines/grid/Engine.h>
 #include <engines/querydata/Q.h>
+#include <gis/Types.h>
+#include <grid-files/grid/Typedefs.h>
+#include <cstddef>
+#include <optional>
+#include <string>
 #include <vector>
+
+namespace SmartMet::QueryServer
+{
+class Query;
+}  // namespace SmartMet::QueryServer
+namespace SmartMet::T
+{
+class AttributeList;
+}  // namespace SmartMet::T
 
 namespace SmartMet
 {
@@ -17,8 +26,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class StreamLayer : public Layer

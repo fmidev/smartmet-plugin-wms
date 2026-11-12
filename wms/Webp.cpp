@@ -1,9 +1,11 @@
 #include "Webp.h"
 #include "Config.h"
-#include "Hash.h"
-
 #include <fmt/format.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {

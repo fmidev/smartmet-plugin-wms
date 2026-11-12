@@ -8,7 +8,29 @@
 #pragma once
 
 #include "NumberLayer.h"
-#include <engines/observation/Engine.h>
+#include "PointData.h"
+#include <gis/SpatialReference.h>
+#include <macgyver/DateTime.h>
+#include <timeseries/TimeSeries.h>
+#include <timeseries/TimeSeriesInclude.h>
+#include <cstddef>
+#include <optional>
+#include <string>
+#include <vector>
+
+namespace Fmi
+{
+class Box;
+class CoordinateTransformation;
+}  // namespace Fmi
+namespace SmartMet::Engine::Observation
+{
+class Settings;
+}  // namespace SmartMet::Engine::Observation
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

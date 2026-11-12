@@ -1,11 +1,22 @@
 #include "Layers.h"
+#include "Attributes.h"
 #include "Hash.h"
 #include "Layer.h"
 #include "LayerFactory.h"
+#include "State.h"
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
+#include <json/writer.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
+#include <spine/HTTP.h>
+#include <iostream>
+#include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+struct Warnings;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

@@ -1,7 +1,8 @@
 #include "ObservationSources.h"
-#include "Hash.h"
 #include "JsonTools.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 
 namespace SmartMet
 {

@@ -7,8 +7,11 @@
 #pragma once
 
 #include "AttributeSelection.h"
+#include "Attributes.h"
+#include <json/forwards.h>
+#include <cstddef>
 #include <map>
-#include <optional>
+#include <string>
 #include <vector>
 
 namespace SmartMet
@@ -18,7 +21,6 @@ namespace Plugin
 namespace Dali
 {
 class Config;
-class Plugin;
 class State;
 
 class MapStyles

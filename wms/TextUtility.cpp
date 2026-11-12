@@ -1,11 +1,17 @@
 #include "TextUtility.h"
+#include "Attributes.h"
+#include "State.h"
 #include <boost/functional/hash.hpp>
-#include <gis/Box.h>
+#include <ctpp2/CDT.hpp>
 #include <macgyver/LRUCache.h>
 #include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <cairo.h>
+#include <cmath>
+#include <cstddef>
+#include <memory>
 #include <mutex>
+#include <optional>
 
 namespace SmartMet
 {

@@ -3,19 +3,31 @@
 #include "DataTile.h"
 #include "GridQueryTools.h"
 #include "Layer.h"
+#include "ParameterInfo.h"
+#include "Projection.h"
 #include "State.h"
 #include <boost/crc.hpp>
 #include <engines/grid/Engine.h>
 #include <fmt/format.h>
+#include <gis/Box.h>
+#include <gis/SpatialReference.h>
 #include <giza/Giza.h>
+#include <grid-content/queryServer/definition/ParameterValues.h>
+#include <grid-content/queryServer/definition/Query.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
-#include <grid-files/common/GeneralFunctions.h>
+#include <grid-content/queryServer/definition/QueryParameter.h>
+#include <grid-files/common/AttributeList.h>
 #include <grid-files/grid/Typedefs.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <newbase/NFmiPoint.h>
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <limits>
+#include <memory>
+#include <optional>
 
 namespace SmartMet
 {

@@ -2,19 +2,35 @@
 #ifndef WITHOUT_OBSERVATION
 
 #include "CloudCeilingLayer.h"
-#include "Config.h"
-#include "Iri.h"
 #include "JsonTools.h"
+#include "ParameterInfo.h"
 #include "PointData.h"
-#include "Select.h"
+#include "PointValueOptions.h"
+#include "Positions.h"
+#include "Projection.h"
 #include "State.h"
 #include "ValueTools.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
-#include <fmt/printf.h>
+#include <engines/geonames/Engine.h>
+#include <engines/observation/Engine.h>
+#include <engines/observation/Settings.h>
+#include <engines/observation/StationSettings.h>
+#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <json/value.h>
+#include <locus/QueryOptions.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <newbase/NFmiGlobals.h>
+#include <newbase/NFmiPoint.h>
+#include <spine/HTTP.h>
+#include <spine/Location.h>
+#include <spine/Parameter.h>
 #include <timeseries/ParameterTools.h>
+#include <cmath>
+#include <list>
+#include <memory>
 
 namespace SmartMet
 {

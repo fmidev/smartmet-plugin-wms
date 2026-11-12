@@ -11,8 +11,15 @@
 
 #pragma once
 
-#include "LayerConfig.h"
 #include "Layer.h"
+#include "LayerConfig.h"
+#include <string>
+#include <utility>
+
+namespace SmartMet::Engine::Observation
+{
+class Engine;
+}  // namespace SmartMet::Engine::Observation
 
 namespace SmartMet
 {

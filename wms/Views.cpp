@@ -1,8 +1,17 @@
 #include "Views.h"
 #include "Hash.h"
-
+#include "View.h"
 #include <ctpp2/CDT.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <string>
+
+namespace SmartMet::Plugin::Dali
+{
+class Properties;
+class State;
+struct Warnings;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

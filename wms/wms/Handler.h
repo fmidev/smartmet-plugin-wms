@@ -6,20 +6,42 @@
 
 #pragma once
 
-#include "Config.h"
-#include "Exception.h"
-#include "../ogc/QueryStatus.h"
 #include <json/value.h>
 #include <macgyver/Cache.h>
+#include <macgyver/CacheStats.h>
 #include <macgyver/DateTime.h>
-#include <macgyver/Exception.h>
 #include <macgyver/TemplateFactory.h>
-#include <spine/HTTP.h>
-#include <spine/JsonCache.h>
+#include <cstddef>
 #include <memory>
 #include <optional>
-#include <set>
 #include <string>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace Fmi
+{
+class Exception;
+}  // namespace Fmi
+namespace SmartMet::Plugin::OGC
+{
+enum class QueryStatus;
+}  // namespace SmartMet::Plugin::OGC
+namespace SmartMet::Plugin::WMS
+{
+class Config;
+enum class ExceptionFormat;
+}  // namespace SmartMet::Plugin::WMS
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+class Response;
+}  // namespace SmartMet::Spine::HTTP
+namespace SmartMet::Spine
+{
+class JsonCache;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {

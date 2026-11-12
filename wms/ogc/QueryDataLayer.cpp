@@ -1,5 +1,22 @@
 #include "QueryDataLayer.h"
+#include "ElevationDimension.h"
+#include "TimeDimension.h"
+#include <engines/querydata/Engine.h>
+#include <engines/querydata/Envelope.h>
+#include <engines/querydata/MetaData.h>
+#include <engines/querydata/OriginTime.h>
+#include <engines/querydata/Producer.h>
+#include <engines/querydata/Q.h>
+#include <engines/querydata/ValidTimeList.h>
 #include <macgyver/Exception.h>
+#include <newbase/NFmiLevelType.h>
+#include <spine/Value.h>
+#include <algorithm>
+#include <list>
+#include <map>
+#include <memory>
+#include <optional>
+#include <set>
 
 namespace SmartMet
 {

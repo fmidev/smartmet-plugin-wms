@@ -23,10 +23,14 @@
 #include "Layer.h"
 #include <engines/querydata/Q.h>
 #include <engines/querydata/ValidTimeList.h>
-#include <spine/Parameter.h>
 #include <sstream>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Spine
+{
+class Parameter;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {

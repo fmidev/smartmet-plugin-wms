@@ -15,10 +15,18 @@
 #include "Properties.h"
 #include "Styles.h"
 #include "Symbols.h"
-#include "Warnings.h"
-#include <map>
+#include <json/forwards.h>
+#include <cstddef>
 #include <string>
-#include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace SmartMet::Plugin::Dali
+{
+struct Warnings;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

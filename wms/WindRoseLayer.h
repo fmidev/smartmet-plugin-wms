@@ -13,7 +13,10 @@
 #include "Stations.h"
 #include "WindRose.h"
 #include "WindRoseData.h"
+#include <macgyver/DateTime.h>
+#include <cstddef>
 #include <map>
+#include <string>
 
 namespace SmartMet
 {
@@ -21,8 +24,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class WindRoseLayer : public Layer

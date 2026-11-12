@@ -13,6 +13,7 @@
 
 #include <macgyver/DateTime.h>
 #include <spine/OpenApi.h>
+#include <cstddef>
 #include <functional>
 #include <map>
 #include <memory>

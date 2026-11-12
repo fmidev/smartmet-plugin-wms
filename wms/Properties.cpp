@@ -2,11 +2,18 @@
 #include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
-#include "Time.h"
+#include "State.h"
+#include <engines/geonames/Engine.h>
+#include <engines/grid/Engine.h>
+#include <gis/Box.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/Typedefs.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <spine/Json.h>
+#include <macgyver/Hash.h>
+#include <spine/HTTP.h>
 #include <cstring>
+#include <set>
 #include <vector>
 
 namespace SmartMet

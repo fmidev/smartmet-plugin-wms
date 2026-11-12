@@ -1,13 +1,17 @@
 #include "PointValueOptions.h"
-#include "Hash.h"
 #include "JsonTools.h"
 #include "PointData.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/NearTree.h>
 #include <newbase/NFmiGlobals.h>
 #include <algorithm>
+#include <cmath>
+#include <limits>
 #include <map>
 #include <unordered_map>
+#include <utility>
 
 namespace SmartMet
 {
@@ -28,7 +32,7 @@ class PointValueWrapper
   double priorityValueMeanDeviation() const { return itsMeanDeviation; }
   void setMeanDeviation(double mean)
   {
-    itsMeanDeviation = abs(mean - itsPointData.priorityValue());
+    itsMeanDeviation = std::abs(mean - itsPointData.priorityValue());
   }
   const PointData& data() const { return itsPointData; }
 

@@ -1,13 +1,20 @@
 #pragma once
 
-#include "Config.h"
-#include <engines/querydata/Engine.h>
 #include <macgyver/TemplateFactory.h>
-#include <spine/HTTP.h>
-#include <spine/Value.h>
-#include <map>
-#include <set>
 #include <string>
+
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Plugin::WMS
+{
+class Config;
+}  // namespace SmartMet::Plugin::WMS
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+}  // namespace SmartMet::Spine::HTTP
 
 namespace SmartMet
 {

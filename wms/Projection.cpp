@@ -2,24 +2,28 @@
 
 #include "Projection.h"
 #include "Config.h"
-#include "Hash.h"
 #include "JsonTools.h"
+#include "State.h"
+#include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
-#include <engines/gis/Engine.h>
-#include <fmt/format.h>
+#include <engines/geonames/Engine.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/Typedefs.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <macgyver/StringConversion.h>
+#include <newbase/NFmiArea.h>
+#include <newbase/NFmiFastQueryInfo.h>
 #include <spine/HTTP.h>
+#include <spine/Location.h>
 #include <cmath>
-#include <ogr_geometry.h>
 #include <ogr_spatialref.h>
-#include <stdexcept>
-
-#include <gis/OGR.h>
+#include <vector>
 
 namespace SmartMet
 {

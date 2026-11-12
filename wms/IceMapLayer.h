@@ -6,12 +6,24 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "PostGISLayerBase.h"
-#include "PostGISLayerFilter.h"
+#include <cstddef>
+#include <map>
+#include <string>
+#include <vector>
 
-#include <engines/gis/MapOptions.h>
-#include <gis/Types.h>
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace Fmi
+{
+struct Feature;
+}  // namespace Fmi
+namespace SmartMet::Plugin::Dali
+{
+class PostGISLayerFilter;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {
@@ -19,8 +31,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class IceMapLayer : public PostGISLayerBase

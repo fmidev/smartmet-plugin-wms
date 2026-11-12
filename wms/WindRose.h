@@ -9,10 +9,17 @@
 #include "AttributeSelection.h"
 #include "Attributes.h"
 #include "Connector.h"
-#include <json/json.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <optional>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

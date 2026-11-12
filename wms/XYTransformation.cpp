@@ -1,4 +1,6 @@
 #include "XYTransformation.h"
+#include "Projection.h"
+#include <gis/Box.h>
 
 namespace SmartMet
 {

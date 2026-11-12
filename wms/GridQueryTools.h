@@ -7,13 +7,28 @@
 #pragma once
 
 #include <gis/Types.h>
-#include <grid-content/queryServer/definition/Query.h>
+#include <grid-content/queryServer/definition/ParameterValues.h>
+#include <grid-files/grid/Typedefs.h>
 #include <macgyver/DateTime.h>
 #include <trax/InterpolationType.h>
-#include <trax/SmoothOptions.h>
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
+
+namespace SmartMet::QueryServer
+{
+class Query;
+class QueryParameter;
+}  // namespace SmartMet::QueryServer
+namespace SmartMet::T
+{
+class AttributeList;
+}  // namespace SmartMet::T
+namespace Trax
+{
+struct SmoothOptions;
+}  // namespace Trax
 
 namespace SmartMet
 {
@@ -39,11 +54,11 @@ namespace Plugin
 {
 namespace Dali
 {
-struct ParameterInfo;
 class Positions;
 class Projection;
 class Smoother;
 class State;
+struct ParameterInfo;
 
 // Add the grid-engine parameter string of the parameter with the multiplier and offset applied
 // to the attributes, use it as the projection parameter if there is none yet, and add the

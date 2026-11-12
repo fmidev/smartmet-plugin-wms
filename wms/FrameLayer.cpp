@@ -1,17 +1,24 @@
 #include "FrameLayer.h"
-#include "Config.h"
+#include "Geometry.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
+#include "Projection.h"
 #include "State.h"
 #include "TextUtility.h"
-#include <cmath>
+#include <boost/algorithm/string.hpp>
 #include <ctpp2/CDT.hpp>
-#include <gis/OGR.h>
+#include <gis/Box.h>
+#include <gis/SpatialReference.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
+#include <cmath>
 #include <ogr_geometry.h>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

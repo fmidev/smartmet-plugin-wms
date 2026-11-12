@@ -1,5 +1,13 @@
 #include "ColorPainter.h"
+#include "JsonTools.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

@@ -1,11 +1,16 @@
 #include "OpenApiLayers.h"
 #include "../Config.h"
 #include "../wms/Config.h"
+#include "Layer.h"
+#include "LayerHierarchy.h"
 #include <boost/algorithm/string.hpp>
+#include <ctpp2/CDT.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <cctype>
+#include <initializer_list>
+#include <utility>
 
 namespace SmartMet
 {

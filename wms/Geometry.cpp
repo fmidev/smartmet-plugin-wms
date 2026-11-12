@@ -1,13 +1,22 @@
 #include "Geometry.h"
-#include "Hash.h"
-#include "State.h"
-#include <engines/gis/Engine.h>
 #include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/OGR.h>
 #include <gis/SpatialReference.h>
+#include <grid-files/common/Typedefs.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <cmath>
+#include <memory>
 #include <ogr_api.h>
 #include <ogr_geometry.h>
+#include <sstream>
+#include <utility>
+
+namespace Fmi
+{
+class Box;
+}  // namespace Fmi
 
 namespace SmartMet
 {

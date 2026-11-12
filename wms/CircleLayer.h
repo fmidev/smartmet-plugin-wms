@@ -6,15 +6,22 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "Circle.h"
 #include "CircleLabels.h"
 #include "Layer.h"
+#include <gis/SpatialReference.h>
 #include <gis/Types.h>
 #include <spine/Location.h>
-#include <optional>
+#include <cstddef>
+#include <set>
 #include <string>
 #include <vector>
+
+namespace Fmi
+{
+class Box;
+class CoordinateTransformation;
+}  // namespace Fmi
 
 namespace CTPP
 {
@@ -27,7 +34,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 class State;
 
 class CircleLayer : public Layer

@@ -1,10 +1,26 @@
 #pragma once
 
-#include "Layer.h"
-#include <engines/observation/Engine.h>
-#include <engines/querydata/Engine.h>
-#include <timeseries/ParameterFactory.h>
+#include <engines/querydata/Q.h>
+#include <macgyver/DateTime.h>
+#include <macgyver/LocalDateTime.h>
+#include <timeseries/TimeSeries.h>
 #include <timeseries/TimeSeriesInclude.h>
+#include <optional>
+#include <vector>
+
+namespace SmartMet::Engine::Observation
+{
+class Engine;
+class Settings;
+}  // namespace SmartMet::Engine::Observation
+namespace SmartMet::Engine::Querydata
+{
+struct ParameterOptions;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::TimeSeries
+{
+struct ParameterAndFunctions;
+}  // namespace SmartMet::TimeSeries
 
 namespace SmartMet
 {

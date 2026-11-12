@@ -28,13 +28,22 @@
 
 #pragma once
 
-#include "ColorMap.h"
 #include "Layer.h"
-#include <engines/satellite/Engine.h>
+#include <engines/satellite/Image.h>
+#include <engines/satellite/ImageInfo.h>
 #include <macgyver/DateTime.h>
-#include <macgyver/TimeParser.h>
-#include <optional>
+#include <cstddef>
+#include <memory>
 #include <string>
+
+namespace SmartMet::Engine::Satellite
+{
+class Engine;
+}  // namespace SmartMet::Engine::Satellite
+namespace SmartMet::Plugin::Dali
+{
+class ColorMap;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {
@@ -42,7 +51,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 class State;
 
 class SatelliteLayer : public Layer

@@ -6,13 +6,19 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "Layer.h"
 #include "PostGISLayerFilter.h"
-#include <engines/gis/MapOptions.h>
+#include <gis/SpatialReference.h>
 #include <gis/Types.h>
+#include <cstddef>
 #include <optional>
 #include <string>
+#include <vector>
+
+namespace SmartMet::Engine::Gis
+{
+struct MapOptions;
+}  // namespace SmartMet::Engine::Gis
 
 namespace SmartMet
 {
@@ -20,8 +26,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 // Explain an empty map fetch. The geometry can be missing either because the

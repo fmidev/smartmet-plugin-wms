@@ -9,6 +9,7 @@
 #ifndef WITHOUT_OBSERVATION
 
 #include "ObservationLayer.h"
+#include <string>
 
 namespace SmartMet
 {
@@ -16,9 +17,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
-class State;
 
 class FinnishRoadObservationLayer : public ObservationLayer
 {

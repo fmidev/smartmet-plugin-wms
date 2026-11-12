@@ -14,7 +14,20 @@
 #include "PointValueOptions.h"
 #include "Positions.h"
 #include <timeseries/ParameterFactory.h>
+#include <timeseries/TimeSeriesInclude.h>
+#include <cstddef>
+#include <optional>
+#include <string>
 #include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace SmartMet::Plugin::Dali
+{
+class PointData;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {
@@ -22,8 +35,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class NumberLayer : public Layer

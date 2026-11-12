@@ -7,8 +7,8 @@
 #pragma once
 
 #include <giza/ColorMapOptions.h>
-#include <json/json.h>
-#include <string>
+#include <json/forwards.h>
+#include <cstddef>
 
 namespace SmartMet
 {

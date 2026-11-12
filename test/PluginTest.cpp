@@ -1,17 +1,23 @@
-#include "Plugin.h"
 #include <boost/algorithm/string.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StaticCleanup.h>
 #include <spine/HTTP.h>
+#include <spine/HandlerView.h>
 #include <spine/Options.h>
 #include <spine/Reactor.h>
-#include <algorithm>
 #include <csignal>
+#include <cstdio>
+#include <cstdlib>
+#include <exception>
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
-#include <stdexcept>
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <memory>
 #include <string>
+#include <unistd.h>
+#include <utility>
 #include <vector>
 
 static const int testtimeout = 900;  // Seconds a single test is allowed to run

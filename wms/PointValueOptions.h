@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include <spine/Json.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <optional>
 #include <string>
 #include <vector>

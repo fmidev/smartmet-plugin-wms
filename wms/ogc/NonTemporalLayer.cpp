@@ -1,5 +1,13 @@
 #include "NonTemporalLayer.h"
-#include <macgyver/Exception.h>
+#include "LayerConfig.h"
+#include <engines/gis/Engine.h>
+#include <engines/gis/MapOptions.h>
+#include <gis/SpatialReference.h>
+#include <spine/Value.h>
+#include <algorithm>
+#include <ogr_geometry.h>
+#include <optional>
+#include <string>
 
 namespace SmartMet
 {

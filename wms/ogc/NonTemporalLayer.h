@@ -11,10 +11,10 @@
 
 #pragma once
 
-#include "LayerConfig.h"
 #include "Layer.h"
-
-#include <spine/Json.h>
+#include "LayerConfig.h"
+#include <json/value.h>
+#include <macgyver/DateTime.h>
 
 namespace SmartMet
 {

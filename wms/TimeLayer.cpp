@@ -1,28 +1,40 @@
 //======================================================================
 
 #include "TimeLayer.h"
-#include "Config.h"
 #include "GridQueryTools.h"
-#include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
+#include "ParameterInfo.h"
+#include "Projection.h"
 #include "State.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/geonames/Engine.h>
 #include <engines/grid/Engine.h>
+#include <engines/querydata/Q.h>
 #include <fmt/chrono.h>
 #include <gis/Box.h>
+#include <gis/SpatialReference.h>
+#include <grid-content/queryServer/definition/ParameterValues.h>
+#include <grid-content/queryServer/definition/Query.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
-#include <grid-files/common/GeneralFunctions.h>
+#include <grid-content/queryServer/definition/QueryParameter.h>
+#include <grid-files/common/AttributeList.h>
+#include <json/value.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/LocalDateTime.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Json.h>
+#include <macgyver/TimeParser.h>
+#include <macgyver/TimeZones.h>
 #include <array>
+#include <cstring>
+#include <ctime>
 #include <functional>
-#include <ogr_spatialref.h>
+#include <memory>
+#include <sstream>
 
 namespace SmartMet
 {

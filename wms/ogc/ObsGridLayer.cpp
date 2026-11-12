@@ -1,5 +1,14 @@
 #include "ObsGridLayer.h"
+#include "TimeDimension.h"
+#include "gridding/Gridder.h"
 #include <macgyver/Exception.h>
+#include <spine/Value.h>
+#include <algorithm>
+#include <list>
+#include <map>
+#include <memory>
+#include <optional>
+#include <vector>
 
 namespace SmartMet
 {

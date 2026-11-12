@@ -8,9 +8,16 @@
 
 #include "Attributes.h"
 #include "Text.h"
-#include <json/json.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <optional>
 #include <string>
+
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <json/json.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <optional>
-#include <string>
 
 namespace SmartMet
 {

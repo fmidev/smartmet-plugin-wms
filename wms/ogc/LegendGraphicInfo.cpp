@@ -1,4 +1,5 @@
 #include "LegendGraphicInfo.h"
+#include <ostream>
 
 namespace SmartMet
 {

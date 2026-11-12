@@ -2,10 +2,9 @@
 
 #include "MapboxVectorTile.h"
 #include <macgyver/Exception.h>
-#include <ogr_geometry.h>
-#include <algorithm>
 #include <cmath>
-#include <cstdint>
+#include <ogr_geometry.h>
+#include <type_traits>
 
 namespace SmartMet
 {

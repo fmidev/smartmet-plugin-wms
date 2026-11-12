@@ -1,8 +1,15 @@
 #pragma once
 
-#include "Projection.h"
-#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+
+namespace Fmi
+{
+class Box;
+}  // namespace Fmi
+namespace SmartMet::Plugin::Dali
+{
+class Projection;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {
@@ -10,7 +17,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class State;
 
 class LonLatToXYTransformation
 {

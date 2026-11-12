@@ -8,9 +8,13 @@
 // ======================================================================
 
 #pragma once
-#include "Projection.h"
 #include <string>
 #include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class Projection;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

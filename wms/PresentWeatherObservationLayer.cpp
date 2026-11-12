@@ -1,13 +1,13 @@
 #ifndef WITHOUT_OBSERVATION
 
 #include "PresentWeatherObservationLayer.h"
-#include "Config.h"
 #include "LonLatToXYTransformation.h"
 #include "PointData.h"
-#include "State.h"
-#include "ValueTools.h"
-#include <timeseries/ParameterTools.h>
+#include <macgyver/Exception.h>
+#include <newbase/NFmiGlobals.h>
+#include <algorithm>
 #include <array>
+#include <vector>
 
 namespace SmartMet
 {

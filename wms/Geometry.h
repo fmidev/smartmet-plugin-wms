@@ -6,12 +6,16 @@
 
 #pragma once
 
-#include <gis/OGR.h>
-#include <memory>
+#include <sys/types.h>
+#include <cstddef>
+#include <map>
 #include <string>
+
+class OGRGeometry;
 
 namespace Fmi
 {
+class Box;
 class SpatialReference;
 }  // namespace Fmi
 
@@ -21,7 +25,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class State;
 
 namespace Geometry
 {

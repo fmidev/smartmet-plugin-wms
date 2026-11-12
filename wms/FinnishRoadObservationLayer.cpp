@@ -3,12 +3,14 @@
 #include "FinnishRoadObservationLayer.h"
 #include "LonLatToXYTransformation.h"
 #include "PointData.h"
-#include "State.h"
-#include "ValueTools.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <timeseries/ParameterTools.h>
-#include <timeseries/TimeSeriesInclude.h>
+#include <newbase/NFmiGlobals.h>
+#include <algorithm>
 #include <map>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

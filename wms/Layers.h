@@ -8,10 +8,17 @@
 
 #include "ParameterInfo.h"
 #include "Projection.h"
-#include "Warnings.h"
-#include <json/json.h>
+#include <json/forwards.h>
+#include <cstddef>
 #include <list>
 #include <memory>
+#include <optional>
+#include <string>
+
+namespace SmartMet::Plugin::Dali
+{
+struct Warnings;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace CTPP
 {
@@ -25,9 +32,9 @@ namespace Plugin
 namespace Dali
 {
 class Config;
+class Layer;
 class Properties;
 class State;
-class Layer;
 
 class Layers
 {

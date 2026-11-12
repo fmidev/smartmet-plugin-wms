@@ -2,15 +2,19 @@
 
 #ifndef WITHOUT_OBSERVATIONS
 
-#include "ObservationSources.h"
 #include <macgyver/DateTime.h>
 #include <string>
 #include <vector>
 
+namespace SmartMet::Plugin::Dali
+{
+struct ObservationSources;
+}  // namespace SmartMet::Plugin::Dali
+
 namespace Fmi
 {
-class SpatialReference;
 class Box;
+class SpatialReference;
 }  // namespace Fmi
 
 namespace SmartMet
@@ -20,8 +24,8 @@ namespace Plugin
 namespace Dali
 {
 class Layer;
-class Positions;
 class PointData;
+class Positions;
 class State;
 
 using PointValues = std::vector<PointData>;

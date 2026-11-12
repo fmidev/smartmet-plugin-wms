@@ -1,16 +1,21 @@
 #include "GridLayer.h"
-#include "Config.h"
 #include "Geometry.h"
-#include "Hash.h"
 #include "Layer.h"
+#include "Projection.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
 #include <engines/querydata/Engine.h>
+#include <gis/BoolMatrix.h>
+#include <gis/Box.h>
+#include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateMatrixAnalysis.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
 #include <ogr_geometry.h>
+#include <optional>
+#include <string>
 
 namespace SmartMet
 {

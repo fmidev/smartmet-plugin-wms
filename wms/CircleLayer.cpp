@@ -1,19 +1,28 @@
 #include "CircleLayer.h"
-#include "Config.h"
-#include "MapboxVectorTile.h"
 #include "Geometry.h"
-#include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
+#include "Projection.h"
 #include "State.h"
-#include <boost/timer/timer.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/geonames/Engine.h>
+#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
+#include <json/value.h>
+#include <locus/QueryOptions.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
+#include <cmath>
+#include <list>
+#include <map>
+#include <memory>
 #include <ogr_geometry.h>
+#include <utility>
 
 namespace SmartMet
 {

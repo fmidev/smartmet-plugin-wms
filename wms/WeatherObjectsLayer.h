@@ -37,6 +37,7 @@
 
 #include "Layer.h"
 #include <dynlib/Dynlib.h>
+#include <cstddef>
 #include <optional>
 #include <string>
 #include <vector>

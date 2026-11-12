@@ -1,30 +1,55 @@
 //======================================================================
 
 #include "StreamLayer.h"
-#include "Config.h"
 #include "Geometry.h"
 #include "GridQueryTools.h"
-#include "Hash.h"
-#include "Isoline.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "Projection.h"
 #include "State.h"
-#include "StyleSheet.h"
+#include <boost/math/constants/constants.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
-#include <engines/contour/Engine.h>
-#include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
+#include <engines/querydata/ParameterOptions.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
-#include <gis/CoordinateTransformation.h>
-#include <gis/OGR.h>
+#include <gis/SpatialReference.h>
+#include <grid-content/queryServer/definition/ParameterValues.h>
+#include <grid-content/queryServer/definition/Query.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
-#include <grid-files/common/GeneralFunctions.h>
+#include <grid-content/queryServer/definition/QueryParameter.h>
+#include <grid-files/common/AttributeList.h>
+#include <grid-files/common/Coordinate.h>
 #include <grid-files/common/GraphFunctions.h>
-#include <spine/Json.h>
+#include <grid-files/common/Typedefs.h>
+#include <grid-files/identification/GridDef.h>
+#include <json/value.h>
+#include <macgyver/DateTime.h>
+#include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <macgyver/LocalDateTime.h>
+#include <macgyver/StringConversion.h>
+#include <macgyver/TimeFormatter.h>
+#include <newbase/NFmiGlobals.h>
+#include <newbase/NFmiMetTime.h>
+#include <newbase/NFmiPoint.h>
+#include <spine/Location.h>
 #include <timeseries/ParameterFactory.h>
-#include <trax/InterpolationType.h>
+#include <timeseries/TimeSeries.h>
+#include <timeseries/TimeSeriesInclude.h>
+#include <cmath>
+#include <cstring>
+#include <locale>
+#include <memory>
+#include <ogr_geometry.h>
+#include <sstream>
+#include <variant>
+
+namespace SmartMet::Spine
+{
+class Parameter;
+}  // namespace SmartMet::Spine
 
 const double pi = boost::math::constants::pi<double>();
 

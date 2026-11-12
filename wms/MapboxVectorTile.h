@@ -15,11 +15,19 @@
 #pragma once
 
 #include "vector_tile.pb.h"
-#include <ogr_geometry.h>
+#include <cstddef>
+#include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <variant>
 #include <vector>
+
+class OGRGeometry;
+class OGRLineString;
+class OGRLinearRing;
+class OGRMultiPoint;
+class OGRMultiPolygon;
 
 namespace SmartMet
 {

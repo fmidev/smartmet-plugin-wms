@@ -3,24 +3,33 @@
 #ifndef WITHOUT_AVI
 
 #include "MetarLayer.h"
-#include "Config.h"
-#include "Hash.h"
 #include "JsonTools.h"
+#include "Projection.h"
 #include "State.h"
+#include <boost/regex.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/avi/Engine.h>
 #include <fmt/format.h>
+#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/SpatialReference.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Json.h>
-
+#include <newbase/NFmiPoint.h>
+#include <timeseries/TimeSeries.h>
 #include <algorithm>
+#include <cctype>
 #include <cmath>
-#include <boost/regex.hpp>
+#include <cstdlib>
+#include <list>
+#include <map>
+#include <memory>
 #include <sstream>
+#include <utility>
+#include <variant>
 
 namespace SmartMet
 {

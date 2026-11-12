@@ -1,18 +1,28 @@
 #include "GetCapabilities.h"
-#include "Exception.h"
+#include "../Config.h"
 #include "../ogc/BaseURL.h"
-#include <boost/algorithm/string/join.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/range/adaptor/map.hpp>
-#include <boost/range/algorithm/copy.hpp>
+#include "../ogc/LayerHierarchy.h"
+#include "Config.h"
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/std_containers_traits.hpp>  // IWYU pragma: keep
+#include <ctpp2/CDT.hpp>
 #include <ctpp2/CTPP2Logger.hpp>  // logging level defines
 #include <fmt/printf.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/TemplateFormatter.h>
+#include <macgyver/TimeParser.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
-#include <algorithm>
-#include <memory>
+#include <spine/HTTP.h>
+#include <cstddef>
+#include <exception>
+#include <optional>
+
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
 
 namespace SmartMet
 {

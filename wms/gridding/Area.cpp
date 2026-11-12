@@ -7,13 +7,16 @@
 #include "Area.h"
 #include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <gdal_priv.h>
 #include <gdal_utils.h>
 #include <limits>
+#include <utility>
 
 namespace SmartMet
 {

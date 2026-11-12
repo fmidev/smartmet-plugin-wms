@@ -1,12 +1,15 @@
 #include "BackgroundLayer.h"
-#include "Config.h"
-#include "Hash.h"
 #include "Layer.h"
+#include "ParameterInfo.h"
+#include "Projection.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
+#include <optional>
+#include <string>
 
 namespace SmartMet
 {

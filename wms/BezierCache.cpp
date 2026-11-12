@@ -1,6 +1,6 @@
 #include "BezierCache.h"
-
 #include <macgyver/Hash.h>
+#include <utility>
 
 namespace SmartMet
 {

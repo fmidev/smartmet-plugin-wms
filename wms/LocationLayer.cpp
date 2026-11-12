@@ -1,11 +1,11 @@
 //======================================================================
 
 #include "LocationLayer.h"
-#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "LabelPlacement.h"
 #include "Layer.h"
+#include "Projection.h"
 #include "Select.h"
 #include "State.h"
 #include "TextUtility.h"
@@ -13,16 +13,28 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
+#include <engines/gis/MapOptions.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
+#include <gis/SpatialReference.h>
+#include <gis/Types.h>
+#include <json/value.h>
+#include <locus/QueryOptions.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/NearTree.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Json.h>
+#include <spine/Location.h>
 #include <algorithm>
+#include <cmath>
 #include <functional>
+#include <list>
+#include <memory>
+#include <ogr_geometry.h>
 #include <ogr_spatialref.h>
+#include <utility>
+#include <variant>
 
 namespace SmartMet
 {

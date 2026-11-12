@@ -1,6 +1,9 @@
 #pragma once
 
-#include <spine/HTTP.h>
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+}  // namespace SmartMet::Spine::HTTP
 
 namespace SmartMet
 {

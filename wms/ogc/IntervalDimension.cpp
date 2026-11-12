@@ -1,6 +1,5 @@
 #include "IntervalDimension.h"
 #include <macgyver/StringConversion.h>
-#include <iostream>
 #include <set>
 
 namespace SmartMet

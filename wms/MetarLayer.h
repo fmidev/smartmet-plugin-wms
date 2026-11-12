@@ -21,8 +21,14 @@
 #ifndef WITHOUT_AVI
 
 #include "Layer.h"
+#include <cstddef>
 #include <string>
 #include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
 
 namespace SmartMet
 {

@@ -9,9 +9,13 @@
 
 #pragma once
 
-#include "../ogc/OpenApiLayers.h"
 #include <spine/OpenApi.h>
 #include <vector>
+
+namespace SmartMet::Plugin::OGC
+{
+struct OpenApiLayer;
+}  // namespace SmartMet::Plugin::OGC
 
 namespace SmartMet
 {

@@ -1,19 +1,29 @@
 //======================================================================
 
 #include "LegendLayer.h"
+#include "Attributes.h"
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "Layers.h"
 #include "State.h"
+#include "Text.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
-#include <fmt/format.h>
 #include <fmt/printf.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Json.h>
+#include <cmath>
+#include <cstring>
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
+#include <utility>
 
 namespace SmartMet
 {

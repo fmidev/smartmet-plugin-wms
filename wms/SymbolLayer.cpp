@@ -1,44 +1,63 @@
 //======================================================================
 #include "SymbolLayer.h"
 #include "AggregationUtility.h"
+#include "Attributes.h"
 #include "Config.h"
 #include "DataTile.h"
 #include "GridDataGeoTiff.h"
 #include "GridQueryTools.h"
 #include "Hash.h"
-#include "Intersections.h"
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
 #include "MapboxVectorTile.h"
 #include "ObservationReader.h"
 #include "PointData.h"
+#include "Projection.h"
 #include "Select.h"
 #include "State.h"
-#include "ValueTools.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
-#include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
-#include <engines/querydata/Engine.h>
-#include <fmt/format.h>
+#include <engines/querydata/ParameterOptions.h>
 #include <fmt/printf.h>
-#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
-#include <gis/OGR.h>
-#include <gis/Types.h>
+#include <grid-content/queryServer/definition/ParameterValues.h>
+#include <grid-content/queryServer/definition/Query.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
-#include <grid-files/common/GeneralFunctions.h>
-#include <grid-files/common/ImagePaint.h>
+#include <grid-content/queryServer/definition/QueryParameter.h>
+#include <grid-files/common/AttributeList.h>
+#include <grid-files/common/Typedefs.h>
+#include <grid-files/grid/GridValue.h>
+#include <grid-files/grid/GridValueList.h>
+#include <grid-files/grid/Typedefs.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <newbase/NFmiArea.h>
+#include <macgyver/Hash.h>
+#include <macgyver/LocalDateTime.h>
+#include <macgyver/StringConversion.h>
+#include <macgyver/TimeFormatter.h>
 #include <newbase/NFmiGlobals.h>
+#include <newbase/NFmiMetTime.h>
 #include <newbase/NFmiPoint.h>
-#include <spine/Json.h>
+#include <spine/Location.h>
+#include <spine/Parameter.h>
 #include <timeseries/ParameterFactory.h>
-#include <timeseries/ParameterTools.h>
+#include <timeseries/TimeSeries.h>
 #include <algorithm>
-#include <iomanip>
+#include <cstring>
+#include <locale>
+#include <map>
+#include <memory>
+#include <ogr_geometry.h>
+#include <utility>
+#include <variant>
+
+namespace Fmi
+{
+class Box;
+}  // namespace Fmi
 
 namespace SmartMet
 {

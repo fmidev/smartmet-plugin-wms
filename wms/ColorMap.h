@@ -1,9 +1,12 @@
 #pragma once
 
-#include <map>
-#include <vector>
-#include <memory>
 #include <sys/types.h>
+#include <iosfwd>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

@@ -19,8 +19,11 @@
 
 #pragma once
 
+#include "FrontCurve.h"
 #include "FrontSource.h"
 #include <json/json.h>
+#include <macgyver/DateTime.h>
+#include <vector>
 
 namespace SmartMet
 {

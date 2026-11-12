@@ -1,13 +1,22 @@
 #include "TagLayer.h"
+#include "Attributes.h"
+#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "Layers.h"
 #include "LonLatToXYTransformation.h"
+#include "Projection.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
+#include <gis/Box.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <ogr_spatialref.h>
+#include <macgyver/Hash.h>
+#include <macgyver/StringConversion.h>
+#include <list>
+#include <memory>
 
 namespace SmartMet
 {

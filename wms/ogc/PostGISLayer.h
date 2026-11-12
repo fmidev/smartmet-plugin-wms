@@ -12,10 +12,19 @@
 
 #pragma once
 
-#include "LayerConfig.h"
 #include "Layer.h"
+#include <engines/gis/MetaData.h>
+#include <json/forwards.h>
+#include <string>
 
-#include <spine/Json.h>
+namespace SmartMet::Engine::Gis
+{
+class Engine;
+}  // namespace SmartMet::Engine::Gis
+namespace SmartMet::Plugin::OGC
+{
+class LayerConfig;
+}  // namespace SmartMet::Plugin::OGC
 
 namespace SmartMet
 {

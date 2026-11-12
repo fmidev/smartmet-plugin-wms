@@ -1,8 +1,16 @@
 #include "Connector.h"
-#include "Config.h"
 #include "Hash.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <stdexcept>
+#include <macgyver/Hash.h>
+#include <string>
+#include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

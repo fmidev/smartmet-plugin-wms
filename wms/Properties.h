@@ -8,12 +8,17 @@
 
 #include "ParameterInfo.h"
 #include "Projection.h"
-
-#include <gis/Box.h>
+#include <json/forwards.h>
 #include <macgyver/DateTime.h>
+#include <macgyver/LocalDateTime.h>
+#include <cstddef>
 #include <optional>
-
 #include <string>
+
+namespace Fmi
+{
+class Box;
+}  // namespace Fmi
 
 namespace SmartMet
 {

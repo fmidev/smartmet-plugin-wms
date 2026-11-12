@@ -1,12 +1,22 @@
 #pragma once
-#include "Config.h"
 #include <json/json.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/LocalDateTime.h>
-#include <macgyver/TimeZones.h>
+#include <sys/types.h>
 #include <optional>
 #include <set>
 #include <string>
+#include <vector>
+
+namespace Fmi
+{
+class TimeZones;
+}  // namespace Fmi
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

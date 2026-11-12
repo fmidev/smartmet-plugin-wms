@@ -6,15 +6,10 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "Layer.h"
-#include <optional>
+#include <cstddef>
+#include <map>
 #include <string>
-
-namespace CTPP
-{
-class CDT;
-}
 
 namespace SmartMet
 {
@@ -22,8 +17,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class State;
 
 class TranslationLayer : public Layer
 {

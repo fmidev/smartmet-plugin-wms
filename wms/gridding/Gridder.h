@@ -15,21 +15,32 @@
 
 #pragma once
 
-#include "Area.h"
 #include "Config.h"
 #include "Sources.h"
 #include <engines/querydata/Model.h>
 #include <engines/querydata/Q.h>
 #include <macgyver/Cache.h>
+#include <macgyver/CacheStats.h>
 #include <macgyver/DateTime.h>
 #include <chrono>
 #include <condition_variable>
+#include <cstddef>
 #include <future>
+#include <libconfig.h++>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Plugin::Dali::Gridding
+{
+class Area;
+}  // namespace SmartMet::Plugin::Dali::Gridding
 
 namespace SmartMet
 {

@@ -1,8 +1,8 @@
 // ======================================================================
 
 #include "Select.h"
-
 #include <macgyver/Exception.h>
+#include <string>
 
 namespace SmartMet
 {

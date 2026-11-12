@@ -5,8 +5,7 @@
 // ======================================================================
 
 #include "Handler.h"
-#include "ApiDefinition.h"
-#include "../Hash.h"
+#include "../Config.h"
 #include "../JsonTools.h"
 #include "../MapboxStyle.h"
 #include "../Mime.h"
@@ -14,24 +13,41 @@
 #include "../Product.h"
 #include "../State.h"
 #include "../ogc/BaseURL.h"
+#include "../ogc/Layer.h"
 #include "../ogc/LayerHierarchy.h"
+#include "../ogc/OpenApiLayers.h"
+#include "../ogc/QueryStatus.h"
 #include "../ogc/StyleSelection.h"
+#include "../wms/Config.h"
 #include "../wms/Handler.h"
+#include "../wmts/TileMatrix.h"
+#include "ApiDefinition.h"
+#include "Config.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <algorithm>
-#include <functional>
-#include <cmath>
-#include <optional>
-#include <fmt/format.h>
+#include <ctpp2/CDT.hpp>
+#include <engines/osm/Engine.h>
+#include <engines/osm/Style.h>
+#include <engines/osm/TileStore.h>
 #include <fmt/printf.h>
 #include <json/json.h>
-#include <json/writer.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
+#include <macgyver/TemplateFormatter.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
+#include <spine/HTTP.h>
 #include <spine/Json.h>
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <optional>
+#include <set>
+#include <utility>
 
 namespace SmartMet
 {

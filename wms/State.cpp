@@ -1,13 +1,27 @@
 // ======================================================================
 
 #include "State.h"
+#include "Attributes.h"
+#include "Config.h"
 #include "Plugin.h"
 #include "StyleSheet.h"
+#include "gridding/Gridder.h"
 #include <ctpp2/CDT.hpp>
+#include <engines/observation/Engine.h>
+#include <engines/querydata/Engine.h>
+#include <engines/querydata/Model.h>
+#include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <stdexcept>
+#include <algorithm>
+#include <utility>
+#include <vector>
+
+namespace SmartMet::Engine::Geonames
+{
+class Engine;
+}  // namespace SmartMet::Engine::Geonames
 
 namespace SmartMet
 {

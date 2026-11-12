@@ -7,8 +7,14 @@
 #pragma once
 
 #include "LayerProxy.h"
-#include <memory>
+#include <boost/algorithm/hex.hpp>
+#include <ctpp2/CDT.hpp>
+#include <macgyver/DateTime.h>
+#include <iosfwd>
+#include <list>
+#include <map>
 #include <optional>
+#include <string>
 
 namespace SmartMet
 {

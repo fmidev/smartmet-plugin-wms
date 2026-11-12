@@ -6,13 +6,8 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "Layer.h"
-
-namespace CTPP
-{
-class CDT;
-}
+#include <cstddef>
 
 namespace SmartMet
 {
@@ -20,8 +15,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class State;
 
 class NullLayer : public Layer
 {

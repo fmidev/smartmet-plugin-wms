@@ -1,14 +1,15 @@
 // ======================================================================
 
 #include "Defs.h"
-#include "Config.h"
 #include "Hash.h"
 #include "State.h"
 #include "Symbols.h"
-#include <boost/timer/timer.hpp>
+#include "Warnings.h"
 #include <ctpp2/CDT.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <spine/HTTP.h>
+#include <macgyver/Hash.h>
+#include <map>
 
 namespace SmartMet
 {

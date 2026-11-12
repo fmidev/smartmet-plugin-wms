@@ -1,8 +1,7 @@
 #include "LayerStyle.h"
-#include <ostream>
-
+#include "Text.h"
 #include <macgyver/Exception.h>
-#include <macgyver/StringConversion.h>
+#include <ostream>
 
 namespace SmartMet
 {

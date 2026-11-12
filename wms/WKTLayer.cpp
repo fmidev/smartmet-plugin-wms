@@ -1,17 +1,22 @@
 #include "WKTLayer.h"
-#include "Config.h"
 #include "Geometry.h"
-#include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "Projection.h"
 #include "State.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/GeometryProjector.h>
 #include <gis/OGR.h>
+#include <gis/SpatialReference.h>
 #include <gis/Types.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <iostream>
+#include <memory>
 #include <ogr_geometry.h>
 
 namespace SmartMet

@@ -1,12 +1,11 @@
 #include "Styles.h"
-#include "Config.h"
-#include "Hash.h"
-
 #include <ctpp2/CDT.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <spine/HTTP.h>
-#include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

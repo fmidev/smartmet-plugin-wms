@@ -7,25 +7,31 @@
 #pragma once
 
 #include "../Text.h"
-#include "ElevationDimension.h"
-#include "IntervalDimension.h"
 #include "LayerConfig.h"
 #include "LayerStyle.h"
 #include "LegendGraphicInfo.h"
-#include "LegendGraphicSettings.h"
-#include "MemberDimension.h"
 #include "SupportedReference.h"
-#include "TimeDimension.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/BBox.h>
+#include <json/value.h>
 #include <macgyver/DateTime.h>
-#include <spine/Json.h>
 #include <spine/Value.h>
-#include <list>
+#include <iosfwd>
 #include <map>
 #include <memory>
 #include <optional>
 #include <set>
+#include <string>
+#include <utility>
+
+namespace SmartMet::Plugin::OGC
+{
+class ElevationDimension;
+class IntervalDimension;
+class MemberDimension;
+class TimeDimensions;
+}  // namespace SmartMet::Plugin::OGC
 
 namespace SmartMet
 {

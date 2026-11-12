@@ -1,10 +1,12 @@
 #include "Heatmap.h"
 #include "Config.h"
-#include "Hash.h"
-
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <algorithm>
-#include <stdexcept>
+#include <cmath>
+#include <cstdlib>
+#include <vector>
 
 namespace
 {

@@ -6,9 +6,8 @@
 
 #pragma once
 
-#include "AttributeSelection.h"
 #include "Layer.h"
-#include <vector>
+#include <cstddef>
 
 namespace SmartMet
 {
@@ -16,9 +15,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
-class State;
 
 class GridLayer : public Layer
 {

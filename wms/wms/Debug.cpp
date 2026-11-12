@@ -1,6 +1,10 @@
 #include "Debug.h"
 #include <macgyver/Exception.h>
-#include <spine/Convenience.h>
+#include <spine/HTTP.h>
+#include <iterator>
+#include <optional>
+#include <ostream>
+#include <string>
 #include <utility>
 #include <vector>
 

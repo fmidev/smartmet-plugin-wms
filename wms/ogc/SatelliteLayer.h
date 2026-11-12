@@ -11,6 +11,15 @@
 
 #include "Layer.h"
 #include "LayerConfig.h"
+#include <macgyver/DateTime.h>
+#include <cstddef>
+#include <string>
+#include <utility>
+
+namespace SmartMet::Engine::Satellite
+{
+class Engine;
+}  // namespace SmartMet::Engine::Satellite
 
 namespace SmartMet
 {

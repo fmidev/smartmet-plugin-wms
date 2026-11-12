@@ -1,5 +1,20 @@
+#include "Attributes.h"
 #include "TextUtility.h"
-#include <spine/Json.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <json/value.h>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

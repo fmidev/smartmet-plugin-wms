@@ -7,11 +7,15 @@
 #include "ComputedFields.h"
 #include "JsonTools.h"
 #include <gis/CoordinateMatrix.h>
+#include <gis/SpatialReference.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <newbase/NFmiGlobals.h>
-#include <algorithm>
 #include <cmath>
+#include <memory>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

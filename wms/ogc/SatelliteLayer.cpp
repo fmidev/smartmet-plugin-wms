@@ -1,7 +1,15 @@
 #include "SatelliteLayer.h"
 #include "TimeDimension.h"
+#include <engines/satellite/Engine.h>
+#include <engines/satellite/ProductInfo.h>
 #include <macgyver/Exception.h>
+#include <spine/Value.h>
 #include <algorithm>
+#include <array>
+#include <map>
+#include <memory>
+#include <optional>
+#include <vector>
 
 namespace SmartMet
 {

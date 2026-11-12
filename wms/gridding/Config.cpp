@@ -8,9 +8,7 @@
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <newbase/NFmiEnumConverter.h>
-#include <spine/Convenience.h>
-#include <filesystem>
-#include <iostream>
+#include <utility>
 
 namespace SmartMet
 {

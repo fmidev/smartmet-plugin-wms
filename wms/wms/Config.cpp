@@ -1,44 +1,80 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
-#include "Config.h"
+#include "../Config.h"
 #include "../CaseInsensitiveComparator.h"
+#include "../Defs.h"
 #include "../Layer.h"
 #include "../LayerFactory.h"
+#include "../Layers.h"
 #include "../Product.h"
-#include "../State.h"
+#include "../Styles.h"
 #include "../View.h"
-#include "Exception.h"
+#include "../Views.h"
+#include "../ogc/Layer.h"
+#include "../ogc/LayerConfig.h"
 #include "../ogc/LayerFactory.h"
 #include "../ogc/LayerHierarchy.h"
+#include "../ogc/LayerProxy.h"
+#include "../ogc/LegendGraphicInfo.h"
+#include "../ogc/MemberDimension.h"
 #include "../ogc/NamespacePattern.h"
+#include "../ogc/SupportedReference.h"
+#include "Config.h"
+#include "Exception.h"
+
+namespace SmartMet::Engine::Gis
+{
+class Engine;
+}  // namespace SmartMet::Engine::Gis
+namespace SmartMet::Engine::Grid
+{
+class Engine;
+}  // namespace SmartMet::Engine::Grid
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Plugin::OGC
+{
+class LegendGraphicSettings;
+}  // namespace SmartMet::Plugin::OGC
 
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
 
+#include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/move/make_unique.hpp>
-#include <boost/regex.hpp>
+#include <boost/thread.hpp>
+#include <engines/observation/Engine.h>
 #include <fmt/format.h>
+#include <gis/BBox.h>
 #include <gis/EPSGInfo.h>
 #include <gis/SpatialReference.h>
+#include <json/reader.h>
+#include <macgyver/AsyncTask.h>
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
 #include <spine/Exceptions.h>
 #include <spine/FmiApiKey.h>
+#include <spine/HTTP.h>
 #include <spine/Json.h>
+#include <spine/JsonCache.h>
+#include <spine/Reactor.h>
 #include <algorithm>
 #include <chrono>
+#include <cmath>
+#include <cstdlib>
+#include <functional>
 #include <iostream>
+#include <libconfig.h++>
+#include <list>
 #include <map>
-#include <ogr_spatialref.h>
-#include <stdexcept>
 #include <string>
 
 using SmartMet::Plugin::Dali::Config;

@@ -6,15 +6,14 @@
 
 #include "Config.h"
 #include <boost/algorithm/string.hpp>
-#include <gis/EPSGInfo.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <spine/ConfigTools.h>
 #include <spine/Exceptions.h>
 #include <algorithm>
 #include <filesystem>
-#include <stdexcept>
 #include <thread>
+#include <utility>
 
 using std::string;
 

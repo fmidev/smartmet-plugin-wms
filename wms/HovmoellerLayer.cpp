@@ -5,22 +5,28 @@
 // ======================================================================
 
 #include "HovmoellerLayer.h"
-#include "Config.h"
-#include "Hash.h"
+#include "Attributes.h"
 #include "Isoband.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "ParameterInfo.h"
 #include "State.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/querydata/Q.h>
 #include <fmt/format.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGlobals.h>
+#include <newbase/NFmiMetTime.h>
 #include <newbase/NFmiPoint.h>
-#include <spine/Json.h>
+#include <spine/Parameter.h>
 #include <timeseries/ParameterFactory.h>
+#include <timeseries/TimeSeriesInclude.h>
+#include <list>
+#include <memory>
+#include <optional>
 #include <sstream>
 
 namespace SmartMet

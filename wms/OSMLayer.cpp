@@ -7,29 +7,38 @@
 #ifndef WITHOUT_OSM
 
 #include "OSMLayer.h"
-#include "Config.h"
 #include "Geometry.h"
-#include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
 #include "MapboxVectorTile.h"
+#include "Projection.h"
 #include "State.h"
 #include "XYTransformation.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
+#include <engines/osm/Engine.h>
+#include <engines/osm/Style.h>
+#include <engines/osm/TileStore.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <ogr_geometry.h>
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <map>
+#include <memory>
+#include <ogr_geometry.h>
 #include <set>
 #include <string>
+#include <system_error>
+#include <type_traits>
+#include <variant>
 
 namespace SmartMet
 {

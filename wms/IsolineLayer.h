@@ -9,10 +9,34 @@
 #include "ParameterInfo.h"
 #include "Sampling.h"
 #include "Smoother.h"
-#include <engines/contour/Engine.h>
+#include <engines/contour/Options.h>
 #include <engines/querydata/Q.h>
+#include <gis/SpatialReference.h>
+#include <gis/Types.h>
+#include <grid-files/grid/Typedefs.h>
+#include <macgyver/DateTime.h>
+#include <cstddef>
 #include <optional>
+#include <string>
 #include <vector>
+
+class OGRGeometry;
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace Fmi
+{
+class Box;
+}  // namespace Fmi
+namespace SmartMet::Engine::Gis
+{
+class Engine;
+}  // namespace SmartMet::Engine::Gis
+namespace SmartMet::Spine
+{
+class Parameter;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {
@@ -20,8 +44,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class IsolineLayer : public Layer

@@ -1,7 +1,6 @@
 // ======================================================================
 
 #include "GeoTiffLayer.h"
-#include "State.h"
 
 namespace SmartMet
 {

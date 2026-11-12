@@ -8,8 +8,8 @@
 
 #include "Attributes.h"
 #include "Layer.h"
-#include "Text.h"
 #include <gis/Types.h>
+#include <cstddef>
 #include <map>
 #include <optional>
 #include <string>
@@ -25,9 +25,8 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class State;
 class LonLatToXYTransformation;
+class State;
 struct text_style_t;
 
 struct FrameDimension

@@ -2,6 +2,7 @@
 
 #include <gis/BBox.h>
 #include <string>
+#include <utility>
 
 namespace SmartMet
 {

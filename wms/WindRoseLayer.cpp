@@ -1,32 +1,55 @@
 #ifndef WITHOUT_OBSERVATION
 
 #include "WindRoseLayer.h"
+#include "AttributeSelection.h"
 #include "Config.h"
+#include "Connector.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "JsonTools.h"
+#include "Label.h"
 #include "Layer.h"
+#include "Observation.h"
 #include "Observations.h"
+#include "Projection.h"
 #include "Select.h"
 #include "State.h"
+#include "Station.h"
 #include "Stations.h"
+#include "Title.h"
 #include "WindRose.h"
 #include <boost/math/constants/constants.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
-#include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/SpatialReference.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <macgyver/TimeParser.h>
-#include <spine/Json.h>
+#include <newbase/NFmiGlobals.h>
+#include <spine/Parameter.h>
 #include <timeseries/ParameterTools.h>
+#include <timeseries/TimeSeries.h>
 #include <timeseries/TimeSeriesInclude.h>
 #include <algorithm>
-#include <ogr_spatialref.h>
+#include <cmath>
+#include <iostream>
+#include <list>
+#include <memory>
+#include <optional>
+#include <stdexcept>
+#include <utility>
+#include <variant>
+#include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class Attributes;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

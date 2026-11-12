@@ -7,8 +7,8 @@
 #pragma once
 
 #include <json/json.h>
+#include <cstddef>
 #include <memory>
-#include <optional>
 #include <sstream>
 #include <string>
 

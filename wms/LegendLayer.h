@@ -12,9 +12,13 @@
 #include "Layer.h"
 #include "LegendLabels.h"
 #include "LegendSymbols.h"
-#include <optional>
-#include <string>
+#include <cstddef>
 #include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
 
 namespace SmartMet
 {
@@ -22,7 +26,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 class State;
 
 class LegendLayer : public Layer

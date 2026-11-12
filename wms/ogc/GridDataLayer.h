@@ -11,8 +11,24 @@
 
 #pragma once
 
-#include "LayerConfig.h"
 #include "Layer.h"
+#include <grid-content/contentServer/definition/GenerationInfo.h>
+#include <grid-files/common/Typedefs.h>
+#include <set>
+#include <string>
+
+namespace SmartMet::ContentServer
+{
+class ServiceInterface;
+}  // namespace SmartMet::ContentServer
+namespace SmartMet::Engine::Grid
+{
+class Engine;
+}  // namespace SmartMet::Engine::Grid
+namespace SmartMet::Plugin::OGC
+{
+class LayerConfig;
+}  // namespace SmartMet::Plugin::OGC
 
 namespace SmartMet
 {

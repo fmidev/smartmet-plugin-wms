@@ -7,7 +7,12 @@
 #pragma once
 #include <macgyver/DateTime.h>
 #include <macgyver/LocalDateTime.h>
-#include <macgyver/TimeZones.h>
+#include <string>
+
+namespace Fmi
+{
+class TimeZones;
+}  // namespace Fmi
 
 namespace SmartMet
 {

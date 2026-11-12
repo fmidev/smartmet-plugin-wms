@@ -7,8 +7,25 @@
 #pragma once
 
 #include "Intersection.h"
+#include <gis/Types.h>
 #include <json/json.h>
+#include <macgyver/DateTime.h>
+#include <cstddef>
 #include <list>
+#include <map>
+#include <optional>
+#include <string>
+#include <vector>
+
+namespace SmartMet::Engine::Grid
+{
+class Engine;
+}  // namespace SmartMet::Engine::Grid
+namespace SmartMet::Plugin::Dali
+{
+class Projection;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

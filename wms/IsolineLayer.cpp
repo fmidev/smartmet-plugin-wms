@@ -1,8 +1,7 @@
 //======================================================================
 
 #include "IsolineLayer.h"
-#include <cmath>
-#include "Config.h"
+#include "Attributes.h"
 #include "DataTile.h"
 #include "Geometry.h"
 #include "GridDataGeoTiff.h"
@@ -12,23 +11,42 @@
 #include "JsonTools.h"
 #include "Layer.h"
 #include "MapboxVectorTile.h"
+#include "Projection.h"
 #include "State.h"
-#include "StyleSheet.h"
 #include "SubdivideGate.h"
+#include <boost/algorithm/string.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
+#include <engines/querydata/Engine.h>
 #include <fmt/format.h>
+#include <gis/BBox.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <grid-content/queryServer/definition/ParameterValues.h>
+#include <grid-content/queryServer/definition/Query.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
-#include <grid-files/common/GeneralFunctions.h>
-#include <grid-files/common/ImagePaint.h>
-#include <spine/Json.h>
+#include <grid-content/queryServer/definition/QueryParameter.h>
+#include <grid-files/common/AttributeList.h>
+#include <json/value.h>
+#include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <macgyver/StringConversion.h>
+#include <spine/Parameter.h>
 #include <timeseries/ParameterFactory.h>
+#include <timeseries/TimeSeriesInclude.h>
 #include <trax/InterpolationType.h>
+#include <trax/SmoothOptions.h>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+#include <iterator>
+#include <memory>
+#include <ogr_geometry.h>
+#include <utility>
 
 namespace SmartMet
 {

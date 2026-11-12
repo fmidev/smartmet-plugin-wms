@@ -1,11 +1,8 @@
 #include "AnimationEffects.h"
-#include "Hash.h"
 #include "JsonTools.h"
-
-#include <boost/numeric/conversion/cast.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <stdexcept>
-#include <spine/Json.h>
+#include <macgyver/Hash.h>
 
 namespace SmartMet
 {

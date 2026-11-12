@@ -8,7 +8,7 @@
 
 #include <gis/CoordinateMatrix.h>
 #include <gis/PointGridding.h>
-#include <gis/SpatialReference.h>
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <mutex>

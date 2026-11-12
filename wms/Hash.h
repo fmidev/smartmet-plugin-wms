@@ -7,10 +7,12 @@
 #pragma once
 #include "State.h"
 #include <macgyver/Hash.h>
-#include <macgyver/StringConversion.h>
+#include <cstddef>
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
+#include <string>
 #include <vector>
 
 namespace SmartMet

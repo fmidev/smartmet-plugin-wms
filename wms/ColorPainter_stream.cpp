@@ -1,10 +1,13 @@
 #include "ColorPainter_stream.h"
-#include <macgyver/Exception.h>
-#include <grid-files/common/GeneralFunctions.h>
-#include <grid-files/common/ImageFunctions.h>
+#include "JsonTools.h"
+#include "State.h"
 #include <grid-files/common/GraphFunctions.h>
-
+#include <grid-files/common/ImageFunctions.h>
+#include <json/value.h>
+#include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <algorithm>
+#include <memory>
 
 namespace SmartMet
 {

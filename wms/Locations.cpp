@@ -1,10 +1,14 @@
 #include "Locations.h"
-#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
+#include <json/forwards.h>
 #include <macgyver/Exception.h>
-#include <spine/Json.h>
-#include <stdexcept>
+#include <string>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

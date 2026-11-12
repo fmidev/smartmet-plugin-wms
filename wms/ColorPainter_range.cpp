@@ -1,7 +1,16 @@
 #include "ColorPainter_range.h"
-#include <macgyver/Exception.h>
-#include <grid-files/common/GeneralFunctions.h>
+#include "JsonTools.h"
 #include <grid-files/common/ImageFunctions.h>
+#include <grid-files/grid/Typedefs.h>
+#include <json/value.h>
+#include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <string>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

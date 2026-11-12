@@ -1,15 +1,10 @@
 #include "GroupLayer.h"
-#include "Config.h"
-#include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
-#include "RasterLayer.h"
-#include "State.h"
-#include <ctpp2/CDT.hpp>
-#include <gis/Box.h>
-#include <grid-files/common/ImageFunctions.h>
+#include "Layers.h"
 #include <macgyver/Exception.h>
-#include <macgyver/StringConversion.h>
+#include <macgyver/Hash.h>
+#include <string>
 
 namespace SmartMet
 {

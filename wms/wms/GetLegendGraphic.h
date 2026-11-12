@@ -1,12 +1,20 @@
 #pragma once
 
-#include "Config.h"
-#include "GetCapabilities.h"
+#include <json/value.h>
+#include <string>
 
-#include <ctpp2/CDT.hpp>
-
-#include <spine/HTTP.h>
-#include <spine/Value.h>
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Plugin::WMS
+{
+class Config;
+}  // namespace SmartMet::Plugin::WMS
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+}  // namespace SmartMet::Spine::HTTP
 
 namespace SmartMet
 {

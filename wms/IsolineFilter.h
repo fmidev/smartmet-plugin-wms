@@ -10,10 +10,15 @@
 #include <gis/GeometrySmoother.h>
 #include <gis/Types.h>
 #include <gis/VertexCounter.h>
-#include <json/json.h>
-#include <ogr_geometry.h>
+#include <json/forwards.h>
+#include <sys/types.h>
+#include <cstddef>
 #include <string>
 #include <vector>
+
+class OGRGeometry;
+class OGRLineString;
+class OGRLinearRing;
 
 namespace Fmi
 {

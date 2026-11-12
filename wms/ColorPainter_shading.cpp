@@ -1,10 +1,14 @@
 #include "ColorPainter_shading.h"
-#include <macgyver/Exception.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/Typedefs.h>
-
+#include <grid-files/grid/Typedefs.h>
+#include <macgyver/Exception.h>
 #include <algorithm>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

@@ -1,10 +1,16 @@
 #include "WindRose.h"
-#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
+#include <boost/algorithm/string/join.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <spine/Json.h>
-#include <stdexcept>
+#include <macgyver/Hash.h>
+
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

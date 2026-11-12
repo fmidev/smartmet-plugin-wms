@@ -1,9 +1,11 @@
 #include "MapStyles.h"
 #include "Hash.h"
 #include "JsonTools.h"
-#include "State.h"
+#include <boost/algorithm/string/join.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <spine/Json.h>
+#include <macgyver/Hash.h>
+#include <optional>
 
 namespace SmartMet
 {

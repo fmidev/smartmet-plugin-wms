@@ -1,6 +1,7 @@
 #include "StyleSheet.h"
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/regex.hpp>
+#include <utility>
 
 namespace SmartMet
 {

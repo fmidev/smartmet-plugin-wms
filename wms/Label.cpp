@@ -1,14 +1,13 @@
 #include "Label.h"
 #include "Config.h"
-#include "Hash.h"
-
-#include <boost/format.hpp>
 #include <boost/locale.hpp>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <cfenv>
 #include <cmath>
 #include <iomanip>
-#include <stdexcept>
+#include <iostream>
+#include <vector>
 
 namespace SmartMet
 {

@@ -1,11 +1,16 @@
 #ifndef WITHOUT_OBSERVATION
 
 #include "Observations.h"
-#include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
-#include <spine/Json.h>
-#include <stdexcept>
+#include <json/forwards.h>
+#include <macgyver/Exception.h>
+#include <string>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

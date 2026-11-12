@@ -11,8 +11,16 @@
 
 #pragma once
 
-#include "LayerConfig.h"
 #include "Layer.h"
+#include "LayerConfig.h"
+#include <macgyver/DateTime.h>
+#include <string>
+#include <utility>
+
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
 
 namespace SmartMet
 {

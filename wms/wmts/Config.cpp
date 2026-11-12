@@ -9,7 +9,13 @@
 // ======================================================================
 
 #include "Config.h"
+#include "../Config.h"
+#include "TileMatrix.h"
+#include "ogc/SupportedReference.h"
+#include "wms/Config.h"
 #include <macgyver/Exception.h>
+#include <map>
+#include <utility>
 
 namespace SmartMet
 {

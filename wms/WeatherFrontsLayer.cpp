@@ -5,19 +5,25 @@
 // ======================================================================
 
 #include "WeatherFrontsLayer.h"
-#include "Config.h"
+#include "FrontCurve.h"
 #include "JsonTools.h"
+#include "Projection.h"
 #include "State.h"
 #include "SyntheticFrontSource.h"
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/SpatialReference.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <macgyver/Hash.h>
 #include <algorithm>
 #include <cmath>
+#include <optional>
 #include <sstream>
+#include <tuple>
+#include <utility>
+#include <variant>
 
 namespace SmartMet
 {

@@ -5,13 +5,24 @@
 #include "Hash.h"
 #include "JsonTools.h"
 #include "ObservationReader.h"
-#include "PointData.h"
-#include "ValueTools.h"
+#include "ParameterInfo.h"
+#include "PointData.h"  // IWYU pragma: keep (std::vector<PointData> results)
+#include "Projection.h"
+#include "State.h"
+#include "Station.h"
+#include "Stations.h"
 #include <ctpp2/CDT.hpp>
-#include <engines/observation/Engine.h>
+#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
-#include <timeseries/TimeSeriesInclude.h>
+#include <json/value.h>
+#include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <macgyver/NearTree.h>
+#include <macgyver/StringConversion.h>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
 
 namespace SmartMet
 {

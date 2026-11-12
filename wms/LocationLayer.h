@@ -9,7 +9,11 @@
 #include "AttributeSelection.h"
 #include "LabelPlacement.h"
 #include "Layer.h"
+#include <cstddef>
+#include <map>
 #include <optional>
+#include <set>
+#include <string>
 #include <vector>
 
 namespace SmartMet
@@ -18,9 +22,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
-class State;
 
 class LocationLayer : public Layer
 {

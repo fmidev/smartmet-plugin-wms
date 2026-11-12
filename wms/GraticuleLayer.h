@@ -1,8 +1,20 @@
 #pragma once
 #include "Attributes.h"
 #include "Layer.h"
+#include <gis/SpatialReference.h>
+#include <cstddef>
+#include <string>
+#include <vector>
 
 class OGRGeometry;
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace Fmi
+{
+class Box;
+}  // namespace Fmi
 
 namespace SmartMet
 {
@@ -10,7 +22,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 class State;
 
 class GraticuleLayer : public Layer

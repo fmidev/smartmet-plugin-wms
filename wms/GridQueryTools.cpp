@@ -3,14 +3,22 @@
 #include "Positions.h"
 #include "Projection.h"
 #include "Smoother.h"
+#include <engines/grid/Engine.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/SpatialReference.h>
-#include <engines/grid/Engine.h>
+#include <grid-content/queryServer/definition/Query.h>
+#include <grid-content/queryServer/definition/QueryParameter.h>
+#include <grid-files/common/AttributeList.h>
+#include <grid-files/common/Coordinate.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/Typedefs.h>
 #include <macgyver/StringConversion.h>
+#include <newbase/NFmiPoint.h>
+#include <trax/SmoothOptions.h>
 #include <cstring>
+#include <ogr_geometry.h>
 #include <vector>
 
 namespace SmartMet

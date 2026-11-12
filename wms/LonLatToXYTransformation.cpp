@@ -1,4 +1,7 @@
 #include "LonLatToXYTransformation.h"
+#include "Projection.h"
+#include <gis/Box.h>
+#include <gis/SpatialReference.h>
 
 namespace SmartMet
 {

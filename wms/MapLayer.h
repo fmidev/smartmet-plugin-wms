@@ -6,11 +6,17 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "Layer.h"
 #include "Map.h"
 #include "MapStyles.h"
+#include <engines/querydata/Q.h>
+#include <cstddef>
 #include <optional>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
 
 namespace SmartMet
 {
@@ -18,8 +24,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class MapLayer : public Layer

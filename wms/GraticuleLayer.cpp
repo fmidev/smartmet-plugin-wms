@@ -1,20 +1,25 @@
 #include "GraticuleLayer.h"
-#include "Config.h"
 #include "Geometry.h"
-#include "Hash.h"
 #include "JsonTools.h"
+#include "Projection.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
+#include <fmt/printf.h>
+#include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
+#include <json/value.h>
+#include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Json.h>
 #include <cmath>
+#include <cstdlib>
+#include <memory>
 #include <ogr_geometry.h>
+#include <optional>
 #include <set>
+#include <utility>
 #include <vector>
-
-#include <fmt/printf.h>
 
 namespace SmartMet
 {

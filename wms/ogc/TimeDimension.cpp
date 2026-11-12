@@ -1,9 +1,13 @@
 #include "TimeDimension.h"
 #include <boost/algorithm/string/join.hpp>
-#include <algorithm>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <macgyver/TimeParser.h>
+#include <algorithm>
+#include <cstddef>
+#include <iterator>
 #include <memory>
+#include <ostream>
+#include <utility>
 
 namespace SmartMet
 {

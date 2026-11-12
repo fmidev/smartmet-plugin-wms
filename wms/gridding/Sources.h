@@ -6,15 +6,24 @@
 
 #pragma once
 
-#include "Config.h"
-#include <engines/querydata/Engine.h>
-#ifndef WITHOUT_OBSERVATION
-#include <engines/observation/Engine.h>
-#endif
 #include <macgyver/DateTime.h>
+#include <cstddef>
 #include <map>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Engine::Observation
+{
+class Engine;
+}  // namespace SmartMet::Engine::Observation
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Plugin::Dali::Gridding
+{
+struct ProducerConfig;
+}  // namespace SmartMet::Plugin::Dali::Gridding
 
 namespace SmartMet
 {

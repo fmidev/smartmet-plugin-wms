@@ -6,7 +6,10 @@
 
 #pragma once
 
-#include <json/json.h>
+#include <json/forwards.h>
+#include <cstddef>
+#include <map>
+#include <string>
 
 namespace CTPP
 {

@@ -1,6 +1,8 @@
 #include "StyleSelection.h"
 #include <macgyver/Exception.h>
-#include <spine/Convenience.h>
+#include <map>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

@@ -7,9 +7,13 @@
 #pragma once
 
 #include "Attributes.h"
-#include <json/json.h>
-#include <optional>
-#include <string>
+#include <json/forwards.h>
+#include <cstddef>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

@@ -7,53 +7,100 @@
 #pragma once
 
 #include "Config.h"
+#include "ParameterInfo.h"
 #include "Product.h"
 #include "StyleSheet.h"
-#include "wms/Handler.h"
-#include "wmts/Handler.h"
-#include "tiles/Handler.h"
-#include <engines/authentication/Engine.h>
-#include <engines/contour/Engine.h>
-#include <engines/geonames/Engine.h>
-#include <engines/gis/Engine.h>
-#include <engines/grid/Engine.h>
-#ifndef WITHOUT_OSM
-#include <engines/osm/Engine.h>
-#endif
-#include <engines/querydata/Engine.h>
-#include "gridding/Gridder.h"
-#include <engines/satellite/Engine.h>
-#ifndef WITHOUT_OBSERVATION
-#include <engines/observation/Engine.h>
-#endif
-#ifndef WITHOUT_AVI
-#include <engines/avi/Engine.h>
-#endif
+#include <json/value.h>
+#include <macgyver/Cache.h>
+#include <macgyver/CacheStats.h>
 #include <macgyver/TemplateFactory.h>
 #include <spine/FileCache.h>
 #include <spine/HTTP.h>
 #include <spine/JsonCache.h>
-#include <spine/Reactor.h>
 #include <spine/SmartMetCache.h>
 #include <spine/SmartMetPlugin.h>
 #include <spine/Thread.h>
 #include <chrono>
+#include <cstddef>
+#include <list>
 #include <map>
 #include <memory>
 #include <set>
+#include <string>
+
+namespace SmartMet::Engine::Authentication
+{
+class Engine;
+}  // namespace SmartMet::Engine::Authentication
+namespace SmartMet::Engine::Avi
+{
+class Engine;
+}  // namespace SmartMet::Engine::Avi
+namespace SmartMet::Engine::Contour
+{
+class Engine;
+}  // namespace SmartMet::Engine::Contour
+namespace SmartMet::Engine::Geonames
+{
+class Engine;
+}  // namespace SmartMet::Engine::Geonames
+namespace SmartMet::Engine::Gis
+{
+class Engine;
+}  // namespace SmartMet::Engine::Gis
+namespace SmartMet::Engine::Grid
+{
+class Engine;
+}  // namespace SmartMet::Engine::Grid
+namespace SmartMet::Engine::OSM
+{
+class Engine;
+}  // namespace SmartMet::Engine::OSM
+namespace SmartMet::Engine::Observation
+{
+class Engine;
+}  // namespace SmartMet::Engine::Observation
+namespace SmartMet::Engine::Querydata
+{
+class Engine;
+}  // namespace SmartMet::Engine::Querydata
+namespace SmartMet::Engine::Satellite
+{
+class Engine;
+}  // namespace SmartMet::Engine::Satellite
+namespace SmartMet::Plugin::Dali::Gridding
+{
+class Gridder;
+}  // namespace SmartMet::Plugin::Dali::Gridding
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
+namespace SmartMet::Plugin::Tiles
+{
+class Handler;
+}  // namespace SmartMet::Plugin::Tiles
+namespace SmartMet::Plugin::WMS
+{
+class Config;
+class Handler;
+}  // namespace SmartMet::Plugin::WMS
+namespace SmartMet::Plugin::WMTS
+{
+class Handler;
+}  // namespace SmartMet::Plugin::WMTS
+namespace SmartMet::Spine
+{
+class Reactor;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {
-namespace Spine
-{
-class Parameter;
-}
 
 namespace Plugin
 {
 namespace Dali
 {
-class Filter;
 
 using ImageCache = Spine::SmartMetCache;
 

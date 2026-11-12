@@ -1,7 +1,9 @@
 #include "ColorMap.h"
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImageFunctions.h>
-
+#include <grid-files/common/Typedefs.h>
+#include <macgyver/Exception.h>
+#include <cstring>
 
 namespace SmartMet
 {

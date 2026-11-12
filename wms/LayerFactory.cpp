@@ -7,7 +7,6 @@
 #include "CloudCeilingLayer.h"
 #include "FinnishRoadObservationLayer.h"
 #include "FrameLayer.h"
-#include "WeatherFrontsLayer.h"
 #include "GraticuleLayer.h"
 #include "GridLayer.h"
 #include "GroupLayer.h"
@@ -15,19 +14,21 @@
 #include "IsobandLayer.h"
 #include "IsolabelLayer.h"
 #include "IsolineLayer.h"
+#include "Layer.h"
 #include "LegendLayer.h"
 #include "LocationLayer.h"
 #include "MapLayer.h"
 #include "NullLayer.h"
 #include "NumberLayer.h"
+#include "WeatherFrontsLayer.h"
 #ifndef WITHOUT_OSM
 #include "OSMLayer.h"
 #endif
-#include "PostGISLayer.h"
-#include "PresentWeatherObservationLayer.h"
 #include "GeoTiffLayer.h"
 #include "HovmoellerLayer.h"
 #include "MetarLayer.h"
+#include "PostGISLayer.h"
+#include "PresentWeatherObservationLayer.h"
 #include "RasterLayer.h"
 #include "SatelliteLayer.h"
 #include "StreamLayer.h"
@@ -40,8 +41,8 @@
 #include "WindRoseLayer.h"
 #include <macgyver/Exception.h>
 #include <map>
-#include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace SmartMet
 {

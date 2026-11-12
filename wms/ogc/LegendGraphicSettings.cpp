@@ -2,7 +2,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <macgyver/Exception.h>
-#include <algorithm>
+#include <libconfig.h++>
+#include <ostream>
 #include <string>
 #include <vector>
 

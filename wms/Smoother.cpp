@@ -1,9 +1,10 @@
 #include "Smoother.h"
-#include "Hash.h"
-
 #include <boost/numeric/conversion/cast.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <stdexcept>
+#include <macgyver/Hash.h>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {

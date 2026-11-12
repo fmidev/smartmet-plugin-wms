@@ -10,10 +10,37 @@
 #include "Layer.h"
 #include "ObservationSources.h"
 #include "ParameterInfo.h"
+#include "PointData.h"
 #include "PointValueOptions.h"
 #include "Positions.h"
+#include <engines/grid/Engine.h>
+#include <engines/querydata/Q.h>
+#include <gis/SpatialReference.h>
+#include <macgyver/DateTime.h>
 #include <timeseries/ParameterFactory.h>
+#include <timeseries/TimeSeriesInclude.h>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <string>
 #include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace Fmi
+{
+class Box;
+}  // namespace Fmi
+namespace SmartMet::QueryServer
+{
+class Query;
+}  // namespace SmartMet::QueryServer
+namespace SmartMet::T
+{
+class AttributeList;
+}  // namespace SmartMet::T
 
 namespace SmartMet
 {
@@ -21,8 +48,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class SymbolLayer : public Layer

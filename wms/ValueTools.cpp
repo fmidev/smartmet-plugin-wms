@@ -2,6 +2,8 @@
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGlobals.h>
+#include <string>
+#include <variant>
 
 namespace SmartMet
 {

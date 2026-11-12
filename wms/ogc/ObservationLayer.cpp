@@ -1,6 +1,13 @@
 #include "ObservationLayer.h"
+#include "TimeDimension.h"
+#include <engines/observation/Engine.h>
+#include <engines/observation/MetaData.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <spine/Value.h>
+#include <map>
+#include <memory>
+#include <optional>
 
 namespace SmartMet
 {

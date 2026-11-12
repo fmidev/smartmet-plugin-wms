@@ -1,16 +1,29 @@
 #include "Product.h"
+#include "CSSs.h"
 #include "Config.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "Layers.h"
 #include "MapboxVectorTile.h"
+#include "Projection.h"
 #include "State.h"
+#include "View.h"
 #include "Warnings.h"
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
+#include <gis/Box.h>
+#include <giza/ColorMapOptions.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <spine/HTTP.h>
+#include <iostream>
+#include <list>
+#include <map>
+#include <memory>
+#include <utility>
+#include <vector>
 
 namespace SmartMet
 {

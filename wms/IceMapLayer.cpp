@@ -1,29 +1,44 @@
 //======================================================================
 
 #include "IceMapLayer.h"
-#include "Config.h"
+#include "Attributes.h"
+#include "Geometry.h"
 #include "Hash.h"
 #include "JsonTools.h"
-#include "Layer.h"
 #include "LonLatToXYTransformation.h"
+#include "PostGISLayerFilter.h"
+#include "Projection.h"
 #include "State.h"
 #include "TextTable.h"
 #include "TextUtility.h"
 #include "XYTransformation.h"
-#include <boost/variant/static_visitor.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/asio.hpp>
 #include <boost/timer/timer.hpp>
+#include <boost/variant/static_visitor.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/gis/MapOptions.h>
 #include <gis/Box.h>
-#include <gis/Host.h>
 #include <gis/OGR.h>
-#include <gis/PostGIS.h>
+#include <gis/SpatialReference.h>
+#include <gis/Types.h>
+#include <json/reader.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Json.h>
 #include <algorithm>
 #include <array>
+#include <cctype>
 #include <cmath>
+#include <list>
+#include <memory>
 #include <ogr_geometry.h>
+#include <optional>
+#include <set>
+#include <stdexcept>
+#include <utility>
+#include <variant>
 
 namespace SmartMet
 {

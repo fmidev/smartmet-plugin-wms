@@ -1,11 +1,19 @@
 #include "LayerHierarchy.h"
+#include "Layer.h"
+#include "LayerProxy.h"
 #include "NamespacePattern.h"
+#include "TimeDimension.h"
+#include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/regex.hpp>
-#include <macgyver/StringConversion.h>
 #include <cmath>
-#include <limits>
+#include <cstddef>
 #include <memory>
+#include <set>
+#include <sstream>
+#include <tuple>
+#include <utility>
+#include <variant>
+#include <vector>
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif

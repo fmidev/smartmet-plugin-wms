@@ -1,5 +1,4 @@
 #include "JsonTools.h"
-#include <cctype>
 #include "CaseInsensitiveComparator.h"
 #include "Time.h"
 #include <json/json.h>
@@ -7,9 +6,16 @@
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Json.h>
+#include <cctype>
+#include <cstddef>
 #include <map>
 #include <set>
 #include <string>
+
+namespace Fmi
+{
+class TimeZones;
+}  // namespace Fmi
 
 namespace SmartMet
 {

@@ -6,12 +6,13 @@
 
 #pragma once
 
+#include <heatmap/heatmap.h>
+#include <json/forwards.h>
 #include <json/json.h>
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <string>
-
-#include <heatmap/heatmap.h>
 
 namespace SmartMet
 {
@@ -20,7 +21,6 @@ namespace Plugin
 namespace Dali
 {
 class Config;
-class Properties;
 class State;
 
 class Heatmap

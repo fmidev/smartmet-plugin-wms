@@ -9,11 +9,30 @@
 #include "AttributeSelection.h"
 #include "Layer.h"
 #include "ParameterInfo.h"
+#include "PointData.h"
 #include "PointValueOptions.h"
 #include "Positions.h"
-#include "Projection.h"
+#include <engines/grid/Engine.h>
+#include <gis/SpatialReference.h>
+#include <grid-content/queryServer/definition/Query.h>
+#include <grid-files/grid/Typedefs.h>
+#include <macgyver/DateTime.h>
+#include <newbase/NFmiPoint.h>
+#include <cstddef>
+#include <memory>
 #include <optional>
+#include <string>
 #include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace Fmi
+{
+class Box;
+class CoordinateTransformation;
+}  // namespace Fmi
 
 namespace SmartMet
 {
@@ -21,8 +40,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class ArrowLayer : public Layer

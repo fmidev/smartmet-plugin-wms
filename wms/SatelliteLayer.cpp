@@ -2,22 +2,28 @@
 
 #include "SatelliteLayer.h"
 #include "Base64.h"
-#include "Config.h"
-#include "Hash.h"
+#include "ColorMap.h"
 #include "JsonTools.h"
+#include "ParameterInfo.h"
+#include "Projection.h"
 #include "State.h"
 #include <boost/algorithm/string/join.hpp>
-#include <algorithm>
 #include <ctpp2/CDT.hpp>
+#include <engines/satellite/Engine.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
+#include <gis/SpatialReference.h>
 #include <giza/Giza.h>
+#include <json/value.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
-#include <macgyver/TimeParser.h>
-#include <spine/Json.h>
+#include <algorithm>
+#include <array>
 #include <cmath>
+#include <optional>
+#include <sstream>
+#include <vector>
 
 namespace SmartMet
 {

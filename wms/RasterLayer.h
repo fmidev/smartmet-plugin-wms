@@ -11,26 +11,28 @@
 #include "ColorPainter_range.h"
 #include "ColorPainter_shading.h"
 #include "ColorPainter_shadow.h"
-#include "Heatmap.h"
-#include "Intersections.h"
-#include "Isoband.h"
-#include "IsolineFilter.h"
 #include "Layer.h"
-#include "Map.h"
 #include "ParameterInfo.h"
-#include "Sampling.h"
-#include "Smoother.h"
-#include <grid-files/common/ImageFunctions.h>
+#include <grid-files/common/Typedefs.h>
+#include <grid-files/grid/Typedefs.h>
+#include <cstddef>
+#include <optional>
+#include <string>
 #include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
 
 namespace SmartMet
 {
+class CImage;
+
 namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 class RasterLayer : public Layer

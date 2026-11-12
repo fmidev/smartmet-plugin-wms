@@ -1,6 +1,7 @@
 #pragma once
 
-#include <spine/Json.h>
+#include <json/value.h>
+#include <string>
 
 namespace SmartMet
 {

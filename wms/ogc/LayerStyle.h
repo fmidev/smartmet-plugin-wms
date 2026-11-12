@@ -13,6 +13,7 @@
 
 #include "../Text.h"
 #include <ctpp2/CDT.hpp>
+#include <iosfwd>
 #include <optional>
 #include <set>
 #include <string>

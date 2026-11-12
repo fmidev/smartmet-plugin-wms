@@ -7,6 +7,14 @@
 #pragma once
 
 #include "Station.h"
+#include <json/forwards.h>
+#include <cstddef>
+#include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class State;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {

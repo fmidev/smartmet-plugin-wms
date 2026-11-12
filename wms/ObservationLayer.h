@@ -9,8 +9,10 @@
 #include "Label.h"
 #include "Layer.h"
 #include "Positions.h"
-#include <engines/observation/Settings.h>
+#include <cstddef>
 #include <optional>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {
@@ -18,10 +20,8 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
-class State;
 class PointData;
+class State;
 
 struct StationSymbolPriority
 {

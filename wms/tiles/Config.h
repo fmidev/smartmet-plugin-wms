@@ -14,11 +14,18 @@
 #pragma once
 
 #include "../wmts/TileMatrix.h"
-#include "../Config.h"
-#include "../wms/Config.h"
 #include <set>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Plugin::Dali
+{
+class Config;
+}  // namespace SmartMet::Plugin::Dali
+namespace SmartMet::Plugin::WMS
+{
+class Config;
+}  // namespace SmartMet::Plugin::WMS
 
 namespace SmartMet
 {

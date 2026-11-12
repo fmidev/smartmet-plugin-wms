@@ -2,14 +2,16 @@
 
 #include "View.h"
 #include "Attributes.h"
-#include "Config.h"
 #include "Hash.h"
-#include "Product.h"
 #include "State.h"
-
+#include "Warnings.h"
 #include <ctpp2/CDT.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <spine/HTTP.h>
+#include <map>
+#include <optional>
 
 namespace SmartMet
 {

@@ -1,9 +1,14 @@
 #include "ApiDefinition.h"
 #include "Config.h"
+#include "ogc/OpenApiLayers.h"
+#include "wmts/TileMatrix.h"
+#include <json/value.h>
 #include <macgyver/Exception.h>
-#include <algorithm>
 #include <cctype>
+#include <cstddef>
+#include <initializer_list>
 #include <set>
+#include <utility>
 
 namespace SmartMet
 {

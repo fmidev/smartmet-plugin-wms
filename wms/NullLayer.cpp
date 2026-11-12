@@ -1,9 +1,7 @@
 #include "NullLayer.h"
-#include "Hash.h"
-#include "JsonTools.h"
-#include "State.h"
-#include <ctpp2/CDT.hpp>
+#include <json/value.h>
 #include <macgyver/Exception.h>
+#include <string>
 
 namespace SmartMet
 {

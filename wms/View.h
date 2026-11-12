@@ -16,11 +16,18 @@
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
-#include "Warnings.h"
-#include <macgyver/DateTime.h>
-#include <optional>
+#include <json/forwards.h>
+#include <cstddef>
 #include <string>
-#include <vector>
+
+namespace CTPP
+{
+class CDT;
+}  // namespace CTPP
+namespace SmartMet::Plugin::Dali
+{
+struct Warnings;
+}  // namespace SmartMet::Plugin::Dali
 
 namespace SmartMet
 {
@@ -29,7 +36,6 @@ namespace Plugin
 namespace Dali
 {
 class Config;
-class Product;
 class State;
 
 class View : public Properties

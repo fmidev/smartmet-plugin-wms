@@ -1,6 +1,8 @@
 #include "BaseURL.h"
 #include <macgyver/Exception.h>
 #include <spine/FmiApiKey.h>
+#include <spine/HTTP.h>
+#include <optional>
 
 namespace SmartMet
 {

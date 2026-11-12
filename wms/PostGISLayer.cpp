@@ -1,11 +1,19 @@
 #include "PostGISLayer.h"
 #include "Geometry.h"
+#include "PostGISLayerFilter.h"
+#include "Projection.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/MapOptions.h>
+#include <gis/Box.h>
 #include <gis/OGR.h>
+#include <gis/Types.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <ogr_geometry.h>
+#include <optional>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {

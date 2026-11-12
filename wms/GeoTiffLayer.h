@@ -15,7 +15,6 @@
 #pragma once
 
 #include "RasterLayer.h"
-#include <string>
 
 namespace SmartMet
 {
@@ -23,7 +22,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class State;
 
 class GeoTiffLayer : public RasterLayer
 {

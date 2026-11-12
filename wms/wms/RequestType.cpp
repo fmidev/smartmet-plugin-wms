@@ -2,6 +2,8 @@
 #include <boost/algorithm/string.hpp>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
+#include <spine/HTTP.h>
+#include <string>
 
 #define WMS_SERVICE "WMS"
 #define WMS_GET_CAPABILITIES "GetCapabilities"

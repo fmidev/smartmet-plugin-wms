@@ -2,17 +2,42 @@
 
 #include "ObservationReader.h"
 #include "AggregationUtility.h"
+#include "Intersections.h"
 #include "Layer.h"
+#include "ObservationSources.h"
+#include "ParameterInfo.h"
 #include "PointData.h"
 #include "Positions.h"
 #include "State.h"
+#include "Station.h"
+#include "Stations.h"
 #include "ValueTools.h"
 #include <engines/observation/Engine.h>
-#include <fmt/format.h>
+#include <engines/observation/Settings.h>
+#include <engines/observation/StationSettings.h>
+#include <engines/querydata/Q.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/Exception.h>
+#include <newbase/NFmiGlobals.h>
+#include <newbase/NFmiPoint.h>
+#include <spine/Convenience.h>
+#include <spine/HTTP.h>
+#include <spine/Parameter.h>
+#include <spine/Station.h>
+#include <timeseries/ParameterFactory.h>
 #include <timeseries/ParameterTools.h>
+#include <timeseries/TimeSeries.h>
+#include <timeseries/TimeSeriesInclude.h>
+#include <cmath>
+#include <cstddef>
+#include <iterator>
+#include <list>
+#include <map>
+#include <optional>
+#include <set>
+#include <utility>
 
 namespace SmartMet
 {

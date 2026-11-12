@@ -1,8 +1,11 @@
 #pragma once
 
+#include "Attributes.h"
 #include "IsolineLayer.h"
 #include "Label.h"
-#include <optional>
+#include <gis/Types.h>
+#include <array>
+#include <cstddef>
 #include <vector>
 
 namespace Fmi
@@ -17,8 +20,6 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
-class Plugin;
 class State;
 
 // For label corner coordinates (estimates)
