@@ -16,6 +16,7 @@
 #include "State.h"
 #include "SubdivideGate.h"
 #include "ValueTools.h"
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
