@@ -1280,7 +1280,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
 
     CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
     map_cdt["iri"] = iri;
-    map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
+    map_cdt["type"] = Geometry::name(*geom, theState.getType());
     map_cdt["layertype"] = "icemap";
     map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
     theState.addPresentationAttributes(map_cdt, css, attributes, theFilter.attributes);  // NEW

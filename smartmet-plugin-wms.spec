@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.11.13
+Version: 26.11.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -194,6 +194,9 @@ rm -rf $RPM_BUILD_ROOTgit
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Nov 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.15-1.fmi
+- Fixed icemap GeoJSON output to name the geometry type from the clipped geometry: features were labeled MultiPolygon while the coordinates were those of a Polygon
+
 * Fri Nov 13 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.13-1.fmi
 - Include cleanup: files include what they use, unnecessary includes removed. No functional changes
 
