@@ -217,6 +217,10 @@ std::string querydataGeoTiff(Layer& layer, const std::string& parameterName, con
   }
 
   const auto values = q->values(coords, NFmiMetTime(layer.getValidTime()));
+  // The result is empty if the data cannot be interpolated to the requested time
+  if (values.NX() != width || values.NY() != height)
+    throw Fmi::Exception(BCP, "The requested time is not available in the querydata")
+        .addParameter("Time", Fmi::to_iso_string(layer.getValidTime()));
 
   const double multiplier = layer.multiplier.value_or(1.0);
   const double offset = layer.offset.value_or(0.0);

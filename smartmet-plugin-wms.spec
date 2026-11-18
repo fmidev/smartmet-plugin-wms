@@ -197,6 +197,7 @@ rm -rf $RPM_BUILD_ROOTgit
 * Wed Nov 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.18-1.fmi
 - Fixed the default elevation in GetCapabilities to use the level set in the layers or views of the product, not only in the product itself
 - WMS GetCapabilities and WMTS GetCapabilities now always list the default elevation
+- Fixed a crash in GeoTIFF output of querydata when the requested time is not available
 
 * Sun Nov 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.15-1.fmi
 - Fixed icemap GeoJSON output to name the geometry type from the clipped geometry: features were labeled MultiPolygon while the coordinates were those of a Polygon
