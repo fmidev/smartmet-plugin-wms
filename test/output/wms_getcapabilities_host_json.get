@@ -11388,6 +11388,7 @@
 						"name": "elevation",
 						"units": "hPa",
 						"value": "1000,925,850,700,500,300",
+						"default": "850",
 						"multipleValues": 0,
 						"nearestValue": 0}],
 				"Style":

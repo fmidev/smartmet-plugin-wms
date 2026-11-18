@@ -1699,7 +1699,7 @@
       
       <Dimension name="reference_time" units="ISO8601" default="2008-09-09T00:00:00Z" multipleValues="0" nearestValue="0" current="1">2008-09-09T00:00:00Z</Dimension>
       
-      <Dimension name="elevation" units="IsobaricLevel" unitSymbol="hPa" default="1000" multipleValues="0" nearestValue="0">1000,925,850,700,500,300</Dimension>
+      <Dimension name="elevation" units="IsobaricLevel" unitSymbol="hPa" default="850" multipleValues="0" nearestValue="0">1000,925,850,700,500,300</Dimension>
       
       <Style>
         <Name>default</Name>

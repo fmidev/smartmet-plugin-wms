@@ -5611,7 +5611,7 @@ A product definition may at the top level include the following settings which d
 | capabilities_end   | (duration)  | -             | Limit end time of GetCapabilities                                                                  |
 | disable_wms_time_dimension | (bool) | false   | If true, the time dimension is not listed in GetCapabilities.                                      |
 | timestep     | (int)             | -             | List in GetCapabilities only the querydata valid times which are multiples of this many minutes counted from UTC midnight. |
-| level        | (int)             | -             | The default elevation of the layer.                                                                |
+| level        | (int)             | -             | The default elevation listed in GetCapabilities. Like `levelId`, the first layer defining the setting wins, then the view, then the product. `elevation` is an alias. |
 | crs          | object            | -             | `enable` and/or `disable` lists of CRS references to be listed for the layer in GetCapabilities.   |
 | interval_start, interval_end | (int) | -        | An interval dimension for the layer in minutes.                                                    |
 | intervals    | array             | -             | Several interval dimensions, each an interval_start integer or an object with interval_start, interval_end and default. |

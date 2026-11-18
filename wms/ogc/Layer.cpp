@@ -2547,6 +2547,7 @@ std::optional<CTPP::CDT> Layer::generateGetCapabilities(
       layer_dimension["level_name"] = elevationDimension->getLevelName();
       layer_dimension["multiple_values"] = "0";
       layer_dimension["nearest_value"] = "0";
+      layer_dimension["default"] = elevationDimension->getDefaultElevation();
       // layer_dimension["current"] = "0";
       layer_dimension["value"] = elevationDimension->getCapabilities();
 

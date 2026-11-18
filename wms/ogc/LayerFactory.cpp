@@ -360,12 +360,11 @@ std::string determine_string(Json::Value& root, const std::string& name)
   }
 }
 
-int determine_int(Json::Value& root, const std::string& name)
+std::optional<int> determine_optional_int(Json::Value& root, const std::string& name)
 {
   try
   {
     // The first layer defining the setting wins, then the view, then the product.
-    // -1 allows all levels, types etc, zero would be a requirement.
     std::optional<int> product_value;
     remove_int(product_value, root, name);
 
@@ -388,20 +387,26 @@ int determine_int(Json::Value& root, const std::string& name)
             std::optional<int> layer_value;
             remove_int(layer_value, layer, name);
             if (layer_value)
-              return *layer_value;
+              return layer_value;
           }
         }
       }
     }
 
     if (view_value)
-      return *view_value;
-    return product_value.value_or(-1);
+      return view_value;
+    return product_value;
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to determine " + name);
   }
+}
+
+// -1 allows all levels, types etc, zero would be a requirement.
+int determine_int(Json::Value& root, const std::string& name)
+{
+  return determine_optional_int(root, name).value_or(-1);
 }
 
 int determine_uint(Json::Value& root, const std::string& name)
@@ -675,10 +680,13 @@ SharedLayer LayerFactory::createLayer(Json::Value& root,
     for (const auto& item : intervals)
       layer->addIntervalDimension(item.interval_start, item.interval_end, item.interval_default);
 
-    // Add default layer
-    json = remove(root, "level");
-    if (!json.isNull())
-      layer->setDefaultElevation(json.asInt());
+    // Default elevation. The level is usually set in the layers instead of the product,
+    // just like levelId. "elevation" is an alias for "level".
+    auto default_level = determine_optional_int(root, "level");
+    if (!default_level)
+      default_level = determine_optional_int(root, "elevation");
+    if (default_level)
+      layer->setDefaultElevation(*default_level);
 
     return layer;
   }

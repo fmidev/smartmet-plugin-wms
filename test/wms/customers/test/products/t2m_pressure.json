@@ -86,6 +86,7 @@
                 {
 		    "qid": "l1",
                     "layer_type": "isoband",
+                    "level": 850,
                     "isobands": "json:isobands/temperature.json",
 		    "css": "isobands/temperature.css",
                     "parameter": "Temperature",

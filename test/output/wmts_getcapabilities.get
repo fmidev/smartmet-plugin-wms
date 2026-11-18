@@ -6721,6 +6721,7 @@
       <Dimension>
         <ows:Identifier>Elevation</ows:Identifier>
         <ows:UOM>hPa</ows:UOM>
+        <Default>850</Default>
         <Value>1000</Value>
         <Value>925</Value>
         <Value>850</Value>

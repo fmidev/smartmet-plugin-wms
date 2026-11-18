@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.11.15
+Version: 26.11.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -194,6 +194,10 @@ rm -rf $RPM_BUILD_ROOTgit
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Nov 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.18-1.fmi
+- Fixed the default elevation in GetCapabilities to use the level set in the layers or views of the product, not only in the product itself
+- WMS GetCapabilities and WMTS GetCapabilities now always list the default elevation
+
 * Sun Nov 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.15-1.fmi
 - Fixed icemap GeoJSON output to name the geometry type from the clipped geometry: features were labeled MultiPolygon while the coordinates were those of a Polygon
 
