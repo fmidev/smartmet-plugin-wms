@@ -137,7 +137,7 @@ class Plugin : public SmartMetPlugin
   Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
 #endif
 #ifndef WITHOUT_AVI
-  Engine::Avi::Engine& getAviEngine() const { return *itsAviEngine; }
+  Engine::Avi::Engine* getAviEngine() const { return itsAviEngine.get(); }
 #endif
   // Plugin specific public API:
 

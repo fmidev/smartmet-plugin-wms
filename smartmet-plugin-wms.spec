@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.11.18
+Version: 26.11.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -185,7 +185,7 @@ make %{_smp_mflags} \
 %makeinstall
 
 %clean
-rm -rf $RPM_BUILD_ROOTgit 
+rm -rf $RPM_BUILD_ROOT
 
 %Files
 %defattr(0775,root,root,0775)
@@ -194,6 +194,9 @@ rm -rf $RPM_BUILD_ROOTgit
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-1.fmi
+- The AVI engine is now optional: if it is not loaded (e.g. disabled in smartmet.conf) the plugin starts normally and only METAR layers report that the AVI engine is not available
+
 * Wed Nov 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.18-1.fmi
 - Fixed the default elevation in GetCapabilities to use the level set in the layers or views of the product, not only in the product itself
 - WMS GetCapabilities and WMTS GetCapabilities now always list the default elevation

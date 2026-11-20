@@ -1050,7 +1050,17 @@ void Plugin::init()
 #endif
 
 #ifndef WITHOUT_AVI
-    itsAviEngine = itsReactor->getEngine<Engine::Avi::Engine>("Avi", nullptr);
+    // AVI (optional — only needed by METAR layers)
+    try
+    {
+      itsAviEngine = itsReactor->getEngine<Engine::Avi::Engine>("Avi", nullptr);
+    }
+    catch (...)
+    {
+      itsAviEngine = nullptr;
+    }
+    if (Spine::Reactor::isShuttingDown())
+      return;
 #endif
 
     // Gridded observations (optional: only when the configuration has a gridding group)

@@ -273,7 +273,10 @@ Engine::Avi::Engine& State::getAviEngine() const
 {
   try
   {
-    return itsPlugin.getAviEngine();
+    auto* engine = itsPlugin.getAviEngine();
+    if (engine == nullptr)
+      throw Fmi::Exception(BCP, "AVI engine is not available");
+    return *engine;
   }
   catch (...)
   {
