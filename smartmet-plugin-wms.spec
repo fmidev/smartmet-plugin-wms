@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.11.20
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -29,8 +29,8 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.10.16
 BuildRequires: smartmet-library-giza-devel >= 26.10.16
-BuildRequires: smartmet-library-grid-content-devel >= 26.10.20
-BuildRequires: smartmet-library-grid-files-devel >= 26.10.20
+BuildRequires: smartmet-library-grid-content-devel >= 26.11.20
+BuildRequires: smartmet-library-grid-files-devel >= 26.11.20
 BuildRequires: smartmet-library-macgyver-devel >= 26.11.3
 BuildRequires: smartmet-library-spine-devel >= 26.11.11
 BuildRequires: smartmet-library-timeseries-devel >= 26.11.4
@@ -88,10 +88,10 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
-Requires: smartmet-library-grid-content >= 26.10.20
-Requires: smartmet-library-grid-files >= 26.10.20
+Requires: smartmet-library-grid-content >= 26.11.20
+Requires: smartmet-library-grid-files >= 26.11.20
 Requires: smartmet-library-gis >= 26.11.1
-Requires: smartmet-library-trax >= 26.10.17
+Requires: smartmet-library-trax >= 26.11.20
 Requires: smartmet-library-macgyver >= 26.11.3
 Requires: smartmet-library-spine >= 26.11.11
 Requires: smartmet-swagger-ui
@@ -194,6 +194,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-2.fmi
+- Fixed smoother method savitzky-golay never smoothing: the degree was not passed to the smoother
+- Fixed intersect unit_conversion, multiplier and offset being ignored with grid engine data
+- Fixed raster multiplier, offset and unit_conversion being ignored with querydata
+- closed_range, strict, validate and desliver are sent to the grid engine (requires grid-files
+  and grid-content 26.11.20); values at the upper limit of the last isoband are now drawn
+- The TFP metaparameter fails clearly with grid engine data instead of drawing an empty map
+- Documented the settings that grid engine data does not use (docs/grid-support.md)
+
 * Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-1.fmi
 - The AVI engine is now optional: if it is not loaded (e.g. disabled in smartmet.conf) the plugin starts normally and only METAR layers report that the AVI engine is not available
 - Layers using observations (cloud ceiling, observation isobands, flashes, stations) no longer crash the server when the Observation engine is disabled with observation_disabled; they report that the engine is not available
