@@ -859,7 +859,18 @@ void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals,
     std::vector<float> values1;
     std::vector<float> values2;
     if (have_param)
+    {
       values1 = sample_values(q, paraminfo.parameter, llmatrix, met_time, width, height);
+      // multiplier, offset and unit_conversion, as the grid path does with MUL{} and SUM{}
+      if (multiplier || offset)
+      {
+        const float m = static_cast<float>(multiplier.value_or(1.0));
+        const float o = static_cast<float>(offset.value_or(0.0));
+        for (auto &v : values1)
+          if (v != static_cast<float>(ParamValueMissing))
+            v = m * v + o;
+      }
+    }
     else
     {
       values1 = sample_values(q, *direction, llmatrix, met_time, width, height);

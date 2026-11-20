@@ -1,0 +1,68 @@
+{
+    "title": "Radar raster with a multiplier (querydata path)",
+    "abstract": "RasterLayer::generate_qEngine applies the multiplier and offset: 2 x rain rate + 100 against the same transformed ranges draws the same image as radar_raster.",
+    "producer": "tutka_suomi_rr",
+    "projection": {
+        "crs": "data",
+        "xsize": 500,
+        "ysize": 800
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "background",
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(0,75,140)"
+                    }
+                },
+                {
+                    "qid": "l1",
+                    "layer_type": "raster",
+                    "parameter": "PrecipitationRate",
+                    "interpolation": "linear",
+                    "data_painter": "range",
+                    "ranges": [
+                        {
+                            "value_min": 100.2,
+                            "value_max": 102,
+                            "color_min": "FF0AC8FF",
+                            "color_max": "FF0AC8FF"
+                        },
+                        {
+                            "value_min": 102,
+                            "value_max": 110,
+                            "color_min": "FF00A000",
+                            "color_max": "FF00A000"
+                        },
+                        {
+                            "value_min": 110,
+                            "value_max": 120,
+                            "color_min": "FFFFFF00",
+                            "color_max": "FFFFFF00"
+                        },
+                        {
+                            "value_min": 120,
+                            "value_max": 140,
+                            "color_min": "FFFF8000",
+                            "color_max": "FFFF8000"
+                        },
+                        {
+                            "value_min": 140,
+                            "value_max": 200,
+                            "color_min": "FFFF0000",
+                            "color_max": "FFFF0000"
+                        }
+                    ],
+                    "attributes": {
+                        "id": "radar_raster"
+                    },
+                    "multiplier": 2,
+                    "offset": 100
+                }
+            ]
+        }
+    ]
+}

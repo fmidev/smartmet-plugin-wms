@@ -4270,6 +4270,34 @@
           "url_template" : "/dali?customer=test&product=radar_raster&time={time}"
         },
         {
+          "abstract" : "RasterLayer::generate_qEngine applies the multiplier and offset: 2 x rain rate + 100 against the same transformed ranges draws the same image as radar_raster.",
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 500
+          },
+          "name" : "radar_raster_multiplier",
+          "path" : 
+          [
+            "test",
+            "radar_raster_multiplier"
+          ],
+          "producer" : "tutka_suomi_rr",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20130910T103500",
+            "values" : "20130910T100000/20130910T103500/PT5M"
+          },
+          "title" : "Radar raster with a multiplier (querydata path)",
+          "url_template" : "/dali?customer=test&product=radar_raster_multiplier&time={time}"
+        },
+        {
           "image" : 
           {
             "height" : 760,
