@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.11.20
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -194,6 +194,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-3.fmi
+- Gridded producers can be defined in JSON files of a directory (gridding.directory), read
+  again when they change, with named variants selected as producer@variant, areas defined in
+  the configuration (gridding.areas), and limits gridding.max_parameters and allowed_sources
+
 * Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-2.fmi
 - Fixed smoother method savitzky-golay never smoothing: the degree was not passed to the smoother
 - Fixed intersect unit_conversion, multiplier and offset being ignored with grid engine data
