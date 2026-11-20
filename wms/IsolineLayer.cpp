@@ -490,6 +490,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   add_contour_value_attributes(*originalGridQuery, extrapolation, multiplier, offset);
 
+  add_contour_check_attributes(*originalGridQuery, strict, validate, desliver);
+
   // The Query object before the query execution.
   // query.print(std::cout,0,0);
 

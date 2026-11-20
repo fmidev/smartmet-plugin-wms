@@ -110,6 +110,9 @@ void add_data_bbox_attribute(QueryServer::Query& query, const Projection& projec
 // Forward the opt-in Trax grid smoother as contour.smooth.* attributes
 void add_trax_smoother_attributes(T::AttributeList& attrs, const Trax::SmoothOptions& so);
 
+// Add the contour.strict, contour.validate and contour.desliver attributes
+void add_contour_check_attributes(QueryServer::Query& query, bool strict, bool validate, bool desliver);
+
 // Add the contour smoothing, subdivision and thread count attributes
 void add_contour_attributes(QueryServer::Query& query,
                             const Smoother& smoother,

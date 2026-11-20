@@ -288,6 +288,40 @@
           "url_template" : "/dali?customer=grid&product=precipitation_1&time={time}"
         },
         {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "subdivide_grid",
+          "path" : 
+          [
+            "grid",
+            "subdivide_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Subdivided isobands of an ordinary grid parameter",
+          "url_template" : "/dali?customer=grid&product=subdivide_grid&time={time}"
+        },
+        {
           "abstract" : "Temperature",
           "name" : "temperature_1",
           "path" : 

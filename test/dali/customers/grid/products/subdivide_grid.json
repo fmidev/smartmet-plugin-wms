@@ -1,0 +1,36 @@
+{
+  "title": "Subdivided isobands of an ordinary grid parameter",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "RRR-KGM2",
+          "subdivide": 6,
+          "isobands": [
+            {
+              "lolimit": 0.1,
+              "hilimit": 1000
+            }
+          ],
+          "attributes": {
+            "fill": "red"
+          }
+        }
+      ]
+    }
+  ]
+}

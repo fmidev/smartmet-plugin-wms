@@ -55,13 +55,14 @@ query blocks are shared helpers in `wms/GridQueryTools.{h,cpp}`:
    `grid.width` / `grid.height` or `grid.size` / `grid.resolution` / `grid.cx` /
    `grid.cy` / `grid.bboxcrs`, and `grid.areaInterpolationMethod`.
 3. **Contouring options** travel the same way: `contour.interpolation.type`
-   (linear, midpoint, logarithmic), `contour.closedRange`, `contour.subdivide`,
+   (linear, midpoint, logarithmic), `contour.closedRange`, `contour.extrapolation`,
+   `contour.strict`, `contour.validate`, `contour.desliver`, `contour.subdivide`,
    `contour.smooth.*` (the Trax smoother), `contour.coordinateType` and
-   `contour.threads`. `multiplier`, `offset` and `unit_conversion` are applied by
-   wrapping the parameter in the grid engine's `MUL{}` and `SUM{}` functions; the
-   `contour.multiplier`, `contour.offset`, `contour.extrapolation`,
-   `contour.smooth.size` and `contour.smooth.degree` attributes are sent but not read
-   by grid-content. See [Settings with grid engine data](#settings-with-grid-engine-data).
+   `contour.threads`; grid-files reads them all with `getContourOptions()`.
+   `multiplier`, `offset` and `unit_conversion` are applied by wrapping the parameter in
+   the grid engine's `MUL{}` and `SUM{}` functions; the `contour.multiplier`,
+   `contour.offset`, `contour.smooth.size` and `contour.smooth.degree` attributes are
+   sent but not read. See [Settings with grid engine data](#settings-with-grid-engine-data).
 4. **`Engine::executeQuery(query)`**. The Query Server finds the content, and the Data
    Server contours or samples the field in the requested grid.
 5. **Read the results** from each parameter's `mValueList`. For contours, `mValueData`
@@ -83,12 +84,10 @@ grid-content and grid-files:
 |---|---|
 | `multiplier`, `offset`, `unit_conversion` (also of `intersect`) | Applied (`MUL{}`, `SUM{}`) |
 | `interpolation`, `minarea`, `filter`, `inside`, `outside`, `precision`, isolabel settings | Applied |
-| `closed_range` | Applied with grid-files and grid-content versions that read `contour.closedRange`; earlier the last isoband was open at its upper limit |
-| `smoother` `method` box / median / morphology | Applied to function and metric level parameters only |
-| `subdivide` | Applied to function and metric level parameters only (grid-files contours ordinary parameters with subdivide 0) |
+| `closed_range`, `extrapolation`, `strict`, `validate`, `desliver` | Applied with grid-files and grid-content 26.11.20 or later (`contour.closedRange`, `contour.extrapolation`, `contour.strict`, `contour.validate`, `contour.desliver`); ignored by older versions |
+| `smoother` `method` box / median / morphology, `subdivide` | Applied with grid-files 26.11.20 or later; older versions apply them to function and metric level parameters only |
 | `smoother` `size` / `degree`, `method` savitzky-golay | Not applied |
 | `sampling`, `subdivide_min_cell_pixels` | Not applied |
-| `extrapolation`, `strict`, `validate`, `desliver` | Not applied |
 | `tfp` (the TFP metaparameter) | Not supported: the layer fails |
 
 The point and raster layers:

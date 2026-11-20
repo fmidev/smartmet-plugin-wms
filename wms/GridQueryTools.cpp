@@ -360,6 +360,24 @@ void add_contour_attributes(QueryServer::Query& query,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add the contour.strict, contour.validate and contour.desliver attributes
+ *
+ * Read by grid-files and grid-content versions with contour options; older versions ignore them.
+ */
+// ----------------------------------------------------------------------
+
+void add_contour_check_attributes(QueryServer::Query& query, bool strict, bool validate, bool desliver)
+{
+  if (strict)
+    query.mAttributeList.addAttribute("contour.strict", "1");
+  if (validate)
+    query.mAttributeList.addAttribute("contour.validate", "1");
+  if (desliver)
+    query.mAttributeList.addAttribute("contour.desliver", "1");
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Add the contour extrapolation, multiplier, offset and coordinate type attributes
  */
 // ----------------------------------------------------------------------
