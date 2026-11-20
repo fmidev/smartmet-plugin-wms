@@ -4520,9 +4520,9 @@ The table below contains a list of attributes used in this structure.
 | Name             | Type   | Default value | Description                                                                      |
 | ---------------- | ------ | ------------- | -------------------------------------------------------------------------------- |
 | size             | int    | -             | Savitzky-Golay: implies 2*N+1 adjacent points are used in the weighted mean.     |
-| degree           | int    | -             | Savitzky-Golay: degree of the polynomial to fit to the data.                     |
+| degree           | int    | -             | Savitzky-Golay: degree of the polynomial to fit to the data, 1-5. Used both with `size` and with method `savitzky-golay`. |
 | method           | string | -             | Trax smoother: `box`, `median` or `morphology` (also `pyramid` for very large radii, `savitzky-golay` and `none`). Enables the Trax smoother path. |
-| radius           | int    | 0             | Trax smoother: window/element half-width in grid cells (2*radius+1 wide).        |
+| radius           | int    | 0             | Trax smoother: window/element half-width in grid cells (2*radius+1 wide). For `savitzky-golay` 1-6, like `size`. |
 | passes           | int    | 3             | Trax smoother: number of repeats (box: passes>=3 approximates a Gaussian).       |
 | boundary         | string | normalized    | Trax smoother: edge handling — `normalized`, `replicate` or `reflect`.           |
 | morphology       | string | openclose     | Morphology only: `open`, `close` or `openclose`.                                 |

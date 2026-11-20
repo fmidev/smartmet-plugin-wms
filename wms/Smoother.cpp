@@ -43,7 +43,13 @@ void Smoother::init(Json::Value& theJson, const Config& /* theConfig */)
       if (name == "size")
         size = boost::numeric_cast<std::size_t>(json.asInt());
       else if (name == "degree")
+      {
+        // Also the polynomial degree of method "savitzky-golay", whose window
+        // half-width is "radius". Without it the Trax smoother is inactive
+        // (SmoothOptions::active() requires degree > 0) and nothing is smoothed.
         degree = boost::numeric_cast<std::size_t>(json.asInt());
+        trax.degree = boost::numeric_cast<int>(json.asInt());
+      }
       else if (name == "method")
       {
         trax.method = Trax::to_smooth_method(json.asString());

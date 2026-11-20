@@ -30,7 +30,8 @@ class Smoother
   std::optional<double> size;
   std::optional<double> degree;
 
-  // Opt-in Trax grid smoother (box / median / morphology). Populated by init()
+  // Opt-in Trax grid smoother (box / median / morphology / savitzky-golay, the
+  // last with "radius" as the window half-width and "degree"). Populated by init()
   // when a "method" is given. It is an independent path from size/degree; when
   // set and active the contour engine applies it in preference to the
   // Savitzky-Golay filter. Built here so every layer just forwards it to the
