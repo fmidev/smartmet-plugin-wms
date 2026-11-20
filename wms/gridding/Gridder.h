@@ -25,6 +25,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstddef>
+#include <filesystem>
 #include <future>
 #include <libconfig.h++>
 #include <map>
@@ -104,7 +105,10 @@ class Gridder
   using Backgrounds = std::vector<Engine::Querydata::Q>;
   using SharedStationData = std::shared_ptr<const StationData>;
 
-  const ProducerConfig& producer(const std::string& theProducer) const;
+  // The producer of the configuration file or of a definition file ("name" or "name@variant")
+  std::shared_ptr<const ProducerConfig> producer(const std::string& theProducer) const;
+  // The definition file of a producer, read again when it has changed; null if there is none
+  std::shared_ptr<const Definition> definition(const std::string& theName) const;
   SharedStationData read(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const;
   Backgrounds backgrounds(const ProducerConfig& theProducer, const Fmi::DateTime& theTime) const;
   std::size_t dataHash(const ProducerConfig& theProducer,
@@ -117,8 +121,21 @@ class Gridder
                                       const Backgrounds& theBackgrounds) const;
 
   Config itsConfig;
+  // The producers of the configuration file
+  std::map<std::string, std::shared_ptr<const ProducerConfig>> itsProducers;
+  // Areas and the station elevations of point querydata, by area name
   std::map<std::string, std::unique_ptr<Area>> itsAreas;
   std::map<std::string, StationElevations> itsStationElevations;
+
+  // The parsed definition files by name, with the time and size of the file they were read from
+  struct CachedDefinition
+  {
+    std::filesystem::file_time_type time;
+    std::uintmax_t size = 0;
+    std::shared_ptr<const Definition> definition;
+  };
+  mutable std::mutex itsDefinitionsMutex;
+  mutable std::map<std::string, CachedDefinition> itsDefinitions;
 
   const Engine::Querydata::Engine* itsQEngine = nullptr;
   Engine::Observation::Engine* itsObsEngine = nullptr;

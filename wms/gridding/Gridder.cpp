@@ -41,8 +41,12 @@
 #include <spine/Convenience.h>
 #include <cmath>
 #include <cpl_error.h>
+#include <algorithm>
+#include <cctype>
 #include <exception>
+#include <fstream>
 #include <iostream>
+#include <set>
 #include <iterator>
 #include <limits>
 #include <optional>
@@ -265,30 +269,37 @@ Gridder::Gridder(const libconfig::Setting& theSetting,
     for (const auto& item : itsConfig.producers())
     {
       const auto& p = item.second;
-      itsAreas[p.name] = std::make_unique<Area>(p.dem, p.tpiSigma, p.seaFraction, p.seaSigma);
-      if ((p.source == SourceType::Observations || !p.elevationStationType.empty()) &&
-          itsObsEngine == nullptr)
+      if (p.source == SourceType::Observations && itsObsEngine == nullptr)
         throw Fmi::Exception(BCP, "Gridded producer needs the observation engine")
             .addParameter("Producer", p.name);
-      if (p.source == SourceType::Querydata)
-        itsStationElevations[p.name] = read_station_elevations(p.stationElevations);
+      itsProducers[p.name] = std::make_shared<const ProducerConfig>(p);
+    }
+
+    for (const auto& item : itsConfig.areas())
+    {
+      const auto& a = item.second;
+      itsAreas[a.name] = std::make_unique<Area>(a.dem, a.tpiSigma, a.seaFraction, a.seaSigma);
+      if (!a.elevationStationType.empty() && itsObsEngine == nullptr)
+        throw Fmi::Exception(BCP, "Station elevations by station type need the observation engine")
+            .addParameter("Area", a.name);
+      itsStationElevations[a.name] = read_station_elevations(a.stationElevations);
     }
 
 #ifndef WITHOUT_OBSERVATION
     // Point querydata station elevations from the observation engine, the file overrides
-    for (const auto& item : itsConfig.producers())
+    for (const auto& item : itsConfig.areas())
     {
-      const auto& p = item.second;
-      if (p.source != SourceType::Querydata || p.elevationStationType.empty())
+      const auto& a = item.second;
+      if (a.elevationStationType.empty())
         continue;
-      auto elevations = read_wmo_elevations(
-          *itsObsEngine, p.elevationStationType, itsAreas.at(p.name)->lonlatBBox());
-      auto& known = itsStationElevations[p.name];
+      auto elevations =
+          read_wmo_elevations(*itsObsEngine, a.elevationStationType, itsAreas.at(a.name)->lonlatBBox());
+      auto& known = itsStationElevations[a.name];
       for (const auto& wmo : elevations)
         known.insert(wmo);  // does not replace the values from the file
       std::cout << Spine::log_time_str() << " WMS gridding: " << elevations.size()
-                << " station elevations from station type " << p.elevationStationType
-                << " for producer " << p.name << '\n';
+                << " station elevations from station type " << a.elevationStationType
+                << " for area " << a.name << '\n';
     }
 #endif
   }
@@ -301,41 +312,171 @@ Gridder::Gridder(const libconfig::Setting& theSetting,
 Gridder::~Gridder() = default;
 
 // ----------------------------------------------------------------------
+/*!
+ * \brief The definition file of a producer
+ *
+ * The file is checked on every call and parsed again when its time or size has changed, so
+ * edits take effect on the next request without a restart.
+ */
+// ----------------------------------------------------------------------
 
-const ProducerConfig& Gridder::producer(const std::string& theProducer) const
+std::shared_ptr<const Definition> Gridder::definition(const std::string& theName) const
 {
-  const auto& producers = itsConfig.producers();
-  auto pos = producers.find(theProducer);
-  if (pos == producers.end())
+  if (itsConfig.directory().empty())
+    return {};
+  // Names of letters, digits, '_' and '-' only: no paths outside the directory
+  for (char c : theName)
+    if (!std::isalnum(static_cast<unsigned char>(c)) && c != '_' && c != '-')
+      return {};
+  if (theName.empty())
+    return {};
+
+  const auto path = std::filesystem::path(itsConfig.directory()) / (theName + ".json");
+  std::error_code ec;
+  const auto time = std::filesystem::last_write_time(path, ec);
+  if (ec)
+    return {};
+  const auto size = std::filesystem::file_size(path, ec);
+  if (ec)
+    return {};
+
+  {
+    std::lock_guard<std::mutex> lock(itsDefinitionsMutex);
+    auto pos = itsDefinitions.find(theName);
+    if (pos != itsDefinitions.end() && pos->second.time == time && pos->second.size == size)
+      return pos->second.definition;
+  }
+
+  std::ifstream in(path);
+  if (!in)
+    throw Fmi::Exception(BCP, "Failed to read the gridded producer definition")
+        .addParameter("File", path.string());
+  Json::Value json;
+  Json::CharReaderBuilder builder;
+  std::string errors;
+  if (!Json::parseFromStream(builder, in, &json, &errors))
+    throw Fmi::Exception(BCP, "Failed to parse the gridded producer definition")
+        .addParameter("File", path.string())
+        .addParameter("Error", errors);
+
+  std::shared_ptr<const Definition> parsed;
+  try
+  {
+    parsed = std::make_shared<const Definition>(itsConfig.parseDefinition(json, theName));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Invalid gridded producer definition file")
+        .addParameter("File", path.string());
+  }
+
+  std::lock_guard<std::mutex> lock(itsDefinitionsMutex);
+  itsDefinitions[theName] = CachedDefinition{time, size, parsed};
+  return parsed;
+}
+
+// ----------------------------------------------------------------------
+
+std::shared_ptr<const ProducerConfig> Gridder::producer(const std::string& theProducer) const
+{
+  auto pos = itsProducers.find(theProducer);
+  if (pos != itsProducers.end())
+    return pos->second;
+
+  // name or name@variant of a definition file
+  const auto at = theProducer.find('@');
+  const auto name = theProducer.substr(0, at);
+  auto def = definition(name);
+  if (!def)
     throw Fmi::Exception(BCP, "Unknown gridded observations producer")
         .addParameter("Producer", theProducer);
-  return pos->second;
+
+  std::shared_ptr<const ProducerConfig> p;
+  if (at == std::string::npos)
+    p = def->defaultVariant;
+  else
+  {
+    const auto variant = theProducer.substr(at + 1);
+    auto v = def->variants.find(variant);
+    if (v == def->variants.end())
+    {
+      std::string known;
+      for (const auto& item : def->variants)
+        known += (known.empty() ? "" : ", ") + item.first;
+      throw Fmi::Exception(BCP, "Unknown variant of a gridded observations producer")
+          .addParameter("Producer", name)
+          .addParameter("Variant", variant)
+          .addParameter("Variants", known.empty() ? "none" : known);
+    }
+    p = v->second;
+  }
+  if (p->source == SourceType::Observations && itsObsEngine == nullptr)
+    throw Fmi::Exception(BCP, "Gridded producer needs the observation engine")
+        .addParameter("Producer", theProducer);
+  return p;
 }
 
 std::vector<std::string> Gridder::producers() const
 {
-  std::vector<std::string> names;
-  for (const auto& item : itsConfig.producers())
-    names.push_back(item.first);
-  return names;  // already sorted by the map
+  std::set<std::string> names;
+  for (const auto& item : itsProducers)
+    names.insert(item.first);
+
+  // The definition files of the directory
+  if (!itsConfig.directory().empty())
+  {
+    std::error_code ec;
+    for (const auto& entry : std::filesystem::directory_iterator(itsConfig.directory(), ec))
+    {
+      const auto& path = entry.path();
+      if (path.extension() != ".json")
+        continue;
+      const auto stem = path.stem().string();
+      if (!stem.empty() && std::all_of(stem.begin(),
+                                       stem.end(),
+                                       [](char c)
+                                       {
+                                         return std::isalnum(static_cast<unsigned char>(c)) ||
+                                                c == '_' || c == '-';
+                                       }))
+        names.insert(stem);
+    }
+  }
+  return {names.begin(), names.end()};
 }
 
 bool Gridder::hasProducer(const std::string& theProducer) const
 {
-  return itsConfig.producers().count(theProducer) > 0;
+  if (itsProducers.count(theProducer) > 0)
+    return true;
+  // A definition file exists: errors in it are reported when the data is requested
+  if (itsConfig.directory().empty())
+    return false;
+  const auto name = theProducer.substr(0, theProducer.find('@'));
+  if (name.empty() || !std::all_of(name.begin(),
+                                   name.end(),
+                                   [](char c)
+                                   {
+                                     return std::isalnum(static_cast<unsigned char>(c)) ||
+                                            c == '_' || c == '-';
+                                   }))
+    return false;
+  std::error_code ec;
+  return std::filesystem::is_regular_file(
+      std::filesystem::path(itsConfig.directory()) / (name + ".json"), ec);
 }
 
 std::vector<std::string> Gridder::parameters(const std::string& theProducer) const
 {
   std::vector<std::string> names;
-  for (const auto& p : producer(theProducer).parameters)
+  for (const auto& p : producer(theProducer)->parameters)
     names.push_back(p.name);
   return names;
 }
 
 std::map<std::string, double> Gridder::boundingBox(const std::string& theProducer) const
 {
-  return itsAreas.at(producer(theProducer).name)->lonlatBBox();
+  return itsAreas.at(producer(theProducer)->area)->lonlatBBox();
 }
 
 // ----------------------------------------------------------------------
@@ -348,7 +489,7 @@ std::vector<Fmi::DateTime> Gridder::validTimes(const std::string& theProducer) c
 {
   try
   {
-    const auto& p = producer(theProducer);
+    const auto& p = *producer(theProducer);
     if (p.source == SourceType::Querydata)
       return querydata_times(*itsQEngine, p);
 
@@ -382,15 +523,19 @@ Gridder::SharedStationData Gridder::read(const ProducerConfig& theProducer,
     auto read_now = [&]()
     {
       return std::make_shared<const StationData>(read_observations(
-          *itsObsEngine, theProducer, itsAreas.at(theProducer.name)->lonlatBBox(), theTime));
+          *itsObsEngine, theProducer, itsAreas.at(theProducer.area)->lonlatBBox(), theTime));
     };
 
     const auto maxage = std::chrono::seconds(itsConfig.observationCacheSeconds());
     if (maxage.count() == 0)
       return read_now();
 
-    // Reuse a recent or ongoing read of the same time, or start one
-    const auto key = theProducer.name + ' ' + Fmi::to_iso_string(theTime);
+    // Reuse a recent or ongoing read of the same observations, also by another producer or
+    // variant reading the same area, station type, parameters and time, or start one
+    std::string key = theProducer.area + ' ' + theProducer.sourceProducer + ' ' +
+                      Fmi::to_iso_string(theTime) + ' ' + std::to_string(theProducer.timeTolerance);
+    for (const auto& param : theProducer.parameters)
+      key += ' ' + param.source;
     const auto now = std::chrono::steady_clock::now();
     std::promise<SharedStationData> promise;
     std::shared_future<SharedStationData> future;
@@ -432,7 +577,7 @@ Gridder::SharedStationData Gridder::read(const ProducerConfig& theProducer,
   }
 #endif
   return std::make_shared<const StationData>(read_querydata(
-      *itsQEngine, theProducer, itsStationElevations.at(theProducer.name), theTime));
+      *itsQEngine, theProducer, itsStationElevations.at(theProducer.area), theTime));
 }
 
 // ----------------------------------------------------------------------
@@ -456,9 +601,10 @@ std::size_t Gridder::dataHash(const ProducerConfig& theProducer,
                               const StationData& theData,
                               const Backgrounds& theBackgrounds) const
 {
-  std::size_t hash = Fmi::hash_value(theProducer.name);
+  // The settings, not the name: a default variant and the variant it names share the data
+  std::size_t hash = theProducer.hash;
   Fmi::hash_combine(hash, Fmi::hash_value(theTime));
-  Fmi::hash_combine(hash, itsAreas.at(theProducer.name)->hashValue());
+  Fmi::hash_combine(hash, itsAreas.at(theProducer.area)->hashValue());
   Fmi::hash_combine(hash, theData.hashValue());
   // A new model run changes the result
   for (const auto& q : theBackgrounds)
@@ -470,7 +616,7 @@ std::size_t Gridder::hashValue(const std::string& theProducer, const Fmi::DateTi
 {
   try
   {
-    const auto& p = producer(theProducer);
+    const auto& p = *producer(theProducer);
     return dataHash(p, theTime, *read(p, theTime), backgrounds(p, theTime));
   }
   catch (...)
@@ -495,7 +641,7 @@ Engine::Querydata::Q Gridder::get(const std::string& theProducer,
 {
   try
   {
-    const auto& p = producer(theProducer);
+    const auto& p = *producer(theProducer);
     return std::make_shared<Engine::Querydata::QImpl>(
         grid(p, theTime, *read(p, theTime), backgrounds(p, theTime)));
   }
@@ -541,7 +687,7 @@ Engine::Querydata::SharedModel Gridder::grid(const ProducerConfig& p,
     // Distinct times are gridded separately, so limit the CPU they can take
     RunningSlot slot(itsRunningMutex, itsRunningCondition, itsRunning, itsConfig.maxConcurrent());
 
-    const Area& area = *itsAreas.at(p.name);
+    const Area& area = *itsAreas.at(p.area);
     auto data = create_querydata(area, p, theTime);
 
     std::vector<double> x = theData.lon;

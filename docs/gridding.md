@@ -131,6 +131,88 @@ Parameter options:
 
 Numbers may be written as integers or decimals.
 
+### Definition files
+
+Gridded producers can also be defined in JSON files, one per producer, in the directory given
+by `directory`, for example a `gridding` directory of the layer configuration repository. The
+file `<directory>/obs_europe.json` defines the producer `obs_europe`. The files are read on each
+request and parsed again when their time or size changes, so a change takes effect on the next
+request without restarting the server. The areas they use are defined in the configuration file,
+since setting up the terrain of an area takes time:
+
+```
+gridding:
+{
+	directory = "/smartmet/share/wms/gridding";
+	max_parameters = 20;                       # at most this many parameters per definition
+	allowed_sources = ["opendata", "synop"];   # optional: the allowed station types and producers
+
+	areas:
+	{
+		europe:
+		{
+			dem = "/smartmet/share/gridding/europe_3035_2500.tif";
+			tpi_sigma = 10.0;
+			sea_fraction = "/smartmet/share/gridding/europe_3035_2500_sea.tif";
+			sea_sigma = 10.0;
+			station_elevations = "/smartmet/share/gridding/stations.csv";
+			elevation_stationtype = "foreign";
+		};
+	};
+};
+```
+
+A definition file has the producer settings above without the area settings, plus the name of
+the area:
+
+```json
+{
+  "title": "Gridded European SYNOP observations",
+  "area": "europe",
+  "source": "observations",
+  "producer": "opendata",
+  "timestep": 60,
+  "parameters": [
+    { "name": "Temperature", "source": "TA_PT1H_AVG" },
+    { "name": "Humidity", "source": "RH_PT1H_AVG", "prior_lapse_rate": 0,
+      "qc_threshold": 15, "lolimit": 0, "hilimit": 100 }
+  ]
+}
+```
+
+Unlike the configuration file, a definition file is strict: an unknown setting is an error, so
+that a misspelled setting does not silently do nothing. An error is reported when the producer
+is requested, with the file and the setting.
+
+**Variants.** A definition can have named variants, to compare methods or to keep an
+alternative ready. A variant overrides the title, the area and the settings of the parameters by
+name; it cannot change the source, the times or the list of parameters, so that every variant
+grids the same observations. With two or more variants `default` names the one the plain name
+means:
+
+```json
+{
+  "area": "europe",
+  "source": "observations",
+  "producer": "opendata",
+  "parameters": [ { "name": "Humidity", "lolimit": 0, "hilimit": 100 } ],
+  "default": "terrain",
+  "variants": [
+    { "name": "terrain" },
+    { "name": "barnes", "parameters": { "Humidity": { "method": "barnes" } } }
+  ]
+}
+```
+
+A layer selects a variant with `"producer": "obs_europe@barnes"`; `obs_europe` means the default.
+The gridded data is cached by the resolved settings, so `obs_europe` and `obs_europe@terrain`
+share it, and the variants of a producer share the observations they read. A variant that is
+not requested costs nothing. Names of producers and variants consist of letters, digits, `_` and
+`-`.
+
+A producer of the configuration file has an area of its own with its name; a name used in both
+places means the producer of the configuration file.
+
 ### Residual analysis
 
 The station residuals from the terrain trend are interpolated with optimal interpolation

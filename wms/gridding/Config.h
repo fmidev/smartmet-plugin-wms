@@ -7,10 +7,12 @@
 #pragma once
 
 #include <gis/PointGridding.h>
+#include <json/json.h>
 #include <newbase/NFmiParameterName.h>
 #include <cstddef>
 #include <libconfig.h++>
 #include <map>
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -53,12 +55,12 @@ enum class SourceType
   Querydata      // point querydata from the querydata engine
 };
 
-// One gridded producer: an area, a source of observations and parameters
-struct ProducerConfig
+// A gridding area: the grid, its terrain and the station elevations of point querydata. The
+// areas are set up when the plugin starts. A producer defined in the configuration file has an
+// area of its own, named after the producer.
+struct AreaConfig
 {
   std::string name;
-  SourceType source = SourceType::Observations;
-  std::string sourceProducer;  // observation engine station type or querydata producer
 
   // Terrain heights (m) as a north-up raster with square cells. The raster defines the grid
   // and its coordinate system, which should be equal-area.
@@ -79,6 +81,20 @@ struct ProducerConfig
   // Optional observation engine station type whose station metadata gives the elevations of
   // point querydata stations by WMO number. The file above takes precedence.
   std::string elevationStationType;
+};
+
+// One gridded producer: an area, a source of observations and parameters
+struct ProducerConfig
+{
+  std::string name;  // as requested: "obs_europe" or "obs_europe@variant"
+  std::string area;  // the name of the area
+  SourceType source = SourceType::Observations;
+  std::string sourceProducer;  // observation engine station type or querydata producer
+
+  // Identifies the settings that determine the gridded values, for the cache: the name of a
+  // producer of the configuration file, the resolved definition of a definition file. The
+  // default variant and the variant it names have the same hash.
+  std::size_t hash = 0;
 
   // Times offered for observations: every timestep minutes up to the current time minus
   // delay minutes, history minutes back. Point querydata offers its own times.
@@ -95,6 +111,13 @@ struct ProducerConfig
   std::vector<ParameterConfig> parameters;
 };
 
+// The producers of one definition file: the default and every named variant
+struct Definition
+{
+  std::shared_ptr<const ProducerConfig> defaultVariant;
+  std::map<std::string, std::shared_ptr<const ProducerConfig>> variants;
+};
+
 class Config
 {
  public:
@@ -102,7 +125,21 @@ class Config
   // Parse the gridding settings group of the plugin configuration
   explicit Config(const libconfig::Setting& theSetting);
 
+  // The producers of the configuration file
   const std::map<std::string, ProducerConfig>& producers() const { return itsProducers; }
+
+  // The areas, also those of the producers of the configuration file
+  const std::map<std::string, AreaConfig>& areas() const { return itsAreas; }
+
+  // The directory of the definition files <name>.json, empty if none
+  const std::string& directory() const { return itsDirectory; }
+
+  // Limits of the definition files
+  std::size_t maxParameters() const { return itsMaxParameters; }
+  const std::vector<std::string>& allowedSources() const { return itsAllowedSources; }
+
+  // Parse a definition file of the directory (strict: unknown settings are errors)
+  Definition parseDefinition(const Json::Value& theJson, const std::string& theName) const;
 
   // Number of gridded datasets kept in memory
   std::size_t cacheSize() const { return itsCacheSize; }
@@ -118,8 +155,13 @@ class Config
 
  private:
   void parseProducer(const libconfig::Setting& theSetting);
+  void parseArea(const libconfig::Setting& theSetting);
 
   std::map<std::string, ProducerConfig> itsProducers;
+  std::map<std::string, AreaConfig> itsAreas;
+  std::string itsDirectory;
+  std::size_t itsMaxParameters = 20;
+  std::vector<std::string> itsAllowedSources;
   std::size_t itsCacheSize = 50;
   unsigned int itsThreads = 0;
   unsigned int itsMaxConcurrent = 10;

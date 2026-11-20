@@ -3538,6 +3538,121 @@
             "height" : 901,
             "width" : 1024
           },
+          "name" : "obsgrid_config",
+          "path" : 
+          [
+            "test",
+            "obsgrid_config"
+          ],
+          "producer" : "synop_europe",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
+          },
+          "title" : "Gridded temperature",
+          "url_template" : "/dali?customer=test&product=obsgrid_config&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 901,
+            "width" : 1024
+          },
+          "name" : "obsgrid_file",
+          "path" : 
+          [
+            "test",
+            "obsgrid_file"
+          ],
+          "producer" : "synop_file",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
+          },
+          "title" : "Gridded temperature",
+          "url_template" : "/dali?customer=test&product=obsgrid_file&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 901,
+            "width" : 1024
+          },
+          "name" : "obsgrid_file_barnes",
+          "path" : 
+          [
+            "test",
+            "obsgrid_file_barnes"
+          ],
+          "producer" : "synop_file@barnes",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
+          },
+          "title" : "Gridded temperature",
+          "url_template" : "/dali?customer=test&product=obsgrid_file_barnes&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 901,
+            "width" : 1024
+          },
+          "name" : "obsgrid_file_terrain",
+          "path" : 
+          [
+            "test",
+            "obsgrid_file_terrain"
+          ],
+          "producer" : "synop_file@terrain",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
+          },
+          "title" : "Gridded temperature",
+          "url_template" : "/dali?customer=test&product=obsgrid_file_terrain&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 901,
+            "width" : 1024
+          },
+          "name" : "obsgrid_file_unknown_variant",
+          "path" : 
+          [
+            "test",
+            "obsgrid_file_unknown_variant"
+          ],
+          "producer" : "synop_file@nope",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:3035",
+            "crs" : "EPSG:3035",
+            "xsize" : 1024,
+            "ysize" : 901
+          },
+          "title" : "Gridded temperature",
+          "url_template" : "/dali?customer=test&product=obsgrid_file_unknown_variant&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 901,
+            "width" : 1024
+          },
           "name" : "obsgrid_humidity",
           "path" : 
           [

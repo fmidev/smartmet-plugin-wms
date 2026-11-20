@@ -1,0 +1,19 @@
+{
+  "title": "European SYNOP observations, defined in a file",
+  "area": "europe_20km",
+  "source": "querydata",
+  "producer": "synop",
+  "parameters": [
+    { "name": "Temperature" },
+    { "name": "Pressure", "method": "barnes", "residual_sigmas": [80], "qc_threshold": 8 },
+    { "name": "Humidity", "prior_lapse_rate": 0, "qc_threshold": 15, "lolimit": 0, "hilimit": 100 },
+    { "name": "WindSpeedMS", "prior_lapse_rate": 0, "qc_threshold": 5, "lolimit": 0,
+      "oi_sigma_h": 300, "oi_error_ratio": 0.7 }
+  ],
+  "default": "terrain",
+  "variants": [
+    { "name": "terrain" },
+    { "name": "barnes", "title": "Temperature without the terrain",
+      "parameters": { "Temperature": { "method": "barnes" } } }
+  ]
+}
