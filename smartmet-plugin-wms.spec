@@ -201,6 +201,8 @@ rm -rf $RPM_BUILD_ROOT
 - closed_range, strict, validate and desliver are sent to the grid engine (requires grid-files
   and grid-content 26.11.20); values at the upper limit of the last isoband are now drawn
 - The TFP metaparameter fails clearly with grid engine data instead of drawing an empty map
+- A grid parameter without a producer mapping with a unit conversion, multiplier or offset is
+  searched in the layer's producers only, not in all producers
 - Documented the settings that grid engine data does not use (docs/grid-support.md)
 
 * Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-1.fmi

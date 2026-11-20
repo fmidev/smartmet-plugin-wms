@@ -53,6 +53,15 @@ std::string add_grid_parameter(const Engine::Grid::Engine& gridEngine,
 
   std::string param = gridEngine.getParameterString(producerName, pName);
 
+  // A parameter without a producer mapping is searched in the producers of the layer. Decided
+  // before the unit conversion wraps the name: otherwise all producers would be searched.
+  if (param == parameterName && query.mProducerNameList.empty())
+  {
+    gridEngine.getProducerNameList(producerName, query.mProducerNameList);
+    if (query.mProducerNameList.empty())
+      query.mProducerNameList.push_back(producerName);
+  }
+
   if (multiplier && *multiplier != 1.0)
     param = "MUL{" + param + ";" + std::to_string(*multiplier) + "}";
 
@@ -64,12 +73,6 @@ std::string add_grid_parameter(const Engine::Grid::Engine& gridEngine,
   if (!projection.projectionParameter)
     projection.projectionParameter = param;
 
-  if (param == parameterName && query.mProducerNameList.empty())
-  {
-    gridEngine.getProducerNameList(producerName, query.mProducerNameList);
-    if (query.mProducerNameList.empty())
-      query.mProducerNameList.push_back(producerName);
-  }
   return param;
 }
 
