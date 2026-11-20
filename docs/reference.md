@@ -4088,7 +4088,7 @@ Each station plot can include:
 The wind direction variability group (e.g. `200V280`) following the wind group is not plotted;
 the visibility, weather and cloud groups after it are decoded normally.
 
-> **Requires:** The AVI engine (`engines/avi`) must be configured and loaded. MetarLayer is compiled out when `WITHOUT_AVI` is defined.
+> **Requires:** The AVI engine (`engines/avi`) must be configured and loaded. The plugin itself starts without the engine, or with the engine in its dummy mode (`disabled = true` in the engine configuration), but MetarLayer requests then fail with "AVI engine is not available". MetarLayer is compiled out when `WITHOUT_AVI` is defined.
 
 **Aviation flight rule categories**
 
@@ -5800,7 +5800,7 @@ The plugin configuration file uses libconfig++ syntax.  The path to this file is
 | `openapi.contact`, `openapi.license` | – | Optional OpenAPI contact (`name`, `url`, `email`) and license (`name`, `url`) groups. |
 | `openapi.map_tiles`, `openapi.map_tile_size`, `openapi.map_attribution` | –, 256, – | Background map of the location maps of the documentation pages. Only the EDR plugin's pages have such maps, so these have no effect here. |
 | `authenticate` | `true` | Enable API-key authentication (requires the authentication engine). |
-| `observation_disabled` | `false` | Disable the observation engine (for deployments without ObsEngine). |
+| `observation_disabled` | `false` | Disable the observation engine (for deployments without ObsEngine). The engine is then not looked up, and layers needing observations fail with "Observation engine is not available". |
 | `gridengine_disabled` | `false` | Disable the grid engine (for deployments without GridEngine). |
 | `heatmap.max_points` | 4000000 | Maximum number of points in a heatmap layer. |
 

@@ -219,14 +219,14 @@ load that engine in a disabled (dummy) mode or tell the plugin not to use it:
 | Contour, Gis | Always | Must be configured normally. |
 | Geonames | Always | `database.disable = true` in the engine configuration runs it without a database. |
 | Querydata | Always | Dummy mode: give the engine no configuration file name (or `configfile = "";`), or set `disabled = true` in its configuration. It then has no producers, so no querydata layers may be configured, and `primaryForecastSource = "grid";` should be set. |
-| Avi | Always | Dummy mode, as for querydata. METAR layers then fail. |
-| Observation | Unless `observation_disabled = true` | Set `observation_disabled = true` in the plugin configuration, or use the engine's dummy mode, as for querydata. |
+| Avi | Never | Leave the engine out of the server configuration, or use its dummy mode as for querydata. METAR layers then fail with "AVI engine is not available" and the rest work. Versions before 26.11.20 require the engine; use the dummy mode with them. |
+| Observation | Unless `observation_disabled = true` | Set `observation_disabled = true` in the plugin configuration, or use the engine's dummy mode, as for querydata. With `observation_disabled = true`, layers needing observations fail with "Observation engine is not available" (before 26.11.20 some of them crashed the server). The dummy mode works with all versions. |
 | grid | Unless `gridengine_disabled = true` | Set `gridengine_disabled = true` in the plugin configuration. Alternatively, load the engine with `smartmet.engine.grid.enabled = false` in its configuration file. An empty configuration file name is not supported. |
 | Authentication | When `authenticate = true` (the default) | Set `authenticate = false` in the plugin configuration. |
 | Satellite, OSM | Never | Leave the engine out of the server configuration. Satellite layers and OSM map layers are then unavailable. Without the OSM engine, products using OSM vector tile datasets fail and the rest work. |
 
 Do not use `disabled = true` in the server's `engines` section for an engine the plugin
-requires. That setting stops the server from loading the engine at all, unlike the
+requires. For the Observation engine this applies unless `observation_disabled = true` is also set. That setting stops the server from loading the engine at all, unlike the
 dummy modes above. Each engine's README describes its dummy mode.
 
 ### Layer configuration and directory structure

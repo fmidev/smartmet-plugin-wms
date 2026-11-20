@@ -185,7 +185,7 @@ The plugin wires to these SmartMet engines:
 - **contour engine** — isoband and isoline generation.
 - **gis engine** — PostGIS geometry storage and shapefile support.
 - **geonames engine** — place name / location resolution.
-- **avi engine** — METAR messages.
+- **avi engine** — METAR messages (optional).
 - **authentication engine** — API keys (optional).
 - **satellite engine** — satellite imagery (optional).
 - **OSM engine** — OpenStreetMap vector tile datasets (PMTiles files or PostgreSQL), optional.
