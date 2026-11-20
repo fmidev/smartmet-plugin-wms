@@ -1,0 +1,30 @@
+{
+  "hidden": true,
+  "title": "TFP on grid data is not supported",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {},
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "TFP",
+          "tfp": {
+            "field": "temperature"
+          },
+          "isobands": [
+            {
+              "lolimit": 0,
+              "hilimit": 10
+            }
+          ],
+          "attributes": {
+            "fill": "red"
+          }
+        }
+      ]
+    }
+  ]
+}

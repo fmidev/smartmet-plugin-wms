@@ -389,6 +389,11 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (paraminfo.parameter.empty())
     throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
 
+  // The TFP metaparameter is computed from querydata only
+  if (tfp && ComputedFields::isTfpParameter(paraminfo.parameter))
+    throw Fmi::Exception(BCP, "The TFP metaparameter is not supported for grid engine data")
+        .addParameter("Parameter", paraminfo.parameter);
+
   std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
   QueryServer::QueryConfigurator queryConfigurator;
   T::AttributeList attributeList;

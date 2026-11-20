@@ -661,6 +661,11 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (paraminfo.parameter.empty())
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer");
 
+    // The TFP metaparameter is computed from querydata only
+    if (tfp && ComputedFields::isTfpParameter(paraminfo.parameter))
+      throw Fmi::Exception(BCP, "The TFP metaparameter is not supported for grid engine data")
+          .addParameter("Parameter", paraminfo.parameter);
+
     std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
