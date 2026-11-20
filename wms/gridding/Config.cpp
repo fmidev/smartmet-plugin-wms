@@ -15,7 +15,7 @@
 #include <macgyver/Hash.h>
 #include <newbase/NFmiEnumConverter.h>
 #include <algorithm>
-#include <regex>
+#include <cctype>
 #include <set>
 #include <utility>
 
@@ -513,11 +513,18 @@ void parse_area_settings(const Settings& theSettings, AreaConfig& theArea)
   theArea.elevationStationType = theSettings.string("elevation_stationtype").value_or("");
 }
 
-// Names of definition files and variants: no paths
+// Names of definition files and variants: letters, digits, '_' and '-', so no paths. Not a
+// std::regex: with the global boost::locale of the server, compiling a bracket expression
+// aborts on RHEL 8 (boost::locale::collator::do_transform).
 bool valid_name(const std::string& theName)
 {
-  static const std::regex re("[A-Za-z0-9_-]+");
-  return std::regex_match(theName, re);
+  return !theName.empty() && std::all_of(theName.begin(),
+                                         theName.end(),
+                                         [](char c)
+                                         {
+                                           return std::isalnum(static_cast<unsigned char>(c)) != 0 ||
+                                                  c == '_' || c == '-';
+                                         });
 }
 
 // The JSON of a variant: the definition with the variant's overrides merged in
