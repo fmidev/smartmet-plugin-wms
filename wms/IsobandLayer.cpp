@@ -777,6 +777,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     add_contour_value_attributes(*originalGridQuery, extrapolation, multiplier, offset);
 
+    // Whether the last isoband includes its upper limit, as with querydata
+    originalGridQuery->mAttributeList.addAttribute("contour.closedRange", closed_range ? "1" : "0");
+
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
 

@@ -361,6 +361,9 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",
                                                    Fmi::to_string((int)*interpolation_type));
 
+    // The isoband includes hilimit, as with querydata (Engine::Contour::Options::closed_range)
+    originalGridQuery->mAttributeList.addAttribute("contour.closedRange", "1");
+
     originalGridQuery->mAttributeList.setAttribute(
         "contour.coordinateType",
         Fmi::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));

@@ -68,6 +68,40 @@
         {
           "image" : 
           {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "closed_range_dry",
+          "path" : 
+          [
+            "grid",
+            "closed_range_dry"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Dry areas fill the band -1...0 (closed_range)",
+          "url_template" : "/dali?customer=grid&product=closed_range_dry&time={time}"
+        },
+        {
+          "image" : 
+          {
             "format" : "datatile",
             "height" : 64,
             "width" : 64
