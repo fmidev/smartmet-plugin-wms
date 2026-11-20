@@ -203,6 +203,8 @@ rm -rf $RPM_BUILD_ROOT
 - The TFP metaparameter fails clearly with grid engine data instead of drawing an empty map
 - A grid parameter without a producer mapping with a unit conversion, multiplier or offset is
   searched in the layer's producers only, not in all producers
+- Multipliers and offsets are sent to the grid engine with full precision: a small multiplier
+  such as 1e-7 was rounded to 0
 - Documented the settings that grid engine data does not use (docs/grid-support.md)
 
 * Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-1.fmi

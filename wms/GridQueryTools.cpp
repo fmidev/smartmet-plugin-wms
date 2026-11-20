@@ -63,10 +63,10 @@ std::string add_grid_parameter(const Engine::Grid::Engine& gridEngine,
   }
 
   if (multiplier && *multiplier != 1.0)
-    param = "MUL{" + param + ";" + std::to_string(*multiplier) + "}";
+    param = "MUL{" + param + ";" + fmt::format("{}", *multiplier) + "}";
 
   if (offset && *offset)
-    param = "SUM{" + param + ";" + std::to_string(*offset) + "}";
+    param = "SUM{" + param + ";" + fmt::format("{}", *offset) + "}";
 
   attributeList.addAttribute("param", param);
 

@@ -210,6 +210,74 @@
             "height" : 500,
             "width" : 300
           },
+          "name" : "grid_function_zero",
+          "path" : 
+          [
+            "grid",
+            "grid_function_zero"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "A function with the constant 0.0 is a field of zeros",
+          "url_template" : "/dali?customer=grid&product=grid_function_zero&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "grid_multiplier_small",
+          "path" : 
+          [
+            "grid",
+            "grid_multiplier_small"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "A small multiplier keeps its precision",
+          "url_template" : "/dali?customer=grid&product=grid_multiplier_small&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
           "name" : "intersect_celsius",
           "path" : 
           [

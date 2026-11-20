@@ -1,0 +1,36 @@
+{
+  "title": "A small multiplier keeps its precision",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "attributes": {
+            "fill": "red"
+          },
+          "parameter": "temperature",
+          "multiplier": 1e-07,
+          "isobands": [
+            {
+              "lolimit": 5e-07,
+              "hilimit": 1e-05
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

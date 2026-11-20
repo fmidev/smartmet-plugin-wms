@@ -1,0 +1,35 @@
+{
+  "title": "A function with the constant 0.0 is a field of zeros",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "attributes": {
+            "fill": "red"
+          },
+          "parameter": "MUL{temperature;0.0}",
+          "isobands": [
+            {
+              "lolimit": -10,
+              "hilimit": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
