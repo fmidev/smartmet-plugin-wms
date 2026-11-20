@@ -176,6 +176,70 @@
             "height" : 64,
             "width" : 64
           },
+          "name" : "datatile_unmapped_pal",
+          "path" : 
+          [
+            "grid",
+            "datatile_unmapped_pal"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : -12,
+            "x2" : 40,
+            "xsize" : 64,
+            "y1" : 34,
+            "y2" : 74,
+            "ysize" : 64
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "T-K with an offset from pal: the producer of the layer is kept",
+          "url_template" : "/dali?customer=grid&product=datatile_unmapped_pal&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "format" : "datatile",
+            "height" : 64,
+            "width" : 64
+          },
+          "name" : "datatile_unmapped_pal2",
+          "path" : 
+          [
+            "grid",
+            "datatile_unmapped_pal2"
+          ],
+          "producer" : "pal2",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : -12,
+            "x2" : 40,
+            "xsize" : 64,
+            "y1" : 34,
+            "y2" : 74,
+            "ysize" : 64
+          },
+          "source" : "grid",
+          "title" : "T-K with an offset from pal2: the producer of the layer is kept",
+          "url_template" : "/dali?customer=grid&product=datatile_unmapped_pal2&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "format" : "datatile",
+            "height" : 64,
+            "width" : 64
+          },
           "name" : "datatile_wind",
           "path" : 
           [

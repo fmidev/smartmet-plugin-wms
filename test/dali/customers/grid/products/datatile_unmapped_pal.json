@@ -1,0 +1,28 @@
+{
+  "title": "T-K with an offset from pal: the producer of the layer is kept",
+  "source": "grid",
+  "producer": "pal",
+  "type": "datatile",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 64,
+    "ysize": 64,
+    "bboxcrs": "EPSG:4326",
+    "x1": -12,
+    "y1": 34,
+    "x2": 40,
+    "y2": 74
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "T-K",
+          "offset": -273.15
+        }
+      ]
+    }
+  ]
+}
