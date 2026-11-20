@@ -218,7 +218,10 @@ Engine::Observation::Engine& State::getObsEngine() const
 {
   try
   {
-    return itsPlugin.getObsEngine();
+    auto* engine = itsPlugin.getObsEngine();
+    if (engine == nullptr)
+      throw Fmi::Exception(BCP, "Observation engine is not available");
+    return *engine;
   }
   catch (...)
   {

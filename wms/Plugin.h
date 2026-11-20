@@ -134,7 +134,7 @@ class Plugin : public SmartMetPlugin
   // nullptr if the engine is not loaded
   const Gridding::Gridder* getGridder() const { return itsGridder.get(); }
 #ifndef WITHOUT_OBSERVATION
-  Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
+  Engine::Observation::Engine* getObsEngine() const { return itsObsEngine.get(); }
 #endif
 #ifndef WITHOUT_AVI
   Engine::Avi::Engine* getAviEngine() const { return itsAviEngine.get(); }
