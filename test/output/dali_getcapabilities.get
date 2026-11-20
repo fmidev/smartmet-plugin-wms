@@ -171,6 +171,74 @@
           "url_template" : "/dali?customer=grid&product=datatile_wind&time={time}"
         },
         {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "intersect_celsius",
+          "path" : 
+          [
+            "grid",
+            "intersect_celsius"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Isobands where T >= 15C, limit in celsius",
+          "url_template" : "/dali?customer=grid&product=intersect_celsius&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "intersect_fahrenheit",
+          "path" : 
+          [
+            "grid",
+            "intersect_fahrenheit"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Isobands where T >= 15C, limit in fahrenheit",
+          "url_template" : "/dali?customer=grid&product=intersect_fahrenheit&time={time}"
+        },
+        {
           "name" : "precipitation_1",
           "path" : 
           [

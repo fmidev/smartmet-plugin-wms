@@ -1,0 +1,39 @@
+{
+  "title": "Isobands where T >= 15C, limit in celsius",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "temperature",
+          "isobands": [
+            {
+              "lolimit": -100,
+              "hilimit": 100
+            }
+          ],
+          "intersect": {
+            "parameter": "temperature",
+            "lolimit": 15
+          },
+          "attributes": {
+            "fill": "red"
+          }
+        }
+      ]
+    }
+  ]
+}

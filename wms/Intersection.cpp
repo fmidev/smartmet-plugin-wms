@@ -223,7 +223,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
                         const Engine::Grid::Engine* gridEngine,
                         const Projection& theProjection,
                         const Fmi::DateTime& theTime,
-                        const State& /* theState */)
+                        const State& theState)
 {
   try
   {
@@ -268,7 +268,6 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     }
 
     std::string param = gridEngine->getParameterString(producerName, pName);
-    attributeList.addAttribute("param", param);
 
     if (param == *parameter && originalGridQuery->mProducerNameList.empty())
     {
@@ -276,6 +275,21 @@ void Intersection::init(const std::optional<std::string>& theProducer,
       if (originalGridQuery->mProducerNameList.empty())
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
+
+    // The limits are in the converted units, as with querydata: convert the values with the
+    // grid engine's functions (unit_conversion, multiplier and offset were ignored here)
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+    if (multiplier && *multiplier != 1.0)
+      param = "MUL{" + param + ";" + std::to_string(*multiplier) + "}";
+    if (offset && *offset != 0.0)
+      param = "SUM{" + param + ";" + std::to_string(*offset) + "}";
+
+    attributeList.addAttribute("param", param);
 
     std::string forecastTime = Fmi::to_iso_string(theTime);
     attributeList.addAttribute("startTime", forecastTime);
@@ -346,9 +360,6 @@ void Intersection::init(const std::optional<std::string>& theProducer,
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
     originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",
                                                    Fmi::to_string((int)*interpolation_type));
-
-    if (offset)
-      originalGridQuery->mAttributeList.addAttribute("contour.offset", Fmi::to_string(*offset));
 
     originalGridQuery->mAttributeList.setAttribute(
         "contour.coordinateType",
