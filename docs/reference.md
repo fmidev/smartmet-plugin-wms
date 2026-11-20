@@ -4533,6 +4533,8 @@ The table below contains a list of attributes used in this structure.
 
 Data to be contoured may be interpolated to another resolution. When used for temperature and topographic data is available, this may be used to provide higher apparent resolution by applying a lapse rate correction to the temperature. The desired resolution may be absolute or relative to the image resolution.
 
+Sampling is applied to querydata only, not to grid engine data. See `docs/grid-support.md` for the settings of the contour layers that grid engine data does not use.
+
 | Name               | Type   | Default value | Description                                                                         |
 | ------------------ | ------ | ------------- | ----------------------------------------------------------------------------------- |
 | resolution         | double | -             | Desired resolution in kilometers per pixel                                          |

@@ -54,11 +54,14 @@ query blocks are shared helpers in `wms/GridQueryTools.{h,cpp}`:
    `grid.crs` (WKT of the product projection), `grid.bbox` / `grid.llbox`,
    `grid.width` / `grid.height` or `grid.size` / `grid.resolution` / `grid.cx` /
    `grid.cy` / `grid.bboxcrs`, and `grid.areaInterpolationMethod`.
-3. **Contouring options** travel the same way: `contour.smooth.size`,
-   `contour.smooth.degree`, `contour.subdivide`, `contour.interpolation.type`
-   (linear, midpoint, logarithmic), `contour.minArea`, `contour.extrapolation`,
-   `contour.multiplier`, `contour.offset`, `contour.coordinateType`,
-   `contour.threads`.
+3. **Contouring options** travel the same way: `contour.interpolation.type`
+   (linear, midpoint, logarithmic), `contour.closedRange`, `contour.subdivide`,
+   `contour.smooth.*` (the Trax smoother), `contour.coordinateType` and
+   `contour.threads`. `multiplier`, `offset` and `unit_conversion` are applied by
+   wrapping the parameter in the grid engine's `MUL{}` and `SUM{}` functions; the
+   `contour.multiplier`, `contour.offset`, `contour.extrapolation`,
+   `contour.smooth.size` and `contour.smooth.degree` attributes are sent but not read
+   by grid-content. See [Settings with grid engine data](#settings-with-grid-engine-data).
 4. **`Engine::executeQuery(query)`**. The Query Server finds the content, and the Data
    Server contours or samples the field in the requested grid.
 5. **Read the results** from each parameter's `mValueList`. For contours, `mValueData`
@@ -69,6 +72,35 @@ query blocks are shared helpers in `wms/GridQueryTools.{h,cpp}`:
 
 The grid-specific keys of the attribute list are described in the grid-files developer
 guide (§9). They are plain strings: a typo silently has no effect.
+
+## Settings with grid engine data
+
+The contour layers (isoband, isoline, isolabel and the `intersect` of an isoband) do not
+apply every setting to grid engine data. Checked against the code of the plugin,
+grid-content and grid-files:
+
+| Setting | Grid engine data |
+|---|---|
+| `multiplier`, `offset`, `unit_conversion` (also of `intersect`) | Applied (`MUL{}`, `SUM{}`) |
+| `interpolation`, `minarea`, `filter`, `inside`, `outside`, `precision`, isolabel settings | Applied |
+| `closed_range` | Applied with grid-files and grid-content versions that read `contour.closedRange`; earlier the last isoband was open at its upper limit |
+| `smoother` `method` box / median / morphology | Applied to function and metric level parameters only |
+| `subdivide` | Applied to function and metric level parameters only (grid-files contours ordinary parameters with subdivide 0) |
+| `smoother` `size` / `degree`, `method` savitzky-golay | Not applied |
+| `sampling`, `subdivide_min_cell_pixels` | Not applied |
+| `extrapolation`, `strict`, `validate`, `desliver` | Not applied |
+| `tfp` (the TFP metaparameter) | Not supported: the layer fails |
+
+The point and raster layers:
+
+| Layer | Setting | Difference |
+|---|---|---|
+| number, symbol, arrow | `multiplier`, `offset`, `unit_conversion`, `level`, `positions`, `minvalues` | None: both paths apply them |
+| number, symbol, arrow | `maxdistance` | Used for stations (observations, point querydata) only |
+| raster | `multiplier`, `offset`, `unit_conversion` | Applied on both paths to a single `parameter`; `direction` and `speed` are not converted |
+| raster | `interpolation` | Grid engine data only (`nearest`, `linear`, `transfer`); querydata is always interpolated bilinearly |
+
+Slayer warns about the settings that are not applied (`smoothing-grid`, `grid-unsupported`).
 
 ## ETags and caching
 
