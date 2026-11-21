@@ -15,6 +15,8 @@
 #include <iterator>
 #include <map>
 #include <memory>
+#include <optional>
+#include <stdexcept>
 #include <string>
 #include <unistd.h>
 #include <utility>
@@ -103,6 +105,52 @@ std::string get_full_response(SmartMet::Spine::HTTP::Response& response)
 
   return result;
 }
+
+// ----------------------------------------------------------------------
+// Request the ETag of each request line and compare them to the first one
+
+std::string compare_etags(SmartMet::Spine::Reactor& reactor, const std::string& input)
+{
+  std::vector<std::string> lines;
+  boost::algorithm::split(lines, input, boost::algorithm::is_any_of("\n"));
+
+  std::string result;
+  std::optional<std::string> first;
+  int n = 0;
+  for (auto line : lines)
+  {
+    boost::algorithm::trim(line);
+    if (line.empty())
+      continue;
+    ++n;
+
+    auto query = SmartMet::Spine::HTTP::parseRequest(line + "\r\nX-Request-ETag: true\r\n\r\n");
+    if (query.first != SmartMet::Spine::HTTP::ParsingStatus::COMPLETE)
+      throw std::runtime_error("Failed to parse request " + std::to_string(n));
+
+    SmartMet::Spine::HTTP::Response response;
+    auto view = reactor.getHandlerView(*query.second);
+    if (!view)
+      throw std::runtime_error("Failed to handle request " + std::to_string(n));
+    view->handle(reactor, *query.second, response);
+
+    auto etag = response.getHeader("ETag");
+    result += "request " + std::to_string(n) + ": ";
+    if (!etag)
+      result += "no ETag";
+    else if (!first)
+      result += "ETag";
+    else if (*etag == *first)
+      result += "same ETag as request 1";
+    else
+      result += "different ETag than request 1";
+    result += "\n";
+
+    if (!first)
+      first = etag;
+  }
+  return result;
+}
 }  // namespace
 
 namespace SmartMet
@@ -156,10 +204,29 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
         input += "\r\n\r\n";
       }
 
-      auto query = SmartMet::Spine::HTTP::parseRequest(input);
-
       path resultfile = path("failures") / command;
       std::filesystem::create_directories(resultfile.parent_path());
+
+      // An etag_*.get file has one request per line. The result tells for each request
+      // whether its ETag is the same as that of the first one: settings that change the
+      // output must change the ETag too.
+      if (boost::algorithm::starts_with(inputfile.filename().string(), "etag_"))
+      {
+        try
+        {
+          put_file_contents(resultfile, compare_etags(*reactor, input));
+        }
+        catch (const std::exception& e)
+        {
+          cout << "EXCEPTION: " << e.what() << endl;
+          put_file_contents(resultfile, "");
+        }
+        alarm(0);
+        cout << "DONE" << endl;
+        continue;
+      }
+
+      auto query = SmartMet::Spine::HTTP::parseRequest(input);
 
       if (query.first == SmartMet::Spine::HTTP::ParsingStatus::COMPLETE)
       {
