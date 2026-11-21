@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.11.20
-Release: 3%{?dist}.fmi
+Version: 26.11.21
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -29,8 +29,8 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.10.16
 BuildRequires: smartmet-library-giza-devel >= 26.10.16
-BuildRequires: smartmet-library-grid-content-devel >= 26.11.20
-BuildRequires: smartmet-library-grid-files-devel >= 26.11.20
+BuildRequires: smartmet-library-grid-content-devel >= 26.11.21
+BuildRequires: smartmet-library-grid-files-devel >= 26.11.21
 BuildRequires: smartmet-library-macgyver-devel >= 26.11.3
 BuildRequires: smartmet-library-spine-devel >= 26.11.11
 BuildRequires: smartmet-library-timeseries-devel >= 26.11.4
@@ -47,7 +47,7 @@ BuildRequires: smartmet-engine-geonames-devel >= 26.10.16
 BuildRequires: smartmet-engine-querydata-devel >= 26.11.5
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-engine-osm-devel >= 26.10.23
-BuildRequires: smartmet-engine-contour-devel >= 26.10.16
+BuildRequires: smartmet-engine-contour-devel >= 26.11.21
 BuildRequires: smartmet-engine-satellite-devel >= 26.10.16
 BuildRequires: smartmet-library-gis-devel >= 26.11.1
 BuildRequires: smartmet-library-trax-devel >= 26.10.16
@@ -88,8 +88,8 @@ Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.10.16
-Requires: smartmet-library-grid-content >= 26.11.20
-Requires: smartmet-library-grid-files >= 26.11.20
+Requires: smartmet-library-grid-content >= 26.11.21
+Requires: smartmet-library-grid-files >= 26.11.21
 Requires: smartmet-library-gis >= 26.11.1
 Requires: smartmet-library-trax >= 26.11.20
 Requires: smartmet-library-macgyver >= 26.11.3
@@ -106,7 +106,7 @@ Requires: smartmet-engine-observation >= 26.11.5
 Requires: smartmet-engine-avi >= 26.10.17
 Requires: smartmet-engine-querydata >= 26.11.5
 Requires: smartmet-engine-satellite >= 26.10.17
-Requires: smartmet-engine-contour >= 26.10.17
+Requires: smartmet-engine-contour >= 26.11.21
 Requires: smartmet-engine-gis >= 26.10.17
 Requires: smartmet-engine-grid >= 26.10.17
 Requires: smartmet-engine-geonames >= 26.10.17
@@ -137,7 +137,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
 #TestRequires: smartmet-engine-avi-devel >= 26.10.16
-#TestRequires: smartmet-engine-contour-devel >= 26.10.16
+#TestRequires: smartmet-engine-contour-devel >= 26.11.21
 #TestRequires: smartmet-engine-geonames-devel >= 26.10.16
 #TestRequires: smartmet-engine-gis-devel >= 26.10.16
 #TestRequires: smartmet-engine-satellite >= 26.10.17
@@ -194,6 +194,23 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Nov 21 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.21-1.fmi
+- Layer settings behave the same for querydata and grid engine data in many more cases,
+  see docs/grid-support.md for the differences that remain. With grid engine data:
+  an isoband or intersect without limits is the area of missing values; intersect works
+  on isoline and isolabel layers and in positions, with its own producer; U/V arrows are
+  not drawn outside the data; an arrow layer without speed uses speed 0; points outside
+  the image and its margins are skipped; a .raw parameter is read from the producers of
+  the layer; a symbol layer without a parameter draws its symbols; a time layer works
+  alone; a grid engine layer need not be the first layer of a view
+- With querydata: streamlines ignore interval_start; isolabels with a unit conversion are
+  oriented correctly; the level of an intersect is used. Isobands and isolines with both
+  a multiplier and an offset are fixed in the contour engine 26.11.21
+- Added settings missing from the ETag: isoline areaunit, intersect smoother and producer,
+  stream u/v, raster direction/speed, border and rain painter steps, symbol minvalues,
+  label locale, and all settings of the Hovmoeller layer
+- An unknown areaunit of an isoline layer is now an error
+
 * Fri Nov 20 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.20-3.fmi
 - Gridded producers can be defined in JSON files of a directory (gridding.directory), read
   again when they change, with named variants selected as producer@variant, areas defined in

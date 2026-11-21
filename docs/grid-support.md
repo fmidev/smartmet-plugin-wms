@@ -30,8 +30,9 @@ else
 
 The layers with a grid path are `IsobandLayer`, `IsolineLayer` (and `IsolabelLayer`,
 which derives from it), `RasterLayer`, `ArrowLayer`, `NumberLayer`, `SymbolLayer`,
-`StreamLayer` and `TimeLayer`. The GeoTIFF, data tile and MVT outputs of the contour
-layers have grid variants too (`GridDataGeoTiff`, `DataTile`). Layers such as
+`StreamLayer` and `TimeLayer`. The GeoTIFF and data tile outputs of the contour
+layers have grid variants too (`GridDataGeoTiff`, `DataTile`); of the MVT outputs only
+the isolines. Layers such as
 `MapLayer` and `BackgroundLayer` use the source only to decide what they need.
 
 ## The grid path of a layer
@@ -49,7 +50,7 @@ query blocks are shared helpers in `wms/GridQueryTools.{h,cpp}`:
      `Point` for point lists) and a result type: `Isoband` here, `Isoline` for isolines,
      `Vector` for gridded values (rasters, arrows, streamlines), `PointValues` for
      numbers and symbols. Level flags (`PressureLevels`, `MetricLevels`) follow `pressure` /
-     `elevation`.
+     `elevation_unit`.
 2. **Describe the output grid** in the query's attribute list, with the grid-files keys:
    `grid.crs` (WKT of the product projection), `grid.bbox` / `grid.llbox`,
    `grid.width` / `grid.height` or `grid.size` / `grid.resolution` / `grid.cx` /
@@ -89,6 +90,9 @@ grid-content and grid-files:
 | `smoother` `size` / `degree`, `method` savitzky-golay | Not applied |
 | `sampling`, `subdivide_min_cell_pixels` | Not applied |
 | `tfp` (the TFP metaparameter) | Not supported: the layer fails |
+| isoband or `intersect` without `lolimit` and `hilimit` | The area of missing values, as with querydata (grid-files 26.11.21 or later) |
+| `intersect` on isoline and isolabel layers, and in `positions` | Applied with the grid engine; `intersect.producer` is honoured. `intersect.level` is not sent |
+| `heatmap` | Not applied |
 
 The point and raster layers:
 
@@ -99,7 +103,31 @@ The point and raster layers:
 | raster | `multiplier`, `offset`, `unit_conversion` | Applied on both paths to a single `parameter`; `direction` and `speed` are not converted |
 | raster | `interpolation` | Grid engine data only (`nearest`, `linear`, `transfer`); querydata is always interpolated bilinearly |
 
-Slayer warns about the settings that are not applied (`smoothing-grid`, `grid-unsupported`).
+Other differences that remain between the two sources (from the audit of 2026-11-21):
+
+| Topic | Querydata | Grid engine |
+|---|---|---|
+| `pressure`, `levelId`, `elevation_unit`, `forecastType`, `forecastNumber`, `geometryId` | Ignored, only `level` is used | Used |
+| `level` | Any number; a missing level is an error | Truncated to an integer; a missing level gives an empty layer |
+| `positions.directionoffset`, `positions.layout: "data"` | Applied | Not applied: no offset, no points |
+| Arrow and stream `u` / `v` of data with grid-relative winds | Rotated to true north | Not rotated |
+| `.raw` parameter suffix | Not supported | Nearest neighbour for gridded results; point layers still interpolate |
+| `interpolation` (nearest, discrete, midpoint), `extrapolation`, smoother `radius`, `subdivide` | In native grid cells | In the cells of the output grid, after a bilinear resampling |
+| MVT output | All vector layers | Isolines only; the other layers are empty |
+| Data tiles, two-band arrow GeoTIFF | Not supported | Supported |
+| GeoTIFF sampling | Pixel centres | Corner to corner (up to half a pixel shift) |
+| Hovmoeller layer, isoband `heatmap` | Supported | Not supported |
+| Unknown `origintime` in Dali, WMTS and tiles requests | Error | Another model run is used silently |
+| Default time when all the data is in the past | Latest time for producers marked as observations | Oldest time |
+| `Expires` header | Follows the data | One hour |
+
+The source of a layer is resolved once for the product: a layer with a `producer` of its
+own inherits the source of the product, and a WMS capabilities layer is a grid layer only
+when the product says `"source": "grid"`. Set `"source"` explicitly in products that mix
+the sources.
+
+Slayer warns about the settings that are not applied (`smoothing-grid`, `grid-unsupported`,
+`querydata-unsupported`).
 
 ## ETags and caching
 
@@ -118,10 +146,11 @@ Observation producers still return `Fmi::bad_hash` (no caching) as before.
 
 ## Pitfalls
 
-* **Source decided per layer.** A product can mix grid and querydata layers. A layer
-  without `"source"` gets its source from `primaryForecastSource` and
-  `isGridProducer()`, so the same product can switch paths when the grid engine's
-  producer list changes.
+* **Source decided per product.** A product can mix grid and querydata layers by giving
+  `"source"` in the layers. Without it the source comes from `primaryForecastSource` and
+  `isGridProducer()` of the product level producer, so the same product can switch paths
+  when the grid engine's producer list changes. The projection of the grid engine layers
+  of a view is that of its first visible grid engine layer.
 * **Producer mapping names.** `getProducerNameList()` may return several producers; the
   Query Server tries them in order. A layer can therefore show data from a different
   producer than the one named in the product.
