@@ -1,0 +1,35 @@
+{
+  "title": "A symbol layer without a parameter draws its symbol at every position, also with grid data",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "symbol",
+          "symbol": "dot",
+          "positions": {
+            "x": 30,
+            "y": 30,
+            "dx": 60,
+            "dy": 60
+          },
+          "attributes": {
+            "fill": "black"
+          }
+        }
+      ]
+    }
+  ]
+}

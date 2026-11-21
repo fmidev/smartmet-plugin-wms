@@ -671,45 +671,52 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    if (paraminfo.parameter.empty() && !projection.projectionParameter)
+    // A plain symbol at each position needs no data, as with querydata. The data projection
+    // cannot be resolved without a parameter though.
+    const bool needs_data = (!paraminfo.parameter.empty() || projection.projectionParameter);
+    if (!needs_data && wkt == "data")
       return;
 
-    addGridParameter(*gridEngine, producerName, attributeList, *originalGridQuery);
+    std::shared_ptr<QueryServer::Query> query = originalGridQuery;
+    if (needs_data)
+    {
+      addGridParameter(*gridEngine, producerName, attributeList, *originalGridQuery);
 
-    add_time_attributes(attributeList, getValidTime(), origintime);
+      add_time_attributes(attributeList, getValidTime(), origintime);
 
-    // Transforming information from the attribute list into the query object.
-    queryConfigurator.configure(*originalGridQuery, attributeList);
+      // Transforming information from the attribute list into the query object.
+      queryConfigurator.configure(*originalGridQuery, attributeList);
 
-    // Fulfilling information into the query object.
+      // Fulfilling information into the query object.
 
-    set_query_locations(*originalGridQuery, positions, projection, paraminfo, theState);
+      set_query_locations(*originalGridQuery, positions, projection, paraminfo, theState);
 
-    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+      originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+      originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    add_grid_size_attributes(*originalGridQuery, projection);
+      add_grid_size_attributes(*originalGridQuery, projection);
 
-    if (wkt == "data")
-      add_data_bbox_attribute(*originalGridQuery, projection);
+      if (wkt == "data")
+        add_data_bbox_attribute(*originalGridQuery, projection);
 
-    // The Query object before the query execution.
-    // originalGridQuery->print(std::cout,0,0);
+      // The Query object before the query execution.
+      // originalGridQuery->print(std::cout,0,0);
 
-    // Executing the query.
-    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+      // Executing the query.
+      query = gridEngine->executeQuery(originalGridQuery);
 
-    // The Query object after the query execution.
-    // query->print(std::cout,0,0);
+      // The Query object after the query execution.
+      // query->print(std::cout,0,0);
 
-    // Extracting the projection information from the query result.
+      // Extracting the projection information from the query result.
 
-    update_projection_size(projection, *query);
+      update_projection_size(projection, *query);
 
-    if (!projection.xsize && !projection.ysize)
-      throw Fmi::Exception(BCP, "The projection size is unknown!");
+      if (!projection.xsize && !projection.ysize)
+        throw Fmi::Exception(BCP, "The projection size is unknown!");
 
-    update_data_projection(projection, *query);
+      update_data_projection(projection, *query);
+    }
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();

@@ -211,11 +211,15 @@ void Layers::check_warnings(Warnings& warnings) const
 Projection Layers::gridProjection(CTPP::CDT& theGlobals, State& theState)
 {
   Projection projection;
-  auto first = layers.begin();
-  if ((*first) != nullptr && (*first)->paraminfo.source &&
-      *(*first)->paraminfo.source == "grid" && (*first)->visible)
+
+  // The first visible layer using the grid-engine decides the projection. It need not be
+  // the first layer: a product may mix querydata and grid-engine layers.
+  for (const auto& layer : layers)
   {
-    if ((*first)->projection.crs && *(*first)->projection.crs == "data")
+    if (layer == nullptr || !layer->visible || layer->paraminfo.source != std::string("grid"))
+      continue;
+
+    if (layer->projection.crs && *layer->projection.crs == "data")
     {
       CTPP::CDT tmpGlobals(theGlobals);
       State tmpState(theState.getPlugin(), theState.getRequest());
@@ -225,8 +229,9 @@ Projection Layers::gridProjection(CTPP::CDT& theGlobals, State& theState)
     }
     else
     {
-      projection = (*first)->projection;
+      projection = layer->projection;
     }
+    break;
   }
   return projection;
 }

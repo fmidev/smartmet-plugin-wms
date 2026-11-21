@@ -1,0 +1,53 @@
+{
+  "title": "A querydata layer followed by a grid engine layer",
+  "producer": "pal_skandinavia",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "Temperature",
+          "isobands": [
+            {
+              "lolimit": 14,
+              "hilimit": 100
+            }
+          ],
+          "attributes": {
+            "fill": "yellow"
+          }
+        },
+        {
+          "qid": "l2",
+          "layer_type": "number",
+          "source": "grid",
+          "producer": "pal",
+          "parameter": "temperature",
+          "label": {
+            "precision": 0
+          },
+          "positions": {
+            "x": 30,
+            "y": 30,
+            "dx": 60,
+            "dy": 60
+          },
+          "attributes": {
+            "font-size": 10
+          }
+        }
+      ]
+    }
+  ]
+}

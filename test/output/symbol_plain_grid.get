@@ -1,0 +1,64 @@
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>A symbol layer without a parameter draws its symbol at every position, also with grid data</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+<symbol id="dot">
+ <desc>Simple round marker</desc>
+ <circle cx="0" cy="0" r="1"/>
+</symbol>
+
+
+</defs>
+
+<g>
+ <g>
+  <g style="fill:black">
+   <use transform="translate(30,30)" xlink:href="#dot"/>
+   <use transform="translate(90,30)" xlink:href="#dot"/>
+   <use transform="translate(150,30)" xlink:href="#dot"/>
+   <use transform="translate(210,30)" xlink:href="#dot"/>
+   <use transform="translate(270,30)" xlink:href="#dot"/>
+   <use transform="translate(30,90)" xlink:href="#dot"/>
+   <use transform="translate(90,90)" xlink:href="#dot"/>
+   <use transform="translate(150,90)" xlink:href="#dot"/>
+   <use transform="translate(210,90)" xlink:href="#dot"/>
+   <use transform="translate(270,90)" xlink:href="#dot"/>
+   <use transform="translate(30,150)" xlink:href="#dot"/>
+   <use transform="translate(90,150)" xlink:href="#dot"/>
+   <use transform="translate(150,150)" xlink:href="#dot"/>
+   <use transform="translate(210,150)" xlink:href="#dot"/>
+   <use transform="translate(270,150)" xlink:href="#dot"/>
+   <use transform="translate(30,210)" xlink:href="#dot"/>
+   <use transform="translate(90,210)" xlink:href="#dot"/>
+   <use transform="translate(150,210)" xlink:href="#dot"/>
+   <use transform="translate(210,210)" xlink:href="#dot"/>
+   <use transform="translate(270,210)" xlink:href="#dot"/>
+   <use transform="translate(30,270)" xlink:href="#dot"/>
+   <use transform="translate(90,270)" xlink:href="#dot"/>
+   <use transform="translate(150,270)" xlink:href="#dot"/>
+   <use transform="translate(210,270)" xlink:href="#dot"/>
+   <use transform="translate(270,270)" xlink:href="#dot"/>
+   <use transform="translate(30,330)" xlink:href="#dot"/>
+   <use transform="translate(90,330)" xlink:href="#dot"/>
+   <use transform="translate(150,330)" xlink:href="#dot"/>
+   <use transform="translate(210,330)" xlink:href="#dot"/>
+   <use transform="translate(270,330)" xlink:href="#dot"/>
+   <use transform="translate(30,390)" xlink:href="#dot"/>
+   <use transform="translate(90,390)" xlink:href="#dot"/>
+   <use transform="translate(150,390)" xlink:href="#dot"/>
+   <use transform="translate(210,390)" xlink:href="#dot"/>
+   <use transform="translate(270,390)" xlink:href="#dot"/>
+   <use transform="translate(30,450)" xlink:href="#dot"/>
+   <use transform="translate(90,450)" xlink:href="#dot"/>
+   <use transform="translate(150,450)" xlink:href="#dot"/>
+   <use transform="translate(210,450)" xlink:href="#dot"/>
+   <use transform="translate(270,450)" xlink:href="#dot"/>
+  </g>
+ </g>
+</g>
+
+</svg>
