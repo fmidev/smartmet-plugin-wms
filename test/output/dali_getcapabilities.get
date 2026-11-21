@@ -509,6 +509,40 @@
         {
           "image" : 
           {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "intersect_producer_grid",
+          "path" : 
+          [
+            "grid",
+            "intersect_producer_grid"
+          ],
+          "producer" : "ecmwf_eurooppa_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080814T120000",
+            "origintime" : "20080804T120000",
+            "values" : "20080804T120000/20080809T120000/PT3H,20080809T180000/20080814T120000/PT6H"
+          },
+          "title" : "Isoband of one grid producer intersected with the temperature of another",
+          "url_template" : "/dali?customer=grid&product=intersect_producer_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 200,
             "width" : 400
           },
