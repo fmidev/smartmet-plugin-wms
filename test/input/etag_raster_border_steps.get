@@ -1,0 +1,4 @@
+GET /dali?customer=grid&product=raster_rain_grid&time=200808050900&type=png HTTP/1.0
+GET /dali?customer=grid&product=raster_border_same_grid&time=200808050900&type=png HTTP/1.0
+GET /dali?customer=grid&product=raster_border_steps_grid&time=200808050900&type=png HTTP/1.0
+GET /dali?customer=grid&product=raster_border_increase_grid&time=200808050900&type=png HTTP/1.0

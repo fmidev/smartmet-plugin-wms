@@ -97,7 +97,8 @@ std::optional<SpeedAndDirection> uv_to_speed_and_direction(
     double lon,
     double lat)
 {
-  if (u == kFloatMissing || v == kFloatMissing)
+  // Querydata and the grid engine have different missing values
+  if (u == kFloatMissing || v == kFloatMissing || u == ParamValueMissing || v == ParamValueMissing)
     return std::nullopt;
 
   double wspd = sqrt(u * u + v * v);
@@ -343,6 +344,18 @@ PointValues read_forecasts(const ArrowLayer& layer,
  */
 // ----------------------------------------------------------------------
 
+// The parameter name in the grid query: the .raw suffix (nearest neighbour) is not a part of it
+std::optional<std::string> query_name(std::optional<std::string> name)
+{
+  if (name)
+  {
+    auto pos = name->find(".raw");
+    if (pos != std::string::npos)
+      name->erase(pos, 4);
+  }
+  return name;
+}
+
 // Transformation for rotating grid-relative U/V components to true north, if needed
 std::shared_ptr<Fmi::CoordinateTransformation> query_uv_transformation(
     const QueryServer::Query& query)
@@ -360,8 +373,11 @@ std::shared_ptr<Fmi::CoordinateTransformation> query_uv_transformation(
   return uvtransformation;
 }
 
-// Point values from grid direction and optional speed values, the speed defaults to 10
-PointValues direction_speed_values(const Positions::Points& points,
+// Point values from grid direction and optional speed values. The speed defaults to 0, as
+// with querydata.
+PointValues direction_speed_values(const ArrowLayer& layer,
+                                   const Fmi::Box& box,
+                                   const Positions::Points& points,
                                    T::GridValueList& dirValues,
                                    T::GridValueList* speedValues)
 {
@@ -370,6 +386,9 @@ PointValues direction_speed_values(const Positions::Points& points,
   for (uint t = 0; t < len; t++)
   {
     auto point = points[t];
+    if (!layer.inside(box, point.x, point.y))
+      continue;
+
     T::GridValue* rec = dirValues.getGridValuePtrByIndex(t);
     T::ParamValue wdir = rec->mValue;
 
@@ -380,10 +399,9 @@ PointValues direction_speed_values(const Positions::Points& points,
     if (speedValues)
     {
       T::GridValue* srec = speedValues->getGridValuePtrByIndex(t);
-      wspeed = (srec ? srec->mValue : 10);
+      if (srec)
+        wspeed = srec->mValue;
     }
-    else
-      wspeed = 10;
 
     if (wspeed != ParamValueMissing)
       pointvalues.emplace_back(point, wspeed, wdir);
@@ -392,7 +410,9 @@ PointValues direction_speed_values(const Positions::Points& points,
 }
 
 // Point values from grid U and V components
-PointValues uv_values(const Positions::Points& points,
+PointValues uv_values(const ArrowLayer& layer,
+                      const Fmi::Box& box,
+                      const Positions::Points& points,
                       T::GridValueList& uValues,
                       T::GridValueList& vValues,
                       const QueryServer::Query& query)
@@ -404,6 +424,9 @@ PointValues uv_values(const Positions::Points& points,
   for (uint t = 0; t < len; t++)
   {
     auto point = points[t];
+    if (!layer.inside(box, point.x, point.y))
+      continue;
+
     T::GridValue* urec = uValues.getGridValuePtrByIndex(t);
     T::GridValue* vrec = vValues.getGridValuePtrByIndex(t);
 
@@ -437,6 +460,11 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
     PointValues pointvalues;
 
+    dirParam = query_name(dirParam);
+    speedParam = query_name(speedParam);
+    uParam = query_name(uParam);
+    vParam = query_name(vParam);
+
     T::GridValueList* dirValues = nullptr;
     T::GridValueList* speedValues = nullptr;
     T::GridValueList* uValues = nullptr;
@@ -461,10 +489,10 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     }
 
     if (dirValues && dirValues->getLength())
-      return direction_speed_values(points, *dirValues, speedValues);
+      return direction_speed_values(layer, box, points, *dirValues, speedValues);
 
     if (uValues && vValues && uValues->getLength() && vValues->getLength())
-      return uv_values(points, *uValues, *vValues, query);
+      return uv_values(layer, box, points, *uValues, *vValues, query);
 
     return pointvalues;
   }
@@ -641,11 +669,16 @@ struct PointWindValues
 };
 
 PointWindValues single_point_values(const QueryServer::Query& query,
-                                    const std::optional<std::string>& direction,
-                                    const std::optional<std::string>& speed,
-                                    const std::optional<std::string>& u,
-                                    const std::optional<std::string>& v)
+                                    std::optional<std::string> direction,
+                                    std::optional<std::string> speed,
+                                    std::optional<std::string> u,
+                                    std::optional<std::string> v)
 {
+  direction = query_name(direction);
+  speed = query_name(speed);
+  u = query_name(u);
+  v = query_name(v);
+
   PointWindValues values;
   for (const auto& param : query.mQueryParameterList)
   {
@@ -1066,7 +1099,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // auto bl = projection.bottomLeftLatLon();
       // auto tr = projection.topRightLatLon();
 
-      positions->init(paraminfo.producer, projection, valid_time, theState);
+      positions->init(paraminfo.producer, projection, valid_time, theState, true);
     }
 
     // Build coordinates for the query from positions
@@ -1093,7 +1126,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (wkt == "data")
       return;
 
-    positions->init(paraminfo.producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState, true);
 
     if (css)
     {

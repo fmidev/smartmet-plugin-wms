@@ -189,6 +189,10 @@ PointValues read_gridForecasts(const NumberLayer& layer,
         T::GridValue* rec = values->getGridValuePtrByIndex(t);
         auto point = points[t];
 
+        // Points outside the image and its margins are skipped, as with querydata
+        if (!layer.inside(box, point.x, point.y))
+          continue;
+
         if (rec->mValue != ParamValueMissing)
           pointvalues.emplace_back(point, rec->mValue);
         else
@@ -501,7 +505,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
 
-      positions->init(paraminfo.producer, projection, valid_time, theState);
+      positions->init(paraminfo.producer, projection, valid_time, theState, true);
     }
     else
     {
@@ -527,7 +531,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
+    if (param == pName && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.empty())
@@ -577,7 +581,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(paraminfo.producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState, true);
 
     // Update the globals
 

@@ -1,0 +1,2 @@
+GET /dali?customer=test&product=precipitation_warm&time=200808050300 HTTP/1.0
+GET /dali?customer=test&product=precipitation_warm&time=200808050300&l3.minvalues=5 HTTP/1.0

@@ -1,0 +1,2 @@
+GET /dali?customer=grid&product=raster_stream_grid&time=200808050900&type=png HTTP/1.0
+GET /dali?customer=grid&product=raster_stream_grid&time=200808050900&type=png&l1.direction=FF-MS&l1.speed=DD-D HTTP/1.0

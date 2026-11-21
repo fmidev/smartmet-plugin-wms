@@ -59,6 +59,7 @@ void Label::setLocale(const std::string& theLocale)
 {
   try
   {
+    locale = theLocale;
     if (!theLocale.empty())
     {
       boost::locale::generator gen;
@@ -256,6 +257,7 @@ std::size_t Label::hash_value(const State& /* theState */) const
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Fmi::hash_value(missing));
+    Fmi::hash_combine(hash, Fmi::hash_value(locale));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
     Fmi::hash_combine(hash, Fmi::hash_value(multiple));
     Fmi::hash_combine(hash, Fmi::hash_value(rounding));

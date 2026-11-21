@@ -55,7 +55,7 @@ std::string add_grid_parameter(const Engine::Grid::Engine& gridEngine,
 
   // A parameter without a producer mapping is searched in the producers of the layer. Decided
   // before the unit conversion wraps the name: otherwise all producers would be searched.
-  if (param == parameterName && query.mProducerNameList.empty())
+  if (param == pName && query.mProducerNameList.empty())
   {
     gridEngine.getProducerNameList(producerName, query.mProducerNameList);
     if (query.mProducerNameList.empty())
@@ -153,8 +153,7 @@ void set_query_locations(QueryServer::Query& query,
   {
     const bool forecast_mode = true;
     const auto& box = projection.getBox();
-    auto points =
-        positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+    auto points = positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
 
     T::Coordinate_vec coordinates;
     for (const auto& point : points)
@@ -369,7 +368,10 @@ void add_contour_attributes(QueryServer::Query& query,
  */
 // ----------------------------------------------------------------------
 
-void add_contour_check_attributes(QueryServer::Query& query, bool strict, bool validate, bool desliver)
+void add_contour_check_attributes(QueryServer::Query& query,
+                                  bool strict,
+                                  bool validate,
+                                  bool desliver)
 {
   if (strict)
     query.mAttributeList.addAttribute("contour.strict", "1");

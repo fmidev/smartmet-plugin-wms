@@ -1,0 +1,3 @@
+request 1: ETag
+request 2: same ETag as request 1
+request 3: different ETag than request 1

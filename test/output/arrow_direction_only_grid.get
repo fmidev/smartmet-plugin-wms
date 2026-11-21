@@ -1,0 +1,48 @@
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Arrows of grid data without speed: the speed is zero as with querydata, no rotation</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+<symbol id="windarrow" overflow="visible">
+ <desc>Plain wind arrow (north wind)</desc>
+ <path d="M0 -6 -3 -2 -1 -2 -1 4 1 4 1 -2 3 -2Z"/>
+</symbol>
+
+
+</defs>
+
+<g>
+ <g>
+  <g>
+   <use transform="translate(30 30)" xlink:href="#windarrow"/>
+   <use transform="translate(110 30)" xlink:href="#windarrow"/>
+   <use transform="translate(190 30)" xlink:href="#windarrow"/>
+   <use transform="translate(270 30)" xlink:href="#windarrow"/>
+   <use transform="translate(30 110)" xlink:href="#windarrow"/>
+   <use transform="translate(110 110)" xlink:href="#windarrow"/>
+   <use transform="translate(190 110)" xlink:href="#windarrow"/>
+   <use transform="translate(270 110)" xlink:href="#windarrow"/>
+   <use transform="translate(30 190)" xlink:href="#windarrow"/>
+   <use transform="translate(110 190)" xlink:href="#windarrow"/>
+   <use transform="translate(190 190)" xlink:href="#windarrow"/>
+   <use transform="translate(270 190)" xlink:href="#windarrow"/>
+   <use transform="translate(30 270)" xlink:href="#windarrow"/>
+   <use transform="translate(110 270)" xlink:href="#windarrow"/>
+   <use transform="translate(190 270)" xlink:href="#windarrow"/>
+   <use transform="translate(270 270)" xlink:href="#windarrow"/>
+   <use transform="translate(30 350)" xlink:href="#windarrow"/>
+   <use transform="translate(110 350)" xlink:href="#windarrow"/>
+   <use transform="translate(190 350)" xlink:href="#windarrow"/>
+   <use transform="translate(270 350)" xlink:href="#windarrow"/>
+   <use transform="translate(30 430)" xlink:href="#windarrow"/>
+   <use transform="translate(110 430)" xlink:href="#windarrow"/>
+   <use transform="translate(190 430)" xlink:href="#windarrow"/>
+   <use transform="translate(270 430)" xlink:href="#windarrow"/>
+  </g>
+ </g>
+</g>
+
+</svg>

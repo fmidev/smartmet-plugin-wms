@@ -130,7 +130,6 @@ PointValues read_gridForecasts(const Positions::Point& point,
   }
 }
 
-
 // The label of the value from the conversions of a legend layer, or an empty string
 std::string legend_layer_label(const Json::Value& layer_json,
                                double theValue,
@@ -851,9 +850,8 @@ std::string Layer::getLegendLabelText(double theValue, const State& theState) co
 
     // Construct the path to the legend product JSON file
     const auto& config = theState.getConfig();
-    const std::string legend_path = config.rootDirectory(theState.useWms()) +
-                                    "/customers/" + customer +
-                                    "/products/" + product_path + ".json";
+    const std::string legend_path = config.rootDirectory(theState.useWms()) + "/customers/" +
+                                    customer + "/products/" + product_path + ".json";
 
     // Read the file
     std::ifstream file(legend_path);
@@ -1051,7 +1049,7 @@ void Layer::getGridValue(CTPP::CDT& theInfo, const State& theState)
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
+    if (param == pName && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.empty())

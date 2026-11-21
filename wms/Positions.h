@@ -90,10 +90,12 @@ class Positions
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
+  // theGridSource: the layer reads its data from the grid engine, and so do the intersections
   void init(const std::optional<std::string>& theProducer,
             const Projection& theProjection,
             const Fmi::DateTime& theTime,
-            const State& theState);
+            const State& theState,
+            bool theGridSource = false);
 
   Points getPoints(const Engine::Querydata::Q& theQ,
                    const Fmi::SpatialReference& theCRS,

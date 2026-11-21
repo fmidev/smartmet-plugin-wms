@@ -65,6 +65,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <limits>
 #include <map>
 #include <ogr_geometry.h>
 #include <utility>
@@ -122,13 +123,21 @@ void apply_autoclass(std::vector<Isoband>& isobands, const std::string& pattern)
   }
 }
 
-// Contour limits of the isobands, missing limits are replaced by huge values
+// Contour limits of the isobands. A missing limit is replaced by a huge value, and an isoband
+// without any limits is the area of missing values (NaN...NaN for Trax), as with querydata
 void contour_limits(const std::vector<Isoband>& isobands,
                     T::ParamValue_vec& contourLowValues,
                     T::ParamValue_vec& contourHighValues)
 {
   for (const Isoband& isoband : isobands)
   {
+    if (!isoband.lolimit && !isoband.hilimit)
+    {
+      contourLowValues.push_back(std::numeric_limits<T::ParamValue>::quiet_NaN());
+      contourHighValues.push_back(std::numeric_limits<T::ParamValue>::quiet_NaN());
+      continue;
+    }
+
     if (isoband.lolimit)
       contourLowValues.push_back(*isoband.lolimit);
     else
@@ -360,8 +369,7 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     const double dwidth = lround(datawidth / *heatmap.resolution);
     const double dheight = lround(dataheight / *heatmap.resolution);
 
-    if (dwidth < 1 || dheight < 1 ||
-        dwidth * dheight > static_cast<double>(heatmap.max_points))
+    if (dwidth < 1 || dheight < 1 || dwidth * dheight > static_cast<double>(heatmap.max_points))
       throw Fmi::Exception(
           BCP,
           (std::string("Heatmap too big (") + Fmi::to_string(dwidth * dheight) + " points, max " +
@@ -582,8 +590,7 @@ void IsobandLayer::addIsoband(CTPP::CDT& theGlobals,
   if (filter.bezierEnabled() && theState.getType() != "topojson" &&
       theState.getType() != "geojson" && theState.getType() != "kml")
   {
-    pointCoordinates =
-        filter.toBezierSvg(geom, box, precision, &theState.getBezierCache());
+    pointCoordinates = filter.toBezierSvg(geom, box, precision, &theState.getBezierCache());
   }
 
   if (pointCoordinates.empty())
@@ -848,8 +855,15 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
         // Finally produce output if we still have something left
         if (geom2 && geom2->IsEmpty() == 0)
-          addIsoband(
-              theGlobals, object_cdt, group_cdt, theState, *geom2, isobands[i], valid_time, crs, box);
+          addIsoband(theGlobals,
+                     object_cdt,
+                     group_cdt,
+                     theState,
+                     *geom2,
+                     isobands[i],
+                     valid_time,
+                     crs,
+                     box);
       }
     }
 
@@ -970,14 +984,8 @@ Engine::Querydata::Q IsobandLayer::sampleData(Engine::Querydata::Q q,
       timer2 = std::make_unique<boost::timer::auto_cpu_timer>(2, report2);
     }
 
-    q = q->sample(param,
-                  valid_time,
-                  crs,
-                  box.xmin(),
-                  box.ymin(),
-                  box.xmax(),
-                  box.ymax(),
-                  *sampleresolution);
+    q = q->sample(
+        param, valid_time, crs, box.xmin(), box.ymin(), box.xmax(), box.ymax(), *sampleresolution);
   }
   else if (heatmap.resolution)
   {
@@ -1140,8 +1148,15 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
         // Finally produce output if we still have something left
         if (geom2 && geom2->IsEmpty() == 0)
-          addIsoband(
-              theGlobals, object_cdt, group_cdt, theState, *geom2, isobands[i], valid_time, crs, box);
+          addIsoband(theGlobals,
+                     object_cdt,
+                     group_cdt,
+                     theState,
+                     *geom2,
+                     isobands[i],
+                     valid_time,
+                     crs,
+                     box);
       }
     }
     theGlobals["objects"][objectKey] = object_cdt;

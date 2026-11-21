@@ -42,6 +42,7 @@ class Label
 
   // Printing
   std::string missing = "-";
+  std::string locale;  // name of the number formatting locale, empty for the default
   int precision = 0;
 
   double multiple = 0;                 // used if non-zero

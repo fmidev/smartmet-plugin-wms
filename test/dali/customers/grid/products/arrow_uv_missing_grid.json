@@ -1,0 +1,34 @@
+{
+  "title": "U/V arrows of grid data are not drawn outside the data",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 400,
+    "ysize": 200,
+    "bboxcrs": "EPSG:4326",
+    "x1": 0,
+    "y1": 50,
+    "x2": 50,
+    "y2": 75
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "arrow",
+          "u": "U-MS",
+          "v": "V-MS",
+          "symbol": "windarrow",
+          "positions": {
+            "x": 10,
+            "y": 10,
+            "dx": 40,
+            "dy": 40
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+GET /dali?customer=test&product=stream_uv&time=200808050900 HTTP/1.0
+GET /dali?customer=test&product=stream_uv&time=200808050900&l1.u=WindVMS&l1.v=WindUMS HTTP/1.0

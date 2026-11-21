@@ -315,8 +315,7 @@ void StreamLayer::addStreamParameters(const Engine::Grid::Engine& gridEngine,
   }
   else
   {
-    throw Fmi::Exception(BCP,
-                         "Missing 'parameter' (= direction) or 'u' / 'v' vector definitions");
+    throw Fmi::Exception(BCP, "Missing 'parameter' (= direction) or 'u' / 'v' vector definitions");
   }
 }
 
@@ -561,8 +560,8 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     std::size_t sz = gwidth * gheight;
     gridValues.reserve(sz);
 
-    auto valid_time_period = getValidTimePeriod();
-    NFmiMetTime met_time = valid_time_period.begin();
+    // The valid time, as with grid engine data: interval_start must not shift a forecast
+    NFmiMetTime met_time = getValidTime();
     QueryValueReader reader(q, Fmi::LocalDateTime(met_time, Fmi::TimeZonePtr::utc));
 
     // Fetching values for the new grid.
@@ -756,6 +755,8 @@ std::size_t StreamLayer::hash_value(const State& theState) const
     // in the "Properties" class.
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, u_parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, v_parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(minStreamLen));
     Fmi::hash_combine(hash, Fmi::hash_value(maxStreamLen));
     Fmi::hash_combine(hash, Fmi::hash_value(lineLen));

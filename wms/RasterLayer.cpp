@@ -62,10 +62,10 @@ namespace
 // Sample one parameter onto the output grid. Values are stored bottom-up to
 // match the coordinates, and the newbase missing sentinel is mapped to
 // the grid-files sentinel the painters test against.
-std::vector<float> sample_values(const Engine::Querydata::Q &q,
-                                 const std::string &name,
-                                 const Fmi::CoordinateMatrix &llmatrix,
-                                 const NFmiMetTime &met_time,
+std::vector<float> sample_values(const Engine::Querydata::Q& q,
+                                 const std::string& name,
+                                 const Fmi::CoordinateMatrix& llmatrix,
+                                 const NFmiMetTime& met_time,
                                  int width,
                                  int height)
 {
@@ -93,7 +93,7 @@ std::vector<float> sample_values(const Engine::Querydata::Q &q,
 }
 
 // Set the interpolation methods of a raster query parameter
-void set_raster_interpolation(QueryServer::QueryParameter &p, const std::string &interpolation)
+void set_raster_interpolation(QueryServer::QueryParameter& p, const std::string& interpolation)
 {
   if (interpolation == "nearest")
     p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Nearest;
@@ -113,13 +113,13 @@ void set_raster_interpolation(QueryServer::QueryParameter &p, const std::string 
 }
 
 // Add the direction and speed parameters to the query
-void add_direction_speed_parameters(const Engine::Grid::Engine &gridEngine,
-                                    const std::string &producerName,
-                                    const std::string &direction,
-                                    const std::string &speed,
-                                    Projection &projection,
-                                    T::AttributeList &attributeList,
-                                    QueryServer::Query &query)
+void add_direction_speed_parameters(const Engine::Grid::Engine& gridEngine,
+                                    const std::string& producerName,
+                                    const std::string& direction,
+                                    const std::string& speed,
+                                    Projection& projection,
+                                    T::AttributeList& attributeList,
+                                    QueryServer::Query& query)
 {
   std::string dir = gridEngine.getParameterString(producerName, direction);
   std::string sp = gridEngine.getParameterString(producerName, speed);
@@ -138,14 +138,14 @@ void add_direction_speed_parameters(const Engine::Grid::Engine &gridEngine,
 }
 
 // The first two non-empty value vectors and the coordinates of the last of them
-void first_two_value_vectors(const QueryServer::Query &query,
+void first_two_value_vectors(const QueryServer::Query& query,
                              std::shared_ptr<SmartMet::QueryServer::ParameterValues> (&p)[2],
-                             const T::Coordinate_vec *&coordinates)
+                             const T::Coordinate_vec*& coordinates)
 {
   uint c = 0;
-  for (const auto &query_param : query.mQueryParameterList)
+  for (const auto& query_param : query.mQueryParameterList)
   {
-    for (const auto &val : query_param.mValueList)
+    for (const auto& val : query_param.mValueList)
     {
       if (!val->mValueVector.empty() && c < 2)
       {
@@ -164,10 +164,10 @@ void first_two_value_vectors(const QueryServer::Query &query,
  * \brief Initialize from JSON
  */
 // ----------------------------------------------------------------------
-void RasterLayer::init(Json::Value &theJson,
-                       const State &theState,
-                       const Config &theConfig,
-                       const Properties &theProperties)
+void RasterLayer::init(Json::Value& theJson,
+                       const State& theState,
+                       const Config& theConfig,
+                       const Properties& theProperties)
 {
   try
   {
@@ -319,7 +319,7 @@ void RasterLayer::init(Json::Value &theJson,
   }
 }
 
-void RasterLayer::generate(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State &theState)
+void RasterLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
   {
@@ -359,7 +359,7 @@ void RasterLayer::generate(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State
  */
 // ----------------------------------------------------------------------
 
-void RasterLayer::paintSurface(const std::string &position, PaintContext &ctx)
+void RasterLayer::paintSurface(const std::string& position, PaintContext& ctx)
 {
   // Painting sea
   if (sea_position == position && !ctx.land.empty())
@@ -429,10 +429,10 @@ void RasterLayer::paintSurface(const std::string &position, PaintContext &ctx)
 
 void RasterLayer::generate_image(int loopstep,
                                  int loopsteps,
-                                 const T::Coordinate_vec *coordinates,
-                                 std::vector<float> &values1,
-                                 std::vector<float> &values2,
-                                 CImage &cimage)
+                                 const T::Coordinate_vec* coordinates,
+                                 std::vector<float>& values1,
+                                 std::vector<float>& values2,
+                                 CImage& cimage)
 {
   try
   {
@@ -474,7 +474,7 @@ void RasterLayer::generate_image(int loopstep,
           std::pair<std::string, std::string>("rotate", std::to_string(rotate)));
     }
 
-    uint *image = new uint[sz];
+    uint* image = new uint[sz];
     memset(image, 0x00, sz * 4);
 
     cimage.width = width;
@@ -554,12 +554,12 @@ bool RasterLayer::isNewImageRequired(const State& theState)
   }
 }
 
-void RasterLayer::generate_output(CTPP::CDT &theGlobals,
-                                  CTPP::CDT &theLayersCdt,
+void RasterLayer::generate_output(CTPP::CDT& theGlobals,
+                                  CTPP::CDT& theLayersCdt,
                                   const State& theState,
-                                  const T::Coordinate_vec *coordinates,
-                                  std::vector<float> &values1,
-                                  std::vector<float> &values2)
+                                  const T::Coordinate_vec* coordinates,
+                                  std::vector<float>& values1,
+                                  std::vector<float>& values2)
 {
   try
   {
@@ -590,7 +590,8 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
         comp = 1;
 
       const auto png = Giza::topng_argb(cimage.pixel, cimage.width, cimage.height, comp);
-      svgImage << "<image id=\"" << Fmi::safexmlescape(qid) << "\" xlink:href=\"data:image/png;base64,";
+      svgImage << "<image id=\"" << Fmi::safexmlescape(qid)
+               << "\" xlink:href=\"data:image/png;base64,";
       svgImage << Dali::base64_encode(png);
       svgImage << R"(" x="0" y="0" width=")" << cimage.width << "\" height=\"" << cimage.height
                << "\" />\n\n";
@@ -600,7 +601,7 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
 
     CTPP::CDT object_cdt;
     std::string objectKey;
-    const auto &box = projection.getBox();
+    const auto& box = projection.getBox();
 
     if (!paraminfo.parameter.empty())
       objectKey = "raster:" + paraminfo.parameter + ":" + qid;
@@ -635,13 +636,13 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
   }
 }
 
-void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
-                                      CTPP::CDT &theLayersCdt,
+void RasterLayer::generate_gridEngine(CTPP::CDT& theGlobals,
+                                      CTPP::CDT& theLayersCdt,
                                       const State& theState)
 {
   try
   {
-    const auto *gridEngine = theState.getGridEngine();
+    const auto* gridEngine = theState.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -665,7 +666,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
     auto valid_time = getValidTime();
 
     auto crs = projection.getCRS();
-    const auto &box = projection.getBox();
+    const auto& box = projection.getBox();
     std::string wkt = *projection.crs;
 
     if (wkt != "data")
@@ -730,7 +731,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
 
     // Fulfilling information into the query object.
 
-    for (auto &p : originalGridQuery->mQueryParameterList)
+    for (auto& p : originalGridQuery->mQueryParameterList)
     {
       p.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       p.mType = QueryServer::QueryParameter::Type::Vector;
@@ -772,7 +773,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
     if (wkt == "data")
       return;
 
-    const T::Coordinate_vec *coordinates = nullptr;
+    const T::Coordinate_vec* coordinates = nullptr;
     std::shared_ptr<SmartMet::QueryServer::ParameterValues> p[2];
 
     first_two_value_vectors(*query, p, coordinates);
@@ -866,7 +867,7 @@ void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals,
       {
         const float m = static_cast<float>(multiplier.value_or(1.0));
         const float o = static_cast<float>(offset.value_or(0.0));
-        for (auto &v : values1)
+        for (auto& v : values1)
           if (v != static_cast<float>(ParamValueMissing))
             v = m * v + o;
       }
@@ -890,7 +891,7 @@ void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals,
  * \brief Extract information on used parameters
  */
 // ----------------------------------------------------------------------
-void RasterLayer::addGridParameterInfo(ParameterInfos &infos, const State &theState) const
+void RasterLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
   if (theState.isObservation(paraminfo.producer))
     return;
@@ -909,7 +910,7 @@ void RasterLayer::addGridParameterInfo(ParameterInfos &infos, const State &theSt
  */
 // ----------------------------------------------------------------------
 
-void RasterLayer::getFeatureInfo(CTPP::CDT & /* theInfo */, const State & /* theState */)
+void RasterLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // not implemented yet
 }
@@ -919,7 +920,7 @@ void RasterLayer::getFeatureInfo(CTPP::CDT & /* theInfo */, const State & /* the
  * \brief Hash value for the layer
  */
 // ----------------------------------------------------------------------
-std::size_t RasterLayer::hash_value(const State &theState) const
+std::size_t RasterLayer::hash_value(const State& theState) const
 {
   try
   {
@@ -932,6 +933,8 @@ std::size_t RasterLayer::hash_value(const State &theState) const
       Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, direction));
+    Fmi::hash_combine(hash, countParameterHash(theState, speed));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
     Fmi::hash_combine(hash, Fmi::hash_value(land_position));
     Fmi::hash_combine(hash, Fmi::hash_value(sea_position));

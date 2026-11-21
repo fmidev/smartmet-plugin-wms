@@ -354,6 +354,7 @@ std::size_t ColorPainter_rain::hash_value(const State &theState) const
     std::size_t hash = ColorPainter::hash_value(theState);
 
     Fmi::hash_combine(hash,line_length);
+    Fmi::hash_combine(hash, Fmi::hash_value(step_x));
 
     Fmi::hash_combine(hash,Fmi::hash(colormap_name));
     Fmi::hash_combine(hash,colormap_hash);

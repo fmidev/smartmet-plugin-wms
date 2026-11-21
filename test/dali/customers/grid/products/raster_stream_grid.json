@@ -1,0 +1,28 @@
+{
+  "title": "Wind raster of grid data with the stream painter",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "raster",
+          "direction": "DD-D",
+          "speed": "FF-MS",
+          "data_painter": "stream"
+        }
+      ]
+    }
+  ]
+}

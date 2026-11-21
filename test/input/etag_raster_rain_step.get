@@ -1,0 +1,2 @@
+GET /dali?customer=grid&product=raster_rain_grid&time=200808050900&type=png HTTP/1.0
+GET /dali?customer=grid&product=raster_rain_grid&time=200808050900&type=png&l1.stream.step_x=6 HTTP/1.0

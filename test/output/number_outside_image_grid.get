@@ -1,0 +1,24 @@
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Points outside the image do not compete with the points inside it (mindistance), also with grid data</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+
+
+</defs>
+
+<g>
+ <g>
+  <g font-size="10">
+  
+  <text x="9" y="375">16</text>
+  <text x="291" y="208">11</text>
+  <text x="9" y="125">10</text>
+  </g>
+ </g>
+</g>
+
+</svg>

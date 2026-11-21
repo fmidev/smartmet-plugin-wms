@@ -203,6 +203,10 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
         T::GridValue* rec = values->getGridValuePtrByIndex(t);
         auto point = points[t];
 
+        // Points outside the image and its margins are skipped, as with querydata
+        if (!layer.inside(box, point.x, point.y))
+          continue;
+
         if (rec->mValue != ParamValueMissing)
           pointvalues.emplace_back(point, rec->mValue);
         else
@@ -217,7 +221,6 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 }  // namespace
 
@@ -545,7 +548,7 @@ void SymbolLayer::addGridParameter(const Engine::Grid::Engine& gridEngine,
   if (!projection.projectionParameter)
     projection.projectionParameter = param;
 
-  if (param == paraminfo.parameter && query.mProducerNameList.empty())
+  if (param == pName && query.mProducerNameList.empty())
   {
     gridEngine.getProducerNameList(producerName, query.mProducerNameList);
     if (query.mProducerNameList.empty())
@@ -658,7 +661,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       add_latlon_bbox_attributes(*originalGridQuery, projection);
 
-      positions->init(paraminfo.producer, projection, valid_time, theState);
+      positions->init(paraminfo.producer, projection, valid_time, theState, true);
     }
 
     // Otherwise the requested projection is the same as the projection of the requested data.
@@ -716,7 +719,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(paraminfo.producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState, true);
 
     // Update the globals
 
@@ -1118,6 +1121,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(dx));
     Fmi::hash_combine(hash, Fmi::hash_value(dy));
     Fmi::hash_combine(hash, Dali::hash_value(symbols, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
     Fmi::hash_combine(hash, point_value_options.hash_value());
     Fmi::hash_combine(hash, sources.hash_value());
     return hash;

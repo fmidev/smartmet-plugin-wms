@@ -172,34 +172,12 @@ void apply_direction_offsets(Positions::Points& thePoints,
 
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
-        auto up = Engine::Querydata::ParameterOptions(uparam,
-                                                      tmp,
-                                                      loc,
-                                                      tmp,
-                                                      tmp,
-                                                      *timeformatter,
-                                                      tmp,
-                                                      tmp,
-                                                      mylocale,
-                                                      tmp,
-                                                      false,
-                                                      0,
-                                                      dummy);
+        auto up = Engine::Querydata::ParameterOptions(
+            uparam, tmp, loc, tmp, tmp, *timeformatter, tmp, tmp, mylocale, tmp, false, 0, dummy);
         auto uresult = q.value(up, localdatetime);
 
-        auto vp = Engine::Querydata::ParameterOptions(vparam,
-                                                      tmp,
-                                                      loc,
-                                                      tmp,
-                                                      tmp,
-                                                      *timeformatter,
-                                                      tmp,
-                                                      tmp,
-                                                      mylocale,
-                                                      tmp,
-                                                      false,
-                                                      0,
-                                                      dummy);
+        auto vp = Engine::Querydata::ParameterOptions(
+            vparam, tmp, loc, tmp, tmp, *timeformatter, tmp, tmp, mylocale, tmp, false, 0, dummy);
         auto vresult = q.value(vp, localdatetime);
 
         const double* u_ptr = std::get_if<double>(&uresult);
@@ -252,15 +230,13 @@ Spine::LocationList search_station(const Engine::Geonames::Engine& geonames,
     options.SetLanguage("lpnn");
     places = geonames.nameSearch(options, Fmi::to_string(*station.lpnn));
     if (places.empty())
-      std::cerr << Spine::log_time_str() << " WMS could not find lpnn " << *station.lpnn
-                << '\n';
+      std::cerr << Spine::log_time_str() << " WMS could not find lpnn " << *station.lpnn << '\n';
   }
   else if (station.geoid)
   {
     places = geonames.idSearch(options, *station.geoid);
     if (places.empty())
-      std::cerr << Spine::log_time_str() << " WMS could not find geoid " << *station.geoid
-                << '\n';
+      std::cerr << Spine::log_time_str() << " WMS could not find geoid " << *station.geoid << '\n';
   }
   else if (station.longitude || station.latitude)
   {
@@ -379,7 +355,8 @@ void add_graticule_cell_points(FillPointCollector& collector, int lon, int lat, 
   double x4 = lon + size;
   double y4 = lat + size;
 
-  if (!project_cell_corners(collector.transformation, collector.box, x1, y1, x2, y2, x3, y3, x4, y4))
+  if (!project_cell_corners(
+          collector.transformation, collector.box, x1, y1, x2, y2, x3, y3, x4, y4))
     return;
 
   // We make the assumption that the bounding box very closely
@@ -583,7 +560,8 @@ void Positions::init(Json::Value& theJson, const Config& theConfig)
 void Positions::init(const std::optional<std::string>& theProducer,
                      const Projection& theProjection,
                      const Fmi::DateTime& theTime,
-                     const State& theState)
+                     const State& theState,
+                     bool theGridSource)
 {
   try
   {
@@ -615,7 +593,10 @@ void Positions::init(const std::optional<std::string>& theProducer,
       // outshape.reset(Fmi::OGR::polyclip(*outshape, theProjection.getBox()));
     }
 
-    intersections.init(theProducer, theProjection, theTime, theState);
+    if (theGridSource)
+      intersections.init(theProducer, theState.getGridEngine(), theProjection, theTime, theState);
+    else
+      intersections.init(theProducer, theProjection, theTime, theState);
   }
   catch (...)
   {

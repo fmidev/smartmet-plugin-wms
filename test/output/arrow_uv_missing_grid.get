@@ -1,0 +1,56 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>U/V arrows of grid data are not drawn outside the data</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+<symbol id="windarrow" overflow="visible">
+ <desc>Plain wind arrow (north wind)</desc>
+ <path d="M0 -6 -3 -2 -1 -2 -1 4 1 4 1 -2 3 -2Z"/>
+</symbol>
+
+
+</defs>
+
+<g>
+ <g>
+  <g>
+   <use transform="translate(10 50) rotate(230)" xlink:href="#windarrow"/>
+   <use transform="translate(50 50) rotate(230)" xlink:href="#windarrow"/>
+   <use transform="translate(90 50) rotate(230)" xlink:href="#windarrow"/>
+   <use transform="translate(130 50) rotate(358)" xlink:href="#windarrow"/>
+   <use transform="translate(170 50) rotate(20)" xlink:href="#windarrow"/>
+   <use transform="translate(210 50) rotate(119)" xlink:href="#windarrow"/>
+   <use transform="translate(250 50) rotate(140)" xlink:href="#windarrow"/>
+   <use transform="translate(290 50) rotate(140)" xlink:href="#windarrow"/>
+   <use transform="translate(330 50) rotate(150)" xlink:href="#windarrow"/>
+   <use transform="translate(370 50) rotate(160)" xlink:href="#windarrow"/>
+   <use transform="translate(10 90) rotate(210)" xlink:href="#windarrow"/>
+   <use transform="translate(50 90) rotate(250)" xlink:href="#windarrow"/>
+   <use transform="translate(90 90) rotate(300)" xlink:href="#windarrow"/>
+   <use transform="translate(130 90) rotate(270)" xlink:href="#windarrow"/>
+   <use transform="translate(170 90) rotate(240)" xlink:href="#windarrow"/>
+   <use transform="translate(210 90) rotate(250)" xlink:href="#windarrow"/>
+   <use transform="translate(250 90) rotate(240)" xlink:href="#windarrow"/>
+   <use transform="translate(290 90) rotate(197)" xlink:href="#windarrow"/>
+   <use transform="translate(330 90) rotate(179)" xlink:href="#windarrow"/>
+   <use transform="translate(50 130) rotate(41)" xlink:href="#windarrow"/>
+   <use transform="translate(90 130) rotate(200)" xlink:href="#windarrow"/>
+   <use transform="translate(130 130) rotate(197)" xlink:href="#windarrow"/>
+   <use transform="translate(170 130) rotate(260)" xlink:href="#windarrow"/>
+   <use transform="translate(210 130) rotate(260)" xlink:href="#windarrow"/>
+   <use transform="translate(250 130) rotate(260)" xlink:href="#windarrow"/>
+   <use transform="translate(290 130) rotate(270)" xlink:href="#windarrow"/>
+   <use transform="translate(50 170) rotate(110)" xlink:href="#windarrow"/>
+   <use transform="translate(90 170) rotate(110)" xlink:href="#windarrow"/>
+   <use transform="translate(130 170) rotate(90)" xlink:href="#windarrow"/>
+   <use transform="translate(170 170) rotate(60)" xlink:href="#windarrow"/>
+   <use transform="translate(210 170) rotate(70)" xlink:href="#windarrow"/>
+   <use transform="translate(250 170) rotate(90)" xlink:href="#windarrow"/>
+  </g>
+ </g>
+</g>
+
+</svg>

@@ -1,0 +1,3 @@
+GET /dali?customer=test&product=precipitation&time=200808050300&l2.minarea=1000 HTTP/1.0
+GET /dali?customer=test&product=precipitation&time=200808050300&l2.minarea=1000 HTTP/1.0
+GET /dali?customer=test&product=precipitation&time=200808050300&l2.minarea=1000&l2.areaunit=px^2 HTTP/1.0

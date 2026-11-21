@@ -256,6 +256,8 @@ void IsolineLayer::init(Json::Value& theJson,
     JsonTools::remove_double(precision, theJson, "precision");
     JsonTools::remove_double(minarea, theJson, "minarea");
     JsonTools::remove_string(areaunit, theJson, "areaunit");
+    if (areaunit != "km^2" && areaunit != "px^2")
+      throw Fmi::Exception(BCP, "Unknown areaunit '" + areaunit + "'");
 
     JsonTools::remove_bool(strict, theJson, "strict");
     JsonTools::remove_bool(validate, theJson, "validate");
@@ -343,7 +345,11 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
   }
 
   // Logical operations with isobands are initialized before hand
-  intersections.init(paraminfo.producer, projection, valid_time, theState);
+  if (paraminfo.source == std::string("grid"))
+    intersections.init(
+        paraminfo.producer, theState.getGridEngine(), projection, valid_time, theState);
+  else
+    intersections.init(paraminfo.producer, projection, valid_time, theState);
 
   // Perform polygon operations
   for (auto& geom : geoms)
@@ -1003,6 +1009,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
     Fmi::hash_combine(hash, Fmi::hash_value(minarea));
+    Fmi::hash_combine(hash, Fmi::hash_value(areaunit));
     Fmi::hash_combine(hash, Dali::hash_value(outside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));

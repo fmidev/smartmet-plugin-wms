@@ -1,0 +1,1 @@
+GET /dali?customer=grid&product=number_raw_grid&time=200808051200 HTTP/1.0

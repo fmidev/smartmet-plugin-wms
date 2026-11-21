@@ -29,6 +29,7 @@
 #include <timeseries/TimeSeriesInclude.h>
 #include <trax/InterpolationType.h>
 #include <trax/SmoothOptions.h>
+#include <limits>
 #include <memory>
 #include <ogr_geometry.h>
 #include <vector>
@@ -234,7 +235,19 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
-    std::string producerName = gridEngine->getProducerName(*theProducer);
+    // Already initialized
+    if (isoband)
+      return;
+
+    // If no parameter is set, no intersections will be calculated
+    if (!parameter)
+      return;
+
+    // The intersection may have a producer of its own, as with querydata
+    if (!producer && !theProducer)
+      throw Fmi::Exception(BCP, "Producer not set for intersection");
+
+    std::string producerName = gridEngine->getProducerName(producer ? *producer : *theProducer);
 
     std::string wkt = *theProjection.crs;
 
@@ -269,7 +282,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
 
     std::string param = gridEngine->getParameterString(producerName, pName);
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+    if (param == pName && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.empty())
@@ -302,14 +315,15 @@ void Intersection::init(const std::optional<std::string>& theProducer,
 
     // Fulfilling information into the query object.
 
-    if (!hilimit)
-      hilimit = 1000000000;
-
-    if (!lolimit)
-      lolimit = -1000000000;
-
-    auto hlimit = C_FLOAT(*hilimit);
-    auto llimit = C_FLOAT(*lolimit);
+    // A missing limit is replaced by a huge value. Without any limits the intersection is
+    // the area of missing values (NaN...NaN for Trax), as with querydata.
+    auto hlimit = C_FLOAT(hilimit ? *hilimit : 1000000000);
+    auto llimit = C_FLOAT(lolimit ? *lolimit : -1000000000);
+    if (!lolimit && !hilimit)
+    {
+      hlimit = std::numeric_limits<float>::quiet_NaN();
+      llimit = std::numeric_limits<float>::quiet_NaN();
+    }
 
     for (auto& p : originalGridQuery->mQueryParameterList)
     {
@@ -526,8 +540,17 @@ std::size_t Intersection::hash_value(const State& theState) const
   {
     std::size_t hash = 0;
 
+    // The producer of the intersection may be a querydata or a grid engine producer. The
+    // producer of the layer is hashed by the layer.
     if (producer)
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(theState.getModel(*producer)));
+    {
+      const auto* gridEngine = theState.getGridEngine();
+      if (gridEngine && gridEngine->isEnabled() && gridEngine->isGridProducer(*producer))
+        Fmi::hash_combine(hash,
+                          gridEngine->getProducerHash(gridEngine->getProducerName(*producer)));
+      if (theState.getQEngine().hasProducer(*producer))
+        Fmi::hash_combine(hash, Engine::Querydata::hash_value(theState.getModel(*producer)));
+    }
 
     Fmi::hash_combine(hash, Fmi::hash_value(lolimit));
     Fmi::hash_combine(hash, Fmi::hash_value(hilimit));
@@ -539,6 +562,7 @@ std::size_t Intersection::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
+    Fmi::hash_combine(hash, smoother.hash_value(theState));
     return hash;
   }
   catch (...)

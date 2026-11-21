@@ -1,0 +1,66 @@
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Numbers of grid data with the .raw suffix (nearest neighbour)</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+
+
+</defs>
+
+<g>
+ <g>
+  <g font-size="10">
+  
+  <text x="20" y="20">7</text>
+  <text x="80" y="20">8</text>
+  <text x="140" y="20">11</text>
+  <text x="200" y="20">11</text>
+  <text x="260" y="20">7</text>
+  <text x="20" y="80">14</text>
+  <text x="80" y="80">11</text>
+  <text x="140" y="80">13</text>
+  <text x="200" y="80">14</text>
+  <text x="260" y="80">13</text>
+  <text x="20" y="140">10</text>
+  <text x="80" y="140">13</text>
+  <text x="140" y="140">14</text>
+  <text x="200" y="140">13</text>
+  <text x="260" y="140">12</text>
+  <text x="20" y="200">13</text>
+  <text x="80" y="200">14</text>
+  <text x="140" y="200">14</text>
+  <text x="200" y="200">13</text>
+  <text x="260" y="200">12</text>
+  <text x="20" y="260">13</text>
+  <text x="80" y="260">14</text>
+  <text x="140" y="260">14</text>
+  <text x="200" y="260">13</text>
+  <text x="260" y="260">13</text>
+  <text x="20" y="320">16</text>
+  <text x="80" y="320">16</text>
+  <text x="140" y="320">15</text>
+  <text x="200" y="320">15</text>
+  <text x="260" y="320">13</text>
+  <text x="20" y="380">16</text>
+  <text x="80" y="380">18</text>
+  <text x="140" y="380">17</text>
+  <text x="200" y="380">16</text>
+  <text x="260" y="380">15</text>
+  <text x="20" y="440">15</text>
+  <text x="80" y="440">16</text>
+  <text x="140" y="440">16</text>
+  <text x="200" y="440">16</text>
+  <text x="260" y="440">16</text>
+  <text x="20" y="500">16</text>
+  <text x="80" y="500">16</text>
+  <text x="140" y="500">12</text>
+  <text x="200" y="500">11</text>
+  <text x="260" y="500">14</text>
+  </g>
+ </g>
+</g>
+
+</svg>

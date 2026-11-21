@@ -1,0 +1,34 @@
+{
+  "title": "Arrows of grid data without speed: the speed is zero as with querydata, no rotation",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "arrow",
+          "direction": "DD-D",
+          "symbol": "windarrow",
+          "minrotationspeed": 2,
+          "positions": {
+            "x": 30,
+            "y": 30,
+            "dx": 80,
+            "dy": 80
+          }
+        }
+      ]
+    }
+  ]
+}

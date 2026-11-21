@@ -261,6 +261,8 @@ std::size_t ColorPainter_border::hash_value(const State &theState) const
     for (const auto& border : borders)
     {
       Fmi::hash_combine(hash, border.inside_value_min);
+      Fmi::hash_combine(hash, Fmi::hash_value(border.step_increase));
+      Fmi::hash_combine(hash, Fmi::hash_value(border.steps));
       Fmi::hash_combine(hash, Fmi::hash(border.inside_color));
       Fmi::hash_combine(hash, Fmi::hash(border.outside_color));
     }

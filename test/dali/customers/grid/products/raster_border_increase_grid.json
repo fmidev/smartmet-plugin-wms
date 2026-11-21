@@ -1,0 +1,40 @@
+{
+  "title": "Precipitation raster of grid data with the rain painter",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "raster",
+          "parameter": "temperature",
+          "data_painter": "rain",
+          "data_borders": [
+            {
+              "inside_value_min": 10,
+              "steps": 1,
+              "step_increase": 3,
+              "inside_color": "FF000000",
+              "outside_color": "FFFFFFFF"
+            }
+          ],
+          "stream": {
+            "step_x": 2,
+            "line_length": 10
+          }
+        }
+      ]
+    }
+  ]
+}

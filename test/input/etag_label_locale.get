@@ -1,0 +1,2 @@
+GET /dali?customer=grid&product=number_locale_grid&time=200808050900 HTTP/1.0
+GET /dali?customer=grid&product=number_locale_grid&time=200808050900&l1.label.locale=fi_FI.UTF-8 HTTP/1.0

@@ -1,0 +1,38 @@
+{
+  "title": "Numbers of grid data",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "number",
+          "parameter": "temperature",
+          "label": {
+            "precision": 1
+          },
+          "positions": {
+            "x": 20,
+            "y": 20,
+            "dx": 60,
+            "dy": 60
+          },
+          "attributes": {
+            "font-size": 10
+          }
+        }
+      ]
+    }
+  ]
+}

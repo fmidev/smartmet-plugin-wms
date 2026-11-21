@@ -1,0 +1,42 @@
+{
+  "title": "Numbers of grid data only where 2*T >= 30, a grid engine function",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "number",
+          "parameter": "temperature",
+          "label": {
+            "precision": 0
+          },
+          "positions": {
+            "x": 20,
+            "y": 20,
+            "dx": 40,
+            "dy": 40,
+            "intersect": {
+              "parameter": "MUL{temperature;2}",
+              "lolimit": 30
+            }
+          },
+          "attributes": {
+            "font-size": 10
+          }
+        }
+      ]
+    }
+  ]
+}

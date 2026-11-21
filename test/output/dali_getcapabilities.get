@@ -71,6 +71,108 @@
             "height" : 500,
             "width" : 300
           },
+          "name" : "arrow_direction_only_grid",
+          "path" : 
+          [
+            "grid",
+            "arrow_direction_only_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Arrows of grid data without speed: the speed is zero as with querydata, no rotation",
+          "url_template" : "/dali?customer=grid&product=arrow_direction_only_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "arrow_raw_grid",
+          "path" : 
+          [
+            "grid",
+            "arrow_raw_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Arrows of grid data with the .raw suffix",
+          "url_template" : "/dali?customer=grid&product=arrow_raw_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 200,
+            "width" : 400
+          },
+          "name" : "arrow_uv_missing_grid",
+          "path" : 
+          [
+            "grid",
+            "arrow_uv_missing_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 0,
+            "x2" : 50,
+            "xsize" : 400,
+            "y1" : 50,
+            "y2" : 75,
+            "ysize" : 200
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "U/V arrows of grid data are not drawn outside the data",
+          "url_template" : "/dali?customer=grid&product=arrow_uv_missing_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
           "name" : "closed_range_dry",
           "path" : 
           [
@@ -405,6 +507,210 @@
           "url_template" : "/dali?customer=grid&product=intersect_fahrenheit&time={time}"
         },
         {
+          "image" : 
+          {
+            "height" : 200,
+            "width" : 400
+          },
+          "name" : "isoband_missing_grid",
+          "path" : 
+          [
+            "grid",
+            "isoband_missing_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 0,
+            "x2" : 50,
+            "xsize" : 400,
+            "y1" : 50,
+            "y2" : 75,
+            "ysize" : 200
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "The isoband without limits is the area without data, also with grid data",
+          "url_template" : "/dali?customer=grid&product=isoband_missing_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "isoline_intersect_grid",
+          "path" : 
+          [
+            "grid",
+            "isoline_intersect_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Isolines of grid data intersected with 2*T >= 27, a grid engine function",
+          "url_template" : "/dali?customer=grid&product=isoline_intersect_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "number_locale_grid",
+          "path" : 
+          [
+            "grid",
+            "number_locale_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Numbers of grid data",
+          "url_template" : "/dali?customer=grid&product=number_locale_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "number_outside_image_grid",
+          "path" : 
+          [
+            "grid",
+            "number_outside_image_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Points outside the image do not compete with the points inside it (mindistance), also with grid data",
+          "url_template" : "/dali?customer=grid&product=number_outside_image_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "number_positions_intersect_grid",
+          "path" : 
+          [
+            "grid",
+            "number_positions_intersect_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Numbers of grid data only where 2*T >= 30, a grid engine function",
+          "url_template" : "/dali?customer=grid&product=number_positions_intersect_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "number_raw_grid",
+          "path" : 
+          [
+            "grid",
+            "number_raw_grid"
+          ],
+          "producer" : "ecmwf_eurooppa_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080814T120000",
+            "origintime" : "20080804T120000",
+            "values" : "20080804T120000/20080809T120000/PT3H,20080809T180000/20080814T120000/PT6H"
+          },
+          "title" : "Numbers of grid data with the .raw suffix (nearest neighbour)",
+          "url_template" : "/dali?customer=grid&product=number_raw_grid&time={time}"
+        },
+        {
           "name" : "precipitation_1",
           "path" : 
           [
@@ -418,6 +724,176 @@
           },
           "title" : "Demo product",
           "url_template" : "/dali?customer=grid&product=precipitation_1&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "raster_border_increase_grid",
+          "path" : 
+          [
+            "grid",
+            "raster_border_increase_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Precipitation raster of grid data with the rain painter",
+          "url_template" : "/dali?customer=grid&product=raster_border_increase_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "raster_border_same_grid",
+          "path" : 
+          [
+            "grid",
+            "raster_border_same_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Precipitation raster of grid data with the rain painter",
+          "url_template" : "/dali?customer=grid&product=raster_border_same_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "raster_border_steps_grid",
+          "path" : 
+          [
+            "grid",
+            "raster_border_steps_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Precipitation raster of grid data with the rain painter",
+          "url_template" : "/dali?customer=grid&product=raster_border_steps_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "raster_rain_grid",
+          "path" : 
+          [
+            "grid",
+            "raster_rain_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Precipitation raster of grid data with the rain painter",
+          "url_template" : "/dali?customer=grid&product=raster_rain_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "raster_stream_grid",
+          "path" : 
+          [
+            "grid",
+            "raster_stream_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Wind raster of grid data with the stream painter",
+          "url_template" : "/dali?customer=grid&product=raster_stream_grid&time={time}"
         },
         {
           "image" : 
@@ -4887,6 +5363,72 @@
           },
           "title" : "Grid smoothers at minimal cost (Savitzky-Golay 5x5 reference)",
           "url_template" : "/dali?customer=test&product=smoother_compare_small&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "stream_interval",
+          "path" : 
+          [
+            "test",
+            "stream_interval"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Streamlines of querydata: interval_start does not shift the valid time",
+          "url_template" : "/dali?customer=test&product=stream_interval&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "stream_uv",
+          "path" : 
+          [
+            "test",
+            "stream_uv"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Streamlines of querydata from U and V",
+          "url_template" : "/dali?customer=test&product=stream_uv&time={time}"
         },
         {
           "image" : 

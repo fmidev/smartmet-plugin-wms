@@ -1,0 +1,63 @@
+{
+  "title": "Points outside the image do not compete with the points inside it (mindistance), also with grid data",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "number",
+          "parameter": "temperature",
+          "label": {
+            "precision": 0
+          },
+          "positions": {
+            "layout": "latlon",
+            "locations": [
+              {
+                "longitude": 17.5,
+                "latitude": 62
+              },
+              {
+                "longitude": 16.5,
+                "latitude": 62
+              },
+              {
+                "longitude": 17.5,
+                "latitude": 68
+              },
+              {
+                "longitude": 16.5,
+                "latitude": 68
+              },
+              {
+                "longitude": 33.5,
+                "latitude": 66
+              },
+              {
+                "longitude": 34.5,
+                "latitude": 66
+              }
+            ]
+          },
+          "attributes": {
+            "font-size": 10
+          },
+          "mindistance": 40,
+          "priority": "max"
+        }
+      ]
+    }
+  ]
+}

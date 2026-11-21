@@ -1,0 +1,57 @@
+{
+  "title": "Isolines of grid data intersected with 2*T >= 27, a grid engine function",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoline",
+          "parameter": "temperature",
+          "isolines": [
+            {
+              "value": 8
+            },
+            {
+              "value": 10
+            },
+            {
+              "value": 12
+            },
+            {
+              "value": 13
+            },
+            {
+              "value": 14
+            },
+            {
+              "value": 15
+            },
+            {
+              "value": 16
+            }
+          ],
+          "intersect": {
+            "parameter": "MUL{temperature;2}",
+            "lolimit": 27
+          },
+          "attributes": {
+            "fill": "none",
+            "stroke": "black"
+          }
+        }
+      ]
+    }
+  ]
+}

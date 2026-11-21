@@ -1,0 +1,51 @@
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Numbers of grid data only where 2*T &gt;= 30, a grid engine function</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+
+
+</defs>
+
+<g>
+ <g>
+  <g font-size="10">
+  
+  <text x="60" y="300">15</text>
+  <text x="100" y="300">15</text>
+  <text x="140" y="300">15</text>
+  <text x="20" y="340">15</text>
+  <text x="60" y="340">15</text>
+  <text x="100" y="340">16</text>
+  <text x="140" y="340">15</text>
+  <text x="180" y="340">15</text>
+  <text x="20" y="380">15</text>
+  <text x="60" y="380">16</text>
+  <text x="100" y="380">16</text>
+  <text x="140" y="380">16</text>
+  <text x="180" y="380">15</text>
+  <text x="260" y="380">15</text>
+  <text x="20" y="420">16</text>
+  <text x="60" y="420">16</text>
+  <text x="100" y="420">17</text>
+  <text x="140" y="420">16</text>
+  <text x="180" y="420">16</text>
+  <text x="220" y="420">16</text>
+  <text x="60" y="460">16</text>
+  <text x="100" y="460">15</text>
+  <text x="140" y="460">15</text>
+  <text x="180" y="460">15</text>
+  <text x="220" y="460">16</text>
+  <text x="260" y="460">17</text>
+  <text x="20" y="500">16</text>
+  <text x="60" y="500">17</text>
+  <text x="100" y="500">17</text>
+  <text x="260" y="500">15</text>
+  </g>
+ </g>
+</g>
+
+</svg>
