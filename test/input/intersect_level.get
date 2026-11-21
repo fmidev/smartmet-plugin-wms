@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=intersect_level&time=20080909T1200 HTTP/1.0

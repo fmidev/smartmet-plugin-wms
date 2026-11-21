@@ -6,6 +6,7 @@
 
 #include "HovmoellerLayer.h"
 #include "Attributes.h"
+#include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
 #include "Layer.h"
@@ -17,6 +18,7 @@
 #include <fmt/format.h>
 #include <json/value.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGlobals.h>
 #include <newbase/NFmiMetTime.h>
@@ -106,9 +108,10 @@ void HovmoellerLayer::init(Json::Value& theJson,
     JsonTools::remove_string(direction, theJson, "direction");
 
     if (direction != "time_lon" && direction != "time_lat" && direction != "time_level")
-      throw Fmi::Exception(BCP,
-          "HovmoellerLayer: direction must be time_lon, time_lat or time_level, got '" +
-          direction + "'");
+      throw Fmi::Exception(
+          BCP,
+          "HovmoellerLayer: direction must be time_lon, time_lat or time_level, got '" + direction +
+              "'");
 
     JsonTools::remove_double(latitude, theJson, "latitude");
     JsonTools::remove_double(longitude, theJson, "longitude");
@@ -147,14 +150,14 @@ void HovmoellerLayer::selectData(const Engine::Querydata::Q& q, const Spine::Par
     if (paraminfo.level)
     {
       if (!q->selectLevel(*paraminfo.level))
-        throw Fmi::Exception(BCP,
-            "HovmoellerLayer: level " + Fmi::to_string(*paraminfo.level) + " not available");
+        throw Fmi::Exception(
+            BCP, "HovmoellerLayer: level " + Fmi::to_string(*paraminfo.level) + " not available");
     }
   }
 
   if (!q->param(param.number()))
-    throw Fmi::Exception(BCP,
-        "HovmoellerLayer: parameter '" + paraminfo.parameter + "' not available in data");
+    throw Fmi::Exception(
+        BCP, "HovmoellerLayer: parameter '" + paraminfo.parameter + "' not available in data");
 }
 
 // ----------------------------------------------------------------------
@@ -174,7 +177,7 @@ void HovmoellerLayer::renderSpaceTime(std::ostringstream& svg,
   const bool time_lon = (direction == "time_lon");
   const double space_min = time_lon ? lon_min : lat_min;
   const double space_max = time_lon ? lon_max : lat_max;
-  const double fixed     = time_lon ? latitude : longitude;
+  const double fixed = time_lon ? latitude : longitude;
 
   const double cell_w = static_cast<double>(canvas_w) / nx;
   const double cell_h = static_cast<double>(canvas_h) / n_times;
@@ -185,8 +188,8 @@ void HovmoellerLayer::renderSpaceTime(std::ostringstream& svg,
     for (int si = 0; si < nx; ++si)
     {
       const double space = space_min + (space_max - space_min) * si / (nx - 1);
-      const double lon   = time_lon ? space : fixed;
-      const double lat   = time_lon ? fixed : space;
+      const double lon = time_lon ? space : fixed;
+      const double lat = time_lon ? fixed : space;
 
       const float value = q->interpolate(NFmiPoint(lon, lat), t, 180);
       const std::string cls = isoband_class(value, isobands);
@@ -245,9 +248,7 @@ void HovmoellerLayer::renderTimeLevel(std::ostringstream& svg,
  */
 // ----------------------------------------------------------------------
 
-void HovmoellerLayer::generate(CTPP::CDT& theGlobals,
-                               CTPP::CDT& theLayersCdt,
-                               State& theState)
+void HovmoellerLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
   {
@@ -288,8 +289,8 @@ void HovmoellerLayer::generate(CTPP::CDT& theGlobals,
     const int canvas_w = static_cast<int>(theGlobals["width"].GetInt());
     const int canvas_h = static_cast<int>(theGlobals["height"].GetInt());
     if (canvas_w <= 0 || canvas_h <= 0)
-      throw Fmi::Exception(BCP,
-          "HovmoellerLayer: canvas size not set – add xsize/ysize to the product projection");
+      throw Fmi::Exception(
+          BCP, "HovmoellerLayer: canvas size not set – add xsize/ysize to the product projection");
 
     // ---- render ----
 
@@ -317,6 +318,36 @@ void HovmoellerLayer::generate(CTPP::CDT& theGlobals,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "HovmoellerLayer::generate failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hash value for the layer: the data and the settings of the diagram
+ */
+// ----------------------------------------------------------------------
+
+std::size_t HovmoellerLayer::hash_value(const State& theState) const
+{
+  try
+  {
+    auto hash = Layer::hash_value(theState);
+    Fmi::hash_combine(hash, getModelHashValueOrEmpty(theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(paraminfo.parameter));
+    Fmi::hash_combine(hash, Fmi::hash_value(direction));
+    Fmi::hash_combine(hash, Fmi::hash_value(latitude));
+    Fmi::hash_combine(hash, Fmi::hash_value(longitude));
+    Fmi::hash_combine(hash, Fmi::hash_value(lon_min));
+    Fmi::hash_combine(hash, Fmi::hash_value(lon_max));
+    Fmi::hash_combine(hash, Fmi::hash_value(lat_min));
+    Fmi::hash_combine(hash, Fmi::hash_value(lat_max));
+    Fmi::hash_combine(hash, Fmi::hash_value(nx));
+    Fmi::hash_combine(hash, Dali::hash_value(isobands, theState));
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -1356,7 +1356,6 @@ void ArrowLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
   try
   {
-    std::cerr << "ArrowLayer::getFeatureInfo\n";
 
     if (!validLayer(theState))
       return;

@@ -1051,9 +1051,8 @@ Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geo
             { return std::tie(a.id, a.x, a.y) < std::tie(b.id, b.x, b.y); });
   candidates.erase(std::unique(candidates.begin(),
                                candidates.end(),
-                               [](const Candidate& a, const Candidate& b) {
-                                 return a.id == b.id && a.x == b.x && a.y == b.y;
-                               }),
+                               [](const Candidate& a, const Candidate& b)
+                               { return a.id == b.id && a.x == b.x && a.y == b.y; }),
                    candidates.end());
 
   return candidates;
@@ -1150,10 +1149,12 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 
     double tmp = cand.isovalue;
 
+    // The isovalues are in the converted units (multiplier, offset, unit_conversion), hence
+    // the data value must be converted too before the two are compared
     if (const double* ptr = std::get_if<double>(&result))
-      tmp = *ptr;
+      tmp = multiplier.value_or(1.0) * *ptr + offset.value_or(0.0);
     else if (const int* ptr = std::get_if<int>(&result))
-      tmp = *ptr;
+      tmp = multiplier.value_or(1.0) * *ptr + offset.value_or(0.0);
     else
       cand.angle = std::numeric_limits<double>::quiet_NaN();
 

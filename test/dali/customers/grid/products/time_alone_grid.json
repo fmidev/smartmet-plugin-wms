@@ -1,0 +1,32 @@
+{
+  "title": "A time layer alone, with grid data",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {
+    "crs": "EPSG:4326",
+    "xsize": 300,
+    "ysize": 500,
+    "bboxcrs": "EPSG:4326",
+    "x1": 17,
+    "y1": 59,
+    "x2": 34,
+    "y2": 71
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "time",
+          "timestamp": "validtime",
+          "format": "%Y-%m-%d %H:%M",
+          "x": 20,
+          "y": 20,
+          "attributes": {
+            "font-size": 12
+          }
+        }
+      ]
+    }
+  ]
+}

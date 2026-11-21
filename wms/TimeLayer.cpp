@@ -388,89 +388,91 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Establish the valid time
 
-    if (!projection.projectionParameter)
-      throw Fmi::Exception(BCP, "Parameter not set for time-layer");
-
-    std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
-    QueryServer::QueryConfigurator queryConfigurator;
-    T::AttributeList attributeList;
-
-    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
-
     auto valid_time = getValidTime();
 
-    std::string wkt = *projection.crs;
-    // std::cout << wkt << "\n";
-
-    if (wkt != "data")
+    // The origin time comes from the data of a grid-engine layer of the view. Without one
+    // (a time layer alone, or before the data layers) the valid time can still be shown.
+    std::optional<Fmi::DateTime> originTime;
+    if (projection.projectionParameter)
     {
-      // Getting WKT and the bounding box of the requested projection.
+      std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
+      QueryServer::QueryConfigurator queryConfigurator;
+      T::AttributeList attributeList;
 
-      if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
-        wkt = projection.getCRS().WKT();
+      std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
 
+      std::string wkt = *projection.crs;
       // std::cout << wkt << "\n";
 
-      // Adding the bounding box information into the query.
+      if (wkt != "data")
+      {
+        // Getting WKT and the bounding box of the requested projection.
 
-      add_latlon_bbox_attributes(*originalGridQuery, projection);
-    }
-    else
-    {
-      // The requested projection is the same as the projection of the requested data. This means
-      // that we we do not know the actual projection yet and we have to wait that the grid-engine
-      // delivers us the requested data and the projection information of the current data.
-    }
+        if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+          wkt = projection.getCRS().WKT();
 
-    // Adding parameter information into the query.
+        // std::cout << wkt << "\n";
 
-    std::string paramStr = *projection.projectionParameter;
+        // Adding the bounding box information into the query.
 
-    if (originalGridQuery->mProducerNameList.empty())
-    {
-      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+        add_latlon_bbox_attributes(*originalGridQuery, projection);
+      }
+      else
+      {
+        // The requested projection is the same as the projection of the requested data. This means
+        // that we we do not know the actual projection yet and we have to wait that the grid-engine
+        // delivers us the requested data and the projection information of the current data.
+      }
+
+      // Adding parameter information into the query.
+
+      std::string paramStr = *projection.projectionParameter;
+
       if (originalGridQuery->mProducerNameList.empty())
-        originalGridQuery->mProducerNameList.push_back(producerName);
+      {
+        gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+        if (originalGridQuery->mProducerNameList.empty())
+          originalGridQuery->mProducerNameList.push_back(producerName);
+      }
+
+      attributeList.addAttribute("param", paramStr);
+
+      add_time_attributes(attributeList, getValidTime(), origintime);
+
+      // Transforming information from the attribute list into the query object.
+      queryConfigurator.configure(*originalGridQuery, attributeList);
+
+      // Fulfilling information into the query object.
+
+      for (auto& param : originalGridQuery->mQueryParameterList)
+      {
+        param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+        param.mType = QueryServer::QueryParameter::Type::Vector;
+        param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
+      }
+
+      originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+      originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+      add_grid_size_attributes(*originalGridQuery, projection);
+
+      if (wkt == "data")
+        add_data_bbox_attribute(*originalGridQuery, projection);
+
+      // The Query object before the query execution.
+      // query.print(std::cout,0,0);
+
+      // Executing the query.
+      std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+
+      // The Query object after the query execution.
+      // query.print(std::cout,0,0);
+
+      std::shared_ptr<QueryServer::ParameterValues> p = first_parameter_values(*query, paramStr);
+
+      if (p && p->mAnalysisTime.length() >= 15)
+        originTime = Fmi::TimeParser::parse_iso(p->mAnalysisTime);
     }
-
-    attributeList.addAttribute("param", paramStr);
-
-    add_time_attributes(attributeList, getValidTime(), origintime);
-
-    // Transforming information from the attribute list into the query object.
-    queryConfigurator.configure(*originalGridQuery, attributeList);
-
-    // Fulfilling information into the query object.
-
-    for (auto& param : originalGridQuery->mQueryParameterList)
-    {
-      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      param.mType = QueryServer::QueryParameter::Type::Vector;
-      param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
-    }
-
-    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
-
-    add_grid_size_attributes(*originalGridQuery, projection);
-
-    if (wkt == "data")
-      add_data_bbox_attribute(*originalGridQuery, projection);
-
-    // The Query object before the query execution.
-    // query.print(std::cout,0,0);
-
-    // Executing the query.
-    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
-
-    // The Query object after the query execution.
-    // query.print(std::cout,0,0);
-
-    std::shared_ptr<QueryServer::ParameterValues> p = first_parameter_values(*query, paramStr);
-
-    std::optional<Fmi::DateTime> originTime;
-    if (p && p->mAnalysisTime.length() >= 15)
-      originTime = Fmi::TimeParser::parse_iso(p->mAnalysisTime);
 
     // Update the globals
 

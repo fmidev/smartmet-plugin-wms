@@ -1,0 +1,265 @@
+{
+  "title": "Isolabels with a unit conversion: the labels still point towards the higher values",
+  "producer": "pal_skandinavia",
+  "language": "fi",
+  "projection": {
+    "crs": "data",
+    "xsize": 500,
+    "ysize": 500
+  },
+  "defs": {
+    "styles": {
+      ".Label": {
+        "font-family": "Roboto",
+        "font-size": 10,
+        "text-anchor": "middle"
+      }
+    }
+  },
+  "views": [
+    {
+      "qid": "v",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "b",
+          "layer_type": "background",
+          "attributes": {
+            "fill": "white"
+          }
+        },
+        {
+          "qid": "m",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries",
+            "minarea": 100
+          },
+          "attributes": {
+            "id": "europe_country_lines",
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3px"
+          }
+        },
+        {
+          "qid": "i",
+          "layer_type": "isoline",
+          "isolines": [
+            {
+              "value": -30
+            },
+            {
+              "value": -28
+            },
+            {
+              "value": -26
+            },
+            {
+              "value": -24
+            },
+            {
+              "value": -22
+            },
+            {
+              "value": -20
+            },
+            {
+              "value": -18
+            },
+            {
+              "value": -16
+            },
+            {
+              "value": -14
+            },
+            {
+              "value": -12
+            },
+            {
+              "value": -10
+            },
+            {
+              "value": -8
+            },
+            {
+              "value": -6
+            },
+            {
+              "value": -4
+            },
+            {
+              "value": -2
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 2
+            },
+            {
+              "value": 4
+            },
+            {
+              "value": 6
+            },
+            {
+              "value": 8
+            },
+            {
+              "value": 10
+            },
+            {
+              "value": 12
+            },
+            {
+              "value": 14
+            },
+            {
+              "value": 16
+            },
+            {
+              "value": 18
+            },
+            {
+              "value": 20
+            },
+            {
+              "value": 22
+            },
+            {
+              "value": 24
+            },
+            {
+              "value": 26
+            },
+            {
+              "value": 28
+            },
+            {
+              "value": 30
+            }
+          ],
+          "parameter": "Pressure",
+          "precision": 0.1,
+          "attributes": {
+            "fill": "none",
+            "stroke": "black",
+            "stroke-width": "0.5px"
+          },
+          "offset": -1000
+        },
+        {
+          "qid": "l",
+          "layer_type": "isolabel",
+          "isolines": [
+            {
+              "value": -30
+            },
+            {
+              "value": -28
+            },
+            {
+              "value": -26
+            },
+            {
+              "value": -24
+            },
+            {
+              "value": -22
+            },
+            {
+              "value": -20
+            },
+            {
+              "value": -18
+            },
+            {
+              "value": -16
+            },
+            {
+              "value": -14
+            },
+            {
+              "value": -12
+            },
+            {
+              "value": -10
+            },
+            {
+              "value": -8
+            },
+            {
+              "value": -6
+            },
+            {
+              "value": -4
+            },
+            {
+              "value": -2
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 2
+            },
+            {
+              "value": 4
+            },
+            {
+              "value": 6
+            },
+            {
+              "value": 8
+            },
+            {
+              "value": 10
+            },
+            {
+              "value": 12
+            },
+            {
+              "value": 14
+            },
+            {
+              "value": 16
+            },
+            {
+              "value": 18
+            },
+            {
+              "value": 20
+            },
+            {
+              "value": 22
+            },
+            {
+              "value": 24
+            },
+            {
+              "value": 26
+            },
+            {
+              "value": 28
+            },
+            {
+              "value": 30
+            }
+          ],
+          "parameter": "Pressure",
+          "label": {
+            "orientation": "auto"
+          },
+          "attributes": {
+            "class": "Label"
+          },
+          "offset": -1000
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+GET /dali?customer=test&product=hovmoeller_geoph500 HTTP/1.0
+GET /dali?customer=test&product=hovmoeller_geoph500&l1.latitude=65 HTTP/1.0
+GET /dali?customer=test&product=hovmoeller_geoph500&l1.nx=20 HTTP/1.0

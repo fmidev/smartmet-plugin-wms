@@ -461,6 +461,9 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     limits.push_back(range);
     Engine::Contour::Options options(param, theTime, limits);
 
+    // Without this the level selected above was reset to the first one below
+    options.level = level;
+
     if (!unit_conversion.empty())
     {
       auto conv = theState.getConfig().unitConversion(unit_conversion);

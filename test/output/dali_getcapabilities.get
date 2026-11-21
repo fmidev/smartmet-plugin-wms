@@ -1095,6 +1095,40 @@
           "url_template" : "/dali?customer=grid&product=temperature_4&time={time}"
         },
         {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 300
+          },
+          "name" : "time_alone_grid",
+          "path" : 
+          [
+            "grid",
+            "time_alone_grid"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : 17,
+            "x2" : 34,
+            "xsize" : 300,
+            "y1" : 59,
+            "y2" : 71,
+            "ysize" : 500
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "A time layer alone, with grid data",
+          "url_template" : "/dali?customer=grid&product=time_alone_grid&time={time}"
+        },
+        {
           "name" : "wind_direction_1",
           "path" : 
           [
@@ -3039,6 +3073,34 @@
         {
           "image" : 
           {
+            "height" : 300,
+            "width" : 300
+          },
+          "name" : "intersect_level",
+          "path" : 
+          [
+            "test",
+            "intersect_level"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 300,
+            "ysize" : 300
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000/20080914T000000/PT3H,20080914T060000/20080919T000000/PT6H"
+          },
+          "title" : "Isoband of the surface... intersected with the temperature of the 500 hPa level",
+          "url_template" : "/dali?customer=test&product=intersect_level&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 500,
             "width" : 500
           },
@@ -3231,6 +3293,34 @@
           },
           "title" : "Demo product",
           "url_template" : "/dali?customer=test&product=isolabel_horizontal&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "isolabel_offset",
+          "path" : 
+          [
+            "test",
+            "isolabel_offset"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Isolabels with a unit conversion: the labels still point towards the higher values",
+          "url_template" : "/dali?customer=test&product=isolabel_offset&time={time}"
         },
         {
           "image" : 

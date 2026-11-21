@@ -47,11 +47,11 @@ class HovmoellerLayer : public Layer
             const Config& theConfig,
             const Properties& theProperties) override;
 
-  void generate(CTPP::CDT& theGlobals,
-                CTPP::CDT& theLayersCdt,
-                State& theState) override;
+  void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
   void getFeatureInfo(CTPP::CDT& /*theInfo*/, const State& /*theState*/) override {}
+
+  std::size_t hash_value(const State& theState) const override;
 
   // ---- slice configuration ----
 
@@ -64,7 +64,7 @@ class HovmoellerLayer : public Layer
   double longitude = 25.0;
 
   // Spatial range along the varying axis
-  double lon_min = 5.0;   // used by time_lon
+  double lon_min = 5.0;  // used by time_lon
   double lon_max = 35.0;
   double lat_min = 55.0;  // used by time_lat
   double lat_max = 70.0;

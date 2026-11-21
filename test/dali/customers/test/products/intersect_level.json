@@ -1,0 +1,35 @@
+{
+  "title": "Isoband of the surface... intersected with the temperature of the 500 hPa level",
+  "producer": "ecmwf_skandinavia_painepinta",
+  "projection": {
+    "crs": "data",
+    "xsize": 300,
+    "ysize": 300
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "Temperature",
+          "level": 1000,
+          "isobands": [
+            {
+              "lolimit": -200,
+              "hilimit": 200
+            }
+          ],
+          "intersect": {
+            "parameter": "Temperature",
+            "level": 500,
+            "lolimit": -20
+          },
+          "attributes": {
+            "fill": "red"
+          }
+        }
+      ]
+    }
+  ]
+}
