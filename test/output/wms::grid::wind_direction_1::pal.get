@@ -37,39 +37,6 @@
    <use id="europe_country" style="fill:rgb(250,250,250)" xlink:href="#europe"/>
   
   <g id="wind_arrows">
-   <use transform="translate(0 0) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(10 0) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(20 0) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(30 0) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(40 0) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(50 0) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(60 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(70 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(80 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(90 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(100 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(110 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(120 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(130 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(140 0) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(150 0) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(160 0) rotate(190)" xlink:href="#windarrow"/>
-   <use transform="translate(170 0) rotate(160)" xlink:href="#windarrow"/>
-   <use transform="translate(180 0) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(190 0) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(200 0) rotate(120)" xlink:href="#windarrow"/>
-   <use transform="translate(210 0) rotate(120)" xlink:href="#windarrow"/>
-   <use transform="translate(220 0) rotate(120)" xlink:href="#windarrow"/>
-   <use transform="translate(230 0) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(240 0) rotate(120)" xlink:href="#windarrow"/>
-   <use transform="translate(250 0) rotate(120)" xlink:href="#windarrow"/>
-   <use transform="translate(260 0) rotate(120)" xlink:href="#windarrow"/>
-   <use transform="translate(270 0) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(280 0) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(290 0) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(300 0) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 10) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(5 10) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(15 10) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(25 10) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 10) rotate(240)" xlink:href="#windarrow"/>
@@ -98,8 +65,6 @@
    <use transform="translate(265 10) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(275 10) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(285 10) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(295 10) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(0 20) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(10 20) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(20 20) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(30 20) rotate(230)" xlink:href="#windarrow"/>
@@ -129,9 +94,6 @@
    <use transform="translate(270 20) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(280 20) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(290 20) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(300 20) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 30) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(5 30) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(15 30) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(25 30) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(35 30) rotate(230)" xlink:href="#windarrow"/>
@@ -160,8 +122,6 @@
    <use transform="translate(265 30) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(275 30) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(285 30) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(295 30) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(0 40) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(10 40) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(20 40) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(30 40) rotate(230)" xlink:href="#windarrow"/>
@@ -191,9 +151,6 @@
    <use transform="translate(270 40) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(280 40) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(290 40) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(300 40) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 50) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(5 50) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(15 50) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(25 50) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 50) rotate(240)" xlink:href="#windarrow"/>
@@ -222,8 +179,6 @@
    <use transform="translate(265 50) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(275 50) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(285 50) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(295 50) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(0 60) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(10 60) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(20 60) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(30 60) rotate(310)" xlink:href="#windarrow"/>
@@ -253,9 +208,6 @@
    <use transform="translate(270 60) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(280 60) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(290 60) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(300 60) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 70) rotate(350)" xlink:href="#windarrow"/>
-   <use transform="translate(5 70) rotate(10)" xlink:href="#windarrow"/>
    <use transform="translate(15 70) rotate(20)" xlink:href="#windarrow"/>
    <use transform="translate(25 70) rotate(20)" xlink:href="#windarrow"/>
    <use transform="translate(35 70) rotate(20)" xlink:href="#windarrow"/>
@@ -284,8 +236,6 @@
    <use transform="translate(265 70) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(275 70) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(285 70) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(295 70) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(0 80) rotate(40)" xlink:href="#windarrow"/>
    <use transform="translate(10 80) rotate(40)" xlink:href="#windarrow"/>
    <use transform="translate(20 80) rotate(40)" xlink:href="#windarrow"/>
    <use transform="translate(30 80) rotate(50)" xlink:href="#windarrow"/>
@@ -315,9 +265,6 @@
    <use transform="translate(270 80) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(280 80) rotate(130)" xlink:href="#windarrow"/>
    <use transform="translate(290 80) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(300 80) rotate(130)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 90) rotate(20)" xlink:href="#windarrow"/>
-   <use transform="translate(5 90) rotate(90)" xlink:href="#windarrow"/>
    <use transform="translate(15 90) rotate(120)" xlink:href="#windarrow"/>
    <use transform="translate(25 90) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(35 90) rotate(240)" xlink:href="#windarrow"/>
@@ -346,8 +293,6 @@
    <use transform="translate(265 90) rotate(140)" xlink:href="#windarrow"/>
    <use transform="translate(275 90) rotate(140)" xlink:href="#windarrow"/>
    <use transform="translate(285 90) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(295 90) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(0 100) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(10 100) rotate(190)" xlink:href="#windarrow"/>
    <use transform="translate(20 100) rotate(180)" xlink:href="#windarrow"/>
    <use transform="translate(30 100) rotate(290)" xlink:href="#windarrow"/>
@@ -377,9 +322,6 @@
    <use transform="translate(270 100) rotate(140)" xlink:href="#windarrow"/>
    <use transform="translate(280 100) rotate(140)" xlink:href="#windarrow"/>
    <use transform="translate(290 100) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(300 100) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 110) rotate(340)" xlink:href="#windarrow"/>
-   <use transform="translate(5 110) rotate(280)" xlink:href="#windarrow"/>
    <use transform="translate(15 110) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(25 110) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(35 110) rotate(290)" xlink:href="#windarrow"/>
@@ -408,8 +350,6 @@
    <use transform="translate(265 110) rotate(140)" xlink:href="#windarrow"/>
    <use transform="translate(275 110) rotate(140)" xlink:href="#windarrow"/>
    <use transform="translate(285 110) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(295 110) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(0 120) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(10 120) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(20 120) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(30 120) rotate(300)" xlink:href="#windarrow"/>
@@ -439,9 +379,6 @@
    <use transform="translate(270 120) rotate(150)" xlink:href="#windarrow"/>
    <use transform="translate(280 120) rotate(140)" xlink:href="#windarrow"/>
    <use transform="translate(290 120) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(300 120) rotate(140)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 130) rotate(300)" xlink:href="#windarrow"/>
-   <use transform="translate(5 130) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(15 130) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(25 130) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(35 130) rotate(310)" xlink:href="#windarrow"/>
@@ -470,8 +407,6 @@
    <use transform="translate(265 130) rotate(160)" xlink:href="#windarrow"/>
    <use transform="translate(275 130) rotate(160)" xlink:href="#windarrow"/>
    <use transform="translate(285 130) rotate(160)" xlink:href="#windarrow"/>
-   <use transform="translate(295 130) rotate(150)" xlink:href="#windarrow"/>
-   <use transform="translate(0 140) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(10 140) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(20 140) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(30 140) rotate(310)" xlink:href="#windarrow"/>
@@ -501,9 +436,6 @@
    <use transform="translate(270 140) rotate(170)" xlink:href="#windarrow"/>
    <use transform="translate(280 140) rotate(160)" xlink:href="#windarrow"/>
    <use transform="translate(290 140) rotate(150)" xlink:href="#windarrow"/>
-   <use transform="translate(300 140) rotate(150)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 150) rotate(310)" xlink:href="#windarrow"/>
-   <use transform="translate(5 150) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(15 150) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(25 150) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(35 150) rotate(310)" xlink:href="#windarrow"/>
@@ -532,8 +464,6 @@
    <use transform="translate(265 150) rotate(170)" xlink:href="#windarrow"/>
    <use transform="translate(275 150) rotate(160)" xlink:href="#windarrow"/>
    <use transform="translate(285 150) rotate(160)" xlink:href="#windarrow"/>
-   <use transform="translate(295 150) rotate(160)" xlink:href="#windarrow"/>
-   <use transform="translate(0 160) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(10 160) rotate(310)" xlink:href="#windarrow"/>
    <use transform="translate(20 160) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(30 160) rotate(300)" xlink:href="#windarrow"/>
@@ -563,9 +493,6 @@
    <use transform="translate(270 160) rotate(160)" xlink:href="#windarrow"/>
    <use transform="translate(280 160) rotate(160)" xlink:href="#windarrow"/>
    <use transform="translate(290 160) rotate(160)" xlink:href="#windarrow"/>
-   <use transform="translate(300 160) rotate(160)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 170) rotate(310)" xlink:href="#windarrow"/>
-   <use transform="translate(5 170) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(15 170) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(25 170) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(35 170) rotate(290)" xlink:href="#windarrow"/>
@@ -594,8 +521,6 @@
    <use transform="translate(265 170) rotate(170)" xlink:href="#windarrow"/>
    <use transform="translate(275 170) rotate(170)" xlink:href="#windarrow"/>
    <use transform="translate(285 170) rotate(170)" xlink:href="#windarrow"/>
-   <use transform="translate(295 170) rotate(160)" xlink:href="#windarrow"/>
-   <use transform="translate(0 180) rotate(300)" xlink:href="#windarrow"/>
    <use transform="translate(10 180) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(20 180) rotate(280)" xlink:href="#windarrow"/>
    <use transform="translate(30 180) rotate(270)" xlink:href="#windarrow"/>
@@ -625,9 +550,6 @@
    <use transform="translate(270 180) rotate(170)" xlink:href="#windarrow"/>
    <use transform="translate(280 180) rotate(170)" xlink:href="#windarrow"/>
    <use transform="translate(290 180) rotate(170)" xlink:href="#windarrow"/>
-   <use transform="translate(300 180) rotate(170)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 190) rotate(300)" xlink:href="#windarrow"/>
-   <use transform="translate(5 190) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(15 190) rotate(280)" xlink:href="#windarrow"/>
    <use transform="translate(25 190) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(35 190) rotate(270)" xlink:href="#windarrow"/>
@@ -656,8 +578,6 @@
    <use transform="translate(265 190) rotate(190)" xlink:href="#windarrow"/>
    <use transform="translate(275 190) rotate(180)" xlink:href="#windarrow"/>
    <use transform="translate(285 190) rotate(180)" xlink:href="#windarrow"/>
-   <use transform="translate(295 190) rotate(180)" xlink:href="#windarrow"/>
-   <use transform="translate(0 200) rotate(290)" xlink:href="#windarrow"/>
    <use transform="translate(10 200) rotate(280)" xlink:href="#windarrow"/>
    <use transform="translate(20 200) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(30 200) rotate(270)" xlink:href="#windarrow"/>
@@ -687,9 +607,6 @@
    <use transform="translate(270 200) rotate(190)" xlink:href="#windarrow"/>
    <use transform="translate(280 200) rotate(190)" xlink:href="#windarrow"/>
    <use transform="translate(290 200) rotate(190)" xlink:href="#windarrow"/>
-   <use transform="translate(300 200) rotate(180)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 210) rotate(290)" xlink:href="#windarrow"/>
-   <use transform="translate(5 210) rotate(280)" xlink:href="#windarrow"/>
    <use transform="translate(15 210) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(25 210) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(35 210) rotate(260)" xlink:href="#windarrow"/>
@@ -718,8 +635,6 @@
    <use transform="translate(265 210) rotate(200)" xlink:href="#windarrow"/>
    <use transform="translate(275 210) rotate(190)" xlink:href="#windarrow"/>
    <use transform="translate(285 210) rotate(190)" xlink:href="#windarrow"/>
-   <use transform="translate(295 210) rotate(190)" xlink:href="#windarrow"/>
-   <use transform="translate(0 220) rotate(280)" xlink:href="#windarrow"/>
    <use transform="translate(10 220) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(20 220) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(30 220) rotate(260)" xlink:href="#windarrow"/>
@@ -749,9 +664,6 @@
    <use transform="translate(270 220) rotate(200)" xlink:href="#windarrow"/>
    <use transform="translate(280 220) rotate(200)" xlink:href="#windarrow"/>
    <use transform="translate(290 220) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(300 220) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 230) rotate(280)" xlink:href="#windarrow"/>
-   <use transform="translate(5 230) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(15 230) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(25 230) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(35 230) rotate(250)" xlink:href="#windarrow"/>
@@ -780,8 +692,6 @@
    <use transform="translate(265 230) rotate(200)" xlink:href="#windarrow"/>
    <use transform="translate(275 230) rotate(200)" xlink:href="#windarrow"/>
    <use transform="translate(285 230) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(295 230) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(0 240) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(10 240) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(20 240) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(30 240) rotate(250)" xlink:href="#windarrow"/>
@@ -811,9 +721,6 @@
    <use transform="translate(270 240) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(280 240) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(290 240) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(300 240) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 250) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(5 250) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(15 250) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(25 250) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(35 250) rotate(250)" xlink:href="#windarrow"/>
@@ -842,8 +749,6 @@
    <use transform="translate(265 250) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(275 250) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(285 250) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(295 250) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(0 260) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(10 260) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(20 260) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(30 260) rotate(250)" xlink:href="#windarrow"/>
@@ -873,9 +778,6 @@
    <use transform="translate(270 260) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(280 260) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(290 260) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(300 260) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 270) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(5 270) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(15 270) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(25 270) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(35 270) rotate(250)" xlink:href="#windarrow"/>
@@ -904,8 +806,6 @@
    <use transform="translate(265 270) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(275 270) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(285 270) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(295 270) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(0 280) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(10 280) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(20 280) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(30 280) rotate(250)" xlink:href="#windarrow"/>
@@ -935,9 +835,6 @@
    <use transform="translate(270 280) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(280 280) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(290 280) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(300 280) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 290) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(5 290) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(15 290) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(25 290) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(35 290) rotate(250)" xlink:href="#windarrow"/>
@@ -966,8 +863,6 @@
    <use transform="translate(265 290) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(275 290) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(285 290) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(295 290) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(0 300) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(10 300) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(20 300) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(30 300) rotate(250)" xlink:href="#windarrow"/>
@@ -997,9 +892,6 @@
    <use transform="translate(270 300) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(280 300) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(290 300) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(300 300) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 310) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(5 310) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(15 310) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(25 310) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(35 310) rotate(250)" xlink:href="#windarrow"/>
@@ -1028,8 +920,6 @@
    <use transform="translate(265 310) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(275 310) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(285 310) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(295 310) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(0 320) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(10 320) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(20 320) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(30 320) rotate(240)" xlink:href="#windarrow"/>
@@ -1059,9 +949,6 @@
    <use transform="translate(270 320) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(280 320) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(290 320) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(300 320) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 330) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(5 330) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(15 330) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(25 330) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 330) rotate(240)" xlink:href="#windarrow"/>
@@ -1090,8 +977,6 @@
    <use transform="translate(265 330) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(275 330) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(285 330) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(295 330) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(0 340) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(10 340) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(20 340) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(30 340) rotate(240)" xlink:href="#windarrow"/>
@@ -1121,9 +1006,6 @@
    <use transform="translate(270 340) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(280 340) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(290 340) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(300 340) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 350) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(5 350) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(15 350) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(25 350) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 350) rotate(240)" xlink:href="#windarrow"/>
@@ -1152,8 +1034,6 @@
    <use transform="translate(265 350) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(275 350) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(285 350) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(295 350) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(0 360) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(10 360) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(20 360) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(30 360) rotate(240)" xlink:href="#windarrow"/>
@@ -1183,9 +1063,6 @@
    <use transform="translate(270 360) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(280 360) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(290 360) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(300 360) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 370) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(5 370) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(15 370) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(25 370) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 370) rotate(240)" xlink:href="#windarrow"/>
@@ -1214,8 +1091,6 @@
    <use transform="translate(265 370) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(275 370) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(285 370) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(295 370) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(0 380) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(10 380) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(20 380) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(30 380) rotate(240)" xlink:href="#windarrow"/>
@@ -1245,9 +1120,6 @@
    <use transform="translate(270 380) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(280 380) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(290 380) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(300 380) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 390) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(5 390) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(15 390) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(25 390) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 390) rotate(240)" xlink:href="#windarrow"/>
@@ -1276,8 +1148,6 @@
    <use transform="translate(265 390) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(275 390) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(285 390) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(295 390) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(0 400) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(10 400) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(20 400) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(30 400) rotate(240)" xlink:href="#windarrow"/>
@@ -1307,9 +1177,6 @@
    <use transform="translate(270 400) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(280 400) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(290 400) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(300 400) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 410) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(5 410) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(15 410) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(25 410) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 410) rotate(240)" xlink:href="#windarrow"/>
@@ -1338,8 +1205,6 @@
    <use transform="translate(265 410) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(275 410) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(285 410) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(295 410) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(0 420) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(10 420) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(20 420) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(30 420) rotate(240)" xlink:href="#windarrow"/>
@@ -1369,9 +1234,6 @@
    <use transform="translate(270 420) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(280 420) rotate(250)" xlink:href="#windarrow"/>
    <use transform="translate(290 420) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(300 420) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 430) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(5 430) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(15 430) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(25 430) rotate(240)" xlink:href="#windarrow"/>
    <use transform="translate(35 430) rotate(250)" xlink:href="#windarrow"/>
@@ -1400,8 +1262,6 @@
    <use transform="translate(265 430) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(275 430) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(285 430) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(295 430) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(0 440) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(10 440) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(20 440) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(30 440) rotate(230)" xlink:href="#windarrow"/>
@@ -1431,9 +1291,6 @@
    <use transform="translate(270 440) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(280 440) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(290 440) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(300 440) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 450) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(5 450) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(15 450) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(25 450) rotate(230)" xlink:href="#windarrow"/>
    <use transform="translate(35 450) rotate(240)" xlink:href="#windarrow"/>
@@ -1462,8 +1319,6 @@
    <use transform="translate(265 450) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(275 450) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(285 450) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(295 450) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(0 460) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(10 460) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(20 460) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(30 460) rotate(220)" xlink:href="#windarrow"/>
@@ -1493,9 +1348,6 @@
    <use transform="translate(270 460) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(280 460) rotate(260)" xlink:href="#windarrow"/>
    <use transform="translate(290 460) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(300 460) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 470) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(5 470) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(15 470) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(25 470) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(35 470) rotate(230)" xlink:href="#windarrow"/>
@@ -1524,8 +1376,6 @@
    <use transform="translate(265 470) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(275 470) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(285 470) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(295 470) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(0 480) rotate(200)" xlink:href="#windarrow"/>
    <use transform="translate(10 480) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(20 480) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(30 480) rotate(220)" xlink:href="#windarrow"/>
@@ -1555,9 +1405,6 @@
    <use transform="translate(270 480) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(280 480) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(290 480) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(300 480) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(-5 490) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(5 490) rotate(200)" xlink:href="#windarrow"/>
    <use transform="translate(15 490) rotate(210)" xlink:href="#windarrow"/>
    <use transform="translate(25 490) rotate(220)" xlink:href="#windarrow"/>
    <use transform="translate(35 490) rotate(230)" xlink:href="#windarrow"/>
@@ -1586,38 +1433,6 @@
    <use transform="translate(265 490) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(275 490) rotate(270)" xlink:href="#windarrow"/>
    <use transform="translate(285 490) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(295 490) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(0 500) rotate(200)" xlink:href="#windarrow"/>
-   <use transform="translate(10 500) rotate(210)" xlink:href="#windarrow"/>
-   <use transform="translate(20 500) rotate(220)" xlink:href="#windarrow"/>
-   <use transform="translate(30 500) rotate(230)" xlink:href="#windarrow"/>
-   <use transform="translate(40 500) rotate(240)" xlink:href="#windarrow"/>
-   <use transform="translate(50 500) rotate(250)" xlink:href="#windarrow"/>
-   <use transform="translate(60 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(70 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(80 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(90 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(100 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(110 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(120 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(130 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(140 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(150 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(160 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(170 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(180 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(190 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(200 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(210 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(220 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(230 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(240 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(250 500) rotate(260)" xlink:href="#windarrow"/>
-   <use transform="translate(260 500) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(270 500) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(280 500) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(290 500) rotate(270)" xlink:href="#windarrow"/>
-   <use transform="translate(300 500) rotate(270)" xlink:href="#windarrow"/>
   </g>
   <g class="Dot" id="wind_markers">
    <use transform="translate(20,20)" xlink:href="#dot"/>
