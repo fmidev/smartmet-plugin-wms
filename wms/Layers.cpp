@@ -7,6 +7,7 @@
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <json/writer.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/HTTP.h>
@@ -259,6 +260,8 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
       // Each layer may actually generate multiple CDT layers
       // (Animations, inner tags etc). Each is pushed separately
       // to the back of the layers CDT
+
+      Fmi::check_cancelled();
 
       if (!layer->visible)
         continue;

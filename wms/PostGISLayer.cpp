@@ -8,6 +8,7 @@
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <ogr_geometry.h>
@@ -80,6 +81,8 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
                             // Get the polygons and store them into the template engine
     for (const PostGISLayerFilter& filter : filters)
     {
+      Fmi::check_cancelled();
+
       if (time_condition && filter.where)
         mapOptions.where = (*filter.where + " AND " + *time_condition);
       else if (time_condition)

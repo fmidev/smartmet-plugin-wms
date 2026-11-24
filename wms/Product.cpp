@@ -15,6 +15,7 @@
 #include <gis/Box.h>
 #include <giza/ColorMapOptions.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -320,6 +321,7 @@ std::string Product::generateGeoTiff(State& theState)
     {
       for (const auto& layer : view->layers.layers)
       {
+        Fmi::check_cancelled();
         auto bytes = layer->generateGeoTiff(theState);
         if (!bytes.empty())
           return bytes;
@@ -363,7 +365,10 @@ std::string Product::generateMVT(State& theState)
 
     for (const auto& view : views.views)
       for (const auto& layer : view->layers.layers)
+      {
+        Fmi::check_cancelled();
         layer->addMVTLayer(tile, theState);
+      }
 
     return tile.serialize();
   }
@@ -387,6 +392,7 @@ std::string Product::generateDataTile(State& theState)
     {
       for (const auto& layer : view->layers.layers)
       {
+        Fmi::check_cancelled();
         auto bytes = layer->generateDataTile(theState);
         if (!bytes.empty())
           return bytes;

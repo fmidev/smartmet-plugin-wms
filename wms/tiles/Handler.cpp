@@ -31,6 +31,7 @@
 #include <engines/osm/TileStore.h>
 #include <fmt/printf.h>
 #include <json/json.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
@@ -1767,6 +1768,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception ex(BCP, "OGC Tiles GetTile failed!", nullptr);
     sendError(500, "Internal Server Error", ex.what(), theResponse);
     return QueryStatus::OK;
@@ -1916,6 +1918,7 @@ QueryStatus Handler::handleGetFeatureInfo(const Spine::Reactor& theReactor,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception ex(BCP, "OGC Tiles feature info failed!", nullptr);
     sendError(500, "Internal Server Error", ex.what(), theResponse);
     return QueryStatus::OK;
@@ -1942,6 +1945,7 @@ QueryStatus Handler::generateTile(Dali::State& theState,
     }
     catch (...)
     { /* non-fatal: hash failure disables caching */
+      Fmi::rethrow_if_cancelled();
     }
 
     if (product_hash != Fmi::bad_hash)

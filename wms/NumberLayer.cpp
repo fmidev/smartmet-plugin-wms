@@ -35,6 +35,7 @@
 #include <grid-files/grid/GridValueList.h>
 #include <grid-files/grid/Typedefs.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
@@ -102,8 +103,11 @@ PointValues read_forecasts(const NumberLayer& layer,
     const auto& mylocale = std::locale::classic();
     NFmiPoint dummy;
 
+    std::size_t counter = 0;
     for (const auto& point : points)
     {
+      if ((++counter & 255) == 0)
+        Fmi::check_cancelled();
       if (layer.inside(box, point.x, point.y))
       {
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
@@ -233,8 +237,11 @@ void NumberLayer::addSymbols(CTPP::CDT& theGlobals,
                              double xmultiplier,
                              double xoffset) const
 {
+  std::size_t counter = 0;
   for (const auto& pointvalue : pointvalues)
   {
+    if ((++counter & 255) == 0)
+      Fmi::check_cancelled();
     // Start generating the hash
 
     CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -295,8 +302,11 @@ int NumberLayer::addNumbers(CTPP::CDT& theGlobals,
                             double xoffset) const
 {
   int valid_count = 0;
+  std::size_t counter = 0;
   for (const auto& pointvalue : pointvalues)
   {
+    if ((++counter & 255) == 0)
+      Fmi::check_cancelled();
     const auto& point = pointvalue.point();
     float value = pointvalue[0];
 

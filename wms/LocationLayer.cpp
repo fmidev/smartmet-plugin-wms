@@ -21,6 +21,7 @@
 #include <gis/Types.h>
 #include <json/value.h>
 #include <locus/QueryOptions.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/NearTree.h>
@@ -421,8 +422,12 @@ std::vector<AcceptedLocation> accept_locations(const Spine::LocationList& locati
 
   Fmi::NearTree<XY> selected_coordinates;
 
+  std::size_t counter = 0;
   for (const auto& location : locations)
   {
+    if ((++counter & 255) == 0)
+      Fmi::check_cancelled();
+
     // Country and feature code filters. Countries are stored in lower case.
     if (!countries.empty() && countries.count(Fmi::ascii_tolower_copy(location->iso2)) == 0)
       continue;
@@ -1054,6 +1059,8 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     const bool labels_active = !label_config.empty();
     for (size_t i = accepted.size(); i-- > 0;)
     {
+      Fmi::check_cancelled();
+
       // No label means no marker.  Two cases:
       //   (a) i is past placed_labels.size() because max_labels truncated
       //       the candidate set — this candidate was never processed

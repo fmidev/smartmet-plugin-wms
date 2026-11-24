@@ -27,6 +27,7 @@
 #include <grid-files/grid/GridValueList.h>
 #include <grid-files/grid/Typedefs.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/LocalDateTime.h>
@@ -546,6 +547,7 @@ Edges create_possible_edges(const Candidates& candidates,
 
   for (std::size_t i = 0; i < n - 1; i++)
   {
+    Fmi::check_cancelled();
     const auto& c1 = candidates[i];
     for (std::size_t j = i + 1; j < n; j++)
     {
@@ -891,6 +893,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // Project the geometries to pixel coordinates
     for (auto& geomptr : geoms)
     {
+      Fmi::check_cancelled();
       if (geomptr && geomptr->IsEmpty() == 0)
         Fmi::OGR::transform(*geomptr, box);
     }
@@ -1016,6 +1019,7 @@ Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geo
   int id = 0;
   for (std::size_t i = 0; i < geoms.size(); i++)
   {
+    Fmi::check_cancelled();
     const OGRGeometryPtr& geom = geoms[i];
     if (geom && geom->IsEmpty() == 0)
     {

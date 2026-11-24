@@ -29,6 +29,7 @@
 #include <ctpp2/CDT.hpp>
 #include <fmt/printf.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
@@ -1010,6 +1011,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception ex(BCP, "WMTS GetTile failed!", nullptr);
     sendException("NoApplicableCode", ex.what(), theState, theRequest, theResponse);
     return QueryStatus::OK;
@@ -1153,6 +1155,7 @@ QueryStatus Handler::handleGetFeatureInfo(const Spine::Reactor& theReactor,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception ex(BCP, "WMTS GetFeatureInfo failed!", nullptr);
     sendException("NoApplicableCode", ex.what(), theState, theRequest, theResponse);
     return QueryStatus::OK;
@@ -1176,7 +1179,10 @@ QueryStatus Handler::generateTile(Dali::State& theState,
   {
     std::size_t product_hash = 0;
     try { product_hash = theProduct.hash_value(theState); }
-    catch (...) { /* non-fatal: hash failure disables caching */ }
+    catch (...)
+    { /* non-fatal: hash failure disables caching */
+      Fmi::rethrow_if_cancelled();
+    }
 
     if (product_hash != Fmi::bad_hash)
     {

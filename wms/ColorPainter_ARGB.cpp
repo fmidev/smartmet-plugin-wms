@@ -4,6 +4,7 @@
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/grid/Typedefs.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <memory>
@@ -98,6 +99,7 @@ void ColorPainter_ARGB::setImageColors(uint width, uint height, uint /* loop_ste
     uint c = 0;
     for (uint y = 0; y < height; y++)
     {
+      Fmi::check_cancelled();
       uint yy = height - y - 1;
       uint p = yy * width;
       for (uint x = 0; x < width; x++)

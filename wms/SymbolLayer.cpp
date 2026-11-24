@@ -32,6 +32,7 @@
 #include <grid-files/grid/GridValueList.h>
 #include <grid-files/grid/Typedefs.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/LocalDateTime.h>
@@ -108,8 +109,11 @@ PointValues read_forecasts(const SymbolLayer& layer,
     const auto& mylocale = std::locale::classic();
     NFmiPoint dummy;
 
+    std::size_t counter = 0;
     for (const auto& point : points)
     {
+      if ((++counter & 255) == 0)
+        Fmi::check_cancelled();
       if (!layer.inside(box, point.x, point.y))
         continue;
 
@@ -364,8 +368,11 @@ int SymbolLayer::addGridSymbols(CTPP::CDT& theGlobals,
 {
   int valid_count = 0;
 
+  std::size_t counter = 0;
   for (const auto& pointvalue : pointvalues)
   {
+    if ((++counter & 255) == 0)
+      Fmi::check_cancelled();
     const auto& point = pointvalue.point();
 
     float value = pointvalue[0];
@@ -403,8 +410,11 @@ int SymbolLayer::addSymbols(CTPP::CDT& theGlobals,
 {
   int valid_count = 0;
 
+  std::size_t counter = 0;
   for (const auto& pointvalue : pointvalues)
   {
+    if ((++counter & 255) == 0)
+      Fmi::check_cancelled();
     auto value = pointvalue[0];
     if (value != kFloatMissing)
     {
@@ -1056,6 +1066,7 @@ std::optional<std::uint64_t> SymbolLayer::flashGeneration(const State& theState)
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     // For example the image size is to be taken from the data, so the area is not
     // known before the data has been read. Not cacheable then, as before.
     return std::nullopt;

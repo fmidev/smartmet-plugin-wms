@@ -3,6 +3,7 @@
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/Typedefs.h>
 #include <grid-files/grid/Typedefs.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <map>
@@ -68,6 +69,7 @@ void ColorPainter_shading::setImageColors(uint width,uint height,uint /* loop_st
     uint c = 0;
     for (uint y=0; y<height; y++)
     {
+      Fmi::check_cancelled();
       int yy = y;
       if (rotate)
         yy = height-y-1;

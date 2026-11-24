@@ -31,6 +31,7 @@
 #include <grid-content/queryServer/definition/QueryParameter.h>
 #include <grid-files/common/AttributeList.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -348,6 +349,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
   // Perform polygon operations
   for (auto& geom : geoms)
   {
+    Fmi::check_cancelled();
     if (geom && geom->IsEmpty() == 0)
     {
       OGRGeometryPtr geom1(geom->clone());
@@ -490,6 +492,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   // Executing the query.
   std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+  Fmi::check_cancelled();
 
   // Converting the returned WKB-isolines into OGRGeometry objects.
 
@@ -505,6 +508,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
         for (const auto& wkb : val->mValueData)
         {
+          Fmi::check_cancelled();
           const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
           OGRGeometry* geom = nullptr;
           OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
@@ -742,7 +746,9 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   if (coords)
     options.subdivide = effective_subdivide(subdivide, subdivide_min_cell_pixels, *coords, box);
 
+  Fmi::check_cancelled();
   auto geoms = contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
+  Fmi::check_cancelled();
 
   return geoms;
 }
@@ -874,6 +880,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     filter.bbox(box);
 
     // Smoothen the isolines
+    Fmi::check_cancelled();
     filter.apply(geoms, false);
 
     // Update the globals
@@ -904,6 +911,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
+      Fmi::check_cancelled();
       const OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
@@ -921,6 +929,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception exception(BCP, "Operation failed!", nullptr);
     exception.printError();
     throw exception;
@@ -1060,6 +1069,7 @@ void IsolineLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     const auto& box = projection.getBox();
     filter.bbox(box);
+    Fmi::check_cancelled();
     filter.apply(geoms, false);
 
     const std::string layerName = qid.empty() ? paraminfo.parameter : qid;
@@ -1067,6 +1077,7 @@ void IsolineLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     for (size_t i = 0; i < geoms.size() && i < isolines.size(); i++)
     {
+      Fmi::check_cancelled();
       const OGRGeometryPtr& geom = geoms[i];
       if (!geom || geom->IsEmpty())
         continue;

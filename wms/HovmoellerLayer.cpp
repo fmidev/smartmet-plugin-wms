@@ -16,6 +16,7 @@
 #include <engines/querydata/Q.h>
 #include <fmt/format.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGlobals.h>
@@ -182,6 +183,7 @@ void HovmoellerLayer::renderSpaceTime(std::ostringstream& svg,
   int ti = 0;
   for (const auto& t : valid_times)
   {
+    Fmi::check_cancelled();
     for (int si = 0; si < nx; ++si)
     {
       const double space = space_min + (space_max - space_min) * si / (nx - 1);
@@ -226,6 +228,7 @@ void HovmoellerLayer::renderTimeLevel(std::ostringstream& svg,
   int ti = 0;
   for (const auto& t : valid_times)
   {
+    Fmi::check_cancelled();
     for (int li = 0; li < n_levels; ++li)
     {
       q->selectLevel(levels[li]);

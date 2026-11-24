@@ -7,6 +7,7 @@
 #include <gis/GeometrySmoother.h>
 #include <gis/VertexCounter.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <spine/Convenience.h>
@@ -219,6 +220,7 @@ void IsolineFilter::applyWithBackoff(std::vector<OGRGeometryPtr>& geoms, bool pr
 
   for (int t = 0; t < m_validateTries && r > 0; ++t)
   {
+    Fmi::check_cancelled();
     geoms = original;
     trial.radius(r);
     trial.apply(geoms, preserve_topology);

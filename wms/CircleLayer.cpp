@@ -13,6 +13,7 @@
 #include <gis/Types.h>
 #include <json/value.h>
 #include <locus/QueryOptions.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -546,6 +547,7 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     for (const auto& location : locations)
     {
+      Fmi::check_cancelled();
       auto lon = location->longitude;
       auto lat = location->latitude;
       for (const auto& circle : circles)
@@ -579,6 +581,7 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     auto current_circle = all_circles.begin();
     for (const auto& location : locations)
     {
+      Fmi::check_cancelled();
       auto lon = location->longitude;
       auto lat = location->latitude;
       for (const auto& circle : circles)
@@ -664,6 +667,7 @@ void CircleLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     for (const auto& location : locations)
     {
+      Fmi::check_cancelled();
       const double lon = location->longitude;
       const double lat = location->latitude;
       const std::string name = location->name;
