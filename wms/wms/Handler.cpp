@@ -1367,6 +1367,18 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
   if (fd < 0)
     throw Fmi::Exception(BCP, "Failed to create a temporary file for the animation");
   close(fd);
+
+  // Removes the animation file also when an exception is thrown, for example when the
+  // request is cancelled
+  struct FileRemover
+  {
+    const char* name;
+    explicit FileRemover(const char* theName) : name(theName) {}
+    FileRemover(const FileRemover& other) = delete;
+    FileRemover& operator=(const FileRemover& other) = delete;
+    ~FileRemover() { (void)remove(name); }
+  } remover{fname};
+
   webp_anim_save_ARGB(fname, image.data(), width, height, frameCount, timeVect);
   images.clear();
 
@@ -1375,16 +1387,10 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
   std::string content;
   std::ifstream in(fname);
   if (!in)
-  {
-    (void)remove(fname);
     throw Fmi::Exception(BCP, "Failed to open '" + std::string(fname) + "' for reading!");
-  }
 
   content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   theResponse.setContent(std::move(content));
-
-  // Removing the animation file
-  (void)remove(fname);
 
   return QueryStatus::OK;
 }
