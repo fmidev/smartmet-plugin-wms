@@ -107,9 +107,9 @@ std::string getMeanTemperatureColumnName(const Fmi::DateTime& t)
   try
   {
     Fmi::TimePeriod summer_period(
-        Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Mar, 20),
+        Fmi::DateTime(Fmi::Date(t.date().year(), unsigned(date::mar), 20),
                       Fmi::TimeDuration(0, 0, 0)),
-        Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Oct, 20),
+        Fmi::DateTime(Fmi::Date(t.date().year(), unsigned(date::oct), 20),
                       Fmi::TimeDuration(23, 59, 59)));
 
     // date must be between 21.10-21.3
