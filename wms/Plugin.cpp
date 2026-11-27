@@ -42,6 +42,7 @@
 #include <json/reader.h>
 #include <json/writer.h>
 #include <macgyver/AnsiEscapeCodes.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
@@ -584,6 +585,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
                                hash.RecursiveDump());
     }
 
+    Fmi::check_cancelled();
+
     std::string output;
     std::string log;
     try
@@ -707,6 +710,7 @@ void Plugin::formatResponse(const std::string &theSvg,
     else
     {
       // Convert buffer content
+      Fmi::check_cancelled();
       std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (usetimer)
       {
@@ -761,6 +765,8 @@ void Plugin::wmsQuery(Spine::Reactor& theReactor,
 
   catch (const Fmi::Exception& wmsException)
   {
+    Fmi::rethrow_if_cancelled();
+
     if (!isQuiet(theRequest))
       wmsException.printError();
 
@@ -862,6 +868,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
     }
     catch (...)
     {
+      Fmi::rethrow_if_cancelled();
+
       // Catching all exceptions
 
       Fmi::Exception exception(BCP, "Request processing exception!", nullptr);

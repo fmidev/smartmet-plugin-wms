@@ -38,6 +38,7 @@
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/Typedefs.h>
 #include <json/writer.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -776,6 +777,7 @@ QueryStatus Handler::wmsGetMapQuery(Dali::State &theState,
     }
     catch (...)
     {
+      Fmi::rethrow_if_cancelled();
       Fmi::Exception ex(BCP, "Operation failed!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
@@ -887,6 +889,7 @@ QueryStatus Handler::wmsGetLegendGraphicQuery(Dali::State &theState,
     }
     catch (...)
     {
+      Fmi::rethrow_if_cancelled();
       Fmi::Exception ex(BCP, "Operation failed!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
@@ -1007,6 +1010,7 @@ QueryStatus Handler::wmsGetFeatureInfoQuery(Dali::State &theState,
     }
     catch (...)
     {
+      Fmi::rethrow_if_cancelled();
       Fmi::Exception ex(BCP, "Operation failed!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
@@ -1131,6 +1135,7 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
   }
   catch (const Fmi::Exception &wmsException)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception ex(
         BCP,
         "Error in generating GetCapabilities response! " + std::string(wmsException.what()),
@@ -1141,6 +1146,7 @@ QueryStatus Handler::wmsGetCapabilitiesQuery(Dali::State &theState,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception ex(BCP, "Error in generating GetCapabilities response!", nullptr);
     if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
       ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
@@ -1242,6 +1248,7 @@ std::optional<QueryStatus> Handler::generateSvg(CTPP::CDT& hash,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     // Do not continue with a half-built CDT: Views::generate() only appends a view after
     // its layers have been generated, so a failure here leaves 'views' empty and we would
     // silently serve - and cache - a blank image with status 200.
@@ -1252,6 +1259,7 @@ std::optional<QueryStatus> Handler::generateSvg(CTPP::CDT& hash,
   }
 
   // Build the template
+  Fmi::check_cancelled();
   std::string log;
   try
   {
@@ -1265,6 +1273,7 @@ std::optional<QueryStatus> Handler::generateSvg(CTPP::CDT& hash,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception ex(
         BCP, "Error in processing the template '" + *theProduct.svg_tmpl + "'!", nullptr);
     if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
@@ -1304,6 +1313,8 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
 
     for (int loop = 0; loop < animation_loopsteps; loop++)
     {
+      Fmi::check_cancelled();
+
       CTPP::CDT hash(CTPP::CDT::HASH_VAL);
       // if (requestType == RequestType::GET_LEGEND_GRAPHIC)
       //   hash["legend"] = "true";
@@ -1321,6 +1332,7 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
         std::cout << fmt::format("Generated CDT:\n{}\n", hash.RecursiveDump());
 
       // Converting SVG to ARGB-image:
+      Fmi::check_cancelled();
       uint* vectorImage = Giza::Svg::toargb(output);
       if (!vectorImage)
         throw Fmi::Exception(BCP, "Failed to convert an animation frame to an image");
@@ -1367,6 +1379,18 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
   if (fd < 0)
     throw Fmi::Exception(BCP, "Failed to create a temporary file for the animation");
   close(fd);
+
+  // Removes the animation file also when an exception is thrown, for example when the
+  // request is cancelled
+  struct FileRemover
+  {
+    const char* name;
+    explicit FileRemover(const char* theName) : name(theName) {}
+    FileRemover(const FileRemover& other) = delete;
+    FileRemover& operator=(const FileRemover& other) = delete;
+    ~FileRemover() { (void)remove(name); }
+  } remover{fname};
+
   webp_anim_save_ARGB(fname, image.data(), width, height, frameCount, timeVect);
   images.clear();
 
@@ -1375,16 +1399,10 @@ QueryStatus Handler::generateAnimation(Dali::State& theState,
   std::string content;
   std::ifstream in(fname);
   if (!in)
-  {
-    (void)remove(fname);
     throw Fmi::Exception(BCP, "Failed to open '" + std::string(fname) + "' for reading!");
-  }
 
   content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   theResponse.setContent(std::move(content));
-
-  // Removing the animation file
-  (void)remove(fname);
 
   return QueryStatus::OK;
 }
@@ -1408,6 +1426,7 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State& theState,
   }
   catch (const Fmi::Exception& exception)
   {
+    Fmi::rethrow_if_cancelled();
     auto layers = theRequest.getParameter("LAYERS");
 
     std::string msg;
@@ -1516,6 +1535,7 @@ QueryStatus Handler::wmsGenerateFeatureInfo(Dali::State &theState,
       }
       catch (...)
       {
+        Fmi::rethrow_if_cancelled();
         // best effort only
       }
     }
@@ -1539,6 +1559,7 @@ QueryStatus Handler::wmsGenerateFeatureInfo(Dali::State &theState,
     }
     catch (...)
     {
+      Fmi::rethrow_if_cancelled();
       Fmi::Exception ex(BCP, "Error in processing the template '" + tmpl_name + "'!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
@@ -1547,6 +1568,7 @@ QueryStatus Handler::wmsGenerateFeatureInfo(Dali::State &theState,
   }
   catch (...)
   {
+    Fmi::rethrow_if_cancelled();
     Fmi::Exception e(BCP, "Failed to generate FeatureInfo", nullptr);
     e.addParameter("URI", theRequest.getURI());
     e.addParameter("ClientIP", theRequest.getClientIP());

@@ -8,10 +8,12 @@
 #include "Area.h"
 #include "Config.h"
 #include "Sources.h"
+#include <boost/thread/thread.hpp>
 #include <engines/querydata/Engine.h>
 #include <engines/querydata/Model.h>
 #include <gis/PointGridding.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -564,6 +566,10 @@ Gridder::SharedStationData Gridder::read(const ProducerConfig& theProducer,
     {
       try
       {
+        // Others may wait for the result, the read must not fail with this request, neither
+        // by its cancellation nor by the interruption of its thread
+        Fmi::CancellationScope none(nullptr);
+        boost::this_thread::disable_interruption no_interruption;
         promise.set_value(read_now());
       }
       catch (...)
@@ -684,6 +690,11 @@ Engine::Querydata::SharedModel Gridder::grid(const ProducerConfig& p,
 
   try
   {
+    // Others may wait for the result, the gridding must not fail with this request, neither
+    // by its cancellation nor by the interruption of its thread
+    Fmi::CancellationScope none(nullptr);
+    boost::this_thread::disable_interruption no_interruption;
+
     // Distinct times are gridded separately, so limit the CPU they can take
     RunningSlot slot(itsRunningMutex, itsRunningCondition, itsRunning, itsConfig.maxConcurrent());
 

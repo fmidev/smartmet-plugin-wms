@@ -35,6 +35,7 @@
 #include <grid-files/grid/GridValue.h>
 #include <grid-files/grid/GridValueList.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/LocalDateTime.h>
@@ -314,8 +315,11 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
     PointValueReader reader(q, met_time, Fmi::LocalDateTime(met_time, Fmi::TimeZonePtr::utc));
 
+    std::size_t counter = 0;
     for (const auto& point : points)
     {
+      if ((++counter & 255) == 0)
+        Fmi::check_cancelled();
       if (!layer.inside(box, point.x, point.y))
         continue;
 
@@ -959,8 +963,11 @@ void ArrowLayer::render_arrows(CTPP::CDT& theGlobals,
                                const State& theState,
                                int& valid_count)
 {
+  std::size_t counter = 0;
   for (const auto& pointvalue : pointvalues)
   {
+    if ((++counter & 255) == 0)
+      Fmi::check_cancelled();
     const auto& point = pointvalue.point();
 
     // Select arrow symbol based on speed when speed-ranged arrows are configured

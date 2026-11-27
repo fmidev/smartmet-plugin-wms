@@ -36,6 +36,7 @@
 #include <grid-files/grid/Typedefs.h>
 #include <grid-files/map/Topography.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -503,6 +504,7 @@ void RasterLayer::generate_image(int loopstep,
           width, height, loopstep, loopsteps, image, land, values1, emptyParameters);
 
     // Painting the actual parameter
+    Fmi::check_cancelled();
     if (dataPainter)
     {
       if (values2.empty())
@@ -518,6 +520,7 @@ void RasterLayer::generate_image(int loopstep,
           width, height, loopstep, loopsteps, image, land, values1, emptyParameters);
 
     // Painting the background layers on top of the data
+    Fmi::check_cancelled();
     paintSurface("top", ctx);
 
     std::ostringstream svgImage;
@@ -589,6 +592,7 @@ void RasterLayer::generate_output(CTPP::CDT& theGlobals,
       if (theState.animation_enabled)
         comp = 1;
 
+      Fmi::check_cancelled();
       const auto png = Giza::topng_argb(cimage.pixel, cimage.width, cimage.height, comp);
       svgImage << "<image id=\"" << Fmi::safexmlescape(qid)
                << "\" xlink:href=\"data:image/png;base64,";
@@ -851,8 +855,11 @@ void RasterLayer::generate_qEngine(CTPP::CDT& theGlobals,
     T::Coordinate_vec coordinates;
     coordinates.reserve(sz);
     for (int j = 0; j < height; j++)
+    {
+      Fmi::check_cancelled();
       for (int i = 0; i < width; i++)
         coordinates.emplace_back(llmatrix.x(i, j), llmatrix.y(i, j));
+    }
 
     // 4. Fetch the values (parameter => values1; or direction => values1,
     //    speed => values2) and paint.

@@ -3,6 +3,7 @@
 #include "View.h"
 #include <ctpp2/CDT.hpp>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <string>
 
@@ -79,6 +80,7 @@ void Views::generate(CTPP::CDT& theGlobals, State& theState)
   {
     for (auto& view : views)
     {
+      Fmi::check_cancelled();
       CTPP::CDT view_hash(CTPP::CDT::HASH_VAL);
       view->generate(theGlobals, view_hash, theState);
       theGlobals["views"].PushBack(view_hash);

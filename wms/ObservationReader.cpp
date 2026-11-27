@@ -19,6 +19,7 @@
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <newbase/NFmiGlobals.h>
 #include <newbase/NFmiPoint.h>
@@ -212,6 +213,8 @@ void translate_stations(Engine::Observation::Engine& obsengine,
 
   for (const auto& station : stations)
   {
+    Fmi::check_cancelled();
+
     Engine::Observation::StationSettings stationSettings = station_settings(station, settings);
 
     auto tagged_fmisids = obsengine.translateToFMISID(settings, stationSettings);
@@ -309,6 +312,9 @@ PointValues read_flash_observations(const State& state,
 
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
+      if ((row & 127) == 127)
+        Fmi::check_cancelled();
+
       double lon = get_double(values.at(lon_idx).at(row));
       double lat = get_double(values.at(lat_idx).at(row));
 
@@ -424,6 +430,9 @@ PointValues read_all_observations(const State& state,
 
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
+      if ((row & 127) == 127)
+        Fmi::check_cancelled();
+
       double lon = get_double(values.at(lon_idx).at(row));
       double lat = get_double(values.at(lat_idx).at(row));
 
@@ -537,6 +546,9 @@ PointValues read_station_observations(const State& state,
 
     for (auto row = 0UL; row < values[0].size(); ++row)
     {
+      if ((row & 127) == 127)
+        Fmi::check_cancelled();
+
       auto fmisid = get_double(values.at(fmisid_idx).at(row));
       auto lon = get_double(values.at(lon_idx).at(row));
       auto lat = get_double(values.at(lat_idx).at(row));
@@ -647,6 +659,8 @@ PointValues read_latlon_observations(const State& state,
 
     for (const auto& point : points)
     {
+      Fmi::check_cancelled();
+
       Engine::Observation::StationSettings stationSettings;
       stationSettings.nearest_station_settings.emplace_back(
           point.latlon.X(), point.latlon.Y(), settings.maxdistance, settings.numberofstations, "");
@@ -690,6 +704,9 @@ PointValues read_latlon_observations(const State& state,
 
     for (auto row = 0UL; row < values[0].size(); ++row)
     {
+      if ((row & 127) == 127)
+        Fmi::check_cancelled();
+
       auto fmisid = get_double(values.at(fmisid_idx).at(row));
       auto lon = get_double(values.at(stationlon_idx).at(row));
       auto lat = get_double(values.at(stationlat_idx).at(row));

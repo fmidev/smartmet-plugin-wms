@@ -11,6 +11,7 @@
 #include <engines/querydata/Engine.h>
 #include <engines/querydata/Model.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -335,6 +336,8 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
     // Gridded observations of the latest time
     if (isObsGrid(theProducer))
     {
+      // Not checked during the gridding, others may be waiting for the result
+      Fmi::check_cancelled();
       auto q = getGridder()->get(theProducer, obsGridTime(theProducer, std::nullopt));
       itsQCache.insert(std::make_pair(key, q));
       return q;
@@ -378,6 +381,7 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
     // Gridded observations have no origin times, the time is the observation time
     if (isObsGrid(theProducer))
     {
+      Fmi::check_cancelled();
       auto q = getGridder()->get(
           theProducer, obsGridTime(theProducer, Fmi::TimePeriod(theOriginTime, theOriginTime)));
       itsQCache.insert(std::make_pair(key, q));
@@ -528,6 +532,7 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
     // Gridded observations of the latest time in the period
     if (isObsGrid(theProducer))
     {
+      Fmi::check_cancelled();
       auto q = getGridder()->get(theProducer, obsGridTime(theProducer, theTimePeriod));
       itsQCache.insert(std::make_pair(key, q));
       return q;

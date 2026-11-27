@@ -3,6 +3,7 @@
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/grid/Typedefs.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <string>
@@ -166,6 +167,7 @@ void paint_range(const ColorPainter_range::Range& range,uint width,uint height,u
   uint c = 0;
   for (uint y = 0; y < height; y++)
   {
+    Fmi::check_cancelled();
     uint yy = height - y -1;
     uint p = yy * width;
     for (uint x = 0; x < width; x++)

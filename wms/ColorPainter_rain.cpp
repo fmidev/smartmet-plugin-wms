@@ -3,6 +3,7 @@
 #include "State.h"
 #include <grid-files/common/ImageFunctions.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <algorithm>
@@ -261,7 +262,8 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
 
     // Rotate
 
-    auto* speed = new float[sz];
+    std::unique_ptr<float[]> speed_buffer(new float[sz]);
+    auto* speed = speed_buffer.get();
 
     if (!streamImage || streamImage_width != width || streamImage_height != height)
       createStreamImage(width,height);
@@ -271,7 +273,6 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
     if (!colormap)
     {
       //printf("No colormap\n");
-      delete [] speed;
       return;
     }
 
@@ -302,6 +303,7 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
       uint c = 0;
       for (uint y = 0; y < height; y++)
       {
+        Fmi::check_cancelled();
         uint yy = height - y -1;
         uint p = yy * width;
         for (uint x = 0; x < width; x++)
@@ -336,8 +338,6 @@ void ColorPainter_rain::setImageColors(uint width,uint height,uint loop_step,uin
         }
       }
     }
-
-    delete [] speed;
   }
   catch (...)
   {

@@ -12,6 +12,7 @@
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <ogr_geometry.h>
 #include <optional>
@@ -79,9 +80,10 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     // Analyze the grid, do not render invalid cells
     auto analysis = Fmi::analysis(*coords);
 
-    // Create the shape
+    // Create the shape, owned by geom so that it is not leaked if the request is cancelled
 
     auto* g = new OGRGeometryCollection;
+    OGRGeometryPtr geom(g);
 
     std::size_t j1 = 0;
     std::size_t j2 = analysis.valid.height() - 1;
@@ -89,6 +91,8 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     std::size_t i2 = analysis.valid.width() - 1;
 
     for (std::size_t j = j1; j < j2; j++)
+    {
+      Fmi::check_cancelled();
       for (std::size_t i = i1; i < i2; i++)
       {
         if (analysis.valid(i, j))
@@ -104,8 +108,8 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
           g->addGeometryDirectly(poly);
         }
       }
+    }
 
-    OGRGeometryPtr geom(g);
     // geom->assignSpatialReference(crs.get()->Clone()); // not needed in following code
 
     // Clip the geometry to the bounding box

@@ -36,6 +36,7 @@
 #include <grid-files/common/AttributeList.h>
 #include <grid-files/grid/Typedefs.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -794,6 +795,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Executing the query.
     std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+    Fmi::check_cancelled();
 
     // The Query object after the query execution.
     // query.print(std::cout,0,0);
@@ -806,6 +808,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     filter.bbox(box);
 
     // Smoothen the isobands
+    Fmi::check_cancelled();
     filter.apply(geoms, true);
 
     // Extracting the projection information from the query result.
@@ -848,6 +851,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
+      Fmi::check_cancelled();
       const OGRGeometryPtr& geom = geoms[i];
       if (geom && geom->IsEmpty() == 0)
       {
@@ -1108,8 +1112,10 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     if (coords)
       options.subdivide = effective_subdivide(subdivide, subdivide_min_cell_pixels, *coords, box);
 
+    Fmi::check_cancelled();
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
+    Fmi::check_cancelled();
 
     filter.bbox(box);
     filter.apply(geoms, true);
@@ -1140,6 +1146,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
+      Fmi::check_cancelled();
       OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
@@ -1377,8 +1384,10 @@ void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     if (coords)
       options.subdivide = effective_subdivide(subdivide, subdivide_min_cell_pixels, *coords, box);
 
+    Fmi::check_cancelled();
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
+    Fmi::check_cancelled();
 
     filter.bbox(box);
     filter.apply(geoms, true);
@@ -1388,6 +1397,7 @@ void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
     for (size_t i = 0; i < geoms.size() && i < isobands.size(); i++)
     {
+      Fmi::check_cancelled();
       OGRGeometryPtr& geom = geoms[i];
       if (!geom || geom->IsEmpty())
         continue;

@@ -20,6 +20,7 @@
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -510,6 +511,8 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 
     for (const auto& feature : features)
     {
+      Fmi::check_cancelled();
+
       if (feature->geom == nullptr || feature->geom->IsEmpty() == 1)
         continue;
 
@@ -625,6 +628,8 @@ void MapLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
 
       for (const auto& feature : features)
       {
+        Fmi::check_cancelled();
+
         if (!feature->geom || feature->geom->IsEmpty() != 0)
           continue;
 

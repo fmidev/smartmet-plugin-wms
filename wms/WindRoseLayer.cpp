@@ -27,6 +27,7 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
@@ -664,6 +665,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     for (const auto& station : stations.stations)
     {
+      Fmi::check_cancelled();
+
       // Currently we require the station to have a fmisid
       if (!station.fmisid)
         throw Fmi::Exception(BCP, "WindRose station fmisid missing");
@@ -781,6 +784,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(const State& theState
 
     for (const auto& station : stations.stations)
     {
+      Fmi::check_cancelled();
       settings.taggedFMISIDs.clear();
       if (!station.fmisid)
         throw Fmi::Exception(BCP, "Station fmisid is required for wind roses");

@@ -25,6 +25,7 @@
 #include <grid-files/common/Typedefs.h>
 #include <grid-files/identification/GridDef.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
@@ -117,6 +118,7 @@ void direction_values(QueryValueReader& reader,
   uint c = 0;
   for (uint y = 0; y < gheight; y++)
   {
+    Fmi::check_cancelled();
     for (uint x = 0; x < gwidth; x++)
     {
       Spine::Location loc(latlonCoordinates[c].x(), latlonCoordinates[c].y());
@@ -151,6 +153,7 @@ void uv_direction_values(QueryValueReader& reader,
   uint c = 0;
   for (uint y = 0; y < gheight; y++)
   {
+    Fmi::check_cancelled();
     for (uint x = 0; x < gwidth; x++)
     {
       Spine::Location loc(latlonCoordinates[c].x(), latlonCoordinates[c].y());
@@ -661,6 +664,9 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
+      if ((i & 63) == 0)
+        Fmi::check_cancelled();
+
       const OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)

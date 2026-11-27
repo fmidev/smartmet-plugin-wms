@@ -3,6 +3,7 @@
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/grid/Typedefs.h>
 #include <json/value.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <string>
@@ -163,6 +164,7 @@ void paint_shadow(const ColorPainter_shadow::Shadow& shadow,uint width,uint heig
   uint c = 0;
   for (uint y = 0; y < height; y++)
   {
+    Fmi::check_cancelled();
     int dyy = y + dy;
     uint yy = height - y -1;
     int py = yy * width;

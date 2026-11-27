@@ -1,6 +1,7 @@
 // ======================================================================
 
 #include "LabelPlacement.h"
+#include <macgyver/Cancellation.h>
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -577,6 +578,7 @@ std::vector<PlacedLabel> greedyCore(const LabelConfig& config,
 
   for (size_t i = 0; i < n; i++)
   {
+    Fmi::check_cancelled();
     const auto& cand = candidates[i];
 
     // Evicted in advance by a higher-priority label
@@ -1003,6 +1005,9 @@ void LabelAnnealer::anneal()
 
   for (int iter = 0; iter < config.sa_iterations; iter++)
   {
+    if ((iter & 1023) == 0)
+      Fmi::check_cancelled();
+
     const int i = label_dist(rng);
     const auto& bboxes_i = render_bboxes[static_cast<size_t>(i)];
     if (bboxes_i.empty())

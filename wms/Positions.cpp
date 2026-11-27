@@ -17,6 +17,7 @@
 #include <grid-files/identification/GridDef.h>
 #include <json/value.h>
 #include <locus/QueryOptions.h>
+#include <macgyver/Cancellation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <macgyver/LocalDateTime.h>
@@ -144,8 +145,12 @@ void apply_direction_offsets(Positions::Points& thePoints,
         throw Fmi::Exception(
             BCP, "Parameter '" + theDirection + "' is not available for position selection!");
 
+      std::size_t counter = 0;
       for (auto& point : thePoints)
       {
+        if ((++counter & 63) == 0)
+          Fmi::check_cancelled();
+
         double dir = q.interpolate(point.latlon, theTime, 180);
         if (dir != kFloatMissing)
         {
@@ -166,8 +171,12 @@ void apply_direction_offsets(Positions::Points& thePoints,
       const auto& mylocale = std::locale::classic();
       NFmiPoint dummy;
 
+      std::size_t counter = 0;
       for (auto& point : thePoints)
       {
+        if ((++counter & 63) == 0)
+          Fmi::check_cancelled();
+
         // Q API SUCKS
 
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
@@ -834,6 +843,8 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
     Points points;
 
     for (auto j = 0UL; j < latlons.height(); j++)
+    {
+      Fmi::check_cancelled();
       for (auto i = 0UL; i < latlons.width(); i++)
       {
         double xcoord = coords.x(i, j);
@@ -858,6 +869,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
         if (inside(latlon.X(), latlon.Y(), forecastMode))
           points.emplace_back(xcoord, ycoord, latlon, deltax, deltay);
       }
+    }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
 
@@ -903,6 +915,7 @@ Positions::Points Positions::getDataPoints(const char* /* originalCrs */,
       uint sz = originalCoordinates->size();
       for (int y = 0; y < originalHeight; y = y + deltay)
       {
+        Fmi::check_cancelled();
         for (int x = 0; x < originalWidth; x = x + deltax)
         {
           pos = y * originalWidth + x;
@@ -1267,6 +1280,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
     // This loop order makes it easier to handle the poles only once
     for (const auto& station : stations.stations)
     {
+      Fmi::check_cancelled();
       options.SetFeatures("SYNOP");
       Spine::LocationList places = search_station(*geonames, options, station);
 

@@ -40,7 +40,7 @@ ISOFILTER_OBJS = ../../obj/IsolineFilter.o ../../obj/BezierFit.o ../../obj/Bezie
 all: $(PROGS)
 
 test_label_placement: $(LABEL_SRCS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lsmartmet-macgyver $(LIBS)
 
 test_subdivide_gate: $(SUBDIVIDE_SRCS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS) -lsmartmet-gis
